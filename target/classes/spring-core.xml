@@ -26,17 +26,19 @@
 
 	<!-- 自动扫描包，可以写多个 -->
     <context:component-scan base-package="com.yunhai.*"></context:component-scan>
-
+	<context:annotation-config />  
     <!--默认的注解映射支持  -->
  	<mvc:annotation-driven></mvc:annotation-driven>
 	<!-- 允许对静态资源文件的访问 -->
-    
+     
     <mvc:default-servlet-handler/>
+    
+
      
     <!-- 完成请求和注解POJO的映射 -->
     <!--<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
      -->
     <!-- 对转向页面的路径解析。prefix：前缀， suffix：后缀 -->
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
-    			 p:prefix="/view/" p:suffix=".jsp" />
+    			 p:prefix="/view/" p:suffix=".html" />
 </beans>

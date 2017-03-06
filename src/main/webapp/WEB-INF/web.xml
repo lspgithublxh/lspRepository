@@ -17,11 +17,14 @@
   <!--对于log4j2，Servlet2.5以前的版本需要-->  
     <listener>  
       <listener-class>org.apache.logging.log4j.web.Log4jServletContextListener</listener-class>  
-    </listener>
+    </listener> 
+    <!-- spring 核心监听器-->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>  
    </listener> 
-   	
+   <listener>  
+        <listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>  
+   </listener>
 	<!-- Filter组 -->
    <filter>  
       <filter-name>log4jServletFilter</filter-name>  
@@ -49,7 +52,16 @@
         <url-pattern>/*</url-pattern>  
     </filter-mapping>  
     
-    
+    <!-- 默认的服务器的servlet来处理 -->
+    <servlet-mapping>  
+        <servlet-name>default</servlet-name>  
+        <url-pattern>*.css</url-pattern> 
+        <url-pattern>*.jpg</url-pattern>
+        <url-pattern>*.png</url-pattern>
+        <url-pattern>*.js</url-pattern>
+        <url-pattern>*.xml</url-pattern> 
+        <url-pattern>*.json</url-pattern>
+    </servlet-mapping>
     
    <!-- DispatcherServlet -->
    <servlet>
@@ -65,16 +77,7 @@
 	    <servlet-name>DispatcherServlet</servlet-name>
 	    <url-pattern>/*</url-pattern>
 	</servlet-mapping>
-<!-- 默认的服务器的servlet来处理 -->
-    <servlet-mapping>  
-        <servlet-name>default</servlet-name>  
-        <url-pattern>*.css</url-pattern> 
-        <url-pattern>*.jpg</url-pattern>
-        <url-pattern>*.png</url-pattern>
-        <url-pattern>*.js</url-pattern>
-        <url-pattern>*.xml</url-pattern> 
-        <url-pattern>*.json</url-pattern>
-    </servlet-mapping>
+
  <!-- 剩余配置 -->
    <welcome-file-list><!--指定欢迎页面-->  
         <welcome-file>login.html</welcome-file>  

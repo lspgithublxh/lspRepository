@@ -3,6 +3,7 @@
  */
 package com.yunhai.serviceImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -20,8 +21,12 @@ import com.yunhai.service.UserService;
 public class UserServiceImpl implements UserService{
 
 	public List<UserEntity> getAllUsers() {
-		// TODO Auto-generated method stub
-		return null;
+		List<UserEntity> list = new ArrayList<UserEntity>();
+		UserEntity user = new UserEntity("李少平",1);
+		UserEntity user2 = new UserEntity("李小海",1);
+		list.add(user);
+		list.add(user2);
+		return list;
 	}
 
 }

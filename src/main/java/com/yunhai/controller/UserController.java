@@ -11,10 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.gson.Gson;
 import com.yunhai.model.UserEntity;
 import com.yunhai.service.UserService;
 
@@ -33,15 +35,39 @@ public class UserController {
      @Autowired
      private UserService userService;
  
-     @RequestMapping(value = "/all", method = RequestMethod.GET)
-     @ResponseBody
-     public List<UserEntity> getAllUsers(){
+     @RequestMapping(value = "/all", method = RequestMethod.POST ,produces="application/json;charset=UTF-8")//不是必须的：
+     @ResponseBody//也不用配置convertor-。。如果输入参数是单一字符串
+     public String getAllUsers(@RequestBody UserEntity user){
+    	 LOGGER.info("::" + user.getName());
          LOGGER.info("[GET] /user/all getAllUsers");
          List<UserEntity> list = userService.getAllUsers();
          LOGGER.debug("This is log of level of debug");
          LOGGER.trace("log4j2 Demo");
          LOGGER.error("哎呀，出错啦~");
-         return list;
+         return new Gson().toJson(list);//"{name:'sss',id:8}";
+     }
+     
+     @RequestMapping(value = "/name", method = RequestMethod.POST)//不是必须的：,produces="application/json;charset=UTF-8"
+     @ResponseBody//也不用配置convertor-。。如果输入参数是单一字符串
+     public String getA(String name){
+    	 LOGGER.info("::" + name);
+         LOGGER.info("[GET] /user/all getAllUsers");
+         List<UserEntity> list = userService.getAllUsers();
+         LOGGER.debug("This is log of level of debug");
+         LOGGER.trace("log4j2 Demo");
+         LOGGER.error("哎呀，出错啦~");
+         return new Gson().toJson(list);//"{name:'sss',id:8}";
+     }
+     
+     @RequestMapping(value = "/page", method = RequestMethod.POST)
+     public String getPage(String name){
+    	 LOGGER.info("::" + name);
+         LOGGER.info("[GET] /user/all getAllUsers");
+         List<UserEntity> list = userService.getAllUsers();
+         LOGGER.debug("This is log of level of debug");
+         LOGGER.trace("log4j2 Demo");
+         LOGGER.error("哎呀，出错啦~");
+         return "inde";
      }
      
     public static void main(String[] args) {
