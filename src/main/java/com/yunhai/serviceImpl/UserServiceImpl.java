@@ -17,7 +17,7 @@ import com.yunhai.service.UserService;
  * 2017年3月5日
  * UserServiceImpl
  */
-@Service("userService")
+@Service("myUserService")
 public class UserServiceImpl implements UserService{
 
 	public List<UserEntity> getAllUsers() {
