@@ -13,9 +13,10 @@
 	<security:http pattern="*.css" security="none"></security:http>
 	<security:http pattern="*.js" security="none"></security:http>
     <security:http auto-config="true">
-    	<security:form-login always-use-default-target="true"
+    	<security:form-login always-use-default-target="true" 
 						  authentication-success-forward-url="/user/page2" />
        <!--特殊专门拦截请求1 权限相关，会在每次请求的时候都可能被使用，但认证则只会在session未建立的时候、securityContext未建立的时候-->
+       <!-- 通道访问可以设置requires-channel="https"  -->
         <security:intercept-url pattern="/admin" 
             access="ROLE_ADMIN" /> 
 		<!--特殊专门拦截请求2 -->
@@ -26,8 +27,9 @@
         <security:http-basic />
 		<!--登出配置 -->
 		<security:logout />
-		<!--实行摘要认证 -->
-		<!--<security:custom-filter ref="digestFilter" position="BASIC_AUTH_FILTER" /> -->
+		<!--实行摘要认证 ,前面添加过滤器 (实现AbstractSecurityInterceptor 接口),只知道请求，是不知道用户信息和权限信息的-->
+		<!--<security:custom-filter ref="digestFilter" position="BASIC_AUTH_FILTER" />
+			<custom-filter ref="securityFilter" before="FILTER_SECURITY_INTERCEPTOR"/>, -->
 		
     </security:http>
 	<!--认证的时候被使用，即第一次访问、登录本项目时候使用..一是认证:看存不存在。二是存在的时候利用配置信息生成
