@@ -29,13 +29,14 @@
     <!-- 对转向页面的路径解析。prefix：前缀， suffix：后缀 -->
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
     			 p:prefix="/view/" p:suffix=".html" />
-    <!--ehcache方式缓存配置 -->
-	<cache:annotation-driven cache-manager="cacheManager" /> 	
+    <!--ehcache方式缓存配置 ,注意此时内存中已经存在一个名为cacheManager的 CacheManager-->
+    
+	<cache:annotation-driven cache-manager="cacheManager"/> 	
 	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">  
-        <property name="cacheManager" ref="ehcache"></property>  
-    </bean>  
-    <bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">  
-        <property name="configLocation" value="classpath:spring-ehcache.xml"></property>  
+        <property name="cacheManager" ref="echcache"></property>  
+    </bean> 
+    <bean id="echcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">  
+        <property name="configLocation" value="classpath:spring-ehcache.xml"></property> 
     </bean>  
    <!--  <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">      
             <property name="messageConverters">      

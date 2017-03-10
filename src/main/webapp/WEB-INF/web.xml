@@ -7,7 +7,7 @@
   <!-- 默认配置在WEB-INF目录下 , 位置必须放在最前面 ;多个配置文件用逗号分割开;可以模糊方式：spring*.xml-->  
    <context-param>
      <param-name>contextConfigLocation</param-name>
-      <param-value>classpath:spring-core.xml,classpath:spring-security.xml,classpath:spring-ehcache.xml</param-value>
+      <param-value>classpath:spring-security.xml</param-value>
    </context-param>
    <!-- log4j的配置文件的路径位置自动会在classpath:下查找，所以不配置 -->
    <context-param>  
@@ -76,10 +76,10 @@
    <servlet>
 	    <servlet-name>SpringMVCLSP</servlet-name>
 	    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-	     <init-param>
+	      <init-param>
 	        <param-name>contextConfigLocation</param-name>
 	        <param-value>classpath:spring-core.xml</param-value>
-	    </init-param>
+	    </init-param> 
     	<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>

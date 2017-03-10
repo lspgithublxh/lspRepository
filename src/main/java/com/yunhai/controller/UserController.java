@@ -8,8 +8,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -66,9 +69,12 @@ public class UserController {
          return "inde";
      }
      
+     @CacheEvict(value="cacheSZ") 
      @RequestMapping(value = "/page", method = RequestMethod.GET)
      public String getPage(String name){
     	 LOGGER.info("::" + name);
+    	 SecurityContext context = SecurityContextHolder.getContext();
+    	 System.out.println(context.getAuthentication().getAuthorities().toString());
          List<UserEntity> list = myUserService.getAllUsers();
          return "inde";
      }

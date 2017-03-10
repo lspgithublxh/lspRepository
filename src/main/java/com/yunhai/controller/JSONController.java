@@ -32,7 +32,7 @@ public class JSONController {
 	 @Autowired
      private UserService myUserService;
 	 
-	@CacheEvict(value="accountCache",key="#user.getName()")
+	//@CacheEvict(value="cacheSZ",key="#user.getName()",cacheManager="myCacheManager")
 	@RequestMapping(value="/user", method=RequestMethod.POST, produces="application/json;charset=UTF-8")
 	public String getObject(@RequestBody UserEntity user){
 		LOGGER.info(user.getName());

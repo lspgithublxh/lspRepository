@@ -15,14 +15,14 @@ function func(type){
 }
 (function(){
 	var postTest = function(){
-		var obj = JSON.stringify({name:"李少平",id:9});
+		var obj = JSON.stringify({name:"lishaoping",id:9});
 		//1.post对象传输失败的原因
 	//	$.post("user/all",obj,function(response){
 //		alert(JSON.stringify(response));
 	//	},"json");
 		 //2.ajax传输没有问题
 		$.ajax({
-			url:"json/user",
+			url:"user/all",
 			data:obj,
 			datatype:"json",
 			type:"post",
