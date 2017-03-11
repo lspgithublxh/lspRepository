@@ -38,7 +38,7 @@ function func(type){
 	}
 	postTest();
 	fun.update = function(){
-		window.location.href = "user/page?name=lishaoping";  //如何发请求，而在请求返回来的时候更新url
+		window.location.href = "view/inde.html";  //如何发请求，而在请求返回来的时候更新url
 	}
 })()
 

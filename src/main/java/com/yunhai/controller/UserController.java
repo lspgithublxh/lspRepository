@@ -66,7 +66,7 @@ public class UserController {
      public String getPage2(){
     	 LOGGER.info("::" + name);
          List<UserEntity> list = myUserService.getAllUsers();
-         return "inde";
+         return "index";
      }
      
      @CacheEvict(value="cacheSZ") 

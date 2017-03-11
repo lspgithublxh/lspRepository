@@ -28,7 +28,7 @@
     <mvc:default-servlet-handler/>
     <!-- 对转向页面的路径解析。prefix：前缀， suffix：后缀 -->
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
-    			 p:prefix="/view/" p:suffix=".html" />
+    			 p:prefix="/view/jsp/" p:suffix=".jsp" />
     <!--ehcache方式缓存配置 ,注意此时内存中已经存在一个名为cacheManager的 CacheManager-->
     
 	<cache:annotation-driven cache-manager="cacheManager"/> 	
