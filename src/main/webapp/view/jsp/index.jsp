@@ -2,8 +2,12 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>菜鸟教程(runoob.com)</title>
+<title>new page(runoob.com)</title>
+<!-- 一起取过来 -->
 <script src="global/jquery/jquery-3.1.1.min.js" type="text/javascript"></script>
+<script  src="global/angularjs2/angularjs2.min.js" type="text/javascript"> </script>
+<script  src="global/bootstrap/bootstrap.min.js" type="text/javascript"> </script>
+<link rel="stylesheet" type="text/css" href="global/bootstrap/bootstrap.min.css" />
 <script type="text/javascript">
 var fun = {};
 function func(type){
@@ -16,19 +20,20 @@ function func(type){
 (function(){
 	var postTest = function(){
 		var obj = JSON.stringify({name:"lishaoping",id:9});
-		//1.post对象传输失败的原因
+		//1.postå¯¹è±¡ä¼ è¾å¤±è´¥çåå 
 	//	$.post("user/all",obj,function(response){
 //		alert(JSON.stringify(response));
 	//	},"json");
-		 //2.ajax传输没有问题
+		 //2.ajaxä¼ è¾æ²¡æé®é¢
 		$.ajax({
-			url:"user/all",
+			url:"view/post.html",
 			data:obj,
 			datatype:"json",
 			type:"post",
 			success:function(e){
+				$("#div").html(e);
 			//	alert(JSON.stringify(e));
-				$("#div").html(JSON.stringify(e));
+				//$("#div").html(JSON.stringify(e));
 			},
 			error:function(e){
 				alert("error");
@@ -38,13 +43,13 @@ function func(type){
 	}
 	postTest();
 	fun.update = function(){
-		window.location.href = "view/inde.html";  //如何发请求，而在请求返回来的时候更新url
+		window.location.href = "view/inde.html";  //
 	}
 })()
 
 </script>
 </head>
-<body>
+<body ng-app>
 <h2>Hello World!</h2>
 <div id="div"></div>
 <button onclick="func('update')">click</button>

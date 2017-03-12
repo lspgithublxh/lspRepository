@@ -24,7 +24,8 @@
     <context:component-scan base-package="com.yunhai.*"></context:component-scan>
     <!--默认的注解映射支持  -->
  	<mvc:annotation-driven></mvc:annotation-driven>
-	<!-- 允许对静态资源文件的访问 -->
+	<!-- 允许对静态资源文件的访问 ；到这里已经经过了spring-security的拦截，
+	如果dispatcherservlet没有匹配到，则下面这句配置告诉再找defaultServlet，即当做静态请求来处理；对post和get都是。。post/get jsp肯定是要经过viewResolver的，因为是在服务器上完成的事情-->
     <mvc:default-servlet-handler/>
     <!-- 对转向页面的路径解析。prefix：前缀， suffix：后缀 -->
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
