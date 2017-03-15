@@ -3,8 +3,11 @@
 <head>
   <script src="../global/jquery/jquery-3.1.1.min.js" type="text/javascript"></script>
   <script  src="../global/angularjs2/angularjs2.min.js" type="text/javascript"> </script>
+  <script  src="../global/angularjs2/angularjs-router.min.js" type="text/javascript"> </script>
   <script  src="../global/bootstrap/bootstrap.min.js" type="text/javascript"> </script>
   <script  src="../view/js/main.js" type="text/javascript"> </script>
+  <script  src="../view/js/module1.js" type="text/javascript"> </script>
+  <script  src="../view/js/module2.js" type="text/javascript"> </script>
   <link rel="stylesheet" type="text/css" href="../global/bootstrap/bootstrap.min.css" />
 </head>
 <body>
@@ -36,7 +39,14 @@ year:<input type="text" ng-model="input2" /><br/>
 </div>
 <!-- main moduleģʽ -->
 <div id="rootModule" ng-app="rootModule">
-	
+	<ul>
+		<li> <a href="#/">First</a></li>
+		<li> <a href="#/cpu">CPU</a></li>
+		<li> <a href="#/mem">MEM</a></li>
+		<li> <a href="#/dev">DEV</a></li>
+		<li> <a href="#/module1">MODULE1</a></li>
+	</ul>
+	<div ng-view></div>
 </div>
 </body>
 </html>

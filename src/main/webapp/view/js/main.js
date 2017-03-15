@@ -49,11 +49,24 @@ angular.module("two",[])
 	}
 //	console.log($scope.arr);
 }]);
-angular.module("rootModule",['module1','module2'])
-.run(["$rootScope", function($rootScope){
+angular.module("rootModule",['module1','module2', 'ngRoute'])
+.config(["$routeProvider", function($routeProvider){
+	$routeProvider.when("/",{template:"这是首页内容"})
+	.when("/cpu",{template:"这是CPU页面内容"})
+	.when("/mem",{template:'这是MEM页面内容'})
+	.when("/dev",{template:"这是DEV页面内容"})
+	.otherwise({redirectTo:"/"});
+}])
+.run(["$rootScope", function($rootScope){// "$state" , "$stateParam" 可见是angularjs-ui中的服务，补充定义的对象
 	$rootScope.name = "lishaoping222";
+	$rootScope.$on("$routeChangeStart", function(evt, next, current){
+	//	alert("run function on $on ");//next.templateUrl
+		console.log(next);
+	});
+//	alert("haha");
 }]);
 angular.element(document).ready(function(){
 	angular.bootstrap(document.getElementById("main"),["main"]);
 	angular.bootstrap(document.getElementById("two"),["two"]);
+	angular.bootstrap(document.getElementById("rootModule"), ["rootModule"]);
 });
