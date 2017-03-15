@@ -20,11 +20,11 @@ function func(type){
 (function(){
 	var postTest = function(){
 		var obj = JSON.stringify({name:"lishaoping",id:9});
-		//1.postå¯¹è±¡ä¼ è¾å¤±è´¥çåå 
+		//1.post 
 	//	$.post("user/all",obj,function(response){
 //		alert(JSON.stringify(response));
 	//	},"json");
-		 //2.ajaxä¼ è¾æ²¡æé®é¢
+		 //2.ajax
 		$.ajax({
 			url:"view/post.html",
 			data:obj,
