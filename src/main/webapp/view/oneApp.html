@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+ <meta charset="UTF-8">
+ <title>ONE APP </title>
+ <script type="text/javascript" src="../global/jquery/jquery-3.1.1.min.js"></script>
+ <script  src="../global/angularjs2/angularjs2.min.js" type="text/javascript"> </script>
+ <script  src="../global/angularjs2/angularjs-ui-router.min.js" type="text/javascript"> </script>
+ <script  src="../global/bootstrap/bootstrap.min.js" type="text/javascript"> </script>
+ <script  src="../view/js/oneApp.js" type="text/javascript"> </script>
+ <script  src="../view/js/ui-module1.js" type="text/javascript"> </script>
+ <script  src="../view/js/ui-module2.js" type="text/javascript"> </script>
+ <link rel="stylesheet" type="text/css" href="../global/bootstrap/bootstrap.min.css" />
+ <!-- 标题 -->
+ <link rel="icon" href="../global/img/0305_2.jpg" type="image/x-icon"/>
+ 
+</head>
+
+<body ng-app="oneApp">
+  <a ui-sref="main">MAIN</a>
+  <ul>
+  	<li ui-sref-active="active" ui-sref="main.module1"> main.MODULE </li>
+  	<li ui-sref="next.module"> next.MODULE </li>
+  </ul>
+ 
+ <ui-view> </ui-view>
+ <!-- <div ui-view></div> -->
+    <script type="text/javascript">
+    setTimeout(function(){
+   	 $("title").html("---");//<marquee direction='up' behavior='scroll' scrollamount='1' scrolldelay='0' loop='-1'  bgcolor='#0099FF' hspace='10' vspace='10'> ddd </marquee>
+    },3000);
+     var timeSet = 10;
+     setInterval(function(){
+    	 var s = "O";
+    	 for(var i = 0 ; i < timeSet; i++){
+    		 s = "*" + s;
+    	 }
+    	 for(var i = 0 ; i < 10 - timeSet; i++){
+    		 s += "*";
+    	 }
+    	 timeSet = timeSet == 0 ? 10 : timeSet - 1;
+    	 $("title").html(s);//document.title
+     }, 1000);
+    </script>
+</body>
+</html>

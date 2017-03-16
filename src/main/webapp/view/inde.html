@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
   <script src="../global/jquery/jquery-3.1.1.min.js" type="text/javascript"></script>
   <script  src="../global/angularjs2/angularjs2.min.js" type="text/javascript"> </script>
   <script  src="../global/angularjs2/angularjs-router.min.js" type="text/javascript"> </script>
@@ -37,7 +38,7 @@ year:<input type="text" ng-model="input2" /><br/>
  </div>
  
 </div>
-<!-- main moduleģʽ -->
+<!-- main module模式 -->
 <div id="rootModule" ng-app="rootModule">
 	<ul>
 		<li> <a href="#/">First</a></li>
@@ -46,7 +47,10 @@ year:<input type="text" ng-model="input2" /><br/>
 		<li> <a href="#/dev">DEV</a></li>
 		<li> <a href="#/module1">MODULE1</a></li>
 	</ul>
-	<div ng-view></div>
+	<div id="1" ng-view></div>
+	<div id="2" ng-view></div>
+	<ng-view> </ng-view>
 </div>
+<a class="btn btn-info" href="oneApp.html">ONEAPP</a>
 </body>
 </html>
