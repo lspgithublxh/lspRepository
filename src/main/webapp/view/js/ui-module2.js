@@ -2,7 +2,6 @@
 angular.module("ui-module2",['ui.router'])
 .config(["$urlRouterProvider","$stateProvider",function($urlRouterProvider, $stateProvider){
 	//url转发
-	
 	$urlRouterProvider.when("", "/main")
 					  .when("/", "/main")
 					  .otherwise("/main");//
@@ -14,7 +13,7 @@ angular.module("ui-module2",['ui.router'])
 	})
 	.state("main.module1", {
 		url: "/module1",
-		templateUrl: "html/ui-module1.html",
+		templateUrl: "html/ui-module2.html",
 		controller: "module1Controller"
 	});
 }])

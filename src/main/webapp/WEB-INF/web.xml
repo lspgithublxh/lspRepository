@@ -70,6 +70,7 @@
         <url-pattern>*.js</url-pattern>
         <url-pattern>*.xml</url-pattern> 
         <url-pattern>*.json</url-pattern>
+        <!--  <url-pattern>*.less</url-pattern>也可以不用写，因为会被当做静态资源而请求到 -->
     </servlet-mapping>
     
    <!-- DispatcherServlet -->
