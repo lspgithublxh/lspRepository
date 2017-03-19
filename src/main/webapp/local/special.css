@@ -1,0 +1,135 @@
+.myUl li{
+	float: left;
+	list-style: none;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	border-bottom: 1px solid #dddddd;
+}
+.myUl li.active{
+	border: 1px solid #dddddd;
+	border-bottom-color: transparent;
+}
+.myUl li a{
+	padding: 10px 15px;
+	/**
+	display: block;	
+	width: 100%;
+	**/
+}
+.myUl>li>a:HOVER{
+	text-decoration: none;
+}
+.myUl>li>a:VISITED{
+	color: green;
+	text-decoration: none;
+}
+.myUl>li>a:AFTER{
+	color: olive;
+	text-decoration: none;
+}
+.myUl>li>a:FOCUS{
+	color: red;
+	text-decoration: none;
+}
+.myOl{
+	clear: left;/* 不允许左边有浮动对象 */
+	list-style: none;
+	padding-bottom: 20px;
+}
+.myOl>li + li:BEFORE {
+	color: #ff0000;
+	content: "/ ";
+	padding: 0 5px;
+}
+.myOl li{
+	float: left;
+}
+.myOl>li>a:HOVER {
+	color:orange;
+	text-decoration: none;
+}
+.myOl>li>a:VISITED {
+	text-decoration: none;
+}
+.myOl>li>a:FOCUS {
+	color:red;
+	text-decoration: none;
+}
+.myPageNation{
+	width: 100%;
+	/*margin: 0 auto;
+	clear: both;*//*不起作用*/
+	transform:translateY(-50%);
+	transform:translateX(50%);
+}
+.flexConfig{
+	display: flex;
+	justify-content:center;/*水平居中*/
+	align-items:center;/*垂直居中*/
+}
+.listGroup{
+	list-style: none;
+	border: 1px solid #dddddd;
+	border-radius:4px;
+	padding: 0 0;
+	width: 30%;
+	
+}
+.listGroup li{
+	width:100%;
+	border:1px solid #dddddd;
+	height: 40px;
+}
+.listGroup>li>a{
+	width:100%;
+	height: 100%;
+	padding: 10px;
+	display: inline-block;
+	text-align: center;
+}
+.myLayer{
+	width:100%;
+	height: 20%;
+	opacity:0.5;
+	z-index: 1026;
+	/*filter:alpha(opacity=60);*/
+	background-color: #777;
+	position: fixed;
+	/*下面这项可选--以完全覆盖..否则高度受制于父标签的起始高度
+	top: 0px;
+	*/
+}
+.myCarousel>ol>li{
+	list-style: none;
+	display: inline-block;
+}
+.myCarousel>ol>li>img{
+	width: 20px;
+	height: 20px;
+	transition:1s height ,1s 1s width ease-in;/*有延迟，从而设置了先后顺序*/
+}
+.myCarousel>ol{
+	padding-left: 0;
+}
+.myCarousel>ol>li>img:HOVER{
+	width: 200px;
+	height: 200px;
+}
+.myAnimation>img{
+	width:20px;
+	height: 20px;
+	animation-play-state:paused;
+}
+.myAnimation>img:HOVER{
+	animation: 5s oneAnimation infinite;/*这个动画要有hover事件才会永远运行下去*/
+	animation-play-state:running;
+}
+@keyframes oneAnimation{
+	0% {width:20px;height: 20px;}
+	50% {width:200px; height: 200px;}
+	100% {width:20px; height: 20px;}
+}
+.updateImg img{
+	width:1000px;
+	height:400px;
+}
