@@ -18,7 +18,7 @@ function func(type){
 	}
 }
 (function(){
-	var postTest = function(){
+	var postTest = function(url){
 		var obj = JSON.stringify({name:"lishaoping",id:9});
 		//1.post 
 	//	$.post("user/all",obj,function(response){
@@ -26,12 +26,12 @@ function func(type){
 	//	},"json");
 		 //2.ajax
 		$.ajax({
-			url:"view/post.html",
+			url:url,
 			data:obj,
 			datatype:"json",
 			type:"post",
 			success:function(e){
-				$("#div").html(e);
+				$("#div").append(e);
 			//	alert(JSON.stringify(e));
 				//$("#div").html(JSON.stringify(e));
 			},
@@ -41,7 +41,8 @@ function func(type){
 			contentType:"application/json; charset=UTF-8"
 		});
 	}
-	postTest();
+	postTest("view/post.html");
+	postTest("user/name");
 	fun.update = function(){
 		window.location.href = "view/inde.html";  //
 	}

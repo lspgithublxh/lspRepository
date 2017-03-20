@@ -11,7 +11,10 @@
  <select id="getAllUser" resultType="com.yunhai.model.UserEntity">
  	SELECT 
  		NAME AS name,
- 		ID AS id
+ 		ID AS id,
+ 		AGE AS age,
+ 		DEGREE AS degree,
+ 		HOME AS home
  	FROM
  		USER
  </select>
