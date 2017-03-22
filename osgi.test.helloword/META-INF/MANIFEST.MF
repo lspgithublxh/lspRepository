@@ -6,6 +6,8 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: osgi.test.helloword.Activator
 Bundle-Vendor: lsp
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Import-Package: org.osgi.framework;version="1.3.0"
+Import-Package: org.osgi.framework;version="1.3.0",
+ org.osgi.service.event;version="1.3.1"
 Bundle-ActivationPolicy: lazy
-Export-Package: osgi.test.service
+Export-Package: osgi.test.event,
+ osgi.test.service

@@ -1,13 +1,12 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Helloword2
-Bundle-SymbolicName: osgi.test.helloword2
+Bundle-Name: Three
+Bundle-SymbolicName: osgi.test.three
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: osgi.test.helloword2.Activator
+Bundle-Activator: osgi.test.three.Activator
 Bundle-Vendor: lsp
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: org.osgi.framework;version="1.3.0",
- org.osgi.service.event;version="1.3.1",
- osgi.test.event,
- osgi.test.service
+ org.osgi.service.log; version="1.3",
+ org.osgi.util.tracker;version="1.3.1"
 Bundle-ActivationPolicy: lazy

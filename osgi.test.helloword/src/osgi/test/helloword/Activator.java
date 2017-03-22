@@ -4,7 +4,9 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import osgi.test.impl.IhlloImpl;
+import osgi.test.impl.TriggerEventImpl;
 import osgi.test.service.Ihello;
+import osgi.test.service.TriggerEventService;
 
 public class Activator implements BundleActivator {
 
@@ -22,6 +24,7 @@ public class Activator implements BundleActivator {
 		Activator.context = bundleContext;
 		System.out.println("Hello world! Good night");
 		bundleContext.registerService(Ihello.class.getName(), new IhlloImpl(), null);
+		bundleContext.registerService(TriggerEventService.class.getName(), new TriggerEventImpl(), null);
 	}
 
 	/*
