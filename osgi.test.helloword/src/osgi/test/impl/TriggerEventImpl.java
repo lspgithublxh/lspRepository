@@ -20,8 +20,11 @@ public class TriggerEventImpl implements TriggerEventService{
 	public void trggerEvent(BundleContext context) {
 		EventAdmin admin = (EventAdmin) context.getService(context.getServiceReference(EventAdmin.class.getName()));
 		System.out.println("post event started");
-		admin.postEvent(new MyEvent());
+		admin.postEvent(new MyEvent());//
 		System.out.println("post event end");
+		System.out.println("send event started");
+		admin.sendEvent(new MyEvent());//可以发几个事件？
+		System.out.println("send event end");
 	}
 
 }
