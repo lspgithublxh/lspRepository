@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+ <hibernate-mapping>
+ <!-- 也可以用注解的方式，而不用一个列一个列地去对应！！只是这个可以灵活配置，更灵活许多 -->
+     <class name="com.yunhai.model.UserEntity" table="USER">
+         <id name="id" column="id" type="integer">
+             <generator class="increment"></generator>
+         </id>
+         <property name="name"  type="string">
+             <column name="name"></column>
+         </property>
+         <property name="age"  type="integer">
+             <column name="age"></column>
+         </property>
+         <property name="degree"  type="double">
+             <column name="degree"></column>
+         </property>
+         <!-- <property name="home"  type="string">
+             <column name="home"></column>
+         </property> -->
+     </class>
+     
+ </hibernate-mapping> 

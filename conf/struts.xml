@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+<!-- 开启开发者模式，作用，页面中报错信息会更加详细，默认false -->
+   
+   <constant name="struts.devMode" value="true" />
+
+   <!-- 指定由spring负责action对象的创建（必选） -->
+
+   <constant name="struts.objectFactory" value="spring" />
+
+   <!-- 国际化设置，请求参数为utf-8编码（必选） -->
+
+   <constant name="struts.i18n.encoding" value="utf-8" />
+   
+   <package name="myPackage" extends="struts-default">
+	   	<action name="loginUser" class="com.yunhai.action.UserAction" method="getUsers">
+		   	<result name="success">/WEB-INF/jsp/main.jsp</result>
+		   	<result name="error">/WEB-INF/jsp/error.jsp</result>
+	   	</action>
+   </package>
+</struts>
