@@ -18,7 +18,7 @@ import com.yunhai.service.UserService;
  * 2017年3月26日
  * UserServiceImpl
  */
-@Service(value="userService")
+@Service(value="userService2")
 public class UserServiceImpl implements UserService{
 
 	@Resource

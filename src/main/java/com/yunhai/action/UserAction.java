@@ -24,7 +24,7 @@ import com.yunhai.service.UserService;
 public class UserAction extends ActionSupport implements ServletRequestAware, ServletResponseAware{
 
 	@Resource
-	private UserService userService;
+	private UserService userService2;
 	
 	private UserEntity user;
 	
@@ -36,7 +36,7 @@ public class UserAction extends ActionSupport implements ServletRequestAware, Se
 	
 	public String getUsers(){
 		request.setAttribute("name", "lsp");
-		request.setAttribute("user", userService.getUsers());
+		request.setAttribute("user", userService2.getUsers());
 		return SUCCESS;
 	}
 

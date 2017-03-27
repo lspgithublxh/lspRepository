@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html> 
 <head> 
-    <title>Hello there!</title> 
+    <title>SSH</title> 
 </head> 
 <body> 
     <h2><s:property  value="message"/></h2> 

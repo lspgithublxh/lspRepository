@@ -5,7 +5,7 @@
 <struts>
 <!-- 开启开发者模式，作用，页面中报错信息会更加详细，默认false -->
    
-   <constant name="struts.devMode" value="true" />
+   <constant name="struts.devMode" value="false" />
 
    <!-- 指定由spring负责action对象的创建（必选） -->
 
@@ -15,10 +15,26 @@
 
    <constant name="struts.i18n.encoding" value="utf-8" />
    
-   <package name="myPackage" extends="struts-default">
+   <constant name="struts.action.extension" value="" />
+   
+   <package name="myPackage" extends="struts-default" namespace="/"><!-- struts-default -->
 	   	<action name="loginUser" class="com.yunhai.action.UserAction" method="getUsers">
 		   	<result name="success">/WEB-INF/jsp/main.jsp</result>
 		   	<result name="error">/WEB-INF/jsp/error.jsp</result>
 	   	</action>
+	   	<action name="login" class="com.yunhai.action.LoginAction" method="login">
+   			<result name="success">/WEB-INF/jsp/error.jsp</result>
+   			<result name="error">/WEB-INF/jsp/error.jsp</result>   			
+   		</action>
+   		<action name="page2" class="com.yunhai.action.LoginAction" method="login">
+   			<result name="success">/WEB-INF/jsp/error.jsp</result>
+   			<result name="error">/WEB-INF/jsp/error.jsp</result>   			
+   		</action>
    </package>
+   <package name="twoPackage" extends="struts-default" namespace="/user">
+   		<action name="page2" class="com.yunhai.action.LoginAction" method="login">
+   			<result name="success">/WEB-INF/jsp/error.jsp</result>   			
+   		</action>
+   </package>
+   
 </struts>

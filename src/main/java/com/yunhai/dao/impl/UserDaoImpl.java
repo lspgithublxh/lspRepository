@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.yunhai.dao.UserDao;
 import com.yunhai.model.UserEntity;
@@ -18,6 +19,7 @@ import com.yunhai.model.UserEntity;
  * 2017年3月26日
  * UserDaoImpl
  */
+@Transactional
 @Repository(value="usersDao")
 public class UserDaoImpl implements UserDao{
 
