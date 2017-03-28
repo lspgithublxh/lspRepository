@@ -12,5 +12,7 @@
            password:   <input type="password" name="user.home" />
         <input type="submit" value="login" >
         </form>
+        
+         <a href="loginout">loginout</a>
 </body>
 </html>

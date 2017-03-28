@@ -26,9 +26,10 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException, ServletException {
 		LOGGER.info("success login");
-		request.getRequestDispatcher("/1.jpg")
+		//转发静态资源jpg,jsp,html，重定向动态请求/login /page2
+		request.getRequestDispatcher("/index.jsp")
 		.forward(request, response);
-//		response.sendRedirect("/webHibernate/page2");//重定向没问题。只是转发不行！！
+//		response.sendRedirect("/webHibernate/page2");//重定向没问题。只是转发不行！！/webHibernate/page2
 	}
 
 }

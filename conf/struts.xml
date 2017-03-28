@@ -17,24 +17,39 @@
    
    <constant name="struts.action.extension" value="" />
    
+  <!--  <package name="xx" extends="struts-default" namespace="/**">
+      <default-action-ref name="index2"></default-action-ref>
+		<action name="index2">
+			<result type="redirect">/index.jsp</result> 
+		</action>
+   </package> -->
+   
    <package name="myPackage" extends="struts-default" namespace="/"><!-- struts-default -->
+  		<default-action-ref name="ii"></default-action-ref>
+		<action name="ii">
+			<result type="redirect">/index</result><!-- dispatcher -->
+		</action>
+		
 	   	<action name="loginUser" class="com.yunhai.action.UserAction" method="getUsers">
 		   	<result name="success">/WEB-INF/jsp/main.jsp</result>
 		   	<result name="error">/WEB-INF/jsp/error.jsp</result>
 	   	</action>
-	   	<action name="login" class="com.yunhai.action.LoginAction" method="login">
-   			<result name="success">/WEB-INF/jsp/error.jsp</result>
+	   	<action name="index" class="com.yunhai.action.LoginAction" method="login">
+   			<result name="success">/index.jsp</result>
    			<result name="error">/WEB-INF/jsp/error.jsp</result>   			
    		</action>
    		<action name="page2" class="com.yunhai.action.LoginAction" method="login">
    			<result name="success">/WEB-INF/jsp/error.jsp</result>
    			<result name="error">/WEB-INF/jsp/error.jsp</result>   			
    		</action>
+   		
    </package>
    <package name="twoPackage" extends="struts-default" namespace="/user">
    		<action name="page2" class="com.yunhai.action.LoginAction" method="login">
    			<result name="success">/WEB-INF/jsp/error.jsp</result>   			
    		</action>
    </package>
-   
+   <unknown-handler-stack>
+   		<unknown-handler-ref name="unknownHandler"></unknown-handler-ref>
+   </unknown-handler-stack>
 </struts>

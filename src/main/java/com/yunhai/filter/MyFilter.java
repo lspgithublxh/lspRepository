@@ -30,6 +30,7 @@ public class MyFilter implements Filter{
 			throws IOException, ServletException {
 		System.out.println("my filter do! " + request.getRemoteAddr() + request.getLocalAddr());
 		Test++;
+//		request.getRequestDispatcher("/1.jpg").forward(request, response);
 		chain.doFilter(request, response);
 //		if(Test == 2){
 //			chain.doFilter(request, response);
