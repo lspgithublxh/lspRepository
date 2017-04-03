@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Model id="0c64f347e2c14bfab07891b5c667228e" name="test" displayName="test" nameSpace="com.test.model">
+  <VersionInfo>
+    <CreatedTime>2017-03-28 10:36:59</CreatedTime>
+    <ChangedTime>2017-03-28 11:13:23</ChangedTime>
+    <Description>This is a demo model.</Description>
+    <Version>1.0</Version>
+    <Creator>Administrator</Creator>
+    <Modifier>Administrator</Modifier>
+  </VersionInfo>
+  <Package id="e6e34e327af24dfb96c1bc9d7f264cd7" name="test" displayName="test">
+    <Diagrams>
+      <Diagram id="f2f02ba641af4561a3a40e01f9c43f4c" name="test" displayName="test" isDefault="true">
+        <DiagramStyle>
+          <BackGroundColor>white</BackGroundColor>
+          <GridStyle>false</GridStyle>
+          <ZoomScale>100%</ZoomScale>
+          <Layout></Layout>
+        </DiagramStyle>
+        <Elements>
+          <Element id="ed6deca2146c434b83c6c892b687bec4" objectId="bf2c6a52f4754987af26fa68152afd4c">
+            <ElementStyle>
+              <FontFamily></FontFamily>
+              <FontSize>0</FontSize>
+              <Width>210</Width>
+              <Height>166</Height>
+              <Position_X>394.0</Position_X>
+              <Position_Y>58.0</Position_Y>
+              <End_Position_X>0.0</End_Position_X>
+              <End_Position_Y>0.0</End_Position_Y>
+              <Point_List></Point_List>
+              <Border>false</Border>
+              <BorderColor></BorderColor>
+              <BackGroundColor></BackGroundColor>
+            </ElementStyle>
+          </Element>
+          <Element id="5b0f934d5f1549fbbc1f2a87faed3c70" objectId="e04a682bd32043f5960f986e67b1e5df">
+            <ElementStyle>
+              <FontFamily></FontFamily>
+              <FontSize>0</FontSize>
+              <Width>150</Width>
+              <Height>152</Height>
+              <Position_X>122.0</Position_X>
+              <Position_Y>82.0</Position_Y>
+              <End_Position_X>0.0</End_Position_X>
+              <End_Position_Y>0.0</End_Position_Y>
+              <Point_List></Point_List>
+              <Border>false</Border>
+              <BorderColor></BorderColor>
+              <BackGroundColor></BackGroundColor>
+            </ElementStyle>
+          </Element>
+          <Element id="b8730e0887654500b058a0d65b3a9dee" objectId="5aef0151fca943bca607a4fb6f33a8a9">
+            <ElementStyle>
+              <FontFamily></FontFamily>
+              <FontSize>0</FontSize>
+              <Width>0</Width>
+              <Height>0</Height>
+              <Position_X>0.0</Position_X>
+              <Position_Y>0.0</Position_Y>
+              <End_Position_X>0.0</End_Position_X>
+              <End_Position_Y>0.0</End_Position_Y>
+              <Point_List></Point_List>
+              <Border>false</Border>
+              <BorderColor></BorderColor>
+              <BackGroundColor></BackGroundColor>
+            </ElementStyle>
+          </Element>
+        </Elements>
+      </Diagram>
+    </Diagrams>
+    <BusinessClasses>
+      <BusinessClass id="bf2c6a52f4754987af26fa68152afd4c" name="Dept" displayName="Dept" stereotype="1">
+        <VersionInfo>
+          <CreatedTime>2017-03-28 11:03:38</CreatedTime>
+          <ChangedTime>2017-03-28 11:13:23</ChangedTime>
+          <Description></Description>
+          <Version>2</Version>
+          <Creator>Administrator</Creator>
+          <Modifier>Administrator</Modifier>
+        </VersionInfo>
+        <TableName>DEPT</TableName>
+        <IsAbstract>false</IsAbstract>
+        <Properties>
+          <Property id="ea1025950d1b41a69a12bd0b4337f419" name="id" displayName="id">
+            <GroupId></GroupId>
+            <DataType>string</DataType>
+            <OrderNum>1</OrderNum>
+            <Validators>
+              <Validator id="0f2be284d1a144adbd6fc8f2bafb5de4" name="UNIQUE" displayName="唯一" orderNumber="0" validatorType="UNIQUE" validatorMessage="违反唯一性约束" expression="" validatorClass="" interfaceName=""/>
+              <Validator id="31b0e3d061fd4b3fad1bb3bb8ec9ec67" name="NOTNULL" displayName="必填校验" orderNumber="1" validatorType="NOTNULL" validatorMessage="不能为空" expression="" validatorClass="" interfaceName=""/>
+            </Validators>
+            <Editor id="de0c07d3dd094be2bd947e708f102e9d" name="" displayName="" editorType="TextEditor" dataSourceType="0"/>
+            <DefaultValue></DefaultValue>
+            <DBColumnName>ID</DBColumnName>
+            <DBDataType></DBDataType>
+            <DBDataLength>32</DBDataLength>
+            <DBDataPrecision></DBDataPrecision>
+            <QueryProperty>false</QueryProperty>
+            <IsPrimaryKey>true</IsPrimaryKey>
+            <Unique>true</Unique>
+            <Nullable>false</Nullable>
+            <ReadOnly>false</ReadOnly>
+            <IndexedColumn>false</IndexedColumn>
+            <Persistence>true</Persistence>
+            <PkName>PRIMARY_KEY_ID</PkName>
+            <PrimaryKeyPloy>UUID</PrimaryKeyPloy>
+          </Property>
+          <Property id="ab223002b5ec4b909079fbc4e6de8225" name="name" displayName="name">
+            <GroupId></GroupId>
+            <DataType>string</DataType>
+            <OrderNum>2</OrderNum>
+            <Validators>
+              <Validator id="76a434b0cfd448bcb46e6ecd07400714" name="NOTNULL" displayName="必填校验" orderNumber="0" validatorType="NOTNULL" validatorMessage="不能为空" expression="" validatorClass="" interfaceName=""/>
+            </Validators>
+            <Editor id="d7ec6c19a9ea4f4186ea0da088de33fe" name="" displayName="" editorType="TextEditor" dataSourceType="0"/>
+            <DefaultValue></DefaultValue>
+            <DBColumnName>NAME</DBColumnName>
+            <DBDataType></DBDataType>
+            <DBDataLength>32</DBDataLength>
+            <DBDataPrecision></DBDataPrecision>
+            <QueryProperty>false</QueryProperty>
+            <IsPrimaryKey>false</IsPrimaryKey>
+            <Unique>false</Unique>
+            <Nullable>false</Nullable>
+            <ReadOnly>false</ReadOnly>
+            <IndexedColumn>false</IndexedColumn>
+            <Persistence>true</Persistence>
+          </Property>
+          <Property id="e172db3ac7354a9db6230d4cf8912035" name="period_of_validity" displayName="period_of_validity">
+            <GroupId></GroupId>
+            <DataType>integer</DataType>
+            <OrderNum>3</OrderNum>
+            <Validators>
+              <Validator id="35e5c340cf69463fab6ed2b8f7aa3223" name="NOTNULL" displayName="必填校验" orderNumber="0" validatorType="NOTNULL" validatorMessage="不能为空" expression="" validatorClass="" interfaceName=""/>
+            </Validators>
+            <Editor id="080cf5c1a8c44c288b157d3b9b497aa7" name="" displayName="" editorType="NumberEditor" dataSourceType="0"/>
+            <DefaultValue></DefaultValue>
+            <DBColumnName>PERIOD_OF_VALIDITY</DBColumnName>
+            <DBDataType></DBDataType>
+            <DBDataLength></DBDataLength>
+            <DBDataPrecision></DBDataPrecision>
+            <QueryProperty>false</QueryProperty>
+            <IsPrimaryKey>false</IsPrimaryKey>
+            <Unique>false</Unique>
+            <Nullable>false</Nullable>
+            <ReadOnly>false</ReadOnly>
+            <IndexedColumn>false</IndexedColumn>
+            <Persistence>true</Persistence>
+          </Property>
+          <Property id="8d38e24a9cef4b40b4d046c64caa86c3" name="color" displayName="color">
+            <GroupId></GroupId>
+            <DataType>string</DataType>
+            <OrderNum>4</OrderNum>
+            <Editor id="bf9d820be08f42b2a7b3137b7c01eb0d" name="" displayName="" editorType="ComboBox" dataSourceType="0">
+              <Params>
+                <Param>
+                  <name>EnumerationId</name>
+                  <value>ead9fbd8e1f04e52b705bde5cebe7574</value>
+                </Param>
+              </Params>
+            </Editor>
+            <DefaultValue></DefaultValue>
+            <DBColumnName>COLOR</DBColumnName>
+            <DBDataType></DBDataType>
+            <DBDataLength>255</DBDataLength>
+            <DBDataPrecision></DBDataPrecision>
+            <QueryProperty>false</QueryProperty>
+            <IsPrimaryKey>false</IsPrimaryKey>
+            <Unique>false</Unique>
+            <Nullable>true</Nullable>
+            <ReadOnly>false</ReadOnly>
+            <IndexedColumn>false</IndexedColumn>
+            <Persistence>true</Persistence>
+          </Property>
+        </Properties>
+        <ExtendAttributies/>
+        <Operations>
+          <Operation id="5aa6f39b64974a0d9bdd79b61b9e7b35" name="add" displayName="新增" operationType="standard"/>
+          <Operation id="e6ddd40fd4384fb0b16f3acb67db12c2" name="update" displayName="编辑" operationType="standard"/>
+          <Operation id="ce020ffefc21462b9e62bb9f5e6b9aa6" name="delete" displayName="删除" operationType="standard"/>
+          <Operation id="348c9ab8035b4c0dab3792d25a711eca" name="get" displayName="获取详情" operationType="standard"/>
+          <Operation id="2d1b132203504cc194a389bdbb2d69d5" name="query" displayName="查询列表" operationType="standard"/>
+        </Operations>
+      </BusinessClass>
+      <BusinessClass id="e04a682bd32043f5960f986e67b1e5df" name="Employee" displayName="Employee" stereotype="1">
+        <VersionInfo>
+          <CreatedTime>2017-03-28 11:07:57</CreatedTime>
+          <ChangedTime>2017-03-28 11:13:23</ChangedTime>
+          <Description></Description>
+          <Version>1</Version>
+          <Creator>Administrator</Creator>
+          <Modifier>Administrator</Modifier>
+        </VersionInfo>
+        <TableName>EMPLOYEE</TableName>
+        <IsAbstract>false</IsAbstract>
+        <Properties>
+          <Property id="66b5657a5de3449097a39963874eb612" name="id" displayName="id">
+            <GroupId></GroupId>
+            <DataType>string</DataType>
+            <OrderNum>0</OrderNum>
+            <Editor id="8071456fbc924df79e621750f904e884" name="" displayName="" editorType="TextEditor" dataSourceType="0"/>
+            <DefaultValue></DefaultValue>
+            <DBColumnName>ID</DBColumnName>
+            <DBDataType></DBDataType>
+            <DBDataLength>32</DBDataLength>
+            <DBDataPrecision></DBDataPrecision>
+            <QueryProperty>false</QueryProperty>
+            <IsPrimaryKey>true</IsPrimaryKey>
+            <Unique>true</Unique>
+            <Nullable>false</Nullable>
+            <ReadOnly>false</ReadOnly>
+            <IndexedColumn>false</IndexedColumn>
+            <Persistence>true</Persistence>
+            <PkName>PRIMARY_KEY_ID</PkName>
+            <PrimaryKeyPloy>UUID</PrimaryKeyPloy>
+          </Property>
+          <Property id="e0e539f366dd486aa973cc792e9cc473" name="name" displayName="name">
+            <GroupId></GroupId>
+            <DataType>string</DataType>
+            <OrderNum>1</OrderNum>
+            <Editor id="5ca610186bcc43429ce3316ce7673294" name="" displayName="" editorType="TextEditor" dataSourceType="0"/>
+            <DefaultValue></DefaultValue>
+            <DBColumnName>NAME</DBColumnName>
+            <DBDataType></DBDataType>
+            <DBDataLength>32</DBDataLength>
+            <DBDataPrecision></DBDataPrecision>
+            <QueryProperty>false</QueryProperty>
+            <IsPrimaryKey>false</IsPrimaryKey>
+            <Unique>false</Unique>
+            <Nullable>true</Nullable>
+            <ReadOnly>false</ReadOnly>
+            <IndexedColumn>false</IndexedColumn>
+            <Persistence>true</Persistence>
+          </Property>
+          <Property id="9a74ae06227f4798bf36afbcb304625b" name="dept_id" displayName="dept_id">
+            <GroupId></GroupId>
+            <DataType>integer</DataType>
+            <OrderNum>2</OrderNum>
+            <Validators>
+              <Validator id="90e9dd3882d14e86971c3702cff93639" name="NOTNULL" displayName="必填校验" orderNumber="0" validatorType="NOTNULL" validatorMessage="不能为空" expression="" validatorClass="" interfaceName=""/>
+            </Validators>
+            <Editor id="3bd973bb847744e59856275334f5599a" name="" displayName="" editorType="NumberEditor" dataSourceType="0"/>
+            <DefaultValue></DefaultValue>
+            <DBColumnName>DEPT_ID</DBColumnName>
+            <DBDataType></DBDataType>
+            <DBDataLength></DBDataLength>
+            <DBDataPrecision></DBDataPrecision>
+            <QueryProperty>false</QueryProperty>
+            <IsPrimaryKey>false</IsPrimaryKey>
+            <Unique>false</Unique>
+            <Nullable>false</Nullable>
+            <ReadOnly>false</ReadOnly>
+            <IndexedColumn>false</IndexedColumn>
+            <Persistence>true</Persistence>
+          </Property>
+        </Properties>
+        <ExtendAttributies/>
+        <Operations>
+          <Operation id="673c1da342d749b8a099c6b8cb6633ed" name="add" displayName="新增" operationType="standard"/>
+          <Operation id="b910825da1054829a3435d68263cbd2f" name="update" displayName="编辑" operationType="standard"/>
+          <Operation id="98ddd351852645e6b63319e1eb88193a" name="delete" displayName="删除" operationType="standard"/>
+          <Operation id="28ab4e9dacd74b889664cd3ac780daeb" name="get" displayName="获取详情" operationType="standard"/>
+          <Operation id="3ecc9201f37b49c2bd7eab3e054eb8f2" name="query" displayName="查询列表" operationType="standard"/>
+        </Operations>
+      </BusinessClass>
+    </BusinessClasses>
+    <Enumerations>
+      <Enumeration id="ead9fbd8e1f04e52b705bde5cebe7574" name="Color" displayName="Color">
+        <VersionInfo>
+          <CreatedTime>2017-03-28 11:04:46</CreatedTime>
+          <ChangedTime>2017-03-28 11:13:23</ChangedTime>
+          <Description></Description>
+          <Version>1</Version>
+          <Creator>Administrator</Creator>
+          <Modifier>Administrator</Modifier>
+        </VersionInfo>
+        <Element name="blue" value="0"/>
+        <Element name="red" value="1"/>
+        <Element name="green" value="2"/>
+        <Element name="yellow" value="3"/>
+      </Enumeration>
+    </Enumerations>
+    <Associations>
+      <Association id="5aef0151fca943bca607a4fb6f33a8a9" name="employee_dept" displayName="employee_dept">
+        <ClassA>e04a682bd32043f5960f986e67b1e5df</ClassA>
+        <ClassB>bf2c6a52f4754987af26fa68152afd4c</ClassB>
+        <Type>m-1</Type>
+        <CascadeDeleteClassA>false</CascadeDeleteClassA>
+        <CascadeDeleteClassB>false</CascadeDeleteClassB>
+        <NavigateToClassA>true</NavigateToClassA>
+        <NavigateToClassB>true</NavigateToClassB>
+        <navigateToClassBRoleName>dept</navigateToClassBRoleName>
+        <navigateToClassARoleName>employees</navigateToClassARoleName>
+        <MajorClassId>bf2c6a52f4754987af26fa68152afd4c</MajorClassId>
+        <PersistencePloy></PersistencePloy>
+        <PersistencePloyParams>
+          <Param>
+            <name>ForeignKeyInB</name>
+            <value>FALSE</value>
+          </Param>
+          <Param>
+            <name>ForeignKeyInA</name>
+            <value>TRUE</value>
+          </Param>
+          <Param>
+            <name>ForeignKeyColumnInA</name>
+            <value>DEPT_ID_1</value>
+          </Param>
+          <Param>
+            <name>ForeignKeyColumnInB</name>
+            <value></value>
+          </Param>
+          <Param>
+            <name>NotNullFKA</name>
+            <value>FALSE</value>
+          </Param>
+          <Param>
+            <name>NotNullFKB</name>
+            <value></value>
+          </Param>
+        </PersistencePloyParams>
+      </Association>
+    </Associations>
+  </Package>
+</Model>

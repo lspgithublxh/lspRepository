@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:module="http://www.sgcc.com.cn/schema/platform/module" 
+	xmlns:bizc="http://www.sgcc.com.cn/schema/platform/bizc" 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+    	http://www.springframework.org/schema/beans/spring-beans.xsd
+    	http://www.sgcc.com.cn/schema/platform/module 
+    	http://www.sgcc.com.cn/schema/platform/module/module.xsd 
+    	http://www.sgcc.com.cn/schema/platform/bizc 
+    	http://www.sgcc.com.cn/schema/platform/bizc/bizc.xsd">
+
+		<bizc:logic id="deptBizc">
+				<bizc:implementation type="java" target="com.test.dept.dept.bizc.DeptBizc" />  
+		<bizc:service interface="com.test.dept.dept.bizc.IDeptBizc">
+			<bizc:transaction>
+    			<bizc:tranactionAttribute method="save*" propagation="REQUIRED" isolation="DEFAULT" timeout="-1" readOnly="false" />
+			</bizc:transaction>
+		</bizc:service>
+	</bizc:logic>
+	
+</beans>

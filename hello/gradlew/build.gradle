@@ -1,0 +1,160 @@
+apply plugin: 'java'
+
+//引入外部gradle文件
+apply from: 'gradlew/dependencyDefinitions.gradle'
+apply from: 'gradlew/extension.gradle'
+
+task wrap(type: Wrapper) {
+  gradleVersion = '2.2.1' 
+  scriptFile = 'gradlew' 
+}
+//清理前先删除之前的全部构建
+clean.doFirst {
+	try{
+		def parent = new File(deploy.target).getParentFile();
+		if(parent.exists()){
+			parent.deleteDir();
+			println("SG-UAP> 删除 " + parent.path);
+		}
+		new File(rootDir,'gradlew/clean').text.split(',').each{
+			if(new File(sguap.plugin_dir,it).delete()) println("SG-UAP> 删除  " + it);
+		}
+	}catch(Exception e){}
+}
+task cleanBuild{
+	startpara = gradle.startParameter.taskRequests[0]!=null?gradle.startParameter.taskRequests[0].args:[]
+	def cl = ['clean']
+	startpara.toString().toLowerCase().contains("build")?cl.addAll(startpara)?startpara.addAll(cl)?startpara.removeRange(0,startpara.size()-cl.size()):null:null:null
+}
+//执行任务前
+gradle.taskGraph.whenReady { taskGraph ->
+	if(!new File(sguap_server).exists()) throw new Exception("SG-UAP> gradle.properties文件中未指定 sguap_server 插件包的目录 或 目录不存在");
+	if(new Boolean(deployFlag))
+		if(!new File(DeployHome).exists()) throw new Exception("SG-UAP> path:" + DeployHome + " 路径不存在！");
+	println('SG-UAP> 开始任务 ');
+}
+//编译依赖所有的子项目
+dependencies {
+	compile subprojects
+}
+//拷贝到DeployHome目录
+build.doLast {
+	//所有模块项目压缩信息
+	pnt.each{println it}
+	//将所有的模块项目生成的jar拷贝到UAP项目的插件目录
+	subprojects.findAll {
+		def exists = it.libsDir.exists();
+		def path = it.libsDir.path;
+		if(exists){
+			println('SG-UAP> 发布 :' + it.name);
+			copy{
+		  		from(path)
+				into(sguap.plugin_dir)
+		 	}
+			println('SG-UAP> ' + it.name + ' 发布完成！ ');
+		}
+	}
+	new File(rootDir,'gradlew/clean').write(jarName);
+	if(new Boolean(deployFlag)){
+		println('SG-UAP> 部署任务正在执行  ');
+		println('SG-UAP> '+ deploy.source + "\r\nSG-UAP> to " + deploy.target);
+		copy{
+			from(deploy.source)
+			into(deploy.target)
+		}
+		println('SG-UAP> 部署成功！ \r\nSG-UAP> 任务结束');
+	}
+	allprojects.each{project.delete("${it.projectDir}\\build")}
+}
+
+//所有子项目的通用配置
+subprojects {
+    apply plugin: 'java'
+    //指定JDK编译版本
+    sourceCompatibility = 1.5
+	//有中文字符是必须定义全局编码方式，否则编译出错
+    [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+	//项目构建所需时间变量
+	def startTime = 0
+	
+	processResources.doFirst{
+	  	startTime = new Date().getTime();
+	}
+	
+	processResources {
+	    from('/') {
+	        include '**/*'
+	        def g = ['build','src','build.*','model','bin','.*','pm','sql'];
+	        if(rootProject.hasProperty("gitignore"))
+	        	gitignore.split(',').each{g.add(it.trim())}
+        	exclude g
+	    }
+	    from('src') {
+	        def g = ['**/*.java','sqls','ddl'];
+	        if(rootProject.hasProperty("gitignore"))
+	        	gitignore.split(',').each{g.add(it.trim())}
+        	exclude g
+	    }
+	}
+
+	sourceSets {
+		if(!flag) main.java.srcDirs = ['src']
+	   	jar {
+		    manifest{
+				from('META-INF/MANIFEST.MF')
+				into('');
+			}
+			//生成的jar名称，可以在此处修改
+			archiveName = project.name + "_" + Deploy_version + "." + new Date().format("yyyyMMddHHmm") + ".jar";
+			jarName = jarName + archiveName + ',';
+		}
+	}
+
+    dependencies {
+    	//搜索当前项目下所有可用的jar
+    	ext.jarTree = fileTree(dir: sguap.mxbuild_dir, include: '**/*.jar')
+		if(!flag){
+			println("SG-UAP> 正在搜索" + project.name + " 模块项目下依赖的jar");
+			jars.each{jarTree += fileTree(dir: it.value, include: '**/*.jar')}
+			jarTree += fileTree(dir: projectDir, include: '**/*.jar')
+		}
+		compile jarTree
+    }
+    //查找项目中的face目录,并压缩js
+    task zipJs(type: JavaExec) {
+    	doFirst{
+    		println("SG-UAP> " + project.name + "/face 目录" + " 开始压缩！");
+    	}
+        enabled = startpara.contains('build')
+        classpath = sourceSets.main.runtimeClasspath
+    	main = "mx.dev.builder.MXBuilder"
+    	args = [new File(projectDir,'face').getAbsolutePath()]
+    	doLast{
+    		pnt.add("SG-UAP> " + project.name + "/face 目录" + " 压缩完成！")
+    	}
+    }
+	classes.doFirst{
+		def exists = new File(projectDir,'face').exists()
+		if(exists){
+			tasks['zipJs'].execute()
+		}else{
+			pnt.add("SG-UAP> " + project.name + "/face 目录" + " 不存在！！！")
+		}
+	}
+	classes << {
+		if(flag){
+			copy{
+				from('bin')
+				into(sourceSets.main.output.classesDir)
+				exclude '**/*.xml','**/sqls','**/ddl','.svn'
+			}
+		}else{
+			project.delete("${sourceSets.main.output.classesDir}/org")
+			project.delete("${sourceSets.main.output.classesDir}/javax")
+		}
+	}
+	build << {
+		def total = (new Date().getTime() - startTime)/1000.00;
+		println("SG-UAP> 构建  " + project.name + " 用时 : " + total + " secs");
+	}
+}

@@ -1,0 +1,34 @@
+apply plugin: CodeLinePlugin
+
+class CodeLinePlugin implements Plugin<Project> {	    
+    void apply(Project project) {
+        project.extensions.create("readValidCodeLine", CodeLinePluginExtension)
+        project.task('line') << {
+        		def ps = project.getSubprojects();        		
+        		ps.each{project.readValidCodeLine.read(it.getProjectDir())}
+        }
+    }
+}
+
+class CodeLinePluginExtension {
+	int lines = 0,lists = 0;
+	public void read(File file) throws Exception {
+	if(!file.exists())
+		throw new Exception("SG-UAP>" + file.name + " not exists!");
+	file.eachFileRecurse{
+		if(it.getName().endsWith(".java")){
+			lists ++;
+			it.eachLine{
+				def line = it.trim();
+				if (!"".equals(line)) {
+					if (!line.startsWith("//")&&!line.startsWith("/**")&&!line.startsWith("/*")&&!line.startsWith("*")) {
+						lines ++;
+					}
+				}
+			}
+		}
+	}
+	println "SG-UAP> " + file.getName() + ": 项目可用Java文件: " + lists
+	println "SG-UAP> " + file.getName() + ": 项目有效代码行数: " + lines
+	}
+}

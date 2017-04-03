@@ -1,0 +1,36 @@
+//环境配置
+ext.sguap_server = rootProject.hasProperty("sguap_server")?sguap_server:new File(System.getProperty("user.dir")).parentFile.path+"\\sguap-server"
+ext.deployFlag = rootProject.hasProperty("DeployHome")?"true":"false"
+ext.DeployHome = new Boolean(deployFlag)?DeployHome:""
+ext.gradleCompile = rootProject.hasProperty("gradleCompile")?gradleCompile:"false"
+ext.flag = new File(System.getProperty("user.dir") + "\\UAP Studio.ini").exists()?new Boolean(gradleCompile):new Boolean("false")
+ext.startpara = []
+ext.pnt = []
+
+//记录生成的模块项目jar包的名称
+ext.jarName = ''
+
+ext.versions = [
+	//定义属性versions下的junit变量，为全局引用
+    //"junit": "4.9",
+]
+
+ext.libraries = [
+		//依赖的jar包
+        //"junit": "junit:junit:${versions.junit}",
+]
+
+//定义属性  sguap-server
+ext.deploy = [
+		"source" : "${rootDir}/WebContent",
+		"target" : "${DeployHome}\\${rootProject.name}\\WebContent",
+]
+
+ext.jars = [
+		"sguap_server_path" : "${sguap_server}\\WEB-INF\\repository\\platform\\Version2.0.0",
+]
+
+ext.sguap = [
+		"plugin_dir" : "${rootDir}\\WebContent\\WEB-INF\\repository\\application\\plugins",
+		"mxbuild_dir" : "${rootDir}\\WebContent\\WEB-INF\\lib",
+]

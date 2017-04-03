@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<platform-dynamic-module>
+  <web>
+    <bundle-context-path>/helloM2</bundle-context-path>
+    <servlet-extensions>/rest/*</servlet-extensions>
+    <resource extension-names="/*.swf,/*.png,/*.fla,/*.gif,/*.css,/*.jpg,/*.properties,/*.eot,/*.jar,/*.js,/*.htm,/*.xml,/*.xsl,/*.html,/*.ini,/*.xsd">
+      <virtual-resource context-path="/mx">
+        <location extension-names="/*.swf,/*.png,/*.xsl,/*.html,/*.gif,/*.css,/*.jpg,/*.eot,/*.js,/*.htm">mx</location>
+      </virtual-resource>
+    </resource>
+    <use-platform-component>true</use-platform-component>
+  </web>
+</platform-dynamic-module>

@@ -1,0 +1,8 @@
+def policy_dir = "${rootDir}/WebContent/WEB-INF/configuration/policy.xml"
+def policy = new XmlParser().parse(policy_dir)."module-repository"
+policy?policy[0].module?policy[0].module.each{
+	def proj = new File(policy[0].attribute("path").concat(File.separator).concat(it.text().trim()))
+	if(!proj.exists()) throw new Exception("SG-UAP> " + proj.path + " 路径不存在")
+	include(":".concat(proj.name))
+	project(":".concat(proj.name)).projectDir = proj
+}:System.err.println("SG-UAP> 尚未配置模块项目"):System.err.println("SG-UAP> 尚未配置模块项目")

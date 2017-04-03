@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="false">
+    <class name="com.test.dept.dept.po.Dept" table="dept">
+    	<comment>dept</comment>
+        <!-- single primaryKey -->
+	    <id name="id" type="string" length="32">
+	    	<column name="ID">
+    	        <comment>车辆标识</comment>
+	    	</column>
+            <generator class="uuid.hex"/>
+        </id>     
+		
+	    <property name="name" type="string"  length="32"  not-null="false">
+	    	<column name="NAME">
+    	        <comment>车辆名称</comment>
+	    	</column>
+    	</property>  
+         
+        <property name="periodOfValidity" type="integer"  not-null="false">  
+			<column name="PERIOD_OF_VALIDITY" sql-type="INTEGER default 10">
+    	        <comment>有效期</comment>
+			</column>
+        </property> 
+         
+	    <property name="color" type="string"  length="255"  not-null="false">
+	    	<column name="COLOR">
+    	        <comment>车辆颜色</comment>
+	    	</column>
+    	</property>  
+         
+    </class>
+</hibernate-mapping>
