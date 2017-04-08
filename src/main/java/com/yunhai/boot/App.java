@@ -12,12 +12,18 @@ import org.springframework.web.bind.annotation.RestController;
  * App
  */
 @SpringBootApplication
-@RestController//(value="boot")
+@RestController
+@RequestMapping(value="/boot")
 public class App 
 {
 	@RequestMapping(value="/")
 	public String hello(){
 		return "Hello World!";
+	}
+	
+	@RequestMapping(value="/hello")
+	public String hello2(){
+		return "Hello World ----------!";
 	}
 	
     public static void main( String[] args )
