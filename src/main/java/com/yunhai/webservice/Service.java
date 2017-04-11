@@ -11,8 +11,8 @@ package com.yunhai.webservice;
 public class Service {
 
 	public static void main(String[] args) {
-//		HelloService service = new HelloService();
-//		App app = service.getPort(App.class);
-//		app.getSayHello("sss");
+		HelloService service = new HelloService();
+		AppImp app = service.getAppImpPort();
+		app.saysssssssss("dfsfsdfd");
 	}
 }
