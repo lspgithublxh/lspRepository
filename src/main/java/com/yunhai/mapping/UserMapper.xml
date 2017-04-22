@@ -16,6 +16,6 @@
  		DEGREE AS degree,
  		HOME AS home
  	FROM
- 		USER
+ 		USER_ENTITY
  </select>
 </mapper>

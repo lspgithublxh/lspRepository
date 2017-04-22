@@ -286,6 +286,7 @@
     <directory>conf</directory><!--自动也不会加入src/main/resource这个路径下的资源 -->
     <includes>
      <include>**/*.xml</include>
+	  <include>**/*.properties</include>
     </includes>
    </resource>
   </resources>
