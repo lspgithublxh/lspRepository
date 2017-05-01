@@ -1,10 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?> 
 <?eclipse version="3.4"?>
 <plugin>
-   <extension
-         id="/jsp/*.jsp"
-         name="org.eclipse.equinox.jsp.jasper.registry.JSPFactory:/webapp"
-         point="org.eclipse.equinox.http.registry.servlets">
-   </extension>
-
-</plugin>
+ <extension point="org.eclipse.equinox.http.registry.resources">
+   <resource alias="/images" base-name="/webapp/img"></resource>
+ </extension>
+ <extension point="org.eclipse.equinox.http.registry.servlets">
+   <servlet alias="/servlet/myfirstservlet" class="com.yunhai.web.servlet" load-on-startup="true"></servlet>
+   <servlet alias="/jsp/*.jsp" class="org.eclipse.equinox.jsp.jasper.registry.JSPFactory:/webapp/jsp/"></servlet>
+ </extension> 
+</plugin> 
