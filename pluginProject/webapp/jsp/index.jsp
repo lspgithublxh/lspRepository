@@ -9,7 +9,7 @@
  <BODY> 
  <p>Current JRE version: <font color="#FF0000"><%=javaVersion%></font></p> 
  <p> 
- <a href="/servlet/myfirstservlet?userName=userA"> 
+ <a href="../servlet/myfirstservlet?userName=userA"> 
  Click to test seervlet 
  </a> 
  </BODY> 

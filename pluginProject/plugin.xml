@@ -5,7 +5,7 @@
    <resource alias="/images" base-name="/webapp/img"></resource>
  </extension>
  <extension point="org.eclipse.equinox.http.registry.servlets">
-   <servlet alias="/servlet/myfirstservlet" class="com.yunhai.web.servlet" load-on-startup="true"></servlet>
+   <servlet alias="/servlet/myfirstservlet" class="com.yunhai.web.servlet.LoginServlet" load-on-startup="true"></servlet>
    <servlet alias="/jsp/*.jsp" class="org.eclipse.equinox.jsp.jasper.registry.JSPFactory:/webapp/jsp/"></servlet>
  </extension> 
 </plugin> 
