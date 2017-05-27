@@ -4,6 +4,7 @@
 package com.hadoop.test;
 
 import java.io.IOException;
+import java.util.StringTokenizer;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -24,16 +25,28 @@ import org.apache.hadoop.util.GenericOptionsParser;
 public class WordsCount {
 
 	public static class MyMapper extends Mapper<Object, Text, Text, IntWritable>{
-		private final static IntWritable one = new IntWritable();
+		private final static IntWritable one = new IntWritable(1);
 		private Text words = new Text();
-		
+		@Override
 		public void map(Object key, Text value, Context context) throws IOException, InterruptedException{
-			int idx = value.toString().indexOf(" ");
-			if(idx > 0){
-				String e = value.toString().substring(0, idx);
-				words.set(e);
-				context.write(value, one);
+//			int idx = value.toString().indexOf(" ");
+//			String[] ss = value.toString().split(" ");
+//			for(String s : ss){
+//				words.set(s);
+//				context.write(words, one);
+//			}
+			StringTokenizer token = new StringTokenizer(value.toString());
+			while(token.hasMoreTokens()){
+				words.set(token.nextToken());
+				System.out.println("haha");
+				context.write(words, one);
 			}
+			System.out.println(key);
+//			if(idx > 0){
+//				String e = value.toString().substring(0, idx);
+//				words.set(e);
+//				context.write(words, one);
+//			}
 		}
 		
 	}
@@ -41,14 +54,28 @@ public class WordsCount {
 	public static class MyReducer extends Reducer<Object, IntWritable, Text, IntWritable>{
 		private IntWritable result = new IntWritable();
 		
-		public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException{
+		@Override
+		protected void reduce(Object key, Iterable<IntWritable> values,
+				Reducer<Object, IntWritable, Text, IntWritable>.Context context) throws IOException, InterruptedException {
 			int sum = 0;
 			for(IntWritable val : values){
 				sum += val.get();
 			}
+			System.out.println(sum);
 			result.set(sum);
-			context.write(key, result);
+			context.write(new Text(key.toString()), result);
 		}
+		
+//		@Override
+//		public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException{
+//			int sum = 0;
+//			for(IntWritable val : values){
+//				sum += val.get();
+//			}
+//			System.out.println(sum);
+//			result.set(sum);
+//			context.write(key, result);
+//		}
 		
 	}
 	
@@ -68,6 +95,8 @@ public class WordsCount {
 		job.setOutputValueClass(IntWritable.class);
 		FileInputFormat.addInputPath(job, new Path(otherArgs[0]));
 		FileOutputFormat.setOutputPath(job, new Path(otherArgs[1]));
+		System.out.println(otherArgs[0]);
+		System.out.println(otherArgs[1]);
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
 	}
 }
