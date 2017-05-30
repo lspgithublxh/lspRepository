@@ -8,10 +8,12 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function0;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFunction;
+import org.apache.spark.api.java.function.VoidFunction;
 import org.apache.spark.storage.StorageLevel;
 import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.api.java.JavaDStream;
@@ -49,15 +51,16 @@ public class StreamingComputing {
 	}
 	
 	private static void createStreamingFromFile() throws InterruptedException{
-		JavaStreamingContext cc = JavaStreamingContext.getOrCreate("D:\\log\\checkpoint_data", new Function0<JavaStreamingContext>() {
-			
-			public JavaStreamingContext call() throws Exception {
-//				JavaStreamingContext jsct = new JavaStreamingContext(conf,Durations.seconds(5));
-				jsct.checkpoint("D:\\log\\checkpoint_data");
-				return jsct;
-			}
-		});
-		JavaDStream<String> jds = cc.textFileStream("D:\\log\\data");
+//		JavaStreamingContext cc = JavaStreamingContext.getOrCreate("D:\\log\\checkpoint_data", new Function0<JavaStreamingContext>() {
+//			
+//			public JavaStreamingContext call() throws Exception {
+////				JavaStreamingContext jsct = new JavaStreamingContext(conf,Durations.seconds(5));
+//				jsct.checkpoint("D:\\log\\checkpoint_data");
+//				return jsct;
+//			}
+//		});
+		jsct.checkpoint("D:\\log\\checkpoint_data");
+		JavaDStream<String> jds = jsct.textFileStream("D:\\log\\data");
 //		JavaDStream<String> jds = jsct.textFileStream("D:\\log\\error.log");
 		JavaDStream<String> words = jds.flatMap(new FlatMapFunction<String, String>() {
 
@@ -68,6 +71,13 @@ public class StreamingComputing {
 		//包含两种变换:构造元组——>reduce
 		JavaPairDStream<String, Integer> kv_wordsCount = nextTransform(words);
 		kv_wordsCount.print();
+//		kv_wordsCount.count();
+//		kv_wordsCount.foreachRDD(new VoidFunction<JavaPairRDD<String,Integer>>() {
+//			
+//			public void call(JavaPairRDD<String, Integer> arg0) throws Exception {
+//				System.out.println(arg0.collect().toString());;
+//			}
+//		});
 		jsct.start();
 		jsct.awaitTermination();
 		jsct.stop();
