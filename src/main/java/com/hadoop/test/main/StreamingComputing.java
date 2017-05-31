@@ -35,8 +35,8 @@ public class StreamingComputing {
 	private static final JavaStreamingContext jsct = new JavaStreamingContext(conf,Durations.seconds(1));
 	
 	public static void main(String[] args) throws InterruptedException {
-//		testStreamingComputing();
-		createStreamingFromFile();
+		testStreamingComputing();
+//		createStreamingFromFile();
 	}
 	
 	//从hdfs也可以
@@ -45,9 +45,9 @@ public class StreamingComputing {
 		
 	}
 	
-	private static void testFile(){
+	private static void testKafka(){
 //		JavaReceiverInputDStream<String> lines = jsct.socketTextStream("localhost", 9999,StorageLevel.MEMORY_AND_DISK());
-		
+//		KafkaUtils
 	}
 	
 	private static void createStreamingFromFile() throws InterruptedException{
@@ -65,19 +65,20 @@ public class StreamingComputing {
 		JavaDStream<String> words = jds.flatMap(new FlatMapFunction<String, String>() {
 
 			public Iterator<String> call(String arg0) throws Exception {
+				System.out.println("flatMap:--" + arg0 + "--");
 				return Arrays.asList(arg0.split(" ")).iterator();
 			}
 		});
 		//包含两种变换:构造元组——>reduce
 		JavaPairDStream<String, Integer> kv_wordsCount = nextTransform(words);
 		kv_wordsCount.print();
-//		kv_wordsCount.count();
-//		kv_wordsCount.foreachRDD(new VoidFunction<JavaPairRDD<String,Integer>>() {
-//			
-//			public void call(JavaPairRDD<String, Integer> arg0) throws Exception {
-//				System.out.println(arg0.collect().toString());;
-//			}
-//		});
+		System.out.println(kv_wordsCount.count());;
+		kv_wordsCount.foreachRDD(new VoidFunction<JavaPairRDD<String,Integer>>() {
+			
+			public void call(JavaPairRDD<String, Integer> arg0) throws Exception {
+				System.out.println("foreachRDD:" + arg0.collect().toString());
+			}
+		});
 		jsct.start();
 		jsct.awaitTermination();
 		jsct.stop();
@@ -93,10 +94,12 @@ public class StreamingComputing {
 	private static void testStreamingComputing() throws InterruptedException{
 		//转换lines流
 		JavaReceiverInputDStream<String> lines = jsct.socketTextStream("localhost", 9999);
+		System.out.println(" count: " + lines.toString() + lines.dstream().countByValue$default$1());
 		//转换为words流
 		JavaDStream<String> words = lines.flatMap(new FlatMapFunction<String, String>() {
 
 			public Iterator<String> call(String arg0) throws Exception {
+				System.out.println("liangliang :" + arg0 + "end");
 				return Arrays.asList(arg0.split(" ")).iterator();
 			}
 		});
@@ -106,7 +109,7 @@ public class StreamingComputing {
 		jsct.start();
 		//阻塞直至完成
 		jsct.awaitTermination();
-		jsct.stop();
+//		jsct.stop();
 		
 	}
 
