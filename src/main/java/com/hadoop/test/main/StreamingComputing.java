@@ -31,8 +31,8 @@ public class StreamingComputing {
 
 	//2代表2个工作线程\执行线程
 	private static final SparkConf conf = new SparkConf().setMaster("local[2]").setAppName("NetworkWordCount");
-	//间隔1s执行,job调用
-	private static final JavaStreamingContext jsct = new JavaStreamingContext(conf,Durations.seconds(1));
+	//间隔5s执行,job调用..5s内收到的数据作为一批数据，即作为一个RDD的内容
+	private static final JavaStreamingContext jsct = new JavaStreamingContext(conf,Durations.seconds(5));
 	
 	public static void main(String[] args) throws InterruptedException {
 		testStreamingComputing();

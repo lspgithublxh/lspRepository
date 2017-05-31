@@ -37,16 +37,7 @@ public class ClientSocket {
 			while((line = scan.nextLine()) != null){
 				outp.writeUTF(line);
 			}
-			
-			
-//			out.write("sssssss hello world!".getBytes());
-//			out.flush();
-//			socket.shutdownOutput();
-//			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-//			String line = null;
-//			while((line = reader.readLine()) != null){
-//				System.out.println(line);
-//			}
+	
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
