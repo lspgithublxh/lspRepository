@@ -17,32 +17,28 @@
         				http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">  
  
  <!-- 引入配置文件 -->  
- <bean id="propertyConfigurer"  
+ <!-- <bean id="propertyConfigurer"  
      class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
      <property name="location" value="classpath:jdbc-hibernate.properties" />  
- </bean>
-<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"  
-    destroy-method="close">  
-    <property name="driverClassName" value="${driver}" />  
-    <property name="url" value="${url}" />  
-    <property name="username" value="${username}" />  
-    <property name="password" value="${password}" />  
-    <!-- 初始化连接大小 -->  
-    <property name="initialSize" value="${initialSize}"></property>  
-    <!-- 连接池最大数量 -->  
-    <property name="maxActive" value="${maxActive}"></property>  
-    <!-- 连接池最大空闲 -->  
-    <property name="maxIdle" value="${maxIdle}"></property>  
-    <!-- 连接池最小空闲 -->  
-    <property name="minIdle" value="${minIdle}"></property>  
-    <!-- 获取连接最大等待时间 -->  
-    <property name="maxWait" value="${maxWait}"></property>  
-</bean> 
+ </bean> -->
+<context:property-placeholder location="classpath:/jdbc-hibernate.properties" />
+<!--配置数据源-->
+<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+    <property name="driverClass" value="com.mysql.cj.jdbc.Driver" />  <!--数据库连接驱动-->
+    <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/mydatabases?useUnicode=true&amp;characterEncoding=utf-8&amp;serverTimezone=UTC" />     <!--数据库地址-->
+    <property name="user" value="root" />   <!--用户名-->
+    <property name="password" value="lsp" />   <!--密码-->
+    <property name="maxPoolSize" value="40" />      <!--最大连接数-->
+    <property name="minPoolSize" value="1" />       <!--最小连接数-->
+    <property name="initialPoolSize" value="1" />      <!--初始化连接池内的数据库连接-->
+    <property name="maxIdleTime" value="20" />  <!--最大空闲时间-->
+</bean>
 
  <!-- (事务管理)transaction manager, use JtaTransactionManager for global tx -->   
 <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
        <property name="dataSource" ref="dataSource" />
        <property name="packagesToScan" value="com.construct.persistence.entity" />
+       <!-- <property name="annotatedClasses"> -->
        <property name="hibernateProperties">
            <props>
                <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop> <!--hibernate根据实体自动生成数据库表-->
@@ -51,18 +47,18 @@
                <prop key="hibernate.format_sql">${hibernate.format_sql}</prop>     <!--在控制台显示执行的数据哭操作语句（格式）-->
            </props>
        </property>
-       <property name=""></property>
 </bean>  
 <!-- hibernate方式 -->
-<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
-      <property name="sessionFactory" ref="sessionFactory" />
-</bean>
+
 <!-- 5. 使用声明式事务  
      transaction-manager：引用上面定义的事务管理器  
      -->  
+<!-- <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+      <property name="sessionFactory" ref="sessionFactory" />
+</bean>
 <tx:annotation-driven transaction-manager="transactionManager" />  
-
-<tx:advice id="txAdvice" transaction-manager="transactionManager">
+ -->
+<!-- <tx:advice id="txAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method name="get*" read-only="true" />
             <tx:method name="*" />
@@ -72,5 +68,5 @@
     <aop:pointcut expression="execution(* com.construct.*.service.*.*(..))"
         id="txPointcut" />
     <aop:advisor advice-ref="txAdvice" pointcut-ref="txPointcut" />
-</aop:config>
+</aop:config> -->
  </beans>                       
