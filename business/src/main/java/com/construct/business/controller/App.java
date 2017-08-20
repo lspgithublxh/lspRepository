@@ -1,4 +1,4 @@
-package com.construct.business;
+package com.construct.business.controller;
 
 /**
  * Hello world!

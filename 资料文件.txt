@@ -1,6 +1,6 @@
 1.问题描述：精准描述，积累概念。
 	>tomcat插件方式运行和debug远程调试：
-
+	>直接放到tomcat上的方式--eclipse中：每次打开eclipse，需要重新执行mvn eclipse:eclipse对于全部的项目一下。
 
 
 

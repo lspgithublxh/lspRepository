@@ -189,6 +189,8 @@
                     <uriEncoding>UTF-8</uriEncoding>
                     <finalName>web</finalName>
                     <server>tomcat8</server>
+                    <username>tomcat</username>
+					<password>tomcat</password>
                     <update>true</update>
                     <warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory>
 					<contextReloadable>true</contextReloadable>

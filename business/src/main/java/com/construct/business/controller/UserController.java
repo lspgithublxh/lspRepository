@@ -1,32 +1,33 @@
-package com.construct.base;
+package com.construct.business.controller;
 
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.construct.business.services.IUserService;
+import com.construct.persistence.entity.UserBean;
 
 @Controller
 @RequestMapping("/user")
 public class UserController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
-	 	
+	 
+	@Autowired
+    private IUserService userService;
+	
 	@RequestMapping(value = "/page2", method = RequestMethod.POST)
-    public void getPage2(HttpServletRequest request, HttpServletResponse response){
+    public String getPage2(){
    	 	LOGGER.info("::");
         System.out.println("-----------------");
-//        request.getRequestDispatcher(arg0)
-         try {
-			response.sendRedirect("./view/jsp/index.jsp");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        List<UserBean> result = userService.queryUsers();
+        System.out.println(result);
+        return "index";
     }
 	
 	public String findUser(){
