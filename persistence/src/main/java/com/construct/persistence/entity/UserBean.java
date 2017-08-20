@@ -9,6 +9,7 @@ import javax.persistence.TableGenerator;
 
 import org.hibernate.annotations.GenericGenerator;
 
+//@Data
 @Entity  
 @Table(name="T_USER") 
 public class UserBean {

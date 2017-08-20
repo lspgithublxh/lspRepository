@@ -185,10 +185,13 @@
                 <version>2.2</version>
                 <configuration>
                     <port>9090</port>
-                    <path>/mgr</path>
+                    <path>/web</path>
                     <uriEncoding>UTF-8</uriEncoding>
-                    <finalName>mgr</finalName>
+                    <finalName>web</finalName>
                     <server>tomcat8</server>
+                    <update>true</update>
+                    <warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory>
+					<contextReloadable>true</contextReloadable>
                 </configuration>
           </plugin> 
   </plugins>

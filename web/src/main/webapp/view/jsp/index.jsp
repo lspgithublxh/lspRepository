@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <title>new page(runoob.com)</title>
 <!-- 一起取过来 -->
-<script src="global/jquery/jquery-3.1.1.min.js" type="text/javascript"></script>
-<script  src="global/angularjs2/angularjs2.min.js" type="text/javascript"> </script>
-<script  src="global/bootstrap/bootstrap.min.js" type="text/javascript"> </script>
-<link rel="stylesheet" type="text/css" href="global/bootstrap/bootstrap.min.css" />
+<script src="../../global/jquery/jquery-3.1.1.min.js" type="text/javascript"></script>
+<script  src="../../global/angularjs2/angularjs2.min.js" type="text/javascript"> </script>
+<script  src="../../global/bootstrap/bootstrap.min.js" type="text/javascript"> </script>
+<link rel="stylesheet" type="text/css" href="../../global/bootstrap/bootstrap.min.css" />
 <script type="text/javascript">
 var fun = {};
 function func(type){
@@ -41,10 +41,10 @@ function func(type){
 			contentType:"application/json; charset=UTF-8"
 		});
 	}
-	postTest("view/post.html");
-	postTest("user/name");
+	postTest("../../view/post.html");
+	postTest("../../user/name");
 	fun.update = function(){
-		window.location.href = "view/inde.html";  //
+		window.location.href = "../../view/inde.html";  //
 	}
 })()
 
