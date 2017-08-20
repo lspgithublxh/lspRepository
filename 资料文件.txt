@@ -1,9 +1,12 @@
 1.问题描述：精准描述，积累概念。
 	>tomcat插件方式运行和debug远程调试：
 	>直接放到tomcat上的方式--eclipse中：每次打开eclipse，需要重新执行mvn eclipse:eclipse对于全部的项目一下。
+	>强制更新到本地仓库：在parent下：mvn clean package install -e -U
 
-
-
+	
+2.问题：
+	1)加载jar包中的配置文件，来让里面的spring配置文件起作用
+	2）在一个项目的spring配置文件中，不能加载依赖的（项目）中的类作为bean..会没发现。
 
 
 参考资料：

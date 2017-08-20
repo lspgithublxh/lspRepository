@@ -65,6 +65,14 @@ public class IHUserDaoImpl implements IHUserDao{
 		// TODO Auto-generated method stub
 		getCurrentSession().flush();
 	}
+
+	public SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
+
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
 	
 	
 

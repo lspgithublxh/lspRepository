@@ -11,6 +11,13 @@
   <packaging>jar</packaging>
   <name>persistence</name>
   <url>http://maven.apache.org</url>
+  <properties>
+  	<mybatis.version>3.4.4</mybatis.version>  
+    <mybatis.spring.version>1.2.2</mybatis.spring.version> 
+    <hibernate.version>5.2.10.Final</hibernate.version>
+    <mysql.connector.version>6.0.6</mysql.connector.version>
+    <c3p0.version>0.9.2</c3p0.version>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -33,7 +40,41 @@
         <artifactId>hibernate-core</artifactId>  
         <version>5.2.10.Final</version>  
     </dependency> 
-    
+     <!-- hibernate 缓存, 视情况添加-->
+     <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-ehcache</artifactId>
+      <version>${hibernate.version}</version>
+    </dependency>
+    <!-- 导入Mysql数据库链接jar包 -->  
+     <dependency>  
+         <groupId>mysql</groupId>  
+         <artifactId>mysql-connector-java</artifactId>  
+         <version>${mysql.connector.version}</version>  
+     </dependency> 
+     <dependency>
+    	<groupId>org.aspectj</groupId>
+    	<artifactId>aspectjrt</artifactId>
+    	<version>1.8.10</version>
+	</dependency>
+      <!-- 数据库连接池-->
+     <dependency>
+      <groupId>com.mchange</groupId>
+      <artifactId>c3p0</artifactId>
+      <version>${c3p0.version}</version>
+    </dependency>
+     <!-- mybatis start-->  
+    <dependency>  
+        <groupId>org.mybatis</groupId>  
+        <artifactId>mybatis</artifactId>  
+        <version>${mybatis.version}</version>  
+    </dependency>  
+    <dependency>  
+        <groupId>org.mybatis</groupId>  
+        <artifactId>mybatis-spring</artifactId>  
+        <version>${mybatis.spring.version}</version>  
+    </dependency>  
+        <!--mybatis end-->
   </dependencies>
   <build>
   <resources>

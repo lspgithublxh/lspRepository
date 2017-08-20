@@ -18,6 +18,12 @@ public class UserService implements IUserService{
 		
 		return userDao.findAll();
 	}
+	public IHUserDao getUserDao() {
+		return userDao;
+	}
+	public void setUserDao(IHUserDao userDao) {
+		this.userDao = userDao;
+	}
 
 	
 }
