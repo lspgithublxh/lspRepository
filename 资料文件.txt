@@ -2,14 +2,24 @@
 	>tomcat插件方式运行和debug远程调试：
 	>直接放到tomcat上的方式--eclipse中：每次打开eclipse，需要重新执行mvn eclipse:eclipse对于全部的项目一下。
 	>强制更新到本地仓库：在parent下：mvn clean package install -e -U
+	>com.alibaba.druid.pool.DruidDataSource 这是alibaba的一种数据连接池。
 
+	>前端：
+		>MetroNic一种良好的模板。
+
+	>spring-security：非配置文件方式：完全java调用方式。
 	
 2.问题：
 	1)加载jar包中的配置文件，来让里面的spring配置文件起作用
 	2）在一个项目的spring配置文件中，不能加载依赖的（项目）中的类作为bean..会没发现。
-
+	3）@Bean(name = "dataSource")新的配置。
 
 参考资料：
 
 1.http://www.cnblogs.com/xrog/p/6359706.html（较好的搭建过程）
 2.仓库文件不能有损毁：否则可能使得tomcat无法启动，报空指针异常。
+3.http://www.cnblogs.com/wlgqo/articles/6001180.html（较好的项目中引用项目）
+4.http://www.cnblogs.com/blueness-sunshine/p/6015965.html（分布式服务的dubbo的使用）
+5.http://blog.csdn.net/zoutongyuan/article/details/41379851/（一个经典的项目,使用了MetroNic,Apache Shiro）
+6.http://www.cnblogs.com/hongxf1990/p/6543214.html（spring-security配置常用情形）
+7.http://bbs.csdn.net/topics/391073429（dao无法注入的问题）

@@ -2,16 +2,17 @@ package com.construct.business.services;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
+
 import org.springframework.stereotype.Service;
 
 import com.construct.persistence.entity.UserBean;
 import com.construct.psersistence.dao.IHUserDao;
 
-@Service("userService")
+@Service("myuserService")
 public class UserService implements IUserService{
 
-	@Autowired
+	@Resource
 	private IHUserDao userDao;
 	@Override
 	public List<UserBean> queryUsers() {

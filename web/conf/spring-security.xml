@@ -12,21 +12,28 @@
 	<!-- 静态资源不拦截 -->
 	<security:http pattern="*.css" security="none"></security:http>
 	<security:http pattern="*.js" security="none"></security:http>
+	<security:http pattern="/view/login.html" security="none"></security:http>
+	<security:http pattern="/user/login" security="none"></security:http>
     <security:http auto-config="true">
-    	<security:form-login always-use-default-target="true" 
-						  authentication-success-forward-url="/user/page2" />
+    	<security:form-login 
+    		always-use-default-target="true" 
+    		login-page="/view/login.html"
+    		default-target-url="/welcome"
+    		authentication-failure-url="/login?error"
+			authentication-success-forward-url="/user/page2" />
        <!--特殊专门拦截请求1 权限相关，会在每次请求的时候都可能被使用，但认证则只会在session未建立的时候、securityContext未建立的时候-->
        <!-- 通道访问可以设置requires-channel="https"  -->
         <security:intercept-url pattern="/admin" 
             access="hasRole('ROLE_ADMIN')" /> 
 		<!--特殊专门拦截请求2 -->
+		<security:access-denied-handler error-page="/403"/>
         <security:intercept-url pattern="/data" access="hasRole('ROLE_USER')" />
         <!-- 全部拦截 -->
         <security:intercept-url pattern="/**" access="hasRole('ROLE_USER')" />
 		<!--用基本验证 来覆盖前面的自动配置；本质上即加了“基本过滤Filter” -->
         <security:http-basic />
 		<!--登出配置 -->
-		<security:logout />
+		<security:logout logout-success-url="/login?logout"/>
 		<!-- 暂时不跨域认证拦截，即先放弃这种安全机制，以后增加这种机制 -->
 		<security:csrf disabled="true" />
 		<!--实行摘要认证 ,前面添加过滤器 (实现AbstractSecurityInterceptor 接口),只知道请求，是不知道用户信息和权限信息的-->
@@ -39,13 +46,17 @@
          <!-- 同时注意userService这个bean就不能和自己写的service的注解名称一样了 -->
 	<security:authentication-manager>
         <security:authentication-provider>
-            <security:user-service id="userService">
+             <security:user-service id="userService">
                 <security:user authorities="ROLE_USER" name="tom"
                     password="tom" />
                 <security:user authorities="ROLE_USER, ROLE_ADMIN"
                     name="admin" password="admin" />
             </security:user-service>
-        </security:authentication-provider>
+            <!-- <security:jdbc-user-service data-source-ref="dataSource"
+                                        users-by-username-query="select username,password, enabled from users where username = ?"
+                                        authorities-by-username-query="select username, role from user_roles where username = ?"/>
+             -->
+                    </security:authentication-provider>
     </security:authentication-manager>
 	
 </beans>     

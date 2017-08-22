@@ -23,6 +23,7 @@
 	<!-- 自动扫描包，可以写多个 -->
 	<context:component-scan base-package="com.construct.business.services"></context:component-scan>
     <context:component-scan base-package="com.construct.business.*"></context:component-scan>
+    <context:component-scan base-package="com.construct.persistence.*"></context:component-scan>
     <mvc:annotation-driven></mvc:annotation-driven>
     
 </beans>
