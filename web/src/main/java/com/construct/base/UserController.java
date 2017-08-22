@@ -27,8 +27,6 @@ public class UserController {
 	@Autowired
     private IUserService myuserService;
 	
-//	@Resource
-//	private IHUserDao userDao;
 	
 	@RequestMapping(value = "/page2", method = RequestMethod.POST)
     public void getPage2(HttpServletResponse response , HttpServletRequest request) throws IOException{
@@ -68,13 +66,6 @@ public class UserController {
 		this.myuserService = myuserService;
 	}
 
-//	public IHUserDao getUserDao() {
-//		return userDao;
-//	}
-//
-//	public void setUserDao(IHUserDao userDao) {
-//		this.userDao = userDao;
-//	}
 	
 	
 }
