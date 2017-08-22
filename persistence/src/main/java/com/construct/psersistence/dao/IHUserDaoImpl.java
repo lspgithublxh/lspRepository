@@ -2,15 +2,17 @@ package com.construct.psersistence.dao;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.construct.persistence.entity.UserBean;
 
-@Repository
+@Repository("userDao")
 public class IHUserDaoImpl implements IHUserDao{
 
 	@Autowired
@@ -75,5 +77,13 @@ public class IHUserDaoImpl implements IHUserDao{
 	}
 	
 	
-
+	public <T> T findUniqueByProperty(Class<T> entityClass,final String propertyName,final Object value)    
+    {  
+        Session session = sessionFactory.getCurrentSession();     
+          
+        Criteria criteria = session.createCriteria(entityClass)  
+                                   .add( Restrictions.eq(propertyName, value) );   //增加属性相等约束    
+          
+        return (T) criteria.uniqueResult();  
+    }  
 }

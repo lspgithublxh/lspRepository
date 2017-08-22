@@ -31,7 +31,7 @@ public class UserBean {
 	
 	@Column(length=32) 
 	private String sex;
-
+	
 	public String getId() {
 		return id;
 	}
