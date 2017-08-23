@@ -24,4 +24,4 @@
 6.http://www.cnblogs.com/hongxf1990/p/6543214.html（spring-security配置常用情形）
 7.http://bbs.csdn.net/topics/391073429（dao无法注入的问题,有启发但是没作用：原因分析可能：一是web.xml中配置文件的位置--即加载时间问题，二可能是子项目中自动浏览包的配置不够详细）
 8.http://zhh9106.iteye.com/blog/1981145(完善的单项目配置)
-9.http://www.cnblogs.com/tyb1222/p/4146900.html(spring-security登录配置)
+9.http://www.cnblogs.com/tyb1222/p/4146900.html(spring-security登录配置范本)

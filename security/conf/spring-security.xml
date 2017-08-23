@@ -27,7 +27,8 @@
     		always-use-default-target="true" 
     		default-target-url="/view/jsp/index.jsp"
     		authentication-failure-url="/login?error" 
-			/><!-- authentication-success-forward-url="/user/page2" 
+    		authentication-success-handler-ref="authSuccess" 
+			/><!--  authentication-success-forward-url="/user/page2"
 				authentication-success-handler-ref="" -->
        <!--特殊专门拦截请求1 权限相关，会在每次请求的时候都可能被使用，但认证则只会在session未建立的时候、securityContext未建立的时候-->
        <!-- 通道访问可以设置requires-channel="https"  -->
@@ -49,6 +50,9 @@
 			<custom-filter ref="securityFilter" before="FILTER_SECURITY_INTERCEPTOR"/>, -->
 		
 </security:http>
+<!-- 成功配置 -->
+<bean name="authSuccess" class="com.construct.security.AuthenticationSuccessHandlerImpl"></bean>
+
 <security:authentication-manager alias="authenticationManager">
       <!--   <security:authentication-provider >
              <security:user-service id="userService">
