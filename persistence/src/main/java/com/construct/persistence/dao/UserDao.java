@@ -1,4 +1,4 @@
-package com.construct.psersistence.dao;
+package com.construct.persistence.dao;
 
 import java.util.List;
 import java.util.Map;

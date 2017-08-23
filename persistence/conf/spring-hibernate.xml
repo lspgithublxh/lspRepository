@@ -38,7 +38,7 @@
 </bean>
 
  <!-- (事务管理)transaction manager, use JtaTransactionManager for global tx -->   
-<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
        <property name="dataSource" ref="dataSource" />
        <property name="packagesToScan" value="com.construct.persistence.entity" />
        <!-- <property name="annotatedClasses"> -->
@@ -56,7 +56,7 @@
 <!-- 5. 使用声明式事务  
      transaction-manager：引用上面定义的事务管理器  
      -->  
-<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+<bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
       <property name="sessionFactory" ref="sessionFactory" />
 </bean>
 <tx:annotation-driven transaction-manager="transactionManager" />  

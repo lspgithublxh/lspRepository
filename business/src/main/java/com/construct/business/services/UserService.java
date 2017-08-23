@@ -6,8 +6,8 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
+import com.construct.persistence.dao.IHUserDao;
 import com.construct.persistence.entity.UserBean;
-import com.construct.psersistence.dao.IHUserDao;
 
 @Service("myuserService")
 public class UserService implements IUserService{

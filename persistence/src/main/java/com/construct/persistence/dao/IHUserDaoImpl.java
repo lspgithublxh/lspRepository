@@ -1,4 +1,4 @@
-package com.construct.psersistence.dao;
+package com.construct.persistence.dao;
 
 import java.util.List;
 
@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.construct.persistence.entity.UserBean;
+
+
 
 @Repository("userDao")
 public class IHUserDaoImpl implements IHUserDao{
@@ -85,5 +87,5 @@ public class IHUserDaoImpl implements IHUserDao{
                                    .add( Restrictions.eq(propertyName, value) );   //增加属性相等约束    
           
         return (T) criteria.uniqueResult();  
-    }  
+    }
 }

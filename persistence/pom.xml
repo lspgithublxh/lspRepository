@@ -33,12 +33,12 @@
 	<dependency>
     	<groupId>org.hibernate.common</groupId>
     	<artifactId>hibernate-commons-annotations</artifactId>
-    	<version>5.0.1.Final</version>
+    	<version>5.0.1.Final</version><!-- 4.0.5.Final 5.0.1.Final-->
 	</dependency>
 	<dependency>  
         <groupId>org.hibernate</groupId>  
         <artifactId>hibernate-core</artifactId>  
-        <version>5.2.10.Final</version>  
+        <version>${hibernate.version}</version>  <!-- 4.3.8 5.2.10-->
     </dependency> 
      <!-- hibernate 缓存, 视情况添加-->
      <dependency>

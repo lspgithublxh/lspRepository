@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.construct.business.services.IUserService;
+import com.construct.persistence.dao.IHUserDao;
 import com.construct.persistence.entity.UserBean;
-import com.construct.psersistence.dao.IHUserDao;
 
 @Controller
 @RequestMapping("/user")

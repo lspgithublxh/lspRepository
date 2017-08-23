@@ -71,7 +71,7 @@
 <property name="baseCollectionDao" ref="login_userdao" />
 </bean>
 
-<bean id="login_userdao" class="com.construct.psersistence.dao.IHUserDaoImpl">
+<bean id="login_userdao" class="com.construct.persistence.dao.IHUserDaoImpl">
  <property name="sessionFactory" ref="sessionFactory" />
  </bean>
 </beans>     
