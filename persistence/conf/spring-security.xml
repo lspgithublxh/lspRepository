@@ -25,9 +25,9 @@
     <security:http auto-config="true" use-expressions="true">
     	<security:form-login 
     		always-use-default-target="true" 
-    		
+    		default-target-url="/view/jsp/index.jsp"
     		authentication-failure-url="/login?error"
-			authentication-success-forward-url="/user/page2" />
+			/><!-- authentication-success-forward-url="/user/page2"  -->
        <!--特殊专门拦截请求1 权限相关，会在每次请求的时候都可能被使用，但认证则只会在session未建立的时候、securityContext未建立的时候-->
        <!-- 通道访问可以设置requires-channel="https"  -->
         <security:intercept-url pattern="/admin" 

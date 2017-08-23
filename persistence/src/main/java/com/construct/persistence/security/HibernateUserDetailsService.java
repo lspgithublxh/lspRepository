@@ -29,11 +29,12 @@ private IHUserDao baseCollectionDao;
     public UserDetails loadUserByUsername(String username)  
             throws UsernameNotFoundException  
     {  
+    	System.out.println(username);
     	Users users = baseCollectionDao.findUniqueByProperty(Users.class, "username", username);  
-          
+    	 System.out.println("-------------------");
         if(users == null)   
             throw new UsernameNotFoundException("用户" + username + " 不存在!!!");  
-          
+        System.out.println(users.getUsername());
         String[] roles = users.getRoles().split(",");  
           
           
