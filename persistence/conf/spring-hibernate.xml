@@ -71,7 +71,8 @@
     <aop:pointcut expression="execution(* com.construct.*.service.*.*(..))"
         id="txPointcut" />
     <aop:advisor advice-ref="txAdvice" pointcut-ref="txPointcut" />
-</aop:config> -->
+</aop:config>
+ <aop:aspectj-autoproxy proxy-target-class="true"/> -->
 
 <!-- 安全需要的 -->
 

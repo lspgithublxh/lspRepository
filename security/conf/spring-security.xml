@@ -16,8 +16,8 @@
     <!--可以改成入口点配置，来加入自己的filter基本加密 -->
 	<!--自动配置还会在首次访问时(没有session,securityContext)时返回自己的登录界面 -->
 	<!-- 静态资源不拦截 -->
-	<security:http pattern="*.css" security="none"></security:http>
-	<security:http pattern="*.js" security="none"></security:http>
+	<security:http pattern="/**/*.css" security="none"></security:http>
+	<security:http pattern="/**/*.js" security="none"></security:http>
 	<security:http pattern="/view/login.html" security="none"></security:http>
 	<!-- <security:http pattern="/logout" security="none"></security:http> -->
 	<!-- 	<security:http pattern="/user/login" security="none"></security:http> -->
