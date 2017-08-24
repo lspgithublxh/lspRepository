@@ -90,7 +90,7 @@
 	</servlet>
 	<servlet-mapping>
 	    <servlet-name>SpringMVCLSP</servlet-name>
-	    <url-pattern>/*</url-pattern>
+	    <url-pattern>/</url-pattern><!-- /是无后缀请求，不包括.jsp之类， /*是拦截所有请求 -->
 	</servlet-mapping>
 
  <!-- 剩余配置 -->

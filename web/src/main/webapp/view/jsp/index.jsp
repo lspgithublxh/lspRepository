@@ -2,8 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>new page(runoob.com)</title>
-<!-- 一起取过来 -->
+<title>hh</title>
 <script src="../../global/jquery/jquery-3.1.1.min.js" type="text/javascript"></script>
 <script  src="../../global/angularjs2/angularjs2.min.js" type="text/javascript"> </script>
 <script  src="../../global/bootstrap/bootstrap.min.js" type="text/javascript"> </script>
