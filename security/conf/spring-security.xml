@@ -19,7 +19,7 @@
 	<security:http pattern="*.css" security="none"></security:http>
 	<security:http pattern="*.js" security="none"></security:http>
 	<security:http pattern="/view/login.html" security="none"></security:http>
-	<security:http pattern="/logout" security="none"></security:http>
+	<!-- <security:http pattern="/logout" security="none"></security:http> -->
 	<!-- 	<security:http pattern="/user/login" security="none"></security:http> -->
 	<!-- login-page="/view/login.html"
     		default-target-url="/welcome" -->

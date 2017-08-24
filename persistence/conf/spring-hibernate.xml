@@ -61,7 +61,7 @@
 </bean>
 <tx:annotation-driven transaction-manager="transactionManager" />  
 
-<tx:advice id="txAdvice" transaction-manager="transactionManager">
+<!-- <tx:advice id="txAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method name="get*" read-only="true" />
             <tx:method name="*" />
@@ -71,7 +71,7 @@
     <aop:pointcut expression="execution(* com.construct.*.service.*.*(..))"
         id="txPointcut" />
     <aop:advisor advice-ref="txAdvice" pointcut-ref="txPointcut" />
-</aop:config>
+</aop:config> -->
 
 <!-- 安全需要的 -->
 

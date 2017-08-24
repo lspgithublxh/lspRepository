@@ -42,22 +42,24 @@
          <logger name="org.springframework.web" level="info">
           <appender-ref ref="Console"/>  
          </logger>   -->
-   
-   		<logger name="org.springframework.*" level="info">  
-   		 <appender-ref ref="Console"/>
+   		 <logger name="org.springframework.*" level="trace">  
+   		 	<appender-ref ref="Console"/>
          </logger>
+   		<!--
          <logger name="org.*.*" level="info">  
-          <appender-ref ref="Console"/>
+          	<appender-ref ref="Console"/>
          </logger>
-          <logger name="com.*.*" level="info">  
-           <appender-ref ref="Console"/>
-         </logger>
+         <logger name="com.*.*" level="info">  
+          	<appender-ref ref="Console"/>
+         </logger>   -->
+        <!--  
+         -->
          <!--<logger name="com.hafiz.www.controller" level="error" includeLocation="true" additivity="false">  
              <appender-ref ref="ErrorLog"/>  
              <appender-ref ref="Console"/>  
          </logger>   -->
    
-         <root level="trace" includeLocation="true">  
+         <root level="debug" includeLocation="true">  
              <appender-ref ref="Console"/> 
 			  <appender-ref ref="ErrorLog"/> 
          </root>  

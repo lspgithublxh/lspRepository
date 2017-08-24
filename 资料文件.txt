@@ -26,3 +26,4 @@
 8.http://zhh9106.iteye.com/blog/1981145(完善的单项目配置)
 9.http://www.cnblogs.com/tyb1222/p/4146900.html(spring-security登录配置范本)
 10.sqlYog下载：本人百度网盘。
+11.http://www.cnblogs.com/wuya/p/4706079.html（经典第三方日志输出配置）http://blog.csdn.net/cheng_fangang/article/details/49617879
