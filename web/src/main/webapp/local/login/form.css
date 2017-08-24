@@ -3,3 +3,12 @@
     position: absolute;
     top: 30%;
 }
+.form-submit{
+	position: relative;
+    left: 50%;
+    top: 10px;
+}
+body{
+	background: url("../../global/img/11.jpg") no-repeat fixed top;
+	background-size: cover;
+}

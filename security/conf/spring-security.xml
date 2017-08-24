@@ -18,6 +18,10 @@
 	<!-- 静态资源不拦截 -->
 	<security:http pattern="/**/*.css" security="none"></security:http>
 	<security:http pattern="/**/*.js" security="none"></security:http>
+	<security:http pattern="/**/*.jpg" security="none"></security:http>
+	<security:http pattern="/**/*.png" security="none"></security:http>
+	<security:http pattern="/**/*.less" security="none"></security:http>
+	<security:http pattern="/**/*.map" security="none"></security:http>
 	<security:http pattern="/view/login.html" security="none"></security:http>
 	<!-- <security:http pattern="/logout" security="none"></security:http> -->
 	<!-- 	<security:http pattern="/user/login" security="none"></security:http> -->
