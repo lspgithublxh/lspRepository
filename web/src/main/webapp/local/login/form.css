@@ -1,4 +1,5 @@
 .form-eb{
+	z-index:3;
     left: 40%;
     position: absolute;
     top: 30%;
@@ -7,8 +8,22 @@
 	position: relative;
     left: 50%;
     top: 10px;
+    border-radius:10px;
+    border:2px solid gray;
 }
 body{
 	background: url("../../global/img/11.jpg") no-repeat fixed top;
 	background-size: cover;
+}
+.back-div{
+	z-index:0;
+	left: 35%;
+    position: absolute;
+    top: 15%;
+	border:2px solid;
+	border-radius:25px;
+	background-color: olive;
+	width: 400px;
+	height: 300px;
+	opacity: 0.1;
 }
