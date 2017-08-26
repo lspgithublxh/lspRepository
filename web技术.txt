@@ -8,6 +8,9 @@
 		>MetroNic一种良好的模板。
 
 	>spring-security：非配置文件方式：完全java调用方式。
+
+	>web技术之：
+		>freemarker和hibernate的结合：freemarker的位置、输入、处理、输出。
 	
 2.问题：
 	1)加载jar包中的配置文件，来让里面的spring配置文件起作用

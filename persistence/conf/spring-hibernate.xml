@@ -50,6 +50,11 @@
                <prop key="hibernate.format_sql">${hibernate.format_sql}</prop>     <!--在控制台显示执行的数据哭操作语句（格式）-->
            </props>
        </property>
+       <property name="mappingDirectoryLocations">  
+	       <list>  
+	         <value>classpath:/com/construct/persistence/config/mapping</value>  
+	       </list>  
+       </property>  
 </bean>  
 <!-- hibernate方式 -->
 

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "../dtd/hibernate-mapping-3.0.dtd">
+ <!-- http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd -->
+<hibernate-mapping 
+	package="com.construct.persistence.entity">
+	<class name="UserRoles">
+		<id name="id">
+			<generator class="native"/>
+		</id>
+		<property name="username" />
+		<property name="role"/>
+	</class>
+	
+	<!-- 定义一个查询，名称为getUserByName -->
+	<query name="getUserRolesByUsername">
+		<![CDATA[from UserRoles where username = :name]]>
+	</query>
+	<sql-query name="getUserRolesBySql">
+		<![CDATA[select id, name from user_roles where username = :name]]>
+	</sql-query>
+	
+	
+</hibernate-mapping>

@@ -23,5 +23,41 @@
 	<!-- 自动扫描包，可以写多个 -->
     <context:component-scan base-package="com.construct.persistence.entity"></context:component-scan>
     <context:component-scan base-package="com.construct.persistence.dao"></context:component-scan>
+    <context:component-scan base-package="com.construct.persistence"></context:component-scan>
     <mvc:annotation-driven></mvc:annotation-driven>
+    <!-- freemarker和hibernate的整合 -->
+    <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+		<property name="templateLoaderPath" value="/WEB-INF"/>
+		<property name="freemarkerSettings">
+			<props>
+				<prop key="template_update_delay">0</prop>
+				<prop key="defaultEncoding">GBK</prop>
+				<prop key="url_escaping_charset">GBK</prop>
+				<prop key="locale">zh_CN</prop>
+				<prop key="boolean_format">true,false</prop>
+				<prop key="datetime_format">yyyy-MM-dd HH:mm:ss</prop>
+				<prop key="date_format">yyyy-MM-dd</prop>
+				<prop key="time_format">HH:mm:ss</prop>
+				<prop key="number_format">0.######</prop>
+				<prop key="whitespace_stripping">true</prop>
+				<prop key="auto_import">/tpl/spring.ftl as s</prop>
+			</props>
+		</property>
+	</bean>
+	<!-- freemarker实现将java中的数据结构引入到html文件中..但不引进java代码 -->
+	<!-- <bean id="freemarkerViewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+
+		<property name="prefix" value="/exam/"/>
+		
+		<property name="suffix" value=".html"/>
+		
+		<property name="contentType" value="text/html; charset=UTF-8"/>
+		
+		<property name="exposeRequestAttributes" value="false"/>
+		
+		<property name="exposeSessionAttributes" value="false"/>
+		
+		<property name="exposeSpringMacroHelpers" value="true"/>
+		
+		</bean> -->
 </beans>
