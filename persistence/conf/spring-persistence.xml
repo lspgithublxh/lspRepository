@@ -26,7 +26,7 @@
     <context:component-scan base-package="com.construct.persistence"></context:component-scan>
     <mvc:annotation-driven></mvc:annotation-driven>
     <!-- freemarker和hibernate的整合 -->
-    <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+    <bean id="fmc" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
 		<property name="templateLoaderPath" value="/WEB-INF"/>
 		<property name="freemarkerSettings">
 			<props>
@@ -44,6 +44,9 @@
 			</props>
 		</property>
 	</bean>
+	<!-- <bean id="freeMarkerConfig" class="freemarker.template.Configuration">
+	
+	</bean> -->
 	<!-- freemarker实现将java中的数据结构引入到html文件中..但不引进java代码 -->
 	<!-- <bean id="freemarkerViewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
 

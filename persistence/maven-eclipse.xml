@@ -1,0 +1,11 @@
+<project default="copy-resources">
+  <target name="init"/>
+  <target name="copy-resources" depends="init">
+    <copy todir="target/classes/com/construct/persistence/config/mapping" filtering="true">
+      <fileset dir="src/main/java/com/construct/persistence/config/mapping" includes="**/*.xml" excludes="**/*.java"/>
+    </copy>
+    <copy todir="target/classes/com/construct/persistence/config/dtd" filtering="true">
+      <fileset dir="src/main/java/com/construct/persistence/config/dtd" includes="**/*.dtd" excludes="**/*.java"/>
+    </copy>
+  </target>
+</project>

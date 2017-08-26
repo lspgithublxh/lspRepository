@@ -21,8 +21,16 @@
 		<![CDATA[from UserRoles where username = :name]]>
 	</query>
 	<sql-query name="getUserRolesBySql">
-		<![CDATA[select id, name from user_roles where username = :name]]>
+		<![CDATA[select id, username from user_roles where username = :name]]>
 	</sql-query>
 	
+	<sql-query name="queryUserUsingFreemarker">          
+        <![CDATA[
+            select u.* from user_roles u where u.username = :name
+            <#if !name??> 
+                and role like '%ADMIN%'
+            </#if>
+        ]]>
+    </sql-query>
 	
 </hibernate-mapping>

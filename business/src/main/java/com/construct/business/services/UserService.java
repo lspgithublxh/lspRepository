@@ -43,6 +43,8 @@ public class UserService implements IUserService{
 		System.out.println(rs);
 		List<UserRoles> result = hibernateDao.queryForListByNamedQuery("getUserRolesBySql", param, UserRoles.class);
 		System.out.println(result);
+		List<UserRoles> rs2 = hibernateDao.queryForListByNamedQueryUsingFreemarker("queryUserUsingFreemarker", param, UserRoles.class);
+		System.out.println(rs2);
 		return result;
 	}
 

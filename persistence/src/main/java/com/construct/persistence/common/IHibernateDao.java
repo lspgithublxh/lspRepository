@@ -11,4 +11,6 @@ public interface IHibernateDao {
 	
 	public <T> List<T> queryForListByNamedQuery(String sql, Map<String, String> params, Class<T> cla_);
 
+	public <T> List<T> queryForListByNamedQueryUsingFreemarker(String sql, Map<String, String> params, Class<T> cla_);
+ 
 }

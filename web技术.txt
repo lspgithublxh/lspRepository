@@ -30,3 +30,4 @@
 9.http://www.cnblogs.com/tyb1222/p/4146900.html(spring-security登录配置范本)
 10.sqlYog下载：本人百度网盘。
 11.http://www.cnblogs.com/wuya/p/4706079.html（经典第三方日志输出配置）http://blog.csdn.net/cheng_fangang/article/details/49617879
+12.http://blog.csdn.net/ldc5306590/article/details/54022015（ctrl+shift+i查看class中的变量值）http://blog.csdn.net/u011277123/article/details/64906091（动态修改变变量值）
