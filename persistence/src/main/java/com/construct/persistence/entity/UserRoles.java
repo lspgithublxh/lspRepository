@@ -1,5 +1,11 @@
 package com.construct.persistence.entity;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.NamedQueries;
+import org.hibernate.annotations.NamedQuery;
+
 /**
  * 
  *
@@ -7,6 +13,13 @@ package com.construct.persistence.entity;
  *persistence
  *2017年8月26日
  */
+@Entity  
+@Table(name="USER_ROLES") 
+@NamedQueries({
+	@NamedQuery(name="user_roles.query1",query="from UserRoles where username = :name"),
+	@NamedQuery(name="user_roles.query2",query="from UserRoles where username = :name"),
+	@NamedQuery(name="user_roles.query3",query="select * from user_roles where username = :name")
+})
 public class UserRoles {
 
 	private String id;

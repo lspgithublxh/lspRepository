@@ -3,14 +3,17 @@
     "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "../dtd/hibernate-mapping-3.0.dtd">
  <!-- http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd -->
-<hibernate-mapping 
-	package="com.construct.persistence.entity">
-	<class name="UserRoles">
-		<id name="id">
-			<generator class="native"/>
+<hibernate-mapping>
+	<class name="com.construct.persistence.entity.UserRoles" table="USER_ROLES">
+		<id name="id" type="java.lang.String" column="id">
+			<generator class="uuid"/>
 		</id>
-		<property name="username" />
-		<property name="role"/>
+		<property name="username" type="java.lang.String" column="username"/>
+		<property name="role" type="java.lang.String" column="role"/>
+		<!-- 定义一个查询，名称为getUserByName (这里将<query>放到<class>节点里面来) 引用时需要带包名类名即完整的路径名--> 
+		<query name="getUserByName_">
+			<![CDATA[from UserRoles where username = :name]]>
+		</query>
 	</class>
 	
 	<!-- 定义一个查询，名称为getUserByName -->

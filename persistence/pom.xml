@@ -92,6 +92,22 @@
     </includes>
     <filtering>true</filtering>
    </resource>
+   <resource>
+    <directory>src/main/java/com/construct/persistence/config/mapping</directory><!--自动也不会加入src/main/resource这个路径下的资源 -->
+    <includes>
+     <include>**/*.xml</include>
+    </includes>
+    <filtering>true</filtering>
+    <targetPath>com/construct/persistence/config/mapping</targetPath>
+   </resource>
+   <resource>
+    <directory>src/main/java/com/construct/persistence/config/dtd</directory><!--自动也不会加入src/main/resource这个路径下的资源 -->
+    <includes>
+     <include>**/*.dtd</include>
+    </includes>
+    <filtering>true</filtering>
+    <targetPath>com/construct/persistence/config/dtd</targetPath>
+   </resource>
   </resources>
   </build>
 </project>
