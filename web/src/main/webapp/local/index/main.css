@@ -129,7 +129,7 @@ span.buy_num{
 }
 
 .navi-div-coll-list:hover .navi-down-coll-list, .navi-div-phone:hover .navi-qrcode,
-.navi-div-seller:hover .navi-div-dropdown-seller{
+.navi-div-seller:hover .navi-div-dropdown-seller, .navi-div-navitor:hover .navi-div-menu{
 	display: block;
 }
 .navi-down-coll-list{
@@ -212,6 +212,46 @@ span.buy_num{
 .navi-div-dropdown-seller li div{
 	display: inline-block;
 }
+.navi-div-menu{
+	position: absolute;
+	background: #fff;
+    z-index: 93110;
+    border: solid #eee;
+    display: none;
+    width: 1220px;
+    left: -400px;
+}
+.navi-menu-hot, .navi-menu-market, .navi-menu-brand, .navi-menu-help{
+	padding-left: 30px;
+    overflow: hidden;
+    height: 200px;
+    width: 310px;
+    margin-right: 0px;
+    padding-right: 0px;
+    float: left;
+}
+.navi-menu-help{
+	width: 150px !important;
+}
+.navi-menu-hot h2, .navi-menu-market h2, .navi-menu-brand h2, .navi-menu-help h2{
+	font-size: 16px;
+    margin: 1px 0px;
+    font-family: '\5FAE\8F6F\96C5\9ED1',arial,"\5b8b\4f53";
+}
+.navi-menu-hot ul, .navi-menu-market ul, .navi-menu-brand ul, .navi-menu-help ul{
+	margin-right: -20px;
+    overflow: hidden;
+    padding: 0;
+    left: -10px;
+    position: relative;
+}
+.navi-menu-hot ul li, .navi-menu-market ul li, .navi-menu-brand ul li, .navi-menu-help ul li{
+	width: 95px;
+    float: left;
+    padding: 0px;
+    overflow: hidden;
+}
+
 /**
 元素头和元素尾加方括号
 选择器对应的全部元素的前面和后面都加content
