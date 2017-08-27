@@ -14,8 +14,8 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest arg0, HttpServletResponse response, Authentication arg2)
 			throws IOException, ServletException {
-		response.sendRedirect("./view/jsp/index.jsp");
-		
+//		response.sendRedirect("./view/jsp/index.jsp");
+		response.sendRedirect("./view/html/index.html");
 	}
 
 }

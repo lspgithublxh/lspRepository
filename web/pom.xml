@@ -135,6 +135,13 @@
                   <encoding>UTF-8</encoding>  
                   <source>1.8</source>  
             	  <target>1.8</target>  
+            	  <!--  <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>../lib/</classpathPrefix>
+                            <useUniqueVersions>false</useUniqueVersions>
+                        </manifest>
+                    </archive> -->
               </configuration>  
           </plugin> 
           <plugin>

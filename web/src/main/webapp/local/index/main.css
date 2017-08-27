@@ -1,0 +1,55 @@
+body {
+	margin: 0;
+	padding: 0;
+}
+
+.main-top {
+	position: relative;
+	display: block;
+	height: 80px
+}
+
+.main-top-bg1 {
+	background: #1f0009;
+	width: 50%;
+	position: absolute;
+	left: 0;
+	height: 100%;
+}
+
+.main-top-bg2 {
+	background: #1f0009;
+	width: 50%;
+	position: absolute;
+	right: 0;
+	height: 100%;
+}
+
+.main-top-img {
+	position: relative;
+	top: 0;
+	margin: 0 auto;
+	z-index: 10;
+}
+.main-navi{
+	position: relative;
+	display: block;
+	height: 32px;
+	font-family: "Microsoft YaHei",tahoma,arial,'Hiragino Sans GB','\5b8b\4f53',sans-serif;
+	font-size: 13px;
+	background: #f2f2f2;
+	border-bottom: 1px solid #e5e5e5;
+}
+.main-navi p{
+	top: 7px;
+    left: 100px;
+    position: relative;
+	margin: 0;
+}
+.main-navi a, .main-navi em{
+	color: #999;
+}
+.main-navi a:hover{
+	color: #FF0036;
+	cursor: pointer;
+}
