@@ -31,25 +31,82 @@ body {
 	margin: 0 auto;
 	z-index: 10;
 }
-.main-navi{
+
+.main-navi {
 	position: relative;
 	display: block;
 	height: 32px;
-	font-family: "Microsoft YaHei",tahoma,arial,'Hiragino Sans GB','\5b8b\4f53',sans-serif;
-	font-size: 13px;
+	font-family: "Microsoft YaHei", tahoma, arial, 'Hiragino Sans GB',
+		'\5b8b\4f53', sans-serif;
+	font-size: 11px;
 	background: #f2f2f2;
 	border-bottom: 1px solid #e5e5e5;
 }
-.main-navi p{
+.main-navi-module{
+	position: relative;
+	width: 1230px;
+	left: -15px;
+	margin: auto;
+}
+.main-navi p {
 	top: 7px;
-    left: 100px;
-    position: relative;
+	/*left: 100px;*/
+	position: relative;
 	margin: 0;
+	display: inline;
 }
-.main-navi a, .main-navi em{
+
+.main-navi a, .main-navi em {
 	color: #999;
+	margin: 0 10px;
 }
-.main-navi a:hover{
+
+.main-navi a:hover {
 	color: #FF0036;
 	cursor: pointer;
+}
+
+.main-navi svg {
+	width: 1em;
+	height: 1em;
+	vertical-align: middle;
+	fill: currentColor;
+	overflow: hidden;
+}
+.main-navi ul{
+	line-height: 32px;
+	position: absolute;
+    right: 0;
+    top: 0;
+    padding: 0;
+    margin: 0;
+}
+.main-navi li{
+	list-style: none;
+	float: left;
+	padding: 0 10px;
+}
+.navi-div-list:hover{
+	background-color: white;
+	border-bottom: 1px solid white;
+}
+.navi-down-list{
+	z-index: 93110;
+    border: solid #eee;
+    border-width: 0 1px 1px;
+    position: absolute;
+    left: 9px;
+    background: white;
+    width: 74px;
+    padding: 8px 10px;
+    top: 33px;
+    display: none;
+}
+.navi-div-list:hover .navi-down-list{
+	display: block;
+}
+.navi-down-list a{
+	display: block;
+	line-height: 20px;
+	margin: 0 !important;
 }
