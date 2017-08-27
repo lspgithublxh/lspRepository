@@ -86,7 +86,7 @@ body {
 	float: left;
 	padding: 0 10px;
 }
-.navi-div-list:hover{
+.navi-div-list:hover, .navi-div-coll-list:hover, .navi-div-seller:hover{
 	background-color: white;
 	border-bottom: 1px solid white;
 }
@@ -105,17 +105,69 @@ body {
 .navi-div-list:hover .navi-down-list{
 	display: block;
 }
-.navi-div-list:hover svg.icon_2{
+.navi-div-list:hover svg.icon_2, .navi-div-coll-list:hover svg.icon_4, 
+.navi-div-seller:hover svg.icon_6{
 	display: inline !important;
 }
-.navi-div-list:hover svg.icon_1{
+.navi-div-list:hover svg.icon_1, .navi-div-coll-list:hover svg.icon_3 ,
+.navi-div-seller:hover svg.icon_5{
 	display: none;
 }
-.navi-down-list a{
+.navi-down-list a, .navi-down-coll-list a{
 	display: block;
 	line-height: 20px;
 	margin: 0 !important;
 }
+span.buy_num{
+	color: #666;
+    padding: 0 2px;
+    font-weight: 700;
+    font-family: Arial;
+    position: relative;
+    left: -1px;
+}
+
+.navi-div-coll-list:hover .navi-down-coll-list, .navi-div-phone:hover .navi-qrcode{
+	display: block;
+}
+.navi-down-coll-list{
+	z-index: 93110;
+    border: solid #eee;
+    border-width: 0 1px 1px;
+    position: absolute;
+    left: 358px;
+    background: white;
+    width: 74px;
+    padding: 8px 10px;
+    top: 33px;
+    display: none;
+}
+.navi-qrcode{
+	position: absolute;
+    width: 175px;
+    height: 227px;
+    background: #fff;
+    left: 400px;
+    top: 26px;
+    box-shadow: 0 0 5px #aaa;
+    display: none;
+}
+.navi-qrcode-img{
+	width: 175px;
+    height: 175px;
+    margin: 5px 0 0px;
+    background: url(../../global/img/qr.png) 0 0 no-repeat;
+}
+.navi-qrcode-bot{
+	background: url(../../global/img/qr-b.png) center bottom no-repeat;
+    text-indent: -9999px;
+    overflow: hidden;
+    margin: 0 15px;
+    line-height: 35px;
+    height: 31px;
+}
+
+
 /**
 元素头和元素尾加方括号
 选择器对应的全部元素的前面和后面都加content
