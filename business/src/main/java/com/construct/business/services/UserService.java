@@ -39,6 +39,7 @@ public class UserService implements IUserService{
 		param.put("name", "Tom");
 //		List<UserRoles> rs2 = hibernateDao.queryForListByNamedQuery("user_roles.query1", param, UserRoles.class);
 
+		
 		List<UserRoles> rs = hibernateDao.queryForListByNamedQuery("com.construct.persistence.entity.UserRoles.getUserByName_", param, UserRoles.class);
 		System.out.println(rs);
 		List<UserRoles> result = hibernateDao.queryForListByNamedQuery("getUserRolesBySql", param, UserRoles.class);
