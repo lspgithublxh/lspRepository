@@ -105,8 +105,21 @@ body {
 .navi-div-list:hover .navi-down-list{
 	display: block;
 }
+.navi-div-list:hover svg.icon_2{
+	display: inline !important;
+}
+.navi-div-list:hover svg.icon_1{
+	display: none;
+}
 .navi-down-list a{
 	display: block;
 	line-height: 20px;
 	margin: 0 !important;
 }
+/**
+元素头和元素尾加方括号
+选择器对应的全部元素的前面和后面都加content
+*/
+a:hover::before, a:hover::after { position: absolute; } 
+a:hover::before { content: "\5B"; left: -20px; }  
+a:hover::after { content: "\5D"; right:  -20px; }  
