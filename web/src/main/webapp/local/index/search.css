@@ -12,7 +12,7 @@
     padding: 0;
 }
 .div-search-content{
-	width: 1230px;
+	width: 610px;
 	margin: 0 auto;
 	padding-top: 0!important;
 }
@@ -21,11 +21,12 @@
     padding-top: 38px;
     float: right;
     overflow: hidden;
+    position: relative;
 }
 .div-search-box form{
-	border-width: 2px 0 2px 2px;
+	
 	clear: both;
-	border: solid #FF0036;
+	
 	zoom: 1;
 	margin: 0;
     padding: 0;
@@ -58,4 +59,25 @@
     padding: 5px 3px 5px 5px;
     outline: 0;
     border: 2.3px solid red;
+}
+.div-search-box button{
+	width: 132px;
+    height: 36px;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 5px;
+    position: absolute;
+    z-index: 1;
+   right: 3px;
+    top: 38px;
+    border: 0;
+    cursor: pointer;
+    color: #fff;
+    background-color: #FF0036;
+    overflow: hidden;
+    font-family: '\5FAE\8F6F\96C5\9ED1',arial,"\5b8b\4f53";
+    
+}
+li.hot-query-highlight{
+	color: red;
 }
