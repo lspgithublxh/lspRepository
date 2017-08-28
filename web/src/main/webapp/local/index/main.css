@@ -89,6 +89,7 @@ body {
 .navi-div-list:hover, .navi-div-coll-list:hover, .navi-div-seller:hover,
 .navi-div-navitor:hover{
 	background-color: white;
+	border-width: 0 1px;
 	border-bottom: 1px solid white;
 }
 .navi-down-list{
@@ -168,6 +169,19 @@ span.buy_num{
     line-height: 35px;
     height: 31px;
 }
+.navi-qrcode b{
+	width: 0;
+    height: 0;
+    line-height: 0;
+    font-size: 0;
+    position: absolute;
+    left: 50%;
+    top: -10px;
+    margin-left: -2px;
+    border-width: 5px;
+    border-style: dashed dashed solid;
+    border-color: transparent transparent #fff;
+}
 .navi-div-dropdown-seller{
     overflow: hidden;
     right: 0;
@@ -216,10 +230,12 @@ span.buy_num{
 	position: absolute;
 	background: #fff;
     z-index: 93110;
-    border: solid #eee;
+    border: 1px solid #eee;
     display: none;
     width: 1220px;
     left: -400px;
+    border-top: 0;
+    top: 33px;
 }
 .navi-menu-hot, .navi-menu-market, .navi-menu-brand, .navi-menu-help{
 	padding-left: 30px;
@@ -237,6 +253,19 @@ span.buy_num{
 	font-size: 16px;
     margin: 1px 0px;
     font-family: '\5FAE\8F6F\96C5\9ED1',arial,"\5b8b\4f53";
+    font-weight: 100;
+}
+.navi-menu-hot h2{
+	color: #f56a00;
+}
+.navi-menu-market h2{
+	color: #2263d4;
+}
+.navi-menu-brand h2{
+	color: #000;
+}
+.navi-menu-help{
+	color: #666;
 }
 .navi-menu-hot ul, .navi-menu-market ul, .navi-menu-brand ul, .navi-menu-help ul{
 	margin-right: -20px;
@@ -251,7 +280,20 @@ span.buy_num{
     padding: 0px;
     overflow: hidden;
 }
-
+/**
+三角形的生成办法启发
+从而可以生成四个方向的三角形
+宽高位置设置、中心点设置好，则直角三角形、钝角三角形就可以
+梯形可以，从多个不同斜度的梯形模拟圆形可以
+*/
+.triangle {
+    width: 10px;
+    height: 10px;
+    border-top: 20px solid #EEB422;
+    border-right: 20px solid #C0FF3E;
+    border-bottom: 20px solid #A020F0;
+    border-left: 20px solid #7CFC00;
+}
 /**
 元素头和元素尾加方括号
 选择器对应的全部元素的前面和后面都加content
