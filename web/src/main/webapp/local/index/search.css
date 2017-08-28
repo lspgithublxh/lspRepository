@@ -1,0 +1,61 @@
+.div-search{
+	    margin-left: auto;
+    margin-right: auto;
+    width: auto!important;
+    position: relative;
+    z-index: 1000;
+    height: 130px;
+    margin-top: 0!important;
+    margin-bottom: 0;
+    min-width: 990px;
+    background: #fff;
+    padding: 0;
+}
+.div-search-content{
+	width: 1230px;
+	margin: 0 auto;
+	padding-top: 0!important;
+}
+.div-search-box{
+	width: 625px;
+    padding-top: 38px;
+    float: right;
+    overflow: hidden;
+}
+.div-search-box form{
+	border-width: 2px 0 2px 2px;
+	clear: both;
+	border: solid #FF0036;
+	zoom: 1;
+	margin: 0;
+    padding: 0;
+}
+.div-search-box ul{
+	height: 18px;
+    font-size: 14px;
+    padding: 4px 0 0;
+    margin-left: -13px;
+    overflow: hidden;
+    width: 100%;
+    list-style: none;
+}
+.div-search-box ul li{
+	display: inline-block;
+    border-left: 1px solid #ccc;
+    line-height: 1.1;
+    padding: 0 12px;
+    list-style: none;
+}
+.div-search-combobox input{
+	    height: 36px;
+    width: 491px;
+    font: 16px/22px arial;
+    box-sizing: border-box;
+    background: 0 0;
+    color: #000;
+    margin: 0;
+    z-index: 2;
+    padding: 5px 3px 5px 5px;
+    outline: 0;
+    border: 2.3px solid red;
+}
