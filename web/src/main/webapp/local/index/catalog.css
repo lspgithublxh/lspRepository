@@ -55,4 +55,32 @@
 }
 .hover-pic{
 	display: inline-block;
+	
+}
+.pic-something{
+	display: none;
+}
+.content-supermarket{
+	position: relative;
+    left: -3px;
+}
+.div-content-menu a:hover .hover-pic{/* 里面的hover-pic元素*/
+	background: url(../../global/img/cat.png) no-repeat;
+    background-size: 40px 15px;
+    display: block;
+    position: absolute;
+    width: 40px;
+    height: 10px;
+    top: 0;
+    right: 30%;
+    transition: opacity .4s,transform .4s;
+    -moz-transform: translate(-20px,-10px);
+    -ms-transform: translate(-20px,-10px);
+    -o-transform: translate(-20px,-10px);
+    -webkit-transform: translate(-20px,-10px);
+    transform: translate(0px,-10px);
+    opacity: 1;
+}
+.div-content-menu a:hover .pic-something{
+	display: inline-block;
 }
