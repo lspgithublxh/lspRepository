@@ -1,8 +1,12 @@
 package com.construct.persistence.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 
@@ -11,7 +15,7 @@ import org.hibernate.annotations.NamedQuery;
  *
  * @author lishaoping
  *persistence
- *2017年8月26日
+ *2017骞�8鏈�26鏃�
  */
 @Entity  
 @Table(name="USER_ROLES") 
@@ -21,7 +25,10 @@ import org.hibernate.annotations.NamedQuery;
 	@NamedQuery(name="user_roles.query3",query="select * from user_roles where username = :name")
 })
 public class UserRoles {
-
+	@Id  
+    @GeneratedValue(generator = "system-uuid")  //浣跨敤uuid鐢熸垚涓婚敭鐨勬柟寮�  
+	@GenericGenerator(name = "system-uuid", strategy = "uuid")   
+    @Column(length=32) 
 	private String id;
 	private String username;
 	private String role;
