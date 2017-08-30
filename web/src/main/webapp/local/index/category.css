@@ -31,6 +31,9 @@
 	height: 31px;
     font-size: 14px;
 }
+.category-tab-li a:hover{
+	cursor: pointer;
+}
 .category-tab-li:hover{
 	background: white;
 	border: 0;
@@ -50,4 +53,114 @@
 }
 .category-li-green:hover{
 	color:green;
+}
+.cata-detail-page{
+	    height: 500px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+}
+.cata-detail-panel{
+	height: 500px;
+    width: 852px;
+    left: 200px;
+    position: absolute;
+    background-color: #fff;
+    display: block;
+}
+.cata-detail-layer{
+	margin: 0;
+    padding: 0;
+}
+.cata-detail-container{
+	float: left;
+    width: 583px;
+    height: 462px;
+    margin: 19px 30px;
+    /*overflow: hidden;*/
+    background-color: #fff;
+}
+.hot-word-line{
+	font-family: "Microsoft YaHei",SimSun,'\5b8b\4f53',sans-serif;
+	color: #999;
+    font-size: 12px;
+}
+.line-title{
+	    width: 60px;
+    color: #333;
+    margin-right: 30px;
+    position: relative;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 22px;
+    height: 22px;
+    float: left;
+}
+.line-con{
+	width: 493px;
+    float: left;
+}
+.line-con a{
+	    height: 22px;
+    line-height: 22px;
+    font-size: 14px;
+    color: #666;
+    float: left;
+    margin-left: 13px;
+    outline: 0;
+}
+.title-text{
+	display: inline-block;
+    width: 60px;
+    overflow: hidden;
+    text-align: justify;
+}
+.highlight{
+	color: red !important;
+}
+.seprate{
+	margin-bottom: 10.5px;
+    border-bottom-width: 1px;
+    border-bottom-style: dashed;
+    border-bottom-color: rgba(0,0,0,.1);
+    height: 10.5px;
+    clear: both;
+    zoom:1;
+}
+.sub-logo-con{
+	float: left;
+    background-color: #FAFAFA;
+    width: 189px;
+    padding: 10px;
+    height: 480px;
+    padding:0;
+    padding-left: 10px;
+    position: relative;
+    top: -500px;
+    left: 600px;
+    z-index: 0;
+}
+a.logo{
+	float: left;
+    width: 73px;
+    margin-right: 1px;
+    margin-bottom: 1px;
+    height: 37px;
+    padding: 5px 10px;
+    overflow: hidden;
+    background-color: #fff;
+    color: #000;
+    outline: 0;
+    text-decoration: none;
+    cursor: pointer;
+}
+a.logo img{
+	width: 73px;
+}
+a.activity img{
+	width: 186px;
+}
+.tab-li-1:hover .cata-detail-panel{
+	display: block;
 }

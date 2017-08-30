@@ -2,17 +2,35 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<script src="../global/jquery/jquery-3.1.1.min.js"
+<script src="../../global/jquery/jquery-3.1.1.min.js"
 	type="text/javascript"></script>
-<script src="../global/angularjs2/angularjs2.min.js"
+<script src="../../global/angularjs2/angularjs2.min.js"
 	type="text/javascript"></script>
-<script src="../global/angularjs2/angularjs-router.min.js"
+<script src="../../global/angularjs2/angularjs-router.min.js"
 	type="text/javascript"></script>
 <link type="text/css" rel="stylesheet" href="../../local/index/main.css">
 <link type="text/css" rel="stylesheet" href="../../local/index/search.css">
 <link type="text/css" rel="stylesheet" href="../../local/index/catalog.css">
 <link type="text/css" rel="stylesheet" href="../../local/index/category.css">
 <title>电子商务网站</title>
+<script type="text/javascript">
+(function(){
+	
+})();
+/**
+ * 页面加载完成
+ */
+$(document).ready(function(){
+	$(".tab-li-1").hover(function(){
+		$(".detail-panel-1").css({"display":"block"});
+	},function(){
+		$(".detail-panel-1").css({"display":"none"});
+	});
+});
+$(function(){
+	
+});
+</script>
 </head>
 <body>
 	<div class="main-top">
@@ -388,7 +406,7 @@
 				<div class="category-tab-content">
 					<div class="category-tab-pannel">
 						<ul class="category-tab-ul">
-							<li class="category-tab-li category-li-red"
+							<li class="category-tab-li category-li-red tab-li-1"
 								data-spm="category2016010">
 								<svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1157"><path d="M957.402707 883.428466c-86.781044-143.468661-176.661411-287.0373-262.242716-430.505961 30.493339-66.085564 63.186198-132.071151 93.879493-198.156715 6.998471-14.996724 5.698755-27.394016-4.299061-40.091243-36.99192-46.989736-37.591789-124.372832-35.392269-181.860275 0.699847-17.996069-15.19668-32.392924-32.692859-32.392924-38.991483 0-78.082944 0-117.074427 0-13.397074 0-29.693514 9.297969-31.893033 23.594846-4.998908 32.292946-18.695916 74.783664-51.988644 87.380913-45.490063 17.196244-66.085564-44.990172-68.385062-78.382878-1.199738-17.996069-14.096921-32.59288-33.092771-32.59288-38.091679 0-79.582616 0-110.975759 0C285.349509-1.678193 265.053942 8.819513 263.954183 32.214403c-2.69941 60.186853-7.098449 134.770561-38.991483 175.161738-10.197772 12.897183-15.296659 24.99454-8.6981 40.091243 29.693514 67.285302 56.187726 134.470627 85.681284 201.755929C229.561695 574.895861 157.477441 702.268038 87.292772 830.839953c-20.395545 37.49181-42.690675 62.086438-22.095174 102.377637 17.496178 34.192531 56.087748 63.58611 91.180083 77.483075 72.484167 28.593754 124.672767 7.398384 173.162175-47.28967 52.688491-59.287049 129.871631 61.186635 188.65879 60.586766 57.287486-0.599869 106.476741-59.686962 158.665342-77.383097 23.094955-7.798297 56.487661 37.291854 72.484167 49.689146 24.194715 18.895872 48.889321 23.994759 78.682813 18.196025 50.588949-9.79786 105.776894-52.888447 131.071369-97.678663C964.901069 906.623399 963.601353 893.626239 957.402707 883.428466zM490.404717 178.682409c70.584582 4.998908 117.97423-49.689146 135.770343-112.375453 18.995851 0 37.991701 0 56.987552 0 0.699847 60.286831 10.397729 123.772963 41.390959 174.861804-27.493994 59.287049-55.087967 118.474121-82.581961 177.76117-92.079886 0-179.660755 0-273.340292 0-9.79786-26.794147-26.894125-55.287923-33.292728-69.5848-16.896309-38.191658-33.292728-76.483293-49.989081-114.674951 32.392924-51.288797 39.69133-108.476305 43.190566-168.263245 18.096047 0 37.891723 0 57.587421 0C398.124875 120.395141 430.917711 174.483326 490.404717 178.682409zM844.327407 934.717263c-53.788251 33.592662-64.885827-5.298843-104.977069-33.292728-67.285302-47.089714-126.772308 2.799389-186.559248 37.791745-10.597685 6.198646-30.193405 22.095174-42.790653 16.496397-19.095829-8.498144-35.392269-24.99454-51.888666-37.691767-32.292946-24.794584-71.884298-42.39074-113.375235-34.092553-36.092116 7.298406-60.086875 27.294038-83.18183 54.38812-40.391177 47.489626-109.27613 7.098449-140.069404-34.992356 81.182267-141.269142 157.765538-280.938632 240.047565-418.60856 49.089277 0 186.059358 0 277.039484 0 6.698537 16.096484 18.096047 31.993012 29.793492 51.488753 73.283992 121.173531 144.168508 242.44704 216.952609 363.620572C874.520812 913.821827 859.824022 925.019381 844.327407 934.717263z" p-id="1158"></path></svg>
 								 <a>
@@ -586,6 +604,352 @@
 						</ul>
 					</div>
 
+				</div>
+				
+				<div class="cata-detail-page">
+					<div class="cata-detail-panel detail-panel-1" style="display: none;">
+						<div class="cata-detail-layer">
+							<div class="cata-detail-container">
+								<div class="hot-word-line">
+									<div class="line-title">
+										<div class="title-text">当季流行</div>
+										<svg class="icon" style="position: relative;left: 56px;top: -28px;width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="12057"><path d="M298.66666699999996 262.91200000000003L298.6666669999999 213.33333299999998 725.333333 470.528l0 43.39200000000002L298.6666669999999 768l0-52.693333000000024 389.0346670000001-223.10400000000016L298.66666699999996 262.91200000000003z" p-id="12058"></path></svg>
+									</div>
+									<div class="line-con">
+										<a class="hot-word  highlight "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.1">夏季新品</a>
+										<a class="hot-word  highlight "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.2">商场同款</a>
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.3">气质连衣裙</a>
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.4">印花衬衫</a>
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.5">牛仔单品</a>
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.6">百搭休闲裤</a>
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.7">无痕文胸</a>
+										<a class="hot-word  highlight "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.8">运动文胸</a>
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.9">超柔内裤</a>
+										<a class="hot-word  highlight "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.10">潮流家居服</a>
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.11">百搭船袜</a>
+										<div class="seprate"></div>
+									</div>
+								</div>
+								<div class="hot-word-line">
+									<div class="line-title">
+										<div class="title-text">精选上装</div>
+										<svg class="icon" style="position: relative;left: 56px;top: -28px;width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="12057"><path d="M298.66666699999996 262.91200000000003L298.6666669999999 213.33333299999998 725.333333 470.528l0 43.39200000000002L298.6666669999999 768l0-52.693333000000024 389.0346670000001-223.10400000000016L298.66666699999996 262.91200000000003z" p-id="12058"></path></svg>
+									</div>
+									<div class="line-con">
+										<a class="hot-word  highlight "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.1">T恤</a>
+										<a class="hot-word  highlight "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.2">衬衫</a>
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.3">针织衫</a>
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.4">短外套</a>
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.5">小西装</a>
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.6">风衣</a>
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.7">卫衣</a>
+										<a class="hot-word  highlight "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.8">毛衣</a>
+										
+										<div class="seprate"></div>
+									</div>
+								</div>
+								<div class="hot-word-line">
+									<div class="line-title">
+										<div class="title-text">浪漫裙装</div>
+										<svg class="icon" style="position: relative;left: 56px;top: -28px;width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="12057"><path d="M298.66666699999996 262.91200000000003L298.6666669999999 213.33333299999998 725.333333 470.528l0 43.39200000000002L298.6666669999999 768l0-52.693333000000024 389.0346670000001-223.10400000000016L298.66666699999996 262.91200000000003z" p-id="12058"></path></svg>
+									</div>
+									<div class="line-con">
+
+										<a class="hot-word  highlight "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.20">连衣裙</a>
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.21">蕾丝连衣裙</a>
+										<a class="hot-word  highlight "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.22">真丝连衣裙</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.23">印花连衣裙</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.24">半身裙</a>
+
+										<a class="hot-word  highlight "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.25">蕾丝半身裙</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.26">百褶裙</a>
+
+										<a class="hot-word  highlight "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.27">牛仔裙</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.28">背心裙</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.29">a字裙</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.30">棉麻连衣裙</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.31">包臀裙</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.32">长袖连衣裙</a>
+										<div class="seprate clearfix"></div>
+									</div>
+								</div>
+								<div class="hot-word-line">
+									<div class="line-title">
+										<div class="title-text">女士下装</div>
+										<svg class="icon" style="position: relative;left: 56px;top: -28px;width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="12057"><path d="M298.66666699999996 262.91200000000003L298.6666669999999 213.33333299999998 725.333333 470.528l0 43.39200000000002L298.6666669999999 768l0-52.693333000000024 389.0346670000001-223.10400000000016L298.66666699999996 262.91200000000003z" p-id="12058"></path></svg>
+									</div>
+									<div class="line-con">
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.33">短裤</a>
+
+										<a class="hot-word  highlight "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.34">牛仔裤</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.35">休闲裤</a>
+
+										<a class="hot-word  highlight "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.36">小脚裤</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.37">哈伦裤</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.38">背带裤</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.39">西装裤</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.40">阔腿裤</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.41">打底裤</a>
+
+										<div class="seprate clearfix"></div>
+
+									</div>
+
+								</div>
+								<div class="hot-word-line">
+									<div class="line-title">
+										<div class="title-text">特色女装</div>
+										<svg class="icon" style="position: relative;left: 56px;top: -28px;width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="12057"><path d="M298.66666699999996 262.91200000000003L298.6666669999999 213.33333299999998 725.333333 470.528l0 43.39200000000002L298.6666669999999 768l0-52.693333000000024 389.0346670000001-223.10400000000016L298.66666699999996 262.91200000000003z" p-id="12058"></path></svg>
+									</div>
+									<div class="line-con">
+
+										<a class="hot-word  highlight "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.42">时尚套装</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.43">休闲套装</a>
+
+										<a class="hot-word  highlight "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.44">精选妈妈装</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.45">大码女装</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.46">职业套装</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.47">优雅旗袍</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.48">精致礼服</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.49">婚纱</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.50">唐装</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.51">小码女装</a>
+
+										<div class="seprate clearfix"></div>
+									</div>
+								</div>
+
+								<div class="hot-word-line">
+									<div class="line-title">
+										<div class="title-text">文胸塑身</div>
+										<svg class="icon" style="position: relative;left: 56px;top: -28px;width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="12057"><path d="M298.66666699999996 262.91200000000003L298.6666669999999 213.33333299999998 725.333333 470.528l0 43.39200000000002L298.6666669999999 768l0-52.693333000000024 389.0346670000001-223.10400000000016L298.66666699999996 262.91200000000003z" p-id="12058"></path></svg>
+									</div>
+									<div class="line-con">
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.52">光面文胸</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.53">运动文胸</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.54">美背文胸</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.55">聚拢文胸</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.56">大杯文胸</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.57">轻薄塑身</a>
+
+										<div class="seprate clearfix"></div>
+
+									</div>
+
+								</div>
+
+								<div class="hot-word-line">
+									<div class="line-title">
+										<div class="title-text">家<span style="padding-left: 6px;">居 </span><span style="padding-left: 2px" >服 </span> </div>
+										<svg class="icon" style="position: relative;left: 56px;top: -28px;width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="12057"><path d="M298.66666699999996 262.91200000000003L298.6666669999999 213.33333299999998 725.333333 470.528l0 43.39200000000002L298.6666669999999 768l0-52.693333000000024 389.0346670000001-223.10400000000016L298.66666699999996 262.91200000000003z" p-id="12058"></path></svg>
+									</div>
+									<div class="line-con">
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.58">春夏家居服</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.59">纯棉家居服</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.60">莫代尔家居服</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.61">真丝家居服</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.62">春夏睡裙</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.63">男士家居服</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.64">情侣家居服</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.65">性感睡裙</a>
+
+										<div class="seprate clearfix"></div>
+
+									</div>
+
+								</div>
+
+								<div class="hot-word-line">
+									<div class="line-title">
+										<div class="title-text">内裤背心</div>
+										<svg class="icon" style="position: relative;left: 56px;top: -28px;width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="12057"><path d="M298.66666699999996 262.91200000000003L298.6666669999999 213.33333299999998 725.333333 470.528l0 43.39200000000002L298.6666669999999 768l0-52.693333000000024 389.0346670000001-223.10400000000016L298.66666699999996 262.91200000000003z" p-id="12058"></path></svg>
+									</div>
+									<div class="line-con">
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.66">男士内裤</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.67">女式内裤</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.68">男士内裤多条装</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.69">女士内裤多条装</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.70">莫代尔内裤</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.71">吊带背心</a>
+
+										<div class="seprate clearfix"></div>
+
+									</div>
+
+								</div>
+
+								<div class="hot-word-line">
+									<div class="line-title">
+										<div class="title-text">袜类</div>
+										<svg class="icon" style="position: relative;left: 56px;top: -28px;width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="12057"><path d="M298.66666699999996 262.91200000000003L298.6666669999999 213.33333299999998 725.333333 470.528l0 43.39200000000002L298.6666669999999 768l0-52.693333000000024 389.0346670000001-223.10400000000016L298.66666699999996 262.91200000000003z" p-id="12058"></path></svg>
+									</div>
+									<div class="line-con">
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.72">船袜</a>
+
+										<a class="hot-word "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.73">长筒丝袜</a>
+
+										<a class="hot-word  highlight "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.74">男士运动袜</a>
+
+										<a class="hot-word  highlight "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.75">女士装饰袜</a>
+
+										<a class="hot-word  highlight "
+											data-spm-anchor-id="875.7931836/B.subpannel2016025.76">潮流渔网袜</a>
+
+									</div>
+
+								</div>
+
+								<div class="sub-logo-con">
+									<div data-spm="subpannel2016026">
+										<a class="logo"> <img src="../../global/img-logo/a1.jpg">
+										</a> <a class="logo"> <img src="../../global/img-logo/a2.jpg">
+										</a> <a class="logo"> <img src="../../global/img-logo/a3.jpg">
+										</a> <a class="logo"> <img src="../../global/img-logo/a4.jpg">
+										</a> <a class="logo"> <img src="../../global/img-logo/a5.jpg">
+										</a> <a class="logo"> <img src="../../global/img-logo/a6.jpg">
+										</a> <a class="logo"> <img src="../../global/img-logo/a7.jpg">
+										</a> <a class="logo"> <img src="../../global/img-logo/a8.jpg">
+										</a> <a class="logo"> <img src="../../global/img-logo/a9.jpg">
+										</a> <a class="logo"> <img src="../../global/img-logo/a10.jpg">
+										</a> <a class="logo"> <img src="../../global/img-logo/a11.jpg">
+										</a> <a class="logo"> <img src="../../global/img-logo/a12.jpg">
+										</a> <a class="logo"> <img src="../../global/img-logo/a13.jpg">
+										</a> <a class="logo"> <img src="../../global/img-logo/a14.jpg">
+										</a> <a class="logo"> <img src="../../global/img-logo/a15.jpg">
+										</a> <a class="logo"> <img src="../../global/img-logo/a16.jpg">
+										</a>
+									</div>
+									<div data-spm="subpannel2016027">
+										<a class="activity"> <img src="../../global/img-logo/a17.jpg">
+											<div class="title"></div>
+											<div class="sub-title"></div>
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					
+					</div>
+				
 				</div>
 			</div>
 		</div>
