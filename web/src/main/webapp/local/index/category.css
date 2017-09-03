@@ -34,28 +34,28 @@
 .category-tab-li a:hover{
 	cursor: pointer;
 }
-.category-tab-li:hover{
+.category-tab-li:hover, .setColorWhite{
 	background: white;
 	border: 0;
 	font-weight: bold;
 }
-.category-li-red:hover{
+.category-li-red:hover, .redColorSet{
 	color: red;
 }
-.category-li-blue:hover{
+.category-li-blue:hover, .blueColorSet{
 	color: blue;
 }
-.category-li-orange:hover{
+.category-li-orange:hover, .orangeColorSet{
 	color: orange;
 }
-.category-li-purple:hover{
+.category-li-purple:hover, .darkorchidColorSet{
 	color:darkorchid;
 }
-.category-li-green:hover{
+.category-li-green:hover, .greenColorSet{
 	color:green;
 }
 .cata-detail-page{
-	    height: 500px;
+	height: 500px;
     position: absolute;
     top: 0;
     left: 0;
@@ -161,6 +161,17 @@ a.logo img{
 a.activity img{
 	width: 186px;
 }
+/*
 .tab-li-1:hover .cata-detail-panel{
 	display: block;
+}
+*/
+#hoverBlock {
+	display: block;
+	position: absolute;
+	width: 852px;
+	height: 500px;
+	z-index: 99999; 
+	opacity: 0.5;
+	left: 199px;
 }
