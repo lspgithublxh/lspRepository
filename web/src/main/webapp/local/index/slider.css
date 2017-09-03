@@ -74,6 +74,9 @@ background: white;
 /*background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAQAAAAngNWGAAAAAmJLR¡­owMFevm3oAAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC) no-repeat;
 */	
 }
+.whiteAdd{
+	background: white!important;
+}
 .big-banner{
 	height: 100%;
     width: 100%;
