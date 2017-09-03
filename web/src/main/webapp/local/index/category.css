@@ -1,5 +1,4 @@
 .category-tab-content{
-	
 }
 .category-tab-pannel{
 	width: 200px;
@@ -56,18 +55,20 @@
 }
 .cata-detail-page{
 	height: 500px;
-    position: absolute;
+    position: relative;
     top: 0;
-    left: 0;
+    left: 200px;
     z-index: 100;
+    width: 853px;
 }
 .cata-detail-panel{
 	height: 500px;
     width: 852px;
-    left: 200px;
-    position: absolute;
+    left: 0px;
+    position: relative;
     background-color: #fff;
     display: block;
+    top: -500px;
 }
 .cata-detail-layer{
 	margin: 0;
@@ -137,7 +138,7 @@
     padding:0;
     padding-left: 10px;
     position: relative;
-    top: -500px;
+    top: -480px;
     left: 600px;
     z-index: 0;
 }
@@ -168,10 +169,10 @@ a.activity img{
 */
 #hoverBlock {
 	display: block;
-	position: absolute;
+	position: relative;
 	width: 852px;
 	height: 500px;
 	z-index: 99999; 
 	opacity: 0.5;
-	left: 199px;
+	left: 0px;
 }
