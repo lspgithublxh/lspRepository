@@ -45,6 +45,16 @@ $(document).ready(function(){
 		currTabIndex = "-1";
 		currTabColor = "";
 	});
+	
+var liIndex = "";
+	/*轮播绑定事件*/
+	$(".slider-nav li").hover(function(e){
+		liIndex = e.target.className.split("-")[2];
+		$(".slider-content").css({"display":"none"});
+		$(".pic-" + liIndex).css({"display":"block"});
+	}, function(e){
+		
+	});
 });
 $(function(){
 	
@@ -4370,38 +4380,93 @@ $(function(){
 			
 			<div class="banner-container">
 				<div class="banner-slider">
-					<div class="slider-content">
-						<!-- <div class="main-banner slider-pannel slider-1">
-							<div class="normal slider-1-con">
-								<div class="main-banner-con">
-									<div class="main-banner-con2 "> -->
-										 <a tabindex="-1"
-											class="j_smallBanner small-banner0  j_needExposure   j_needGoldExposure "
-											data-exposure="" data-gold-exposure=""> 
-											<img alt="" class="slider-img1"
-											src="../../global/img-slider/sli1a.webp"
-											>
-										</a> <a tabindex="-1"
-											class="j_smallBanner small-banner1  j_needExposure   j_needGoldExposure "
-											data-exposure="" data-gold-exposure=""> 
-											<img alt="" class="slider-img2"
-											src="../../global/img-slider/sli1b.webp"
-											>
-										</a>
-									<!-- </div>
-								</div>
-							</div>
-						</div> -->
+					<div class="slider-content pic-1">
+						 <a tabindex="-1"
+							class="j_smallBanner small-banner0  j_needExposure   j_needGoldExposure "
+							data-exposure="" data-gold-exposure=""> 
+							<img alt="" class="slider-img1"
+							src="../../global/img-slider/sli1a.webp"
+							>
+						</a> <a tabindex="-1"
+							class="j_smallBanner small-banner1  j_needExposure   j_needGoldExposure "
+							data-exposure="" data-gold-exposure=""> 
+							<img alt="" class="slider-img2"
+							src="../../global/img-slider/sli1b.webp"
+							>
+						</a>
+					</div>
+					<div class="slider-content pic-2">
+						 <a tabindex="-1"
+							class="j_smallBanner small-banner0  j_needExposure   j_needGoldExposure "
+							data-exposure="" data-gold-exposure=""> 
+							<img alt="" class="slider-img2a"
+							src="../../global/img-slider/sli2a.png"
+							>
+						</a> 
+					</div>
+					<div class="slider-content pic-3">
+						 <a tabindex="-1"
+							class="j_smallBanner small-banner0  j_needExposure   j_needGoldExposure "
+							data-exposure="" data-gold-exposure=""> 
+							<img alt="" class="slider-img1"
+							src="../../global/img-slider/sli3a.webp"
+							>
+						</a> <a tabindex="-1"
+							class="j_smallBanner small-banner1  j_needExposure   j_needGoldExposure "
+							data-exposure="" data-gold-exposure=""> 
+							<img alt="" class="slider-img2"
+							src="../../global/img-slider/sli3b.webp"
+							>
+						</a>
+					</div>
+					<div class="slider-content pic-4">
+						 <a tabindex="-1"
+							class="j_smallBanner small-banner0  j_needExposure   j_needGoldExposure "
+							data-exposure="" data-gold-exposure=""> 
+							<img alt="" class="slider-img2a"
+							src="../../global/img-slider/sli2a.png"
+							>
+						</a> 
+					</div>
+					<div class="slider-content pic-5">
+						 <a tabindex="-1"
+							class="j_smallBanner small-banner0  j_needExposure   j_needGoldExposure "
+							data-exposure="" data-gold-exposure=""> 
+							<img alt="" class="slider-img1"
+							src="../../global/img-slider/sli5a.webp"
+							>
+						</a> <a tabindex="-1"
+							class="j_smallBanner small-banner1  j_needExposure   j_needGoldExposure "
+							data-exposure="" data-gold-exposure=""> 
+							<img alt="" class="slider-img2"
+							src="../../global/img-slider/sli5b.webp"
+							>
+						</a>
+					</div>
+					<div class="slider-content pic-6">
+						 <a tabindex="-1"
+							class="j_smallBanner small-banner0  j_needExposure   j_needGoldExposure "
+							data-exposure="" data-gold-exposure=""> 
+							<img alt="" class="slider-img1"
+							src="../../global/img-slider/sli6a.webp"
+							>
+						</a> <a tabindex="-1"
+							class="j_smallBanner small-banner1  j_needExposure   j_needGoldExposure "
+							data-exposure="" data-gold-exposure=""> 
+							<img alt="" class="slider-img2"
+							src="../../global/img-slider/sli6b.webp"
+							>
+						</a>
 					</div>
 				</div>
 			</div>
 			<div class="slider-nav">
-				        <li class=""></li>
-				        <li class=""></li>
-				        <li class=""></li>
-				        <li class=""></li>
-				        <li class="selected"></li>
-				        <li class=""></li>
+				        <li class="slider-li-1"></li>
+				        <li class="slider-li-2"></li>
+				        <li class="slider-li-3"></li>
+				        <li class="slider-li-4"></li>
+				        <li class="slider-li-5"></li>
+				        <li class="slider-li-6"></li>
 		    </div>
 		</div>
 	</div>
