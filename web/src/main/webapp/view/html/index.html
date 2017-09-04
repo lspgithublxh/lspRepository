@@ -46,24 +46,49 @@ $(document).ready(function(){
 		currTabColor = "";
 	});
 	
-var liIndex = "";
+var liIndex = "1";
 	/*轮播绑定事件*/
 	$(".slider-nav li").hover(function(e){
 		liIndex = e.target.className.split(" ")[0].split("-")[2];		
 		$(".slider-content").css({"opacity":"0","filter":"alpha(opacity=0)"});
 		setTimeout(() => {
-			$(".slider-content").css({"display":"none"});console.log(liIndex);
+			$(".slider-content").css({"display":"none"});
 			$(".pic-" + liIndex).css({"display":"block"});
 			setTimeout(() => {
 				$(".pic-" + liIndex).css({"opacity":"100","filter":"alpha(opacity=100)"});
 			}, 100);
 		}, 100);
 		$(".slider-nav li").removeClass("whiteAdd");
-		
+		clearInterval(timer);
 		
 	}, function(e){
 		$(".slider-li-" + liIndex).addClass("whiteAdd");
+		timer = setInterval(timee, 4000);
 	});
+	
+	/*轮播定时*/
+	var i = 5;
+	function timee(){
+		i = parseInt(liIndex);
+		$(".slider-li-" + liIndex).removeClass("whiteAdd");
+		var index = i % 6 + 1;
+		//i = index - 1;
+		liIndex = index + "";
+		$(".slider-li-" + index).addClass("whiteAdd");
+		//详细动画
+		$(".slider-content").css({"opacity":"0","filter":"alpha(opacity=0)"});
+		setTimeout(() => {
+			$(".slider-content").css({"display":"none"});
+			$(".pic-" + index).css({"display":"block"});
+			setTimeout(() => {
+				$(".pic-" + index).css({"opacity":"100","filter":"alpha(opacity=100)"});
+			}, 100);
+		}, 100);
+	//	$(".slider-li-" + index).trigger("mouseover");
+	//	$(".slider-li-" + index).trigger("mouseenter");
+	}
+	var timer = setInterval(timee, 4000);
+	$(".slider-li-1").addClass("whiteAdd");
 });
 $(function(){
 	
