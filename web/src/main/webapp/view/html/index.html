@@ -21,6 +21,8 @@
 })();
 var currTabIndex = "";
 var currTabColor = "";
+var backgroundColorMap = {"1":"#FFB6C1","2":"#FAFAFA","3":"#9c0a29",
+				"4":"#FAFAFA","5":"#a3a4ea", "6":"#6948a9"};
 /**
  * 页面加载完成
  */
@@ -60,7 +62,7 @@ var liIndex = "1";
 		}, 100);
 		$(".slider-nav li").removeClass("whiteAdd");
 		clearInterval(timer);
-		
+		$(".banner-slider").css({"background":backgroundColorMap[liIndex]});
 	}, function(e){
 		$(".slider-li-" + liIndex).addClass("whiteAdd");
 		timer = setInterval(timee, 4000);
@@ -84,11 +86,13 @@ var liIndex = "1";
 				$(".pic-" + index).css({"opacity":"100","filter":"alpha(opacity=100)"});
 			}, 100);
 		}, 100);
+		$(".banner-slider").css({"background":backgroundColorMap[liIndex]});
 	//	$(".slider-li-" + index).trigger("mouseover");
 	//	$(".slider-li-" + index).trigger("mouseenter");
 	}
 	var timer = setInterval(timee, 4000);
 	$(".slider-li-1").addClass("whiteAdd");
+	$(".banner-slider").css({"background":backgroundColorMap[liIndex]});//
 });
 $(function(){
 	
