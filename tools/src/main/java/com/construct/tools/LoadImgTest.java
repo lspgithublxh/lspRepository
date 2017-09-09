@@ -11,8 +11,11 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.commons.io.FileUtils;
 
 /**
  * 
@@ -27,12 +30,16 @@ public class LoadImgTest {
 	private static Pattern p1 = Pattern.compile("<img.*?(>|\\r\\n)", Pattern.CASE_INSENSITIVE);
 	private static Pattern p2 = Pattern.compile("src=\"(.*?)\"", Pattern.CASE_INSENSITIVE);
 	private static Pattern p3 = Pattern.compile("<img.*?src=\"(.*?)\".*?(>|\\r\\n)", Pattern.CASE_INSENSITIVE);
+	private static Pattern p4 = Pattern.compile("(href=\".*?\")", Pattern.CASE_INSENSITIVE);
+	private static Pattern p5 = Pattern.compile("((\\s)+(\\r\\n))", Pattern.MULTILINE);
+	
 	private static Matcher m1 = null;
 	private static Matcher m2 = null;
+	private static Matcher m4 = null;
 	private static String root = "D:\\download\\";
 	
 	public static void main(String[] args) {
-		loadImg(new String[] {"D:\\download\\source.txt"});
+		loadImg(new String[] {"D:\\download\\source.txt", "../../global/img-yours/"});
 	}
 	
 	public static void loadImg(String[] args){
@@ -41,6 +48,7 @@ public class LoadImgTest {
 			return;
 		}else {
 			String file = args[0];
+			String imgDir = args[1];
 			String url = null;
 			
 			try {
@@ -57,8 +65,9 @@ public class LoadImgTest {
 				System.out.println(b);
 				if(!b) return;
 				FileOutputStream out = new FileOutputStream(txt);
+				String outline = "";
 				while((line = reader.readLine()) != null) {
-					out.write((line + "\r\n").getBytes() );
+					outline = line;
 					m1 = p1.matcher(line);
 					if(m1.find()) {
 						m2 = p2.matcher(line);
@@ -67,14 +76,25 @@ public class LoadImgTest {
 							if(create_sta) {
 								String type = url.substring(url.lastIndexOf("."));
 								testGetFile(url, dir.getAbsolutePath(), i++ + type);
+								outline = line.replace(url, "src=\"" + imgDir + (i - 1) + type + "\"");
 							}
+							
 						}
 					}
+					m4 = p4.matcher(line);
+					if(m4.find()) {
+						String href = m4.group(1);
+						outline = line.replace(href, " ");
+					}
+					out.write((outline + "\r\n").getBytes() );
 				}
 				out.flush();
 				out.close();
 				reader.close();
 				System.out.println("success");
+//				String ct = FileUtils.readFileToString(txt, "UTF-8").replaceAll("(\\s)+(\\r\\n)", "\\r\\n");
+//				FileUtils.writeStringToFile(txt, ct, "UTF-8", false);
+//				System.out.println(ct);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
