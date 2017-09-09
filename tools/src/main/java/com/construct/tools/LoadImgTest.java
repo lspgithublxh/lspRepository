@@ -42,6 +42,7 @@ public class LoadImgTest {
 		}else {
 			String file = args[0];
 			String url = null;
+			
 			try {
 				BufferedReader reader = new BufferedReader(new FileReader(file));
 				String line = null;
@@ -50,7 +51,14 @@ public class LoadImgTest {
 				long time = System.currentTimeMillis();
 				File dir = new File( root + time);
 				boolean create_sta = dir.mkdirs();
+				//清晰文件用：
+				File txt = new File(dir + "\\new.txt");
+				boolean b = txt.createNewFile();
+				System.out.println(b);
+				if(!b) return;
+				FileOutputStream out = new FileOutputStream(txt);
 				while((line = reader.readLine()) != null) {
+					out.write((line + "\r\n").getBytes() );
 					m1 = p1.matcher(line);
 					if(m1.find()) {
 						m2 = p2.matcher(line);
@@ -63,6 +71,10 @@ public class LoadImgTest {
 						}
 					}
 				}
+				out.flush();
+				out.close();
+				reader.close();
+				System.out.println("success");
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
