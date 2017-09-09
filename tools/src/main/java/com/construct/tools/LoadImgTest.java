@@ -76,7 +76,7 @@ public class LoadImgTest {
 							if(create_sta) {
 								String type = url.substring(url.lastIndexOf("."));
 								testGetFile(url, dir.getAbsolutePath(), i++ + type);
-								outline = line.replace(url, "src=\"" + imgDir + (i - 1) + type + "\"");
+								outline = line.replace(url,  imgDir + (i - 1) + type);
 							}
 							
 						}
