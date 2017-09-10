@@ -128,3 +128,6 @@
     height: 90px;
     margin-left: -165px;
 }
+.channel-item:hover .img-con img {
+    width: 105%!important;
+}
