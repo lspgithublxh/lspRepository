@@ -1,0 +1,130 @@
+.channel-con {
+    width: 1250px;
+    padding-right: 30px;
+    margin: 30px auto 0;
+    height: 577px;
+    position: absolute;
+    top: 1900px;
+    left: 43px;
+}
+.channel-con .channel-column {
+    background-color: #fff;
+    width: 238px;
+    height: 476px;
+    margin-right: 10px;
+    text-align: center;
+    float: left;
+    border-bottom: 1px solid transparent;
+}
+.channel-column .column-title {
+    -webkit-transition: background-color .4s;
+    -ms-transition: background-color .4s;
+    -o-transition: background-color .4s;
+    -moz-transition: background-color .4s;
+    transition: background-color .4s;
+    font-weight: 700;
+    background-color: #ff0036;
+    height: 36px;
+    line-height: 36px;
+    font-size: 18px;
+    color: #fff;
+}
+.channel-icon {
+    font-size: 22px;
+    position: relative;
+    top: -1px;
+}
+.column-title .text {
+    display: inline-block;
+    height: 36px;
+    line-height: 36px;
+    vertical-align: top;
+}
+.channel-column .channel-item {
+    width: 238px;
+    height: 220px;
+    display: block;
+    overflow: hidden;
+}
+.channel-column .item-title {
+    display: block;
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    font-size: 22px;
+    height: 24px;
+    line-height: 24px;
+    margin-top: 19px;
+}
+.channel-column .item-sub-title {
+    z-index: 10;
+    display: block;
+    position: relative;
+    margin-top: 5px;
+    color: #888;
+    font-size: 14px;
+    height: 14px;
+    line-height: 14px;
+}
+.channel-column .img-con {
+    display: block;
+    width: 140px;
+    height: 140px;
+    margin: 9px auto 0;
+    position: relative;
+}
+.channel-column .img-con .img-mask {
+    display: none\9;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 140px;
+    height: 140px;
+    background-color: #000;
+    opacity: .03;
+    border-radius: 70px;
+    z-index: 10;
+}
+.channel-column .img-con img {
+    display: block;
+    position: relative;
+    z-index: 1;
+    width: 95%;
+    top: 50%;
+    left: 50%;
+    top: 0\9;
+    left: 0\9;
+    top: 50%\9\0;
+    left: 50%\9\0;
+    -moz-transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+    -o-transform: translate(-50%,-50%);
+    -webkit-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
+    -moz-transition: width .3s;
+    -ms-transition: width .3s;
+    -o-transition: width .3s;
+    -webkit-transition: width .3s;
+    transition: width .3s;
+}
+.channel-column .seprate {
+    height: 1px;
+    width: 200px;
+    background-color: #EEE;
+    margin: 0 auto;
+}
+.full-banner {
+    height: 90px;
+    height: 90px\9;
+    overflow: hidden;
+    display: block;
+    margin: 0 auto;
+    position: relative;
+    padding-top: 10px;
+}
+.full-banner img {
+    display: block;
+    width: 1620px;
+    height: 90px;
+    margin-left: -165px;
+}
