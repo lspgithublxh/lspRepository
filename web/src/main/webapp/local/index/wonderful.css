@@ -1,0 +1,116 @@
+.wonderful-con .wonderful-line {
+    height: 333px;
+    list-style: none;
+}
+.wonderful-con .wonderful-item {
+    float: left;
+    width: 235px;
+    margin-right: 12px;
+    margin-bottom: 7px;
+    list-style: none;
+}
+.wonderful-con .card-item {
+    display: block;
+    border: 1px solid #fff;
+    position: relative;
+    background-color: #fff;
+    overflow: hidden;
+    margin-right: 7px;
+    margin-bottom: 7px;
+    width: 100%;
+    height: 315px;
+}
+.wonderful-con .card-item:hover{
+	border: 1px solid red;
+}
+.wonderful-con .card-item .item-pic {
+    display: block;
+    width: 100%;
+    height: 230px;
+    overflow: hidden;
+    -webkit-transition: opacity .3s ease-out;
+    -moz-transition: opacity .3s ease-out;
+    -o-transition: opacity .3s ease-out;
+    transition: opacity .3s ease-out;
+}
+.wonderful-con .card-item .item-pic img {
+    display: block;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    top: 0\9;
+    left: 0\9;
+    top: 50%\9\0;
+    left: 50%\9\0;
+    -moz-transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+    -o-transform: translate(-50%,-50%);
+    -webkit-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
+    vertical-align: middle;
+}
+.wonderful-con .card-item .item-info {
+    display: block;
+    padding: 14px 12px 8px;
+    text-align: left;
+}
+.wonderful-con .card-item .item-desc {
+    display: block;
+    height: 34px;
+    line-height: 14px;
+    overflow: hidden;
+}
+.wonderful-con .card-item .item-name {
+    font-size: 13px;
+    line-height: 18px;
+    color: #666;
+}
+em, i {
+    font-style: normal;
+}
+.wonderful-con .card-item .item-detail {
+    position: relative;
+    display: block;
+    height: 33px;
+    line-height: 22px;
+    margin-top: 2px;
+}
+.wonderful-con .card-item .item-price {
+    line-height: 32px;
+    color: #ff0036;
+}
+.wonderful-con .card-item .item-price .mui-price-rmb {
+    font-size: 14px;
+}
+.wonderful-con .card-item .item-price .mui-price-integer {
+    font-size: 16px;
+}
+.wonderful-con .card-item .item-price .mui-price-decimal {
+    font-size: 14px;
+}
+.wonderful-con{
+	position: absolute;
+    top: 3040px;
+    left: 5px;
+    width: 1344px;
+    background: rgba(128, 128, 128, 0.12);
+}
+.wonderful-con .wonderful-title {
+    color: #666;
+    text-align: center;
+    height: 43px;
+    font-weight: 100;
+}
+.wonderful-con .wonderful-title>.text-ctn {
+    position: relative;
+    font-size: 18px;
+    line-height: 20px;
+    font-family: 'Microsoft YaHei',SimSun,sans-serif,'\65b9\6b63\5170\4ead\9ed1';
+}
+.wonderful-con .wonderful-title>.text-ctn .fp-iconfont {
+    position: relative;
+    top: 1px;
+    margin-right: 4px;
+    font-size: 20px;
+    color: #ff0036;
+}
