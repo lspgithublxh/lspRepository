@@ -92,6 +92,9 @@ body {
 	border-width: 0 1px;
 	border-bottom: 1px solid white;
 }
+.navi-div-seller:hover ul{
+	background: white;
+}
 .navi-down-list{
 	z-index: 93110;
     border: solid #eee;
@@ -132,6 +135,7 @@ span.buy_num{
 .navi-div-coll-list:hover .navi-down-coll-list, .navi-div-phone:hover .navi-qrcode,
 .navi-div-seller:hover .navi-div-dropdown-seller, .navi-div-navitor:hover .navi-div-menu{
 	display: block;
+	z-index: 99999;
 }
 .navi-down-coll-list{
 	z-index: 93110;
