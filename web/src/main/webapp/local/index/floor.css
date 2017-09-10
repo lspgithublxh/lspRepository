@@ -211,27 +211,39 @@
 }
 @keyframes firstmove{
 	0%	{margin-top:0px;}
-	50% {margin-top:-30px;}
-	100% {margin-top:-60px;}
+	20% {margin-top:0px;}
+	40% {margin-top:-30px;}
+	60% {margin-top:-30px;}
+	80% {margin-top:-60px;}
+	100%	{margin-top:-60px;}
 } 
 @-moz-keyframes firstmove{
 	0%	{margin-top:0px;}
-	50% {margin-top:-30px;}
+	20% {margin-top:0px;}
+	40% {margin-top:-30px;}
+	60% {margin-top:-30px;}
+	80% {margin-top:-60px;}
 	100%	{margin-top:-60px;}
 } 
 @-webkit-keyframes firstmove{
 	0%	{margin-top:0px;}
-	50% {margin-top:-30px;}
+	20% {margin-top:0px;}
+	40% {margin-top:-30px;}
+	60% {margin-top:-30px;}
+	80% {margin-top:-60px;}
 	100%	{margin-top:-60px;}
 } 
 @-o-keyframes firstmove{
 	0%	{margin-top:0px;}
-	50% {margin-top:-30px;}
+	20% {margin-top:0px;}
+	40% {margin-top:-30px;}
+	60% {margin-top:-30px;}
+	80% {margin-top:-60px;}
 	100%	{margin-top:-60px;}
 } 
 div.first-keyframe{
-	animation: firstmove 5s linear 2s infinite alternate;
-	-moz-animation: firstmove 5s linear 2s infinite alternate;	/* Firefox */
-	-webkit-animation: firstmove 5s linear 2s infinite alternate;	/* Safari 和 Chrome */
-	-o-animation: firstmove 5s linear 2s infinite alternate;
+	animation: firstmove 10s linear 0s infinite normal;/*alternate,逆向播放*/
+	-moz-animation: firstmove 10s linear 0s infinite normal;	/* Firefox */
+	-webkit-animation: firstmove 10s linear 0s infinite normal;	/* Safari 和 Chrome */
+	-o-animation: firstmove 10s linear 0s infinite normal;
 }
