@@ -91,6 +91,7 @@
     -moz-transition: color .3s ease-out;
     -o-transition: color .3s ease-out;
     transition: color .3s ease-out;
+    color: #000;
 }
 .floor-line-con .line-body .big-banner-con .title-con {
     height: 110px;
@@ -207,4 +208,30 @@
 .floor-con .floor-line-con .line-body .grid.second-grid img {
     width: 100px;
     height: 100px;
+}
+@keyframes firstmove{
+	0%	{margin-top:0px;}
+	50% {margin-top:-30px;}
+	100% {margin-top:-60px;}
+} 
+@-moz-keyframes firstmove{
+	0%	{margin-top:0px;}
+	50% {margin-top:-30px;}
+	100%	{margin-top:-60px;}
+} 
+@-webkit-keyframes firstmove{
+	0%	{margin-top:0px;}
+	50% {margin-top:-30px;}
+	100%	{margin-top:-60px;}
+} 
+@-o-keyframes firstmove{
+	0%	{margin-top:0px;}
+	50% {margin-top:-30px;}
+	100%	{margin-top:-60px;}
+} 
+div.first-keyframe{
+	animation: firstmove 5s linear 2s infinite alternate;
+	-moz-animation: firstmove 5s linear 2s infinite alternate;	/* Firefox */
+	-webkit-animation: firstmove 5s linear 2s infinite alternate;	/* Safari ºÍ Chrome */
+	-o-animation: firstmove 5s linear 2s infinite alternate;
 }
