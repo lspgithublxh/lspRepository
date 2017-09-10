@@ -209,37 +209,41 @@
     width: 100px;
     height: 100px;
 }
-@keyframes firstmove{
+@-keyframes firstmove{
 	0%	{margin-top:0px;}
-	20% {margin-top:0px;}
-	40% {margin-top:-30px;}
-	60% {margin-top:-30px;}
-	80% {margin-top:-60px;}
-	100%	{margin-top:-60px;}
+	16.7% {margin-top:0px;}
+	33.4% {margin-top:-30px;}
+	50.1% {margin-top:-30px;}
+	66.8% {margin-top:-60px;}
+	83.5%	{margin-top:-60px;}
+	100%      {margin-top:-90px;}
 } 
 @-moz-keyframes firstmove{
 	0%	{margin-top:0px;}
-	20% {margin-top:0px;}
-	40% {margin-top:-30px;}
-	60% {margin-top:-30px;}
-	80% {margin-top:-60px;}
-	100%	{margin-top:-60px;}
+	16.7% {margin-top:0px;}
+	33.4% {margin-top:-30px;}
+	50.1% {margin-top:-30px;}
+	66.8% {margin-top:-60px;}
+	83.5%	{margin-top:-60px;}
+	100%      {margin-top:-90px;}
 } 
 @-webkit-keyframes firstmove{
 	0%	{margin-top:0px;}
-	20% {margin-top:0px;}
-	40% {margin-top:-30px;}
-	60% {margin-top:-30px;}
-	80% {margin-top:-60px;}
-	100%	{margin-top:-60px;}
+	32.1% {margin-top:0px;}
+	33.4% {margin-top:-30px;}/*33.4*/
+	65.5% {margin-top:-30px;}
+	66.8% {margin-top:-60px;}/*66.8*/
+	98.7%	{margin-top:-60px;}
+	100%      {margin-top:-90px;}/*100*/
 } 
 @-o-keyframes firstmove{
 	0%	{margin-top:0px;}
-	20% {margin-top:0px;}
-	40% {margin-top:-30px;}
-	60% {margin-top:-30px;}
-	80% {margin-top:-60px;}
-	100%	{margin-top:-60px;}
+	16.7% {margin-top:0px;}
+	33.4% {margin-top:-30px;}
+	50.1% {margin-top:-30px;}
+	66.8% {margin-top:-60px;}
+	83.5%	{margin-top:-60px;}
+	100%      {margin-top:-90px;}
 } 
 div.first-keyframe{
 	animation: firstmove 10s linear 0s infinite normal;/*alternate,ÄæÏò²¥·Å*/
