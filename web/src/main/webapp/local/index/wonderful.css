@@ -94,6 +94,7 @@ em, i {
     left: 5px;
     width: 1344px;
     background: rgba(128, 128, 128, 0.12);
+    height: 6800px;
 }
 .wonderful-con .wonderful-title {
     color: #666;
@@ -113,4 +114,36 @@ em, i {
     margin-right: 4px;
     font-size: 20px;
     color: #ff0036;
+}
+.wonderful-con .tm-end {
+    background: url(//img.alicdn.com/tps/TB1wQDAPXXXXXXgaFXXXXXXXXXX-62-35.png) no-repeat;
+    position: relative;
+    display: block;
+    content: '\20';
+    text-align: center;
+    width: 80px;
+    height: 45px;
+    margin: 0 auto 10px;
+    background-size: cover;
+    z-index: 9;
+}
+.w-title-left{
+	position: relative;
+    border-bottom: 1px solid grey;
+    height: 10px;
+    width: 40px;
+    /* background: red; */
+    /* z-index: 99999; */
+    top: 20px;
+    left: 570px;
+}
+.w-title-right{
+	position: relative;
+    border-bottom: 1px solid grey;
+    height: 10px;
+    width: 40px;
+    /* background: red; */
+    /* z-index: 99999; */
+    top: -23px;
+    left: 732px;
 }
