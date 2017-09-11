@@ -270,3 +270,164 @@ div#footer {
     position: relative;
     top: -12px;
 }
+.as-shelter.show {
+    top: 0;
+}
+.as-shelter {
+    background-color: #FF0036;
+    opacity: .95;
+    display: block;
+    position: fixed;
+    width: 100%;
+    z-index: 10000;
+    height: 50px;
+    -webkit-transition: top .3s ease-out;
+    -moz-transition: top .3s ease-out;
+    -ms-transition: top .3s ease-out;
+    -o-transition: top .3s ease-out;
+    transition: top .3s ease-out;
+}
+.as-total-container {
+    display: block;
+    position: fixed;
+    width: 100%;
+    z-index: 10000;
+    height: 50px;
+    top: 0px;
+}
+.attached-search-container {
+    top: 0;
+    width: 1230px;
+    padding-right: 30px;
+    background-color: transparent;
+    position: relative;
+    height: 50px;
+    margin: 0 auto;
+    border: none;
+    overflow: hidden;
+}
+.attached-search-container .fp-iconfont-new {
+    overflow: hidden;
+    font-size: 23px;
+    position: relative;
+    top: 5px;
+    color: white;
+}
+.attached-search-container .fp-iconfont-new .logo-en {
+    vertical-align: middle;
+}
+.attached-search-container .fp-iconfont-new .logo-zh {
+    padding-left: 5px;
+    vertical-align: middle;
+}
+.attached-search-container #mallSearch {
+    float: none!important;
+    padding-top: 0px;
+    width: 740px!important;
+    position: relative;
+    z-index: 10;
+    height: 30px;
+    margin: 0 auto;
+    overflow: hidden;
+    top: -20px;
+}
+.attached-search-container .mallSearch-form {
+    border: none!important;
+}
+fieldset {
+    border: 0;
+    position: relative;
+}
+legend{
+	display: none;
+}
+.attached-search-container .mallSearch-input {
+    height: 30px;
+}
+.mallSearch-input {
+    background: #fff;
+}
+#mallSearch .s-combobox {
+    height: 30px;
+}
+.attached-search-container .s-combobox {
+    width: 650px;
+}
+.s-combobox {
+    float: left;
+    height: 34px;
+    font-size: 12px;
+}
+.s-combobox .s-combobox-input-wrap {
+    position: relative;
+    height: 30px;
+    vertical-align: middle;
+}
+.attached-search-container #mallSearch #mq.s-combobox-input {
+    width: 640px!important;
+    background: 0 0;
+    outline: transparent dotted 0;
+    opacity: 1;
+}
+#mallSearch #mq {
+    color: #000;
+    margin: 0;
+    z-index: 2;
+    width: 289px;
+    height: 20px;
+    line-height: 20px;
+    padding: 5px 3px 5px 5px;
+    outline: 0;
+    border: none;
+    font-weight: 900;
+    background: url(data:image/gif;base64,R0lGODlhAQADAJEAAObm5t3d3ff39wAAACH5BAAAAAAALAAAAAABAAMAAAICDFQAOw==) repeat-x;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
+#mallSearch label, #tmallSearch label {
+    max-width: 90%;
+    overflow: hidden;
+    white-space: nowrap;
+}
+#mallSearch label {
+    color: #666;
+    font-size: 12px;
+    line-height: 30px;
+    height: 30px;
+    position: absolute;
+    left: 8px;
+    top: 0;
+    z-index: 1;
+}
+.attached-search-container #mallSearch button {
+    right: 4px;
+    height: 32px;
+}
+#mallSearch button, #tmallSearch button {
+    position: absolute;
+    z-index: 1;
+}
+#mallSearch button {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 90px;
+    border: 0;
+    font-size: 16px;
+    letter-spacing: 4px;
+    cursor: pointer;
+    color: #fff;
+    background-color: #FF0036;
+    height: 30px;
+    overflow: hidden;
+    font-family: '\5FAE\8F6F\96C5\9ED1',arial,"\5b8b\4f53";
+}
+.lastButton{
+	width: 640px;
+    height: 30px;
+    border: 0;
+    position: relative;
+    top: -1px!important;
+    padding-left: 10px;
+}

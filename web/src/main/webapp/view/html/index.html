@@ -100,6 +100,30 @@ var liIndex = "1";
 });
 $(function(){
 	
+	/*
+	window.onmousewheel = function(e){
+	console.log("----");
+	console.log(e.clientY);
+}
+	*/
+		
+	window.onscroll = function(e){////window.onmouseover = 
+	//	console.log("****");
+	//	console.log(e.path[1].scrollY);
+	//	console.log(window.event.clientY);
+		if(e.path[1].scrollY > 800){
+			$("#J_ASTotalContainer").css({"display":"block"});
+			$(".as-shelter").css({"display":"block"});
+		}else{
+			$("#J_ASTotalContainer").css({"display":"none"});
+			$(".as-shelter").css({"display":"none"});
+		}
+	}
+	/*
+	$("body").onscroll = function(e){
+	console.log(e);
+}
+	*/
 });
 </script>
 </head>
@@ -7013,5 +7037,34 @@ $(function(){
 		<div id="server-num">wormholesource011142228229.center.et15.production</div>
 	</div>
 
+	<div class="as-shelter show"></div>
+	<div id="J_ASTotalContainer" class="as-total-container show">
+		<div id="J_AttachedSearchContainer" class="attached-search-container">
+			<div class="fp-iconfont-new">
+				<span class="logo-en">TMALL</span><span class="logo-zh">天猫</span></div>
+				<div id="mallSearch" class="mall-search">
+      <!--   <form name="searchTop" action="//list.tmall.com/search_product.htm" class="mallSearch-form clearfix" target="_top" acceptcharset="gbk" accept-charset="gbk">
+            <fieldset>
+                <legend>天猫搜索</legend>
+                      <div class="mallSearch-input clearfix">
+                          <label for="mq" style="visibility: visible; display: none;">搜索 天猫 商品/品牌/店铺</label>
+                          <div class="s-combobox" id="s-combobox-139">
+                              <div class="s-combobox-input-wrap">
+                                      <input type="text" name="q" accesskey="s" autocomplete="off" x-webkit-speech="" x-webkit-grammar="builtin:translate" value="" id="mq" class="s-combobox-input" role="combobox" aria-haspopup="true" title="请输入搜索文字" aria-label="请输入搜索文字">
+                              </div>
+                          <label for="mq" class="s-combobox-placeholder" style="color: rgb(102, 102, 102); visibility: visible;">潮流时尚低帮鞋</label></div>
+                          <button type="submit">搜索<s></s></button>
+                          <input id="J_Type" type="hidden" name="type" value="p">
+                          <input id="J_MallSearchStyle" type="hidden" name="style" value="">
+                          <input id="J_Cat" type="hidden" name="cat" value="all">
+                          <input type="hidden" name="vmarket" value="">
+                      </div>
+             </fieldset></form> -->
+            
+          <input placeholder="潮流时尚低帮鞋" class="lastButton" />
+             <button type="submit">搜索<s></s></button>
+   </div>
+   </div>
+   </div>
 </body>
 </html>
