@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 /**
  * 访问网站的爬虫
- *
+ *应当对网站做限制，否则牵连到其他网站，跑太久跑到内存爆炸
  *@author lishaoping
  *ToolsTest
  *2017年9月22日
