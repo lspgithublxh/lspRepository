@@ -30,8 +30,9 @@ public class VisitWebSiteTest {
 	 * 本质只有两类方法，
 	 * 但是特殊情况的处理不同，移除：返回null,有的抛出异常，有的阻塞；添加：返回false,抛出异常，阻塞
 	 * 3个移除并返回，2个直接返回，3个添加元素
+	 * 能存一亿个任务
 	 */
-	private BlockingQueue<String> queue = new ArrayBlockingQueue<String>(10000);
+	private BlockingQueue<String> queue = new ArrayBlockingQueue<String>(100000000);
 	
 	private Set<String> visitedQ = new HashSet<String>();
 	
@@ -223,8 +224,8 @@ public class VisitWebSiteTest {
 	
 	public static void main(String[] args) throws InterruptedException {
 		final VisitWebSiteTest test = new VisitWebSiteTest();
-//		test.start(test);
-		test.start2();
+		test.start(test);
+//		test.start2();
 		
 	}
 	
