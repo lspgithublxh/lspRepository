@@ -72,16 +72,18 @@ public class JDBC_MYSQLTool {
 	 *2017Äê9ÔÂ23ÈÕ
 	 */
 	public static void multipleInsert(String[] url) {
-		String sql = "insert into website(id,url) values";
+		String sql = "insert into website2(id,url) values";
 		for(String ur : url) {
+//			if(null == ur) continue;
 			UUID id = UUID.randomUUID();
 			String uuid = id.toString().replace("-", "");
-			String values = "(" + id + "," + ur + "),";
+			 sql += "('" + uuid + "','" + ur + "'),";
 		}
 		if(url.length > 0) {
 			sql = sql.substring(0, sql.length() - 1);
 			try {
 				Statement stat = connection.createStatement();
+				System.out.println(sql);
 				int i = stat.executeUpdate(sql);
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -117,7 +119,8 @@ public class JDBC_MYSQLTool {
 	}
 	
 	public static void main(String[] args) throws SQLException {
-		connectionTest();
+//		connectionTest();
+		multipleInsert(new String[] {"httxxx","https:"});
 //		UUID id = UUID.randomUUID();
 //		System.out.println(id.toString().replace("-", ""));
 	}

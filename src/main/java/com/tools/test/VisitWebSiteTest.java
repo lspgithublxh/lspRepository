@@ -20,6 +20,8 @@ import java.util.regex.Pattern;
 /**
  * 访问网站的爬虫
  *应当对网站做限制，否则牵连到其他网站，跑太久跑到内存爆炸
+ *1.常见问题--内存垃圾回收异常，死掉一些线程后继续可以跑：Exception in thread "pool-1-thread-100" java.lang.OutOfMemoryError: GC overhead limit exceeded
+ *2.常见问题2：堆栈溢出，导致内存占用暴增Exception in thread "pool-1-thread-3" java.lang.OutOfMemoryError: Java heap space 
  *@author lishaoping
  *ToolsTest
  *2017年9月22日
@@ -36,10 +38,12 @@ public class VisitWebSiteTest {
 	
 	private Set<String> visitedQ = new HashSet<String>();
 	
-	private String[] permUrlArr = new String[1000];
+	private int length = 100;
+	
+	private String[] permUrlArr = new String[length];
 	
 	private int i = 0;
-	
+		
 	private String keysite = ".people.";
 	
 	/**
@@ -65,7 +69,7 @@ public class VisitWebSiteTest {
 	 * @param htmls
 	 */
 	public void putToQueue2(String[] htmls) {
-		System.out.println("-------start put to queue2-----------");
+//		System.out.println("-------start put to queue2-----------");
 		try {
 			for(String html : htmls) {
 				if(null != html) {
@@ -75,7 +79,7 @@ public class VisitWebSiteTest {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		System.out.println("-------end put to queue2-----------");
+//		System.out.println("-------end put to queue2-----------");
 	}
 	
 	public  String getFromQueue() {
@@ -110,9 +114,9 @@ public class VisitWebSiteTest {
 		test.putToQueue(initialUrl);
 		while(true) {
 			//1.取出一个url
-			System.out.println("start get url:");
+//			System.out.println("start get url:");
 			String url = test.getFromQueue();
-			System.out.println(Thread.currentThread().getName() + url);
+//			System.out.println(Thread.currentThread().getName() + url);
 			//1.2已经访问过的页面
 			boolean visited = test.isVisited(url);
 			if(visited) {
@@ -134,6 +138,7 @@ public class VisitWebSiteTest {
 		Executor excutor = Executors.newFixedThreadPool(threadMount);
 		
 		test.putToQueue(initialUrl);
+		final Object lock = new Object();
 		for(int i = 0; i < threadMount; i++) {
 			//1.
 			excutor.execute(new Runnable() {
@@ -141,9 +146,9 @@ public class VisitWebSiteTest {
 				public void run() {
 					while(true) {
 						//1.取出一个url
-						System.out.println("start get url:");
+//						System.out.println("start get url:");
 						String url = test.getFromQueue();
-						System.out.println(Thread.currentThread().getName() + url);
+//						System.out.println(Thread.currentThread().getName() + url);
 						//1.2已经访问过的页面
 						boolean visited = test.isVisited(url);
 						if(visited) {
@@ -171,19 +176,35 @@ public class VisitWebSiteTest {
 	 * @param url
 	 * @return
 	 */
-	public synchronized boolean isVisited( String url) {
-		if(!visitedQ.contains(url) && url.contains(keysite)) {
-			visitedQ.add(url);
-			permUrlArr[i++] = url;
-			if(i % 1000 == 0) {
-				JDBC_MYSQLTool.multipleInsert(permUrlArr);
-				permUrlArr = null;
-				permUrlArr = new String[1000];
-				i = 0;
+	public boolean isVisited( String url) {
+		synchronized (VisitWebSiteTest.class) {
+			if(url.length() > 100) {
+				url = url.substring(0, 100);
 			}
-			return false;
+			if(url.contains("\r\n")) {
+				url = url.substring(0, url.indexOf("\r\n"));
+			}else if(url.contains("\r")) {
+				url = url.substring(0, url.indexOf("\r"));
+			}else if(url.contains("\n")) {
+				url = url.substring(0, url.indexOf("\n"));
+			}
+			
+			if(url.contains("\"")) {
+				url = url.substring(0, url.indexOf("\""));
+			}
+			if(!visitedQ.contains(url) && url.contains(keysite)) {
+				visitedQ.add(url);
+				if(i > 0 && i % length == 0) {//1000条太多，不行
+					JDBC_MYSQLTool.multipleInsert(permUrlArr);
+					permUrlArr = null;
+					permUrlArr = new String[length];
+					i = 0;
+				}
+				permUrlArr[i++] = url;
+				return false;
+			}
+			return true;
 		}
-		return true;
 	}
 	
 	public String urlTransfer(String url) {
@@ -191,8 +212,11 @@ public class VisitWebSiteTest {
 	}
 	
 	public String getPage(String url) {
-		System.out.println("---connection start----");
+//		System.out.println("---connection start----");
 		String res = null;
+		if(url.endsWith(".jpg") || url.endsWith(".png") || url.endsWith(".webp")) {
+			return res;
+		}
 		try {
 			URL uc = new URL(url);
 			URLConnection con = uc.openConnection();
@@ -217,7 +241,7 @@ public class VisitWebSiteTest {
 				System.out.println("------------timeout-----" + url);
 			}
 		}
-		System.out.println("-----connection end--------");
+//		System.out.println("-----connection end--------");
 		return res;
 	}
 	
@@ -227,7 +251,7 @@ public class VisitWebSiteTest {
 	 * parse html
 	 */
 	public String[] getAllNewSite(String html) {
-		System.out.println("-------start get all new site--------");
+//		System.out.println("-------start get all new site--------");
 		if(null == html) {
 			return new String[] {};
 		}
@@ -241,7 +265,7 @@ public class VisitWebSiteTest {
 			}
 			
 		}
-		System.out.println("-------end get all new site--------");
+//		System.out.println("-------end get all new site--------");
 		return set.toArray(new String[0]);
 	}
 	

@@ -25,7 +25,8 @@ public class CommonTest {
 	public static void main(String[] args) throws IOException {
 //		test();
 //		test2();
-		linkTest("http://www.people.cn/32306/402306/402664/index.html");
+		test3();
+//		linkTest("http://www.people.cn/32306/402306/402664/index.html");
 	}
 	
 	public static void linkTest(String url) {
@@ -49,6 +50,17 @@ public class CommonTest {
 			e.printStackTrace();
 		}
 		System.out.println(res);
+	}
+	
+	private static Pattern p2 = Pattern.compile("href=\"(.*?)\"", Pattern.CASE_INSENSITIVE);
+	private static Matcher m2 = null;
+	
+	public static void test3() {
+		m2 = p2.matcher("href=\"http://dangshi.people.com.cn/GB/165617/165618/166491/167909/12070207.html\">ÍõÁ¼Ì«</a></td>\r\n<td width=\"10%\" align=\"center\">");
+		while(m2.find()) {
+			String url = m2.group(0);
+			System.out.println(url);
+		}
 	}
 	
 	public static void test2() {
