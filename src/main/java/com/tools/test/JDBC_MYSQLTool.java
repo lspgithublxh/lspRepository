@@ -72,7 +72,7 @@ public class JDBC_MYSQLTool {
 	 *2017Äê9ÔÂ23ÈÕ
 	 */
 	public static void multipleInsert(String[] url) {
-		String sql = "insert into website2(id,url) values";
+		String sql = "insert into website3(id,url) values";
 		for(String ur : url) {
 //			if(null == ur) continue;
 			UUID id = UUID.randomUUID();

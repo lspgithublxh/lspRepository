@@ -34,7 +34,7 @@ public class VisitWebSiteTest {
 	 * 3个移除并返回，2个直接返回，3个添加元素
 	 * 能存一亿个任务
 	 */
-	private BlockingQueue<String> queue = new ArrayBlockingQueue<String>(100000000);
+	private BlockingQueue<String> queue = new ArrayBlockingQueue<String>(10000000);//100000000
 	
 	private Set<String> visitedQ = new HashSet<String>();
 	
@@ -200,6 +200,9 @@ public class VisitWebSiteTest {
 					permUrlArr = new String[length];
 					i = 0;
 				}
+				if(url.contains("'")) {
+					url = url.replace("'", "-");
+				}
 				permUrlArr[i++] = url;
 				return false;
 			}
@@ -228,6 +231,9 @@ public class VisitWebSiteTest {
 				out.write(arr, 0, len);
 			}
 			res = out.toString();
+			out.close();
+			in.close();
+			
 		} catch (MalformedURLException | java.net.UnknownHostException e) {
 			if(e instanceof java.net.UnknownHostException) {
 				System.out.println("--------unknownHost----" + url);
