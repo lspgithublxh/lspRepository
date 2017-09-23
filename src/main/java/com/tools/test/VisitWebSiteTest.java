@@ -22,6 +22,9 @@ import java.util.regex.Pattern;
  *应当对网站做限制，否则牵连到其他网站，跑太久跑到内存爆炸
  *1.常见问题--内存垃圾回收异常，死掉一些线程后继续可以跑：Exception in thread "pool-1-thread-100" java.lang.OutOfMemoryError: GC overhead limit exceeded
  *2.常见问题2：堆栈溢出，导致内存占用暴增Exception in thread "pool-1-thread-3" java.lang.OutOfMemoryError: Java heap space 
+ *3.最后一次跑了14万不同的连接，堆区溢出了
+ *----总结四大过程：*比较---*寻页---*提取---*存储
+ *----介绍流程
  *@author lishaoping
  *ToolsTest
  *2017年9月22日
@@ -156,6 +159,7 @@ public class VisitWebSiteTest {
 						}
 						//2.获取html
 						String html = test.getPage(url);
+						//2.2提取到title，等其他信息，存到redis可以更快，更有效;存到mongoDB也可以
 						//3.解析页面取到sites
 						String[] sites = test.getAllNewSite(html);
 						//4.加入队列中
