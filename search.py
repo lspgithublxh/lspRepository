@@ -1,5 +1,6 @@
 #0 其他python文件的引入,引入类的方式也可以
 import util
+import const
 # from util import Student
 #1.控制台输出
 print("hello world")
@@ -63,4 +64,7 @@ print("-----------------------")
 student = util.Student("lsp",25)
 student.getNameAndAge()
 print("----anything else===========")
-
+# 8 异常处理
+const.value =5
+print(const.value)
+const.value = 6
