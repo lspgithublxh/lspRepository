@@ -1,4 +1,5 @@
 import re
+import pymysql
 from urllib import request
 from urllib import error
 pattern =re.compile(r'.*?href="(.*?)"')#默认是从开头开始匹配的，不能从中间开始匹配,所以必须将前面部分的匹配都写出来
@@ -61,6 +62,11 @@ print(set3.union(set4))
 task = set()#不能再初始化的的时候加元素
 task.add("http://www.people.com.cn/")
 visitedd = {}
+conn = pymysql.connect(host='localhost',port=3306,user='root',password='lsp',db='test')
+cursor = conn.cursor()
+row1 = cursor.execute('select count(*) from website')
+print(row1)
+
 while 1 == 1:
     url = task.pop()
     title = 'title'
@@ -80,7 +86,7 @@ while 1 == 1:
         task = task.union(newTask)
     except UnicodeDecodeError as e:
             continue
-    # title = getTitle(page)
+    title = getTitle(page)
 
     if len(visitedd) > 100:
         print('-------exit-----too much url------')
