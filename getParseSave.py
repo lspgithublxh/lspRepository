@@ -29,11 +29,11 @@ def getPage(url):
 htmlp = getPage('http://www.people.com.cn/')
 # print(htmlp)
 def parsePage(html):
-    matcher = re.match(r'.*?href="(.*?)"',r'{0}'.format(html.decode('gbk')))
-    set1 = set();
-    while matcher:
-        print("---html------")
-        set1.add(matcher.group(1))
+    patte = re.compile(r'.*?href="(.*?)"')
+    set1 = re.findall(patte,r'{0}'.format(html.decode('gbk')))
+    # while matcher:
+    #     print("---html------")
+    #     set1.add(matcher.group(1))
     return set1
 sets = parsePage(htmlp)
 print(sets)
