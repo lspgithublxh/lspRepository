@@ -67,4 +67,42 @@ print("----anything else===========")
 # 8 异常处理
 const.value =5
 print(const.value)
-const.value = 6
+#const.value = 6
+#9. 自然字符串
+ziran = r"Our target is search \n"
+print(ziran)
+ziran2 = "'haha',i\'m successed!\n" * 3
+print(ziran2)
+#10. 子字符串
+charString = "School"
+char1 = charString[1]
+print(char1)
+char2 = charString[1:3]
+print(char2)
+char3 = charString[3:]
+print(char3)
+#11 列表 元组 集合 字典
+list = [4,5,6,7,8]
+tuple1 = ("3","4")
+set1 = set("3")#不能加数字
+set1.add("s")
+dict1 = {"name":"lishaoping","age":25}
+print(list)
+print(tuple1)
+print(set1)
+print(dict1["name"])
+#12.序列化 及其存储到文件
+import pickle
+file1 = open("save.pke","wb")#将创建文件
+listp = pickle._dump(list,file1)
+file1.close()
+file2 = open("save.pke","rb")
+listf = pickle._load(file2)
+file2.close()
+print(listp)
+print(listf)
+print("a");print("b") #逻辑行和物理行
+#13 复杂的数学运算
+res = 1 + 1* -2 + 2**3
+print(res)
+print(3/5)
