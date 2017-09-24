@@ -64,8 +64,8 @@ task.add("http://www.people.com.cn/")
 visitedd = {}
 conn = pymysql.connect(host='localhost',port=3306,user='root',password='lsp',db='test')
 cursor = conn.cursor()
-row1 = cursor.execute('select count(*) from website')
-print(row1)
+row1 = cursor.execute('select count(1) from website')
+print('------{0}-row1----'.format(cursor.fetchone()))
 
 while 1 == 1:
     url = task.pop()
@@ -86,10 +86,27 @@ while 1 == 1:
         task = task.union(newTask)
     except UnicodeDecodeError as e:
             continue
-    title = getTitle(page)
-
-    if len(visitedd) > 100:
+    try:
+        title = getTitle(page)
+    except IndexError as e:pass
+    if len(visitedd) > 10:
         print('-------exit-----too much url------')
+        hset = set()
+        i = 0
+        list = []
+        for key in  visitedd.keys():
+           value = visitedd.get(key)
+           i = i + 1
+           # hset.add((r"'{0}'".format(i),r"'{0}'".format(key),r"'{0}'".format(value)))
+           # hset.add((r"{0}".format(i), r"{0}".format(key), r"{0}".format(value)))
+           # hset.add((r"'{0}','{1}','{2}'".format(i,key,value)))
+           # list.append((r"'{0}'".format(i),r"'{0}'".format(key),r"'{0}'".format(value)))
+           list.append((r"{0}".format(i), r"{0}".format(key), r"{0}".format(value)))
+        print(list)
+        cursor.executemany("insert into website4(id,url,content) values (%s,%s,%s);",list)
+        cursor.close()
+        conn.commit()
+        conn.close()
         break
 
 
