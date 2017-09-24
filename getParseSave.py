@@ -37,3 +37,35 @@ def parsePage(html):
     return set1
 sets = parsePage(htmlp)
 print(sets)
+def getTitle(html):
+    patte = re.compile(r'.*?<title>(.*?)</title>')
+    set1 = re.findall(patte,r'{0}'.format(html.decode('gbk')))
+    return set1.pop()
+title1 = getTitle(htmlp)
+print(title1)
+#异常处理
+try:
+    obj = sets.pop()
+    print(obj)
+except KeyError as e:
+    print(e)
+dict = {}
+set3 = set('1')
+set4 = set('2')
+set4.add('3')
+set3.add('3')
+print(set3 | set4)
+print(set3.union(set4))
+#开始主任务
+task = set('http://www.people.com.cn/')
+visitedd = {}
+while 1 == 1:
+    url = task.pop()
+    page = getPage(url)
+    newTask = parsePage(page)
+    task.union(newTask)
+    title = getTitle(page)
+    if visitedd.keys().__contains__(url):pass
+    else:
+        visitedd.url = title
+
