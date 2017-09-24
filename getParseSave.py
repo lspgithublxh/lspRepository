@@ -83,6 +83,7 @@ while 1 == 1:
     # title = getTitle(page)
 
     if len(visitedd) > 100:
+        print('-------exit-----too much url------')
         break
 
 
