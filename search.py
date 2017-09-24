@@ -84,12 +84,13 @@ print(char3)
 #11 列表 元组 集合 字典
 list = [4,5,6,7,8]
 tuple1 = ("3","4")
-set1 = set("3")#不能加数字
-set1.add("s")
+set1 = set()#不能加数字
+set1.add("dfdf")
+# set1.add("ssrs")
 dict1 = {"name":"lishaoping","age":25}
 print(list)
 print(tuple1)
-print(set1)
+print('set is {0}'.format(set1.pop()))
 print(dict1["name"])
 #12.序列化 及其存储到文件
 import pickle

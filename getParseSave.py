@@ -1,5 +1,6 @@
 import re
 from urllib import request
+from urllib import error
 pattern =re.compile(r'.*?href="(.*?)"')#默认是从开头开始匹配的，不能从中间开始匹配,所以必须将前面部分的匹配都写出来
 matcher = pattern.match(r'<a href="http://www.baidu.com" >what</a>')
 if matcher:
@@ -50,22 +51,38 @@ try:
 except KeyError as e:
     print(e)
 dict = {}
-set3 = set('1')
-set4 = set('2')
-set4.add('3')
-set3.add('3')
+set3 = set()
+set4 = set()
+set4.add('xcxx2')
+set3.add('xxx3')
 print(set3 | set4)
 print(set3.union(set4))
 #开始主任务
-task = set('http://www.people.com.cn/')
+task = set()#不能再初始化的的时候加元素
+task.add("http://www.people.com.cn/")
 visitedd = {}
 while 1 == 1:
     url = task.pop()
-    page = getPage(url)
-    newTask = parsePage(page)
-    task.union(newTask)
-    title = getTitle(page)
-    if visitedd.keys().__contains__(url):pass
+    title = 'title'
+    if visitedd.keys().__contains__(url):
+       continue
     else:
-        visitedd.url = title
+        visitedd[url] = title
+    page = ''
+    try:
+        print('------new url---{0}'.format(url))
+        page = getPage(url)
+    except BaseException as e:
+        continue
+    try:
+        newTask = parsePage(page)
+        # print('---new task---is -----{0}'.format(newTask))
+        task = task.union(newTask)
+    except UnicodeDecodeError as e:
+            continue
+    # title = getTitle(page)
+
+    if len(visitedd) > 100:
+        break
+
 
