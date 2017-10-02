@@ -6,9 +6,9 @@ import  bs4,datetime
 import  requests
 
 starttime = datetime.datetime.now()
-# url = r'http://www.lagou.com/jobs/positionAjax.json?city=%E5%8C%97%E4%BA%AC'
+url = r'http://www.lagou.com/jobs/positionAjax.json?city=%E5%8C%97%E4%BA%AC'
 # url = r'https://www.lagou.com/jobs/list_java?city=%E5%8C%97%E4%BA%AC&cl=false&fromSearch=true&labelWords=sug&suginput=java'
-url = r'https://www.lagou.com/jobs/positionAjax.json?city=%E5%8C%97%E4%BA%AC&needAddtionalResult=false&isSchoolJob=0'
+# url = r'https://www.lagou.com/jobs/positionAjax.json?city=%E5%8C%97%E4%BA%AC&needAddtionalResult=false&isSchoolJob=0'
 keyword = input('请输入您所需要查找的关键词 : ')
 
 def getPage2(url,pn,keyword):
@@ -77,7 +77,10 @@ def getPage(url,pn,keyword):
 def read_id(page):
     tag = 'positionId'
     page_json = json.loads(page)
-    page_json = page_json['content']['hrInfoMap']
+    try:
+        page_json = page_json['content']['hrInfoMap']
+    except KeyError :
+        return []
     company_list = []
     # for i in range(15):
     #     company_list.append(page_json[i].get(tag))
@@ -115,9 +118,11 @@ def get_content(company_id):
 
 
 def get_result(content):
-    print(content)
+    # print(content)
     soup = bs4.BeautifulSoup(content,'html.parser')
     job_description = soup.select('dd[class="job_bt"]')
+    if len(job_description) == 0:
+        return 'null'
     job_description = str(job_description[0])
     rule = re.compile(r'<[^>]+>')
     result = rule.sub('',job_description)
@@ -189,4 +194,4 @@ if __name__ == '__main__':
     print('已经保存到文件')
     endtime = datetime.datetime.now()
     time = (endtime - starttime).seconds
-    print('总共耗时：{0}'.format(time))
+    print('总共耗时：{0}s'.format(time))
