@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2793c186-7f5d-4552-9006-41c13eb24552" name="Default" comment="" />
+    <list default="true" id="2793c186-7f5d-4552-9006-41c13eb24552" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/urlConnection.py" afterPath="$PROJECT_DIR$/urlConnection.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/util/Lagou_Excel.py" afterPath="$PROJECT_DIR$/util/Lagou_Excel.py" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -14,8 +17,8 @@
       <file leaf-file-name="Lagou_Excel.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/util/Lagou_Excel.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="248">
-              <caret line="126" column="33" lean-forward="true" selection-start-line="126" selection-start-column="33" selection-end-line="126" selection-end-column="33" />
+            <state relative-caret-position="96">
+              <caret line="133" column="17" lean-forward="true" selection-start-line="133" selection-start-column="17" selection-end-line="133" selection-end-column="17" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -36,8 +39,8 @@
       <file leaf-file-name="urlConnection.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/urlConnection.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
-              <caret line="11" column="33" lean-forward="false" selection-start-line="11" selection-start-column="27" selection-end-line="11" selection-end-column="33" />
+            <state relative-caret-position="175">
+              <caret line="20" column="56" lean-forward="true" selection-start-line="20" selection-start-column="56" selection-end-line="20" selection-end-column="56" />
               <folding />
             </state>
           </provider>
@@ -60,9 +63,9 @@
       <find>read_max_page</find>
       <find>read_id</find>
       <find>get_content</find>
-      <find>Request</find>
       <find>job_bt</find>
       <find>getPage</find>
+      <find>Request</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -74,7 +77,6 @@
         <option value="$PROJECT_DIR$/search" />
         <option value="$USER_HOME$/AppData/Local/Programs/Python/Python37/Lib/const.py" />
         <option value="$PROJECT_DIR$/util.py" />
-        <option value="$PROJECT_DIR$/urlConnection.py" />
         <option value="$PROJECT_DIR$/search.py" />
         <option value="$PROJECT_DIR$/excelUtil.py" />
         <option value="$PROJECT_DIR$/getParseSave.py" />
@@ -101,6 +103,7 @@
         <option value="$PROJECT_DIR$/util/SMTP_send.py" />
         <option value="$PROJECT_DIR$/util/POP_receive.py" />
         <option value="$PROJECT_DIR$/functionPrograming.py" />
+        <option value="$PROJECT_DIR$/urlConnection.py" />
         <option value="$PROJECT_DIR$/util/Lagou_Excel.py" />
       </list>
     </option>
@@ -171,7 +174,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.Lagou_Excel">
+  <component name="RunManager" selected="Python.urlConnection">
     <configuration name="Lagou_Excel" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -223,23 +226,6 @@
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
     </configuration>
-    <configuration name="Socket_server" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="website" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Socket_server.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-    </configuration>
     <configuration name="functionPrograming" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -257,20 +243,37 @@
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
     </configuration>
+    <configuration name="urlConnection" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="website" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/urlConnection.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
     <list size="5">
-      <item index="0" class="java.lang.String" itemvalue="Python.Socket_server" />
-      <item index="1" class="java.lang.String" itemvalue="Python.Socket_client2" />
-      <item index="2" class="java.lang.String" itemvalue="Python.POP_receive" />
-      <item index="3" class="java.lang.String" itemvalue="Python.functionPrograming" />
-      <item index="4" class="java.lang.String" itemvalue="Python.Lagou_Excel" />
+      <item index="0" class="java.lang.String" itemvalue="Python.Socket_client2" />
+      <item index="1" class="java.lang.String" itemvalue="Python.POP_receive" />
+      <item index="2" class="java.lang.String" itemvalue="Python.functionPrograming" />
+      <item index="3" class="java.lang.String" itemvalue="Python.Lagou_Excel" />
+      <item index="4" class="java.lang.String" itemvalue="Python.urlConnection" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.Lagou_Excel" />
-        <item index="1" class="java.lang.String" itemvalue="Python.functionPrograming" />
-        <item index="2" class="java.lang.String" itemvalue="Python.POP_receive" />
-        <item index="3" class="java.lang.String" itemvalue="Python.Socket_client2" />
-        <item index="4" class="java.lang.String" itemvalue="Python.Socket_server" />
+        <item index="0" class="java.lang.String" itemvalue="Python.urlConnection" />
+        <item index="1" class="java.lang.String" itemvalue="Python.Lagou_Excel" />
+        <item index="2" class="java.lang.String" itemvalue="Python.functionPrograming" />
+        <item index="3" class="java.lang.String" itemvalue="Python.POP_receive" />
+        <item index="4" class="java.lang.String" itemvalue="Python.Socket_client2" />
       </list>
     </recent_temporary>
   </component>
@@ -927,16 +930,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/urlConnection.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="11" column="33" lean-forward="false" selection-start-line="11" selection-start-column="27" selection-end-line="11" selection-end-column="33" />
+        <state relative-caret-position="175">
+          <caret line="20" column="56" lean-forward="true" selection-start-line="20" selection-start-column="56" selection-end-line="20" selection-end-column="56" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/util/Lagou_Excel.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="248">
-          <caret line="126" column="33" lean-forward="true" selection-start-line="126" selection-start-column="33" selection-end-line="126" selection-end-column="33" />
+        <state relative-caret-position="96">
+          <caret line="133" column="17" lean-forward="true" selection-start-line="133" selection-start-column="17" selection-end-line="133" selection-end-column="17" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>

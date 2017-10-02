@@ -5,7 +5,7 @@ def getPage(url):
     content = page.decode("utf-8")
     return content
 # print(getPage(r'http://python.org/'))
-print(getPage(r'http://www.cnblogs.com/fnng/p/3576154.html'))
+# print(getPage(r'http://www.cnblogs.com/fnng/p/3576154.html'))
 # 用报头的方式访问,构造request，再访问，可以增加data参数，成为post方式
 def getPage2(url,headers):
     reques = request.Request(url,headers=headers)
@@ -17,4 +17,5 @@ headers = {
      'Referer': r'http://www.lagou.com/zhaopin/Python/?labelWords=label',
      'Connection': 'keep-alive'
 }
-print(getPage2(r'http://www.cnblogs.com/fnng/p/3576154.html',headers))
+# print(getPage2(r'http://www.cnblogs.com/fnng/p/3576154.html',headers))
+print(getPage(r'http://www.lagou.com/jobs/429813.html'))
