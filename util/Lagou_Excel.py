@@ -5,10 +5,10 @@ import json,collections,xlsxwriter
 import  bs4,datetime
 import  requests
 
-starttime = datetime.datetime.now()
-url = r'http://www.lagou.com/jobs/positionAjax.json?city=%E5%8C%97%E4%BA%AC'
+starttime = datetime.datetime.now()#&needAddtionalResult=false&isSchoolJob=0
+# url = r'http://www.lagou.com/jobs/positionAjax.json?city=%E5%8C%97%E4%BA%AC'
 # url = r'https://www.lagou.com/jobs/list_java?city=%E5%8C%97%E4%BA%AC&cl=false&fromSearch=true&labelWords=sug&suginput=java'
-# url = r'https://www.lagou.com/jobs/positionAjax.json?city=%E5%8C%97%E4%BA%AC&needAddtionalResult=false&isSchoolJob=0'
+url = r'https://www.lagou.com/jobs/positionAjax.json?city=%E5%8C%97%E4%BA%AC&needAddtionalResult=false&isSchoolJob=0'
 keyword = input('请输入您所需要查找的关键词 : ')
 
 def getPage2(url,pn,keyword):
@@ -38,6 +38,7 @@ def getPage2(url,pn,keyword):
         ('pn',pn),
         ('kd',keyword)
     ])
+    print('{0},{1},{2}'.format(url,pn,keyword))
     req = request.Request(url,headers=headers)
     page = request.open(req,data=data.encode('utf-8')).read()
     # page = request.u
@@ -54,7 +55,7 @@ def getPage(url,pn,keyword):
         'Connection': 'keep-alive',
         'Origin': 'http://www.lagou.com',
         'Cookie': 'JSESSIONID=ABAAABAAAGGABCB8EEC952C31AB3AA9A18BFA809495A8C7; user_trace_token=20171002112650-04238be5-9d8c-4769-9362-2f1c6cc7ae59; LGUID=20171002112653-88e1de05-a721-11e7-b81d-525400f775ce; index_location_city=%E5%8C%97%E4%BA%AC; SEARCH_ID=c0253b6c5f874e45990d399269e20297; Hm_lvt_4233e74dff0ae5bd0a3d81c6ccf756e6=1506914804; Hm_lpvt_4233e74dff0ae5bd0a3d81c6ccf756e6=1506916934; _gat=1; _ga=GA1.2.556263261.1506914804; _gid=GA1.2.500162274.1506914804; LGSID=20171002112653-88e1dc0c-a721-11e7-b81d-525400f775ce; LGRID=20171002120313-9c734b18-a726-11e7-b821-525400f775ce; TG-TRACK-CODE=search_code',
-        'Connection': 'keep-alive',
+        # 'Connection': 'keep-alive',
         'Content-Length': '38',
         'Content-Type': 'application/x-www-form-urlencoded;charset = UTF - 8',
         'Referer': 'https://www.lagou.com/jobs/list_%E7%BB%8F%E7%90%86?city=%E5%8C%97%E4%BA%AC&cl=false&fromSearch=true&labelWords=&suginput=',
@@ -69,6 +70,7 @@ def getPage(url,pn,keyword):
     else:
         boo = 'false'
     data = {'first':boo,'pn':pn, 'kd':keyword}
+    print('main page:{0},{1},{2}'.format(url, pn, keyword))
     s.headers.update(headers)
     r = s.post(url,data=data)
     return r.text
@@ -91,6 +93,7 @@ def read_id(page):
 
 def get_content(company_id):
     fin_url = r'http://www.lagou.com/jobs/{0}.html'.format(company_id)
+    print('zhiwei page:{0}'.format(fin_url))
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) '
                       'Chrome/45.0.2454.85 Safari/537.36 115Browser/6.0.3',
