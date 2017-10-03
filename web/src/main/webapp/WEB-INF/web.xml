@@ -4,6 +4,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">       
   <display-name>web-eb</display-name>
+  <!-- 上面可以配置 metadata-complete="true"  -->
   <!-- 默认配置在WEB-INF目录下（打包后的路径） , 位置必须放在最前面 ;多个配置文件用逗号分割开;可以模糊方式：spring*.xml-->  
    <context-param>
      <param-name>contextConfigLocation</param-name>

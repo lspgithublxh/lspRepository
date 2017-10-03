@@ -38,6 +38,9 @@
 	    <artifactId>cxf-rt-transports-http</artifactId>
 	    <version>${cxf.version}</version>
 	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.codehaus.woodstox/stax2-api -->
+	
+	
   </dependencies>
   <build>
 	  <resources>

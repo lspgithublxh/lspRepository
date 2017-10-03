@@ -23,6 +23,9 @@
 	<security:http pattern="/**/*.less" security="none"></security:http>
 	<security:http pattern="/**/*.map" security="none"></security:http>
 	<security:http pattern="/view/login.html" security="none"></security:http>
+	<security:http pattern="/services/**" security="none"></security:http>
+	
+	
 	<!-- <security:http pattern="/logout" security="none"></security:http> -->
 	<!-- 	<security:http pattern="/user/login" security="none"></security:http> -->
 	<!-- login-page="/view/login.html"
