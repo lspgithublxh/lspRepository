@@ -52,7 +52,7 @@ public class ZookeeperClient {
      }    
      
      
-     public void connect() throws KeeperException, InterruptedException, UnsupportedEncodingException {
+     public void connect() throws KeeperException, InterruptedException, IOException {
     	 System.out.println("/n1. 创建 ZooKeeper 节点 (znode ： zoo2, 数据： myData2 ，权限： OPEN_ACL_UNSAFE ，节点类型： Persistent");
     	 //1.创建节点
     	 zk.create("/zoo2","lishaoping".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
@@ -64,7 +64,7 @@ public class ZookeeperClient {
          zk.delete("/zoo2", -1);
          Stat stat = zk.exists("/zoo2", false);
          System.out.println("stat:" + stat);
-         
+         System.in.read();
      }
 
      private void close() throws InterruptedException {
