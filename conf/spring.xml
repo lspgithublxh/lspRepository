@@ -9,8 +9,8 @@
         ">  
  
   <dubbo:application name="lsp_provider"  />  
-  <!-- <dubbo:registry address="zookeeper://127.0.0.1:2181" /> -->
-  <dubbo:registry address="multicast://224.5.6.7:1234"/>
+   <dubbo:registry address="zookeeper://127.0.0.1:2181" />
+  <!-- <dubbo:registry address="multicast://224.5.6.7:1234"/> -->
   <dubbo:protocol name="dubbo" port="20880" />
   <dubbo:service interface="com.tools.dubbo.IMessageService" ref="messageService" /> 
   <bean id="messageService" class="com.tools.dubbo.MessageService" />  
