@@ -15,7 +15,20 @@ public class WebServiceClient {
 	public static void main(String[] args) throws IOException {
 		 
 //		 javaxMethod();
-		urlOpenWriteMethod();
+		String url = "http://localhost:8080/web/services/messageService?wsdl";
+		StringBuilder builder = new StringBuilder();
+		builder.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"");
+		builder.append(" xmlns:q0=\"http://webservice.tools.construct.com/\" ");
+		builder.append(" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"> ");
+		builder.append(" <soapenv:Body>");
+//		builder.append(" <q0:sayHello><arg0>aaa</arg0>  </q0:sayHello> ");
+		builder.append(" <q0:getMessage><arg0>aaa</arg0>  </q0:getMessage> ");
+		builder.append(" </soapenv:Body> </soapenv:Envelope>");
+		String body = builder.toString();
+//		String url = "http://localhost:8888/toolT/services/IABService";
+//		String body = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:q0=\"http://webservice.tools.com/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" + 
+//                "<soapenv:Body> <q0:sayHello><arg0>aaa</arg0>  </q0:sayHello> </soapenv:Body> </soapenv:Envelope>";
+		urlOpenWriteMethod(url, body);
 		 
 	}
 	
@@ -27,8 +40,12 @@ public class WebServiceClient {
 		 System.out.println(inter.sayHello("d"));;
 	}
 	
-	public static void urlOpenWriteMethod() throws IOException {
-		URL wsUrl = new URL("http://localhost:8888/toolT/services/IABService");
+	public static void xfireMethod() {
+		
+	}
+	
+	public static void urlOpenWriteMethod(String url, String body) throws IOException {
+		URL wsUrl = new URL(url);
         
         HttpURLConnection conn = (HttpURLConnection) wsUrl.openConnection();
         
@@ -40,8 +57,7 @@ public class WebServiceClient {
         OutputStream os = conn.getOutputStream();
         
         //«Î«ÛÃÂ
-        String soap = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:q0=\"http://webservice.tools.com/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" + 
-                      "<soapenv:Body> <q0:sayHello><arg0>aaa</arg0>  </q0:sayHello> </soapenv:Body> </soapenv:Envelope>";
+        String soap = body;
         
         os.write(soap.getBytes());
         
