@@ -1,8 +1,5 @@
 package com.tools.spring_boot.controller;
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.web.servlet.ServletComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,9 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
  *ToolsTest
  *2017年10月5日
  */
-@Configuration
-@ServletComponentScan
-@EnableAutoConfiguration 
+//@Configuration
+//@ServletComponentScan
+//@EnableAutoConfiguration 
 @RestController
 public class AController {
 

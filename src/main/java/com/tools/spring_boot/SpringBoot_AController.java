@@ -34,6 +34,7 @@ public class SpringBoot_AController {
     }
 	
 	public static void main(String[] args) {
+		//1.只需要运行注解了@SpringBootApplication的那个类就可以了。其他controller只要在同级包下或者子包下都可以被访问到
 		SpringApplication.run(SpringBoot_AController.class, args);
 		
 	}
