@@ -1,8 +1,12 @@
 package com.tools.spring_boot.controller;
 
+import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,10 +30,17 @@ public class AController {
 	@Autowired
     private IAService userService;
 	
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+	
 	@RequestMapping("/hello")
 	public String hello(String name) {
 		System.out.println("hello : " + name);
 		userService.testData();
+		//2.jdbc方式
+		String sql = "select * from boot_user4";
+		List<Map<String, Object>> list = jdbcTemplate.queryForList(sql);
+		System.out.println(list);
 		return "success";
 	}
 }
