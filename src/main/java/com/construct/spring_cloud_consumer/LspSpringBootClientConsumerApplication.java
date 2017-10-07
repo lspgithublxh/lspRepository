@@ -15,6 +15,13 @@ public class LspSpringBootClientConsumerApplication {
 		SpringApplication.run(LspSpringBootClientConsumerApplication.class, args);
 	}
 	
+	/**
+	 * @LoadBalanced代理类，转换服务名为ip用
+	 *@author lishaoping
+	 *lsp_spring_boot_client_consumer
+	 *2017年10月7日
+	 * @return
+	 */
 	@Bean
 	@LoadBalanced
 	public RestTemplate restTemplate() {

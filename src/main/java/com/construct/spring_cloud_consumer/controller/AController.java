@@ -15,6 +15,7 @@ public class AController {
 	
 	@RequestMapping("/hi")
 	public String hi(@RequestParam String name) {
+		System.out.println("loadBalanced method:");
 		return aservice.hiService(name);
 	}
 }
