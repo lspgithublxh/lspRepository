@@ -23,6 +23,7 @@
     <cxf.version>3.2.0</cxf.version>
     <spring_boot.version>1.5.7.RELEASE</spring_boot.version>
     <kafka.version>0.11.0.1</kafka.version>
+    <jedis.version>2.9.0</jedis.version>
   </properties>
  
   <dependencies>
@@ -79,6 +80,11 @@
 	    <groupId>org.apache.kafka</groupId>
 	    <artifactId>kafka-clients</artifactId>
 	    <version>${kafka.version}</version>
+	</dependency>
+	<dependency>
+	    <groupId>redis.clients</groupId>
+	    <artifactId>jedis</artifactId>
+	    <version>${jedis.version}</version>
 	</dependency>
 	<!-- spirng boot的依赖包 -->
 	<!--  <dependency>
