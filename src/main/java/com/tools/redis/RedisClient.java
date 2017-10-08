@@ -6,6 +6,7 @@ import java.util.List;
 import org.junit.Test;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Transaction;
 
@@ -16,6 +17,8 @@ public class RedisClient {
 	}
 	
 	Jedis jedis = new Jedis("localhost", 6379);
+	
+	
 	
 	@Test
 	public void client() {
@@ -79,5 +82,46 @@ public class RedisClient {
 			}
 			
 		}
+	}
+	
+	@Test
+	public void publish() {
+		jedis.connect();
+		jedis.publish("renminribao", "today is 2.17.10.8");
+	}
+	
+	@Test
+	public void subsribe() {
+		jedis.connect();
+		
+		jedis.subscribe(new JedisPubSub() {
+			@Override
+			public void onMessage(String channel, String message) {
+				System.out.println("on messeage:" + message + "  from " + channel);
+				super.onMessage(channel, message);
+			}
+			
+			@Override
+			public void onSubscribe(String channel, int subscribedChannels) {
+				// TODO Auto-generated method stub
+				super.onSubscribe(channel, subscribedChannels);
+			}
+			
+			@Override
+			public void onPSubscribe(String pattern, int subscribedChannels) {
+				System.out.println("on psubscribe ");
+				super.onPSubscribe(pattern, subscribedChannels);
+			}
+			
+			@Override
+			public void onUnsubscribe(String channel, int subscribedChannels) {
+				// TODO Auto-generated method stub
+				super.onUnsubscribe(channel, subscribedChannels);
+			}
+		
+		}, "renminribao");
+		
+		
+		
 	}
 }
