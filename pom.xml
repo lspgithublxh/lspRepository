@@ -22,6 +22,7 @@
     <freemarker.version>2.3.23</freemarker.version>
     <cxf.version>3.2.0</cxf.version>
     <spring_boot.version>1.5.7.RELEASE</spring_boot.version>
+    <kafka.version>0.11.0.1</kafka.version>
   </properties>
  
   <dependencies>
@@ -68,6 +69,16 @@
 	    <groupId>com.101tec</groupId>
 	    <artifactId>zkclient</artifactId>
 	    <version>0.10</version>
+	</dependency>
+	<!-- <dependency>
+	    <groupId>org.apache.kafka</groupId>
+	    <artifactId>kafka_2.11</artifactId>
+	    <version>${kafka.version}</version>
+	</dependency> -->
+	<dependency>
+	    <groupId>org.apache.kafka</groupId>
+	    <artifactId>kafka-clients</artifactId>
+	    <version>${kafka.version}</version>
 	</dependency>
 	<!-- spirng boot的依赖包 -->
 	<!--  <dependency>
