@@ -9,6 +9,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 
 public class MongoClientTest {
 
@@ -16,7 +17,8 @@ public class MongoClientTest {
 	
 	public static void main(String[] args) {
 //		new MongoClientTest().connect();
-		new MongoClientTest().query();
+//		new MongoClientTest().query();
+		new MongoClientTest().update();
 	}
 	
 	/**
@@ -52,5 +54,12 @@ public class MongoClientTest {
 		for(Document d : docs) {
 			System.out.println(d);
 		}
+	}
+	
+	public void update() {
+		MongoDatabase database = client.getDatabase("business");
+		MongoCollection<Document> col = database.getCollection("product");
+		col.updateMany(Filters.eq("title", "洞察世界"), new Document("$set", new Document("title", "分析设计")));
+		query();
 	}
 }
