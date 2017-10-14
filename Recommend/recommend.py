@@ -29,8 +29,8 @@ def readFile(filename):
 def getRatingInfo(ratings):
     rates = []
     for line in ratings:
-        rate = line.split("\t")
-        rates.append([int(rate[0]), int(rate[1]), int(rate[2])])
+        rate = line.split(",")
+        rates.append([int(rate[0]), int(rate[1]), float(rate[2])])
     return rates
 
 
@@ -52,7 +52,13 @@ def getUserScoreDataStructure(rates):
 
 def getNearestNeighbor(userId, userDIct, itemUser):
     neighbors = []
+    #print(itemUser)
     for item in userDIct:
+        if itemUser.keys().__contains__(item) == False:
+            continue
+        if item == 400:
+            break
+        print("item:{0},list:".format(item))#itemUser[item]
         for neighbor in itemUser[item]:
             if neighbor != userId and neighbor not in neighbors:
                 neighbors.append(neighbor)
@@ -65,8 +71,9 @@ def getNearestNeighbor(userId, userDIct, itemUser):
 
 
 def recommendByUserFC(filename, userId, k = 5):
+    #影-人-分list字符串
     contents = readFile(filename)
-    #用户-电影-评分列表
+    #用户id-电影id-评分列表
     rates = getRatingInfo(contents)
     userDict, itemUser = getUserScoreDataStructure(rates)
     neighbors = getNearestNeighbor(userId, userDict,itemUser)[:5]
@@ -91,26 +98,28 @@ def recommendByUserFC(filename, userId, k = 5):
 
 
 def getMovieList(filename):
+    #电影名|电影版本|...其他信息的list
     contentes = readFile(filename)
     movies_info = {}
     for movie in contentes:
-        singel_info = movie.split("|")
+        # print("movie:{0}".format(movie))
+        singel_info = movie.split(",")
         movies_info[int(singel_info[0])] = singel_info[1:]
     return movies_info
 
 
 if __name__ ==  '__main__':
-    movies = getMovieList("u.item")
-    recomend_list, user_movie,item_user, neighbors = recommendByUserFC("u.data",50,80)
+    movies = getMovieList("D:\\tool\ml-20m\\movies.csv".encode("utf-8"))
+    recomend_list, user_movie,item_user, neighbors = recommendByUserFC("D:\\tool\\ml-20m\\mus.csv".encode("utf-8"),50,80)
     neighbors_id = [ i[1] for i in neighbors]
     table = Texttable()
     table.set_deco(Texttable.HEADER)
     table.set_cols_dtype(['t','t','t'])
     table.set_cols_align(['l','l','l'])
     rows = []
-    rows.append(['movie name','release'])
+    rows.append(['movie name','type','userid'])
     for movie_id in recomend_list[:20]:
-        rows.append([movies[movie_id][0], movies[movie_id][1]])
+        rows.append([movies[movie_id][0], movies[movie_id][1], '50'])
     table.add_rows(rows)
     print(table.draw())
     #另一种打印
