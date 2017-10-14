@@ -97,6 +97,36 @@ def recommendByUserFC(filename, userId, k = 5):
     return [k[1] for k in recommend_list], user_movies, itemUser, neighbors
 
 
+def getUserDictAndItemUser(filename):
+    # 影-人-分list字符串
+    contents = readFile(filename)
+    # 用户id-电影id-评分列表
+    rates = getRatingInfo(contents)
+    userDict, itemUser = getUserScoreDataStructure(rates)
+    return userDict, itemUser
+
+def recommendByUserFC2(userDict,itemUser, userId, k = 5):
+    neighbors = getNearestNeighbor(userId, userDict,itemUser)[:5]
+    #推荐字典
+    recommend_dict = {}
+    for neighbor in neighbors:
+        neighbor_user_id = neighbor[1]
+        movies = userDict[neighbor_user_id]
+        for movie in movies:
+            if movie[0] not in recommend_dict:
+                recommend_dict[movie[0]] = neighbor[0] #喜欢者之间距离总和
+            else:
+                recommend_dict[movie[0]] += neighbor[0]
+    recommend_list = []
+    for key in recommend_dict:
+        recommend_list.append([recommend_dict[key], key])
+    #距离越小越靠前
+    recommend_list.sort(reverse=True)
+    user_movies = [ k[0] for k in userDict[userId]]
+    return [k[1] for k in recommend_list], user_movies, itemUser, neighbors
+
+
+
 def getMovieList(filename):
     #电影名|电影版本|...其他信息的list
     contentes = readFile(filename)
@@ -107,22 +137,34 @@ def getMovieList(filename):
         movies_info[int(singel_info[0])] = singel_info[1:]
     return movies_info
 
+def printRecommend(movies, recommend_list):
+    table = Texttable()
+    table.set_deco(Texttable.HEADER)
+    table.set_cols_dtype(['t', 't', 't'])
+    table.set_cols_align(['l', 'l', 'l'])
+    rows = []
+    rows.append(['movie name', 'type', 'userid'])
+    i = 0
+    for movie_id in recomend_list:
+        rows.append([movies[movie_id][0], movies[movie_id][1], '{0}'.format(math.floor(i / 20) + 1)])
+        i = i + 1
+    table.add_rows(rows)
+    print(table.draw())
+    result = open('D:\\tool\ml-20m\\weRecommend3.csv', 'w+')
+    result.write(table.draw())
 
 if __name__ ==  '__main__':
     movies = getMovieList("D:\\tool\ml-20m\\movies.csv".encode("utf-8"))
-    recomend_list, user_movie,item_user, neighbors = recommendByUserFC("D:\\tool\\ml-20m\\mus.csv".encode("utf-8"),50,80)
-    neighbors_id = [ i[1] for i in neighbors]
-    table = Texttable()
-    table.set_deco(Texttable.HEADER)
-    table.set_cols_dtype(['t','t','t'])
-    table.set_cols_align(['l','l','l'])
-    rows = []
-    rows.append(['movie name','type','userid'])
-    for movie_id in recomend_list[:20]:
-        rows.append([movies[movie_id][0], movies[movie_id][1], '50'])
-    table.add_rows(rows)
-    print(table.draw())
-    result = open('D:\\tool\ml-20m\\weRecommend.csv','w+')
-    result.write(table.draw())
+    # recomend_list, user_movie,item_user, neighbors = recommendByUserFC("D:\\tool\\ml-20m\\mus.csv".encode("utf-8"),50,80)
+    userDict, itemUser = getUserDictAndItemUser("D:\\tool\\ml-20m\\mus.csv")
+    recomend_list1 = []
+    for i in range(1,10):
+        recomend_list, user_movie, item_user, neighbors = recommendByUserFC2(userDict, itemUser, i, 80)
+        recomend_list1.extend(recomend_list[:20])
+        print(recomend_list1)
+    printRecommend(movies, recomend_list1)
+    # recomend_list, user_movie, item_user, neighbors = recommendByUserFC2( userDict,itemUser,50, 80)
+    # neighbors_id = [ i[1] for i in neighbors]
+
     #另一种打印
-    print('User:{0}, We Recommend:{1}'.format(50, recomend_list))
+    # print('User:{0}, We Recommend:{1}'.format(50, recomend_list))
