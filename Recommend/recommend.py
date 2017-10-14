@@ -122,5 +122,7 @@ if __name__ ==  '__main__':
         rows.append([movies[movie_id][0], movies[movie_id][1], '50'])
     table.add_rows(rows)
     print(table.draw())
+    result = open('D:\\tool\ml-20m\\weRecommend.csv','w+')
+    result.write(table.draw())
     #另一种打印
     print('User:{0}, We Recommend:{1}'.format(50, recomend_list))
