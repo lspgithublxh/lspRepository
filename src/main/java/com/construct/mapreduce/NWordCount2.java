@@ -98,10 +98,10 @@ public class NWordCount2 {
 		Configuration conf = new Configuration();
 		GenericOptionsParser parser = new GenericOptionsParser(conf, args);
 		String[] remainArgs = parser.getRemainingArgs();
-		if((remainArgs.length != 3) && (remainArgs.length != 6)) {
-			System.out.println(" params num is not right!");
-			System.exit(1);
-		}
+//		if((remainArgs.length != 3) && (remainArgs.length != 6)) {
+//			System.out.println(" params num is not right!");
+//			System.exit(1);
+//		}
 		Job job = Job.getInstance(conf, "NWordCount2");
 		job.setJarByClass(NWordCount2.class);
 		job.setMapperClass(NMaper.class);
@@ -115,7 +115,7 @@ public class NWordCount2 {
 			if("-skip".equals(remainArgs[i])) {
 				job.addCacheFile(new Path(remainArgs[++i]).toUri());
 				job.getConfiguration().setBoolean("wordcount.skip.patterns", true);
-			}else {
+			}else if(remainArgs[i].startsWith("/")){
 				otherArgs.add(remainArgs[i]);
 			}			
 		}
