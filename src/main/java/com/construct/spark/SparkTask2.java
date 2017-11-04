@@ -10,13 +10,42 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
-import org.apache.spark.storage.StorageLevel;
 
 import scala.Tuple2;
 
 public class SparkTask2 {
 
 	public static void main(String[] args) {
+		localHandle();
+//		distributedMethod();
+	}
+	
+	/**
+	 * 一气呵成非常重要，隔了几天可能全部就忘干净了
+	 *@author lishaoping
+	 *BigData
+	 *2017年11月4日
+	 */
+	private static void localHandle() {
+		SparkConf conf = new SparkConf().setAppName("easy_task").setMaster("local[1]");
+		JavaSparkContext context = new JavaSparkContext(conf);
+		//1.创建RDD---内存方式 list 
+		List<Integer> list = Arrays.asList(new Integer[] {1,2,3,4,5});
+		JavaRDD<Integer> RDD1 = context.parallelize(list, 10);
+		//2.创建RDD---文件方式-line of collection
+		JavaRDD<String> lineRDD = context.textFile("D:\\tool\\words.txt");//不一定是单个文件，可以是多个文件，匹配到的文件
+		//3.JavaRDD上进行的一系列集合操作：分布式集合的操作
+		int textSize = lineRDD.map(s -> s.length()).reduce((a, b) -> a + b);
+		System.out.println("fileSize:" + textSize);
+		//4.创建特殊RDD,文件名-文件内容的pair ,对一个目录下的小文件
+//		JavaPairRDD<String, String> pairs = context.wholeTextFiles("D:\\test\\text");
+		//5.创建RDD，hadoop任务方式
+//		context.hadoopRDD(conf, inputFormatClass, keyClass, valueClass)
+//		context.newAPIHadoopRDD(conf, fClass, kClass, vClass)
+//		localHandle();
+	}
+	
+	private static void distributedMethod() {
 		SparkConf conf = new SparkConf().setAppName("easy_task").setMaster("S1PA11");
 		JavaSparkContext context = new JavaSparkContext(conf);
 		//1.创建RDD---内存方式 list 
@@ -33,6 +62,10 @@ public class SparkTask2 {
 //		context.newAPIHadoopRDD(conf, fClass, kClass, vClass)
 		
 		
+		somKindsOfHandle(lineRDD);
+	}
+
+	private static void somKindsOfHandle(JavaRDD<String> lineRDD) {
 		//6.RDD操作 常见：transform 和action
 		 JavaRDD<Integer> lineCount = lineRDD.map(s -> s.length());
 //		 lineCount.persist(StorageLevel.MEMORY_ONLY());
