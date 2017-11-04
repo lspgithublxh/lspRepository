@@ -10,6 +10,7 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
+import org.apache.spark.storage.StorageLevel;
 
 import scala.Tuple2;
 
@@ -42,7 +43,7 @@ public class SparkTask2 {
 		//5.创建RDD，hadoop任务方式
 //		context.hadoopRDD(conf, inputFormatClass, keyClass, valueClass)
 //		context.newAPIHadoopRDD(conf, fClass, kClass, vClass)
-//		localHandle();
+		somKindsOfHandle(lineRDD);
 	}
 	
 	private static void distributedMethod() {
@@ -68,8 +69,9 @@ public class SparkTask2 {
 	private static void somKindsOfHandle(JavaRDD<String> lineRDD) {
 		//6.RDD操作 常见：transform 和action
 		 JavaRDD<Integer> lineCount = lineRDD.map(s -> s.length());
-//		 lineCount.persist(StorageLevel.MEMORY_ONLY());
+		 lineCount.persist(StorageLevel.MEMORY_ONLY());
 		 int size = lineCount.reduce((a, b) -> a + b);
+		 System.out.println("fileSize2:" + size);
 		 JavaRDD<Integer> counts = lineRDD.map(new Function<String, Integer>(){
 			@Override
 			public Integer call(String arg0) throws Exception {
@@ -82,6 +84,7 @@ public class SparkTask2 {
 				return arg0 + arg1;
 			}
 		});
+		 System.out.println("fileSize3:" + size);
 		 //7.返回worker元素到driver
 		 counts.take(100).forEach(new Consumer<Integer>() {
 			@Override
@@ -94,14 +97,29 @@ public class SparkTask2 {
 		JavaPairRDD<String, Integer> statistic = pairs2.reduceByKey(new Function2() {
 			@Override
 			public Object call(Object arg0, Object arg1) throws Exception {
-				return new Tuple2(((Tuple2)arg0)._2, ((Tuple2)arg1)._2);
+				System.out.println("arg0:" + arg0);
+				System.out.println("arg1:" + arg1);
+//				return new Tuple2(((Integer)arg0), ((Integer)arg1));
+				return new Tuple2((arg0), (arg1));
 			}
 			
 		});
+		statistic.take(100).forEach(new Consumer<Tuple2<String,Integer>>() {
+
+			@Override
+			public void accept(Tuple2<String, Integer> t) {
+				System.out.println(t._1 + "-----------" + t._2);
+			}
+
+		});
 		//9.排序
 		JavaPairRDD<String, Integer> sorted = statistic.sortByKey(true);
+		System.out.println(sorted.toDebugString());
 		//10.收集返回的结果
 		List<Tuple2<String, Integer>> collect = sorted.collect();
+		for(Tuple2<String, Integer> t : collect) {
+			System.out.println("-collect:--" + t._1 + "---" + t._2);
+		}
 		//11.异步操作：
 //		statistic.foreachAsync(f)
 	}
