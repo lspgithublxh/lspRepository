@@ -6,11 +6,16 @@ import java.util.List;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.ml.classification.LogisticRegression;
+import org.apache.spark.ml.classification.LogisticRegressionModel;
+import org.apache.spark.ml.linalg.Vector;
+import org.apache.spark.ml.linalg.VectorUDT;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.RowFactory;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.types.DataTypes;
+import org.apache.spark.sql.types.Metadata;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
 
@@ -40,6 +45,8 @@ public class DataFrameHandle {
 		System.out.println(set3.collect());
 		//数据库访问操作：
 		databaseHandle(session);
+		//机器学习操作：
+		mlLibAlgorithm(rowRdd, session, context);
 	}
 
 	private static void databaseHandle(SparkSession session) {
@@ -51,6 +58,31 @@ public class DataFrameHandle {
 		rows.printSchema();
 		Dataset<Row> couns = rows.groupBy("username").count();
 		couns.show();
-		couns.write().format("json").save("D:\\test\\" + System.currentTimeMillis() + "\\OK.txt");
+//		couns.write().format("json").save("D:\\test\\" + System.currentTimeMillis() + "\\OK.txt");
+	}
+	
+	/**
+	 * 暂时不碰机器学习
+	 *@author lishaoping
+	 *BigData
+	 *2017年11月5日
+	 * @param rowRdd
+	 * @param session
+	 * @param context
+	 */
+	private static void mlLibAlgorithm(JavaRDD<Row> rowRdd, SparkSession session, JavaSparkContext context) {
+		List<Double> list = Arrays.asList(new Double[] {2.11,2.232,6.6565,23.78,2323.2322,23.454,3434.12,2323.2322,23.454,3434.12,2323.2322,23.454,3434.12,2323.2322,23.454,3434.12});
+		rowRdd = context.parallelize(list).map(RowFactory::create);
+		StructType type = new StructType(new StructField[] {new StructField("label", DataTypes.DoubleType, true, Metadata.empty()),
+														new StructField("features",new VectorUDT(), true, Metadata.empty())});
+		Dataset<Row> rows = session.createDataFrame(rowRdd, type);
+		LogisticRegression regression = new LogisticRegression().setMaxIter(10);
+		LogisticRegressionModel model = regression.fit(rows);
+		Vector v1 = model.coefficients();
+		Vector v2 = model.interceptVector();
+		System.out.println("v1:" + v1.toString());
+		System.out.println("v2:" + v2.toString());
+		model.transform(rows).show();
+		
 	}
 }

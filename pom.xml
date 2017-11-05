@@ -11,6 +11,7 @@
   	<mahout.version>0.13.0</mahout.version>
   	<mysql.connector.version>6.0.6</mysql.connector.version>
   	<hadoop.version>2.8.1</hadoop.version>
+  	<spark.version>2.2.0</spark.version>
   </properties>
   <dependencies>
     <dependency>
@@ -66,14 +67,21 @@
 	    <dependency> 
 	      <groupId>org.apache.spark</groupId>
 	      <artifactId>spark-sql_2.11</artifactId>
-	      <version>2.2.0</version>
+	      <version>${spark.version}</version>
 	    </dependency>
 	    <dependency>
 		    <groupId>org.apache.spark</groupId>
 		    <artifactId>spark-core_2.11</artifactId>
-		    <version>2.2.0</version>
+		    <version>${spark.version}</version>
 		    <scope>provided</scope><!--编译时用，但 不打包 -->
 		</dependency>
+		<dependency>
+		    <groupId>org.apache.spark</groupId>
+		    <artifactId>spark-mllib_2.11</artifactId>
+		    <version>${spark.version}</version>
+		    <scope>provided</scope>
+		</dependency>
+		
 		<!-- <dependency>
 		    <groupId>org.apache.spark</groupId>
 		    <artifactId>spark-assembly_2.10</artifactId>
