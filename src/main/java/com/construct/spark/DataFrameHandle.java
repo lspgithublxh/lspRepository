@@ -38,5 +38,19 @@ public class DataFrameHandle {
 		Dataset<Row> set3 = set2.filter(set.col("line").like("%a%"));
 		System.out.println(set3.count());
 		System.out.println(set3.collect());
+		//数据库访问操作：
+		databaseHandle(session);
+	}
+
+	private static void databaseHandle(SparkSession session) {
+		Dataset<Row> rows = session.read().format("jdbc")
+//				.jdbc(url, table, properties)
+				.option("url", "jdbc:mysql://localhost:3306/mydatabases?user=root&password=lsp&useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC")
+				.option("dbtable", "user_roles")
+				.load();
+		rows.printSchema();
+		Dataset<Row> couns = rows.groupBy("username").count();
+		couns.show();
+		couns.write().format("json").save("D:\\test\\" + System.currentTimeMillis() + "\\OK.txt");
 	}
 }
