@@ -12,12 +12,13 @@ import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFunction;
+import org.apache.spark.storage.StorageLevel;
 
 import scala.Tuple2;
 
 /**
  * 弹性数据集为数据结构，而不是map-reduce那一套过程
- *
+ *map.maptopair ,reducebykey,sortedbykey,collect
  *@author lishaoping
  *BigData
  *2017年11月5日
@@ -27,7 +28,9 @@ public class WordCount {
 	public static void main(String[] args) {
 		SparkConf conf = new SparkConf().setAppName("easy_task").setMaster("local[1]");
 		JavaSparkContext context = new JavaSparkContext(conf);
-		JavaRDD<String> lineRDD = context.textFile("D:\\tool\\words.txt");
+		List<String> yuan = Arrays.asList(new String[] {"ss","ss","ew"});
+		JavaRDD<String> lineRDD = context.parallelize(yuan);
+//		JavaRDD<String> lineRDD = context.textFile("D:\\tool\\words.txt");
 		JavaRDD<String> text = lineRDD.flatMap(new FlatMapFunction<String, String>() {
 
 			@Override
@@ -44,13 +47,18 @@ public class WordCount {
 			}
 		});
 		
+		//定义值的两两计算方法,如果是一个元素，根本不需要调用这个方法，也不会执行这个reduceBykey方法中注入的元素了，即直接输出了，直接就是结果了
+		//同时也说明了：reduceByKey的传递函数的泛型参数是定了的
 		JavaPairRDD<String, Integer> reduce = pair.reduceByKey(new Function2<Integer, Integer, Integer>() {
 			
 			@Override
 			public Integer call(Integer arg0, Integer arg1) throws Exception {
+				System.out.println("how many times:" + arg0 + "," + arg1);
+				
 				return arg0 + arg1;
 			}
 		});
+		
 		JavaPairRDD<String, Integer> result = reduce.sortByKey(true);
 		
 		System.out.println("result is : " + reduce.collect());
@@ -84,7 +92,9 @@ public class WordCount {
 		for(Tuple2<Integer, String> tu : pair2.collect()) {
 			System.out.println(tu._2 + "----count3-----:" + tu._1);
 		}
-		reduce.saveAsTextFile("D:\\test\\" + System.currentTimeMillis());
+		reduce.persist(StorageLevel.MEMORY_AND_DISK());
+		reduce.saveAsObjectFile("D:\\test\\" + System.currentTimeMillis());
+//		reduce.saveAsTextFile("D:\\test\\" + System.currentTimeMillis());
 		context.close();
 	}
 
