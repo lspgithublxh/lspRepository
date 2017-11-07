@@ -79,6 +79,12 @@ public class StandardProcess {
 		for(Tuple2<String , Double> tu : pairs2.collect()) {
 			System.out.println("--url: " + tu._1 + ", score:" + tu._2());
 		}
+		JavaPairRDD<Double, String> pairs3 = pairs2.mapToPair(s -> {
+			return new Tuple2<>(s._2, s._1);
+		}).sortByKey(false);
+		for(Tuple2<Double , String> tu : pairs3.collect()) {
+			System.out.println("--url: " + tu._2 + ", score:" + tu._1());
+		}
 		context.stop();
 	}
 

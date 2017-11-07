@@ -10,6 +10,7 @@ import org.apache.spark.ml.classification.LogisticRegression;
 import org.apache.spark.ml.classification.LogisticRegressionModel;
 import org.apache.spark.ml.linalg.Vector;
 import org.apache.spark.ml.linalg.VectorUDT;
+import org.apache.spark.sql.AnalysisException;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.RowFactory;
@@ -21,11 +22,11 @@ import org.apache.spark.sql.types.StructType;
 
 public class DataFrameHandle {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws AnalysisException {
 		handle1();
 	}
 
-	private static void handle1() {
+	private static void handle1() throws AnalysisException {
 		SparkConf conf = new SparkConf().setAppName("dataframes").setMaster("local[4]");
 		JavaSparkContext context = new JavaSparkContext(conf);
 		JavaRDD<String> rdd = context.textFile("D:\\tool\\words.txt");
@@ -46,18 +47,25 @@ public class DataFrameHandle {
 		//数据库访问操作：
 		databaseHandle(session);
 		//机器学习操作：
-		mlLibAlgorithm(rowRdd, session, context);
+//		mlLibAlgorithm(rowRdd, session, context);
 	}
 
-	private static void databaseHandle(SparkSession session) {
+	private static void databaseHandle(SparkSession session) throws AnalysisException {
 		Dataset<Row> rows = session.read().format("jdbc")
 //				.jdbc(url, table, properties)
 				.option("url", "jdbc:mysql://localhost:3306/mydatabases?user=root&password=lsp&useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC")
 				.option("dbtable", "user_roles")
 				.load();
 		rows.printSchema();
-		Dataset<Row> couns = rows.groupBy("username").count();
-		couns.show();
+		rows.groupBy("username").count().show();
+		rows.show();
+		rows.select(rows.col("username").substr(0, 4)).show();
+		rows.filter(rows.col("username").like("%admin%")).groupBy(rows.col("username")).count();
+//		session.sql("select count(1) from user_roles").show();
+		rows.createOrReplaceTempView("user_ros");
+		session.sql("select count(1) from user_ros").show();
+		rows.createGlobalTempView("user_so");
+		session.sql("select count(1) from global_temp.user_so ").show();
 //		couns.write().format("json").save("D:\\test\\" + System.currentTimeMillis() + "\\OK.txt");
 	}
 	
