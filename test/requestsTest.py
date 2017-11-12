@@ -1,11 +1,13 @@
 #coding=utf-8
 import  requests
 import sys
+import beautifulsoup4Test
 
 def test():
     res = requests.get("http://www.baidu.com")
     res.encoding = 'utf-8'
     print  res.text
+    print res.content
     # print (res.text.decode('ISO-8859-1').encode('utf-8'))
     # print res.text.decode('ISO-8859-1')
     # print res.text.decode('ISO-8859-1').encode('utf-8')
@@ -15,6 +17,24 @@ def test():
     print (res.headers)
     print(res.encoding)
     print res.cookies
+    beautifulsoup4Test.test(res.text)
+
+def headers():
+    head = {
+        "Accept": 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Encoding':'gzip, deflate, sdch, br',
+        'Accept-Language':'zh-CN,zh;q=0.8',
+        'Connection':'keep-alive',
+        'Host': 'www.baidu.com',
+        'Upgrade-Insecure-Requests': str(1),
+        'User-Agent': 'Mozilla/5.0(Windows NT 10.0;WOW64) AppleWebKit/537.36(KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36'
+    }
+    res = requests.get('http://www.baidu.com',headers=head)
+    res.encoding = 'utf-8'
+    print res.text
+    beautifulsoup4Test.test(res.text)
+
+
 
 def test2():
     print sys.getdefaultencoding()
@@ -47,5 +67,6 @@ def test2():
     print '\xd6\xd0\xce\xc4\x41dfcd'.decode('GBK')
 
 if __name__ == '__main__':
-     test2()
+     # test2()
      # test()
+     headers()
