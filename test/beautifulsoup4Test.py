@@ -1,5 +1,7 @@
 from bs4 import  BeautifulSoup
 
+
+
 def test(content):
     # print 'test'
     bs = BeautifulSoup(content, 'html.parser')

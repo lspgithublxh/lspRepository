@@ -4,7 +4,8 @@ import sys
 import beautifulsoup4Test
 
 def test():
-    res = requests.get("http://www.baidu.com")
+    # res = requests.get('''https://mbd.baidu.com/newspage/data/landingsuper?context=%7B"nid"%3A"news_2762606785137875577"%7D&n_type=0&p_from=1''')
+    res = requests.get('''https://www.shodan.io/search?query=port%3A102''')
     res.encoding = 'utf-8'
     print  res.text
     print res.content
@@ -19,6 +20,18 @@ def test():
     print res.cookies
     beautifulsoup4Test.test(res.text)
 
+def download(url, header):
+    res = requests.get(url, headers=header)
+    print res.encoding
+    # res.encoding = 'utf-8'
+    return res.text
+
+def download2(url, data, header):
+    res = requests.get(url,data, headers=header)
+    # res.encoding = 'utf-8'
+    return res.text
+
+
 def headers():
     head = {
         "Accept": 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -30,6 +43,7 @@ def headers():
         'User-Agent': 'Mozilla/5.0(Windows NT 10.0;WOW64) AppleWebKit/537.36(KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36'
     }
     res = requests.get('http://www.baidu.com',headers=head)
+    # res = requests.get('https://mbd.baidu.com/newspage/data/landingsuper?context=%7B"nid"%3A"news_2762606785137875577"%7D&n_type=0&p_from=1', headers=head)
     res.encoding = 'utf-8'
     print res.text
     beautifulsoup4Test.test(res.text)
@@ -68,5 +82,5 @@ def test2():
 
 if __name__ == '__main__':
      # test2()
-     # test()
-     headers()
+     test()
+     # headers()
