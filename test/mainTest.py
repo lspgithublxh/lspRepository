@@ -14,7 +14,7 @@ if __name__ == '__main__':
         "path": "/search?query=port%3A102",
         "scheme": "https",
         "Accept": 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Accept-Encoding':'gzip, deflate, sdch, br',
+      #  'Accept-Encoding':'gzip, deflate, sdch, br',
         'Accept-Language':'zh-CN,zh;q=0.8',
         'cache-control':'max-age=0',
         'cookie':'__cfduid=dd7096f06fdc5ad7b5f81ef9706c673351510477684; __guid=257598605.3644327904132300300.1510477677988.1885; polito="b91d5dce8ae4ca991d6009cc56a1d4f75a080dc45a080d79e449853f25e6b2a1!"; session=4af887580ef211b0719c4b44c9fb112d2c2cf19bgAJVQDQ1OWU1MTNhYjFiM2JlZmQ1ZDhjNDM4YWFhMTFmYWE2Y2JlYWU3ZmRjZjM2MWIwNWQ0ZTY2NDA2NmYzOTMwODZxAS4=; monitor_count=9; _ga=GA1.2.1287974922.1510477679; _gid=GA1.2.1788027332.1510477679',
