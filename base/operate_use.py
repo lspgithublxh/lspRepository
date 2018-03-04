@@ -38,3 +38,17 @@ ab('abc','eeee','ddd', ac = 'ad', de = 'af')
 print ','.join(('a','b','c'))
 print '-'* 30
 ab(*[1,2,3,4], **{'key1':2,'key2':3})
+
+#lambda表达式定义小函数：
+print '*' * 40
+print lambda nn,mm:nn +mm
+f = lambda uu,oo:uu + oo
+f(*[1,2])
+f(1,3)
+print '-' * 40
+def lam(n):
+    return lambda x , n : x + n
+f1 = lam(23)
+f1(3)
+
+print map(lambda a:a*a, [1,2,3,4])
