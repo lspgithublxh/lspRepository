@@ -25,4 +25,18 @@ print sys.getdefaultencoding()
 print u'adb中文'
 print ur'abd中文'
 print u'中文'.encode('utf-8')
-print str(u'中文') #str()执行时会调用默认编码来编码
+#print str(u'中文') #str()执行时会调用默认编码来编码
+
+#数字
+print 1/7.0
+print 1/7
+print str(1/7)
+print repr(1/7)
+
+#正则re
+import re
+ma = re.match('^1[3-9]\d{9}$', '15652587687', re.IGNORECASE)
+p = re.compile('^1[3-9]\d{9}$')
+print ma.group()
+res = p.match('15652587687')
+print res.group()
