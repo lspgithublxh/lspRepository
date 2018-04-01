@@ -9,6 +9,9 @@ for a in range(1,100,1):
     if a == 56:break
 else:
     print 'no print'
+for i, a in enumerate(range(1,100, 1)):
+    print i ,a
+print enumerate(range(1,10, 1))
 
 #print raw_input('please input a number:')
 #函数定义
@@ -49,6 +52,26 @@ print '-' * 40
 def lam(n):
     return lambda x , n : x + n
 f1 = lam(23)
-f1(3)
+f1(3,4)
 
 print map(lambda a:a*a, [1,2,3,4])
+
+#全局变量
+print '23', '-' * 40
+print i
+# global i
+cmc = [1,2]
+
+def getGlobal():
+    # global i
+    i = 2
+    print i
+    cmc = [2,3,4]
+    cmc.append(1)
+    global dd
+    dd = [2,3]
+
+getGlobal()
+
+print i
+print cmc, dd

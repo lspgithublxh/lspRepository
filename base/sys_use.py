@@ -4,6 +4,7 @@ import utils.util1
 
 def main():
     print sys.argv
+    print sys
 
 if __name__ == '__main__':
     reload(sys)
