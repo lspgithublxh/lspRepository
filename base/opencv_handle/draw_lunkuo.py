@@ -7,7 +7,7 @@
 
 import cv2
 
-img = cv2.imread("1.jpg")
+img = cv2.imread("fang2.jpg")
 h, w = img.shape[:2]
 cv2.imshow("Origin", img)
 
