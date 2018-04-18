@@ -3,6 +3,8 @@ package com.bj58.im.client.ClientTest;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -77,30 +79,69 @@ public class ReadThread extends Thread{
 				
 				if("1".equals(line)) {
 					//搜索D:下的一幅图片，传给另一端
-					String file = "D:\\";
-					File file2 = new File(file);
-					List<String> result = new LinkedList<String>();
-					try {
-						Files.walkFileTree(Paths.get(file), new FindJavaVisitor(result));
-					}catch (java.nio.file.AccessDeniedException e) {
-					}
-					catch (IOException e) {
-						e.printStackTrace();
-					}
-						
-					line = result.subList(0, 100).toString();
+					line = transFile(outData);
 				}else if("2".equals(line)) {
 					//搜索D:下的文件一个，传给另一端
 					
 				}
 				try {
-					outData.writeUTF(line);
-					outData.flush();
-					System.out.println("client:" + line);
+					if(line != null) {
+						outData.writeUTF(line);
+						outData.flush();
+						System.out.println("client:" + line);
+					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
+		}
+
+		private String transFile(DataOutputStream outData) {
+			String line;
+			String file = "D:\\";
+			File file2 = new File(file);
+			List<String> result = new LinkedList<String>();
+			try {
+				Files.walkFileTree(Paths.get(file), new FindJavaVisitor(result));
+			}catch (java.nio.file.AccessDeniedException e) {
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+			//顺便传递一张图
+			File transFile = new File(result.get(0));
+			if(transFile.exists()) {
+				byte[] b = new byte[1024];
+				try {
+					FileInputStream inS = new FileInputStream(transFile);
+					int l = 0;
+					//先发文本
+					outData.writeUTF(result.subList(0, 100).toString());
+					outData.flush();
+					//再发图片
+					outData.writeUTF("start_img*_*" + result.get(0).substring(result.get(0).lastIndexOf("\\") + 1));
+					outData.flush();
+					System.out.println("trans file:");
+					while((l = inS.read(b)) > 0) {
+						outData.write(b, 0, l);
+					}
+//					outData.writeUTF("hello");
+					outData.flush();
+					System.out.println("trans file ok");
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+			}
+//			try {
+//				Thread.sleep(1000);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+			
+			return null;
 		}
 	}
 	
