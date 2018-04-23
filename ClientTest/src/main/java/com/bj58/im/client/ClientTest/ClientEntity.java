@@ -32,8 +32,19 @@ public class ClientEntity {
 		
 		OutputStream out = socket.getOutputStream();
 		InputStream in = socket.getInputStream();
-		new ReadThread(in).start();
-		new WriteThread(out).start();
+		new ReadThread(in, new CallBack() {
+			@Override
+			public String callback(String input) {
+				System.out.println(input);
+				return null;
+			}})  .start();
+		new WriteThread(out,new CallBack() {
+			@Override
+			public String callback(String input) {
+				Scanner scanner = new Scanner(System.in);
+				String line = scanner.nextLine();
+				return line;
+			}}).start();
 		
 	}
 	
@@ -41,11 +52,15 @@ public class ReadThread extends Thread{
 		
 		public InputStream in = null;
 
-		public ReadThread(InputStream in) {
+		public CallBack callback = null;
+		
+		public ReadThread(InputStream in, CallBack callback) {
 			super();
 			this.in = in;
+			this.callback = callback;
 		}
-		
+
+
 		@Override
 		public void run() {
 			DataInputStream dataIn = new DataInputStream(in);
@@ -54,6 +69,7 @@ public class ReadThread extends Thread{
 					while(true) {
 						String line = dataIn.readUTF();
 						System.out.println("server:" + line);
+						callback.callback(line);
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -64,18 +80,21 @@ public class ReadThread extends Thread{
 	public class WriteThread extends Thread{
 		
 		OutputStream out;
-
-		public WriteThread(OutputStream out) {
+		public CallBack callback = null;
+		
+		public WriteThread(OutputStream out, CallBack callback) {
 			super();
 			this.out = out;
+			this.callback = callback;
 		}
 		
 		@Override
 		public void run() {
 			DataOutputStream outData = new DataOutputStream(out);
 			while(true) {
-				Scanner scanner = new Scanner(System.in);
-				String line = scanner.nextLine();
+//				Scanner scanner = new Scanner(System.in);
+//				String line = scanner.nextLine();
+				String line = callback.callback(null);
 				
 				if("1".equals(line)) {
 					//搜索D:下的一幅图片，传给另一端
@@ -161,4 +180,9 @@ public class ReadThread extends Thread{
             return FileVisitResult.CONTINUE;
         }
 	}
+	
+	interface CallBack {
+		public String callback(String input);
+	}
+	
 }
