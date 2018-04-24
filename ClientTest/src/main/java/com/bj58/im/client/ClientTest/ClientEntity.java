@@ -20,11 +20,71 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * 正确的模型，是对外提供一个被调用的写接口--接收写入本client---！！！对方有需要可以调用这个接口来写入；；同时接收一个外部的读接口，！！！网络有数据就调用他的接口传给他
+ * @ClassName:ClientEntity
+ * @Description:
+ * @Author lishaoping
+ * @Date 2018年4月24日
+ * @Version V1.0
+ * @Package com.bj58.im.client.ClientTest
+ */
 public class ClientEntity {
 
 	public static void main(String[] args) throws UnknownHostException, IOException {
 		new ClientEntity().startClient();
 	}
+	
+	public WriteCallBack openAClientModel(ReadCallBack rc) throws IOException {
+		Socket socket = new Socket("localhost", 10000);
+		System.out.println("start connect to localhost, 10000");
+		
+		OutputStream out = socket.getOutputStream();
+		InputStream in = socket.getInputStream();
+		
+		new ReadThread(in, rc).start();
+		WriteCallBack wc = new WriteCallBack() {
+			String line = null;
+			Object lock = new Object();
+			@Override
+			public void setLine(String input) {
+				this.line = input;
+			}
+
+			@Override
+			public String getLine() {
+				String line_c = line;
+				line = null;
+				return line_c;
+			}
+
+			@Override
+			public Object getLock() {
+				return lock;
+			}};
+			
+		new WriteThread(out, wc, wc.getLock()).start();
+		return wc;
+	}
+	
+	/**
+	 * 此模型不对
+	 * @param 
+	 * @author lishaoping
+	 * @Date 2018年4月24日
+	 * @Package com.bj58.im.client.ClientTest
+	 * @return void
+	 */
+//	public void openAClient(ReadCallBack rc, WriteCallBack wc) throws UnknownHostException, IOException {
+//		Socket socket = new Socket("localhost", 10000);
+//		System.out.println("start connect to localhost, 10000");
+//		
+//		OutputStream out = socket.getOutputStream();
+//		InputStream in = socket.getInputStream();
+//		
+//		new ReadThread(in, rc).start();
+//		new WriteThread(out, wc).start();
+//	}
 	
 	public void startClient() throws UnknownHostException, IOException {
 		Socket socket = new Socket("localhost", 10000);
@@ -32,29 +92,53 @@ public class ClientEntity {
 		
 		OutputStream out = socket.getOutputStream();
 		InputStream in = socket.getInputStream();
-		new ReadThread(in, new CallBack() {
+		new ReadThread(in, new ReadCallBack() {
 			@Override
 			public String callback(String input) {
 				System.out.println(input);
 				return null;
 			}})  .start();
-		new WriteThread(out,new CallBack() {
-			@Override
-			public String callback(String input) {
-				Scanner scanner = new Scanner(System.in);
-				String line = scanner.nextLine();
-				return line;
-			}}).start();
 		
+		
+		WriteCallBack wc = new WriteCallBack() {
+			String line = null;
+			Object lock = new Object();
+			@Override
+			public void setLine(String input) {
+				this.line = input;
+			}
+
+			@Override
+			public String getLine() {
+				String line_c = line;
+				line = null;
+				return line_c;
+			}
+
+			@Override
+			public Object getLock() {
+				return lock;
+			}};
+			
+		new WriteThread(out, wc, wc.getLock()).start();
+		//把主线程，当作调用线程
+		while(true) {
+			Scanner scanner = new Scanner(System.in);
+			String line = scanner.nextLine();
+			wc.setLine(line);
+			synchronized (wc.getLock()) {
+				wc.getLock().notify();
+			}
+		}
 	}
 	
 public class ReadThread extends Thread{
 		
 		public InputStream in = null;
 
-		public CallBack callback = null;
+		public ReadCallBack callback = null;
 		
-		public ReadThread(InputStream in, CallBack callback) {
+		public ReadThread(InputStream in, ReadCallBack callback) {
 			super();
 			this.in = in;
 			this.callback = callback;
@@ -80,12 +164,14 @@ public class ReadThread extends Thread{
 	public class WriteThread extends Thread{
 		
 		OutputStream out;
-		public CallBack callback = null;
+		public WriteCallBack callback = null;
+		Object lock;
 		
-		public WriteThread(OutputStream out, CallBack callback) {
+		public WriteThread(OutputStream out, WriteCallBack callback, Object lock) {
 			super();
 			this.out = out;
 			this.callback = callback;
+			this.lock = lock;
 		}
 		
 		@Override
@@ -94,7 +180,14 @@ public class ReadThread extends Thread{
 			while(true) {
 //				Scanner scanner = new Scanner(System.in);
 //				String line = scanner.nextLine();
-				String line = callback.callback(null);
+				try {
+					synchronized (lock) {
+						lock.wait();
+					}
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+				String line = callback.getLine();
 				
 				if("1".equals(line)) {
 					//搜索D:下的一幅图片，传给另一端
@@ -179,10 +272,6 @@ public class ReadThread extends Thread{
             }
             return FileVisitResult.CONTINUE;
         }
-	}
-	
-	interface CallBack {
-		public String callback(String input);
 	}
 	
 }
