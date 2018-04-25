@@ -1,5 +1,8 @@
 package application;
 	
+import com.bj58.im.client.ClientTest.ClientEntity;
+import com.bj58.im.client.ClientTest.WriteCallBack;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,6 +19,8 @@ public class Main extends Application {
 			loader.setLocation(getClass().getResource("Abc.fxml"));
 			Parent root = loader.load();
 			AbcController cmain = loader.getController();
+			WriteCallBack wc = new ClientEntity().openAClientModel(cmain);
+			cmain.setWc(wc);
 //			BorderPane root = new BorderPane();
 			Scene scene = new Scene(root,500,522);//
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());

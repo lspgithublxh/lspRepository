@@ -44,24 +44,29 @@ public class ClientEntity {
 		
 		new ReadThread(in, rc).start();
 		WriteCallBack wc = new WriteCallBack() {
-			String line = null;
-			Object lock = new Object();
+//			String line = null;
+//			Object lock = new Object();
 			@Override
 			public void setLine(String input) {
 				this.line = input;
+				synchronized (lock) {
+					lock.notify();
+				}
+				//如果再加一个锁，实现同步的通信,可以避免消息漏发---即后面的消息将前面的消息覆盖了。所以可能还需要用消息队列。。使用消息队列，那么可以避免这个漏发
 			}
 
-			@Override
-			public String getLine() {
-				String line_c = line;
-				line = null;
-				return line_c;
-			}
-
-			@Override
-			public Object getLock() {
-				return lock;
-			}};
+//			@Override
+//			public String getLine() {
+//				String line_c = line;
+//				line = null;
+//				return line_c;
+//			}
+//
+//			@Override
+//			public Object getLock() {
+//				return lock;
+//			}
+			};
 			
 		new WriteThread(out, wc, wc.getLock()).start();
 		return wc;
@@ -95,17 +100,20 @@ public class ClientEntity {
 		new ReadThread(in, new ReadCallBack() {
 			@Override
 			public String callback(String input) {
-				System.out.println(input);
+//				System.out.println(input);
 				return null;
 			}})  .start();
 		
 		
-		WriteCallBack wc = new WriteCallBack() {
+		WriteCallBack wc = new WriteCallBack() {//写出抽象类可以避免锁的亲自实现----即模板模式
 			String line = null;
 			Object lock = new Object();
 			@Override
 			public void setLine(String input) {
 				this.line = input;
+				synchronized (lock) {
+					lock.notify();
+				}
 			}
 
 			@Override
@@ -126,9 +134,7 @@ public class ClientEntity {
 			Scanner scanner = new Scanner(System.in);
 			String line = scanner.nextLine();
 			wc.setLine(line);
-			synchronized (wc.getLock()) {
-				wc.getLock().notify();
-			}
+			
 		}
 	}
 	

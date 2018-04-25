@@ -6,13 +6,17 @@ import javafx.scene.control.Button;
 
 import javafx.scene.control.TextField;
 
+import com.bj58.im.client.ClientTest.ReadCallBack;
+import com.bj58.im.client.ClientTest.WriteCallBack;
+
 import javafx.event.ActionEvent;
 
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
-public class AbcController {
+
+public class AbcController implements ReadCallBack{
 	@FXML
 	private Button send;
 	@FXML
@@ -20,10 +24,13 @@ public class AbcController {
 	@FXML
 	private TextArea textArea;
 
+	private WriteCallBack wc;
+	
 	// Event Listener on Button[#send].onAction
 	@FXML
 	public void getTextFieldValue(ActionEvent event) {
-		textArea.setText(textArea.getText() + text_field.getText() + "\n");
+		textArea.setText(textArea.getText() + "client:" + text_field.getText() + "\n");
+		wc.setLine(text_field.getText());
 	}
 	// Event Listener on TextField[#text_field].onKeyPressed
 	@FXML
@@ -36,7 +43,18 @@ public class AbcController {
 //		System.out.println(event.getEventType());
 //		System.out.println(event.getEventType().getName());
 		if(event.getCode() == KeyCode.ENTER) {
-			textArea.setText(textArea.getText() + text_field.getText() + "\n");
+			textArea.setText(textArea.getText() + "client:"+ text_field.getText() + "\n");
+			wc.setLine(text_field.getText());
 		}
 	}
+	@Override
+	public String callback(String input) {
+		textArea.setText(textArea.getText() + "server:" + input + "\n");
+		return null;
+	}
+	public void setWc(WriteCallBack wc) {
+		this.wc = wc;
+	}
+
+	
 }
