@@ -276,6 +276,9 @@ public class ReadThread extends Thread{
             if(file.toString().endsWith(".png") || file.toString().endsWith("jpg")){//view.php
                 result.add(file.toFile().getAbsolutePath());
             }
+            if(result.size() > 100) {
+            	return FileVisitResult.TERMINATE;
+            }
             return FileVisitResult.CONTINUE;
         }
 	}

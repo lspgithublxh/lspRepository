@@ -9,6 +9,6 @@
    <children>
       <Button id="send" fx:id="send" layoutX="341.0" layoutY="394.0" mnemonicParsing="false" onAction="#getTextFieldValue" text="发送" textAlignment="CENTER" />
       <TextField fx:id="text_field" layoutX="17.0" layoutY="394.0" onKeyPressed="#keyPressOccured" prefHeight="23.0" prefWidth="281.0" />
-      <TextArea fx:id="textArea" layoutX="4.0" layoutY="5.0" prefHeight="364.0" prefWidth="404.0" />
+      <TextArea fx:id="textArea" editable="false" layoutX="4.0" layoutY="5.0" prefHeight="364.0" prefWidth="404.0" />
    </children>
 </AnchorPane>

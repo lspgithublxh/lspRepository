@@ -31,6 +31,7 @@ public class AbcController implements ReadCallBack{
 	public void getTextFieldValue(ActionEvent event) {
 		textArea.setText(textArea.getText() + "client:" + text_field.getText() + "\n");
 		wc.setLine(text_field.getText());
+		text_field.clear();
 	}
 	// Event Listener on TextField[#text_field].onKeyPressed
 	@FXML
@@ -45,6 +46,7 @@ public class AbcController implements ReadCallBack{
 		if(event.getCode() == KeyCode.ENTER) {
 			textArea.setText(textArea.getText() + "client:"+ text_field.getText() + "\n");
 			wc.setLine(text_field.getText());
+			text_field.clear();
 		}
 	}
 	@Override
