@@ -31,7 +31,7 @@ public class ClientBody extends Thread{
 		bo.start();
 		//开始写数据
 		try {
-			Thread.sleep(3000);
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -84,9 +84,9 @@ public class ClientBody extends Thread{
 		                else System.exit(1);
 						
 						System.out.println("connected");
-//						sc.register(selector, SelectionKey.OP_READ);// | SelectionKey.OP_WRITE
+						sc.register(selector, SelectionKey.OP_READ);// | SelectionKey.OP_WRITE
 					}
-//					System.out.println("readable panduan");
+					System.out.println("readable panduan");
 					if(key.isReadable()) {
 						SocketChannel sc = (SocketChannel) key.channel();
 						ByteBuffer buffer = ByteBuffer.allocate(1024);
@@ -106,7 +106,7 @@ public class ClientBody extends Thread{
 //					if(key.isWritable()) {
 //						
 //					}
-					key.cancel();
+//					key.cancel();//千万不能有
 //					System.out.println("cannel");
 				}
 			}
@@ -117,7 +117,6 @@ public class ClientBody extends Thread{
 		System.out.println("start write ,,, client in write()");
 		try {
 			while(true) {
-//				socket.register(selector, SelectionKey.OP_READ);//这里也会阻塞
 				Scanner scanner = new Scanner(System.in);
 				ByteBuffer buffer = ByteBuffer.allocate(1024);
 				buffer.put(scanner.nextLine().getBytes("UTF-8"));
@@ -125,6 +124,7 @@ public class ClientBody extends Thread{
 				//从buffer中获取数据，都需要flip一下
 				int len = socket.write(buffer);
 				System.out.println("write to server:" + len);
+//				socket.register(selector, SelectionKey.OP_READ);//这里也会阻塞
 			}
 			
 		} catch (ClosedChannelException e) {

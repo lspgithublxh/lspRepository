@@ -85,8 +85,8 @@ public class ServerBody {
 //							e.printStackTrace();
 //						}
 						len = sc.write(buffer);
-						sc.socket().getOutputStream().flush();
-						System.out.println("sever write data:");
+//						sc.socket().getOutputStream().flush();
+						System.out.println("sever write data:" + len);
 					}
 //					System.out.println("writeable panduan");
 //					if(key.isWritable()) {
