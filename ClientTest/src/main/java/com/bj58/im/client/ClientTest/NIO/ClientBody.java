@@ -26,25 +26,16 @@ import java.util.Set;
 public class ClientBody extends Thread{
 
 	public static void main(String[] args) throws IOException {
+		clientUI();
+	}
+	
+	public static void clientUI() {
 		ClientBody bo = new ClientBody();
 		
 		bo.start();
-		//开始写数据
-//		try {
-//			Thread.sleep(1000);
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		System.out.println("start write ,, client:");
-		synchronized (bo.lock) {
-			try {
-				bo.lock.wait();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			bo.write();
-		}
+		
+		bo.write();
+		
 	}
 	
 	Object lock = new Object();
@@ -104,29 +95,29 @@ public class ClientBody extends Thread{
 						ByteBuffer buffer = ByteBuffer.allocate(1024);
 						int len = 0;
 						ByteArrayOutputStream out = new ByteArrayOutputStream();
-						while((len = sc.read(buffer)) > 0) {
+						while((len = sc.read(buffer)) > 0) {//会抛出异常---在客户端断开连接的情况下
 							buffer.flip();
 							out.write(buffer.array(), 0, len);//数组方式，可以不用上下两句
 							buffer.clear();
 						}
 						System.out.println("client read data:" + out.toString("UTF-8"));
-//						key.cancel();
-//						sc.close();
-						
 					}
-//					System.out.println("writeable panduan");
-//					if(key.isWritable()) {
-//						
-//					}
-//					key.cancel();//千万不能有
-//					System.out.println("cannel");
+					//key.cancel();不能有，否则再也不能听到这种事件
+					
 				}
 			}
 		}
 	}
 	
 	public void write() {
-		System.out.println("start write ,,, client in write()");
+		//开始写数据
+		synchronized (lock) {
+			try {
+				lock.wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		try {
 			while(true) {
 				Scanner scanner = new Scanner(System.in);

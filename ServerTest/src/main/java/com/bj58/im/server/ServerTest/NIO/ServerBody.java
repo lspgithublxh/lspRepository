@@ -2,15 +2,19 @@ package com.bj58.im.server.ServerTest.NIO;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Scanner;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * nio产品和原理
@@ -27,10 +31,55 @@ import java.util.Set;
  * @Version V1.0
  * @Package com.bj58.im.server.ServerTest.NIO
  */
-public class ServerBody {
+public class ServerBody extends Thread{
 
 	public static void main(String[] args) throws IOException {
-		new ServerBody().startServer();
+		ServerBody sb = new ServerBody();
+		sb.start();
+		sb.write();
+	}
+	
+	Map<String, SocketChannel> map = new ConcurrentHashMap<String, SocketChannel>();
+	
+	int icount = 0;
+	Object lock = new Object();
+	
+	public void write() {
+		synchronized (lock) {
+			try {
+				lock.wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println("server start write");
+		try {
+			while(true) {
+				Scanner scanner = new Scanner(System.in);
+				String broacast = scanner.nextLine();
+				ByteBuffer buffer = ByteBuffer.allocate(1024);
+				for(Entry<String, SocketChannel> entry : map.entrySet()) {
+					buffer.put(String.format("hello, %s, %s", entry.getKey(), broacast).getBytes("UTF-8"));
+					buffer.flip();
+					entry.getValue().write(buffer);
+					buffer.clear();
+					System.out.println(String.format("write to %s is ok",  entry.getKey()));
+				}
+			}
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void run() {
+		try {
+			startServer();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void startServer() throws IOException {
@@ -57,11 +106,17 @@ public class ServerBody {
 						SocketChannel sc = ssc.accept();//对accept事件的回应
 						sc.configureBlocking(false);
 						sc.register(selector, SelectionKey.OP_READ);// | SelectionKey.OP_WRITE,写应该是想写就写
+						
+						map.put(sc.getRemoteAddress().toString() + "," + System.currentTimeMillis(), sc);
+						if(icount == 0) {
+							icount++;
+							synchronized (lock) {
+								lock.notify();
+							}
+						}
 					}
-//					System.out.println("readable panduan");
 					if(key.isReadable()) {
 						SocketChannel sc = (SocketChannel) key.channel();//肯定是这种channel
-//						sc.register(selector, SelectionKey.OP_READ);//再次注册
 						ByteBuffer buffer = ByteBuffer.allocate(1024);
 						int len = -1;
 						ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -72,28 +127,12 @@ public class ServerBody {
 //							buffer.compact();
 						}
 						System.out.println("sever read data:" + out.toString("UTF-8"));
-//						key.cancel();
-//						sc.close();
-//						SocketChannel sc = (SocketChannel) key.channel();//肯定是这种channel
-//						ByteBuffer buffer = ByteBuffer.allocate(1024);
 						buffer.put("hello client".getBytes("UTF-8"));
 						buffer.flip();//将起点指针放到0位置，limit指针放到最后一个数据放的位置,来方便读
 						//从buffer中获取数据，都需要flip一下
-//						try {
-//							Thread.sleep(3000);
-//						} catch (InterruptedException e) {
-//							e.printStackTrace();
-//						}
 						len = sc.write(buffer);
-//						sc.socket().getOutputStream().flush();
 						System.out.println("sever write data:" + len);
 					}
-//					System.out.println("writeable panduan");
-//					if(key.isWritable()) {
-						
-//					}
-//					key.cancel();
-//					System.out.println("cannel");
 				}
 			}
 		}
