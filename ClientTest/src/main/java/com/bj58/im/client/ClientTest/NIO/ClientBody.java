@@ -30,15 +30,24 @@ public class ClientBody extends Thread{
 		
 		bo.start();
 		//开始写数据
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			Thread.sleep(1000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		System.out.println("start write ,, client:");
-		bo.write();
+		synchronized (bo.lock) {
+			try {
+				bo.lock.wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			bo.write();
+		}
 	}
+	
+	Object lock = new Object();
 	
 	@Override
 	public void run() {
@@ -85,6 +94,9 @@ public class ClientBody extends Thread{
 						
 						System.out.println("connected");
 						sc.register(selector, SelectionKey.OP_READ);// | SelectionKey.OP_WRITE
+						synchronized (lock) {
+							lock.notify();
+						}
 					}
 					System.out.println("readable panduan");
 					if(key.isReadable()) {
