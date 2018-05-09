@@ -14,11 +14,28 @@ public class Gen {
 	public static void main(String[] args){
 		try {
 //			test1();
-			merge();
+//			merge();
 //			font();
+			imageAndFont();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private static void imageAndFont() throws IOException {
+		BufferedImage big = ImageIO.read(new File("D:\\test\\img\\cai.jpg"));  
+		BufferedImage image = new BufferedImage(500, 500, BufferedImage.TYPE_INT_ARGB);
+//	
+		int[] rs = new int[big.getWidth() * big.getHeight()];
+		rs = big.getRGB(0, 0, big.getWidth(), big.getHeight(), rs, 0, big.getHeight());
+		image.setRGB(40, 100, big.getWidth(), big.getHeight(), rs, 0, big.getHeight());
+		Graphics2D gd = image.createGraphics();
+		gd.setColor(Color.BLACK);
+		gd.setBackground(Color.WHITE);
+		gd.setFont(new Font(null, Font.BOLD, 60));
+		gd.drawString("hello world", 30, 60);
+		gd.dispose();
+		ImageIO.write(image, "png", new File("D:\\test\\img\\rs.png"));
 	}
 
 	/**
