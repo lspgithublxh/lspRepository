@@ -120,13 +120,15 @@ public class ServerBody extends Thread{
 						ByteBuffer buffer = ByteBuffer.allocate(1024);
 						int len = -1;
 						ByteArrayOutputStream out = new ByteArrayOutputStream();
+						int i = 0;
 						while((len = sc.read(buffer)) > 0) {
+							System.out.println(i++ + "read from socket:" + len + new String(buffer.array()));
 							buffer.flip();//
 							out.write(buffer.array(), 0, len);
 							buffer.clear();
 //							buffer.compact();
 						}
-						System.out.println("sever read data:" + out.toString("UTF-8"));
+						System.out.println("sever read data:" + out.size() + out.toString("UTF-8"));
 						buffer.put("hello client".getBytes("UTF-8"));
 						buffer.flip();//将起点指针放到0位置，limit指针放到最后一个数据放的位置,来方便读
 						//从buffer中获取数据，都需要flip一下

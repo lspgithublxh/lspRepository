@@ -1,6 +1,7 @@
 package com.bj58.im.client.ClientTest.NIO;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
@@ -118,16 +119,60 @@ public class ClientBody extends Thread{
 				e.printStackTrace();
 			}
 		}
+		ByteBuffer buffer = ByteBuffer.allocate(1024);
+		buffer.put(new byte[1024]);
+		buffer.flip();
+		buffer.clear();
 		try {
 			while(true) {
 				Scanner scanner = new Scanner(System.in);
-				ByteBuffer buffer = ByteBuffer.allocate(1024);
-				buffer.put(scanner.nextLine().getBytes("UTF-8"));
+				String nextLine = scanner.nextLine();
+//				ByteBuffer buffer = ByteBuffer.allocate(1024);
+				buffer.clear();
+				buffer.put(nextLine.getBytes("UTF-8"));
 				buffer.flip();//将起点指针放到0位置，limit指针放到最后一个数据放的位置,来方便读
 				//从buffer中获取数据，都需要flip一下
-				int len = socket.write(buffer);
-				System.out.println("write to server:" + len);
+				
+				
+//				socket.socket().getOutputStream().flush();//不能阻止,因为服务端读取的时候用了bytebuffer缓存
+				
 //				socket.register(selector, SelectionKey.OP_READ);//这里也会阻塞
+				if("1".equals(nextLine)) {
+					//开发发送图片
+					//发送有先后
+					//对于文本，补充0发送不会影响到文本的显示,,,因为ascll码不会有这个值，，发送补充位,,目前不需要了
+					buffer.clear();
+					buffer.put(new byte[1024]);//"test img send".getBytes("UTF-8")
+					buffer.flip();
+					socket.write(buffer);
+					
+					//发送标记位,标记数,是1024位，保证一次都完毕
+					buffer.clear();
+					buffer.put("write_img".getBytes("UTF-8"));//"test img send".getBytes("UTF-8")
+					buffer.put(new byte[1024 - "write_img".length()]);
+					buffer.flip();
+					socket.write(buffer);
+					//发送图片开始
+					
+//					buffer.put("发送的图片正文".getBytes("UTF-8"));
+					FileInputStream in = new FileInputStream("D:\\a.png");
+					int l = 0;
+					byte[] b = new byte[1024];
+					while((l = in.read(b)) > 0) {
+						buffer.clear();
+						buffer.put(b, 0, l);
+						buffer.flip();
+						socket.write(buffer);
+					}
+					//结束的补充字符串
+//					buffer.clear();
+//					buffer.put(new byte[1024 - l]);//"test img send".getBytes("UTF-8")
+//					buffer.flip();
+//					socket.write(buffer);
+				}else {
+					int len = socket.write(buffer);
+					System.out.println("write to server:" + len);
+				}
 			}
 			
 		} catch (ClosedChannelException e) {
