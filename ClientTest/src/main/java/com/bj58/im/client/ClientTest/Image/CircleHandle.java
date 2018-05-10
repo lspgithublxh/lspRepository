@@ -8,7 +8,9 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
+import java.awt.font.FontRenderContext;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -49,25 +51,56 @@ public class CircleHandle {
 		big = scaled(big, 2);
 		BufferedImage image = new BufferedImage(200, 233, BufferedImage.TYPE_INT_ARGB);
 		
+		Graphics2D gd = image.createGraphics();//上移
+		gd.fill(new Rectangle(200, 233));
+		
 		int[] rs = new int[big.getWidth() * big.getHeight()];
 		rs = big.getRGB(0, 0, big.getWidth(), big.getHeight(), null, 0, big.getHeight());//rs不用null反而会出问题..效果一样
-		image.setRGB(40, 10, big.getWidth(), big.getHeight(), rs, 0, big.getHeight());
+		image.setRGB((200 / 2 - big.getWidth() / 2), 10, big.getWidth(), big.getHeight(), rs, 0, big.getHeight());
 		
-		Graphics2D gd = image.createGraphics();
+		
 		gd.setColor(Color.BLACK);
 		gd.setBackground(Color.WHITE);
-		gd.setFont(new Font(null, Font.ROMAN_BASELINE, 10));
+		//
+//		
 		String[] fs = new String[] {"二手房经纪人", "服务区域：房山长阳", "主营小区：长阳国际城" ,"所属公司：金色时光"};
-		fs = formatString(fs);
-		gd.drawString(fs[0], 30, 120);//w,h
-		gd.drawString(fs[1], 30, 135);
-		gd.drawString(fs[2], 30, 150);
-		gd.drawString(fs[3], 30, 165);
+//		fs = formatString(fs);
+//		gd.drawString(fs[0], 30, 120);//w,h
+//		gd.drawString(fs[1], 30, 135);
+//		gd.drawString(fs[2], 30, 150);
+//		gd.drawString(fs[3], 30, 165);
+		drawTextS(fs, gd, 200);
 		gd.dispose();
-		ImageIO.write(image, "png", new File("D:\\new.jpg"));//格式必须png
+		ImageIO.write(image, "png", new File("D:\\news.jpg"));//格式必须png
 		
 	}
 
+	private static void drawTextS(String[] sou , Graphics2D gd, int w) {
+		int h  = 120;
+//		gd.setFont(new Font(null, Font.ROMAN_BASELINE, 13));
+		int i = 0;
+		for(String s : sou) {
+			Font font = null;
+			if(i++ == 0) {
+				font = new Font("宋体", Font.PLAIN, 13);
+			}else {
+				font = new Font("微软雅黑", Font.PLAIN, 13);//微软雅黑 微软雅黑
+			}
+			gd.setFont(font);
+			gd.drawString(s, drawText(s, font, w), h);
+			h += 20;
+		}
+	}
+	
+	private static int drawText(String s, Font font, int w) {
+		FontRenderContext frc = new FontRenderContext(null, true, true);
+		Rectangle2D r2D = font.getStringBounds(s, frc);
+	    int rWidth = (int) Math.round(r2D.getWidth());
+	    int rX = (int) Math.round(r2D.getX());
+	    int a = (w / 2) - (rWidth / 2) - rX;
+	    return a;
+	}
+	
 	private static String[] formatString(String[] sou) {
 		int len = 0;
 		String[] rs = new String[sou.length];
