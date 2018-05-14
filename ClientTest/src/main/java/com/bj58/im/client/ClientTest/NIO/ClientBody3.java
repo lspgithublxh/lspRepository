@@ -180,16 +180,6 @@ public class ClientBody3 extends Thread{
 						xx += l;
 						buffer.clear();
 					}
-//					while((l = in.read(b)) > 0) {
-//						System.out.println(l);
-//						last = l;
-//						buffer.clear();
-//						buffer.put(b, 0, l);
-//						buffer.flip();
-//						socket.write(buffer);//会被分成多次来读
-//						xx += l;
-//					}
-//					System.out.println(xx);
 					//结束的补充字符串
 					buffer.clear();
 					buffer.put(new byte[1024 - last]);//"test img send".getBytes("UTF-8") l会是-1

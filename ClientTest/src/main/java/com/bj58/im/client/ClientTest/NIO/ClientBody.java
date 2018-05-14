@@ -171,7 +171,11 @@ public class ClientBody extends Thread{
 						buffer.clear();
 						buffer.put(b, 0, l);
 						buffer.flip();
-						socket.write(buffer);//会被分成多次来读
+						int count = socket.write(buffer);//会被分成多次来读
+						while(count == 0) {
+							count = socket.write(buffer);
+							System.out.println("重新传输");
+						}
 						xx += l;
 					}
 //					System.out.println(xx);
@@ -181,7 +185,7 @@ public class ClientBody extends Thread{
 					buffer.flip();
 					socket.write(buffer);
 					
-					Thread.sleep(3000);
+//					Thread.sleep(1000);
 					
 					buffer.clear();
 					buffer.put("end".getBytes());//"test img send".getBytes("UTF-8")
@@ -201,9 +205,10 @@ public class ClientBody extends Thread{
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		} 
+//		catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
 	}
 	
 }
