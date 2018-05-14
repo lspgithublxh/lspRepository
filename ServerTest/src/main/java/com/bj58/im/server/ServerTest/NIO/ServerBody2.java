@@ -1,9 +1,9 @@
 package com.bj58.im.server.ServerTest.NIO;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -33,10 +33,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Version V1.0
  * @Package com.bj58.im.server.ServerTest.NIO
  */
-public class ServerBody extends Thread{
+public class ServerBody2 extends Thread{
 
 	public static void main(String[] args) throws IOException {
-		ServerBody sb = new ServerBody();
+		ServerBody2 sb = new ServerBody2();
 		sb.start();
 		sb.write();
 	}
@@ -97,9 +97,9 @@ public class ServerBody extends Thread{
 		long lenth = 0;
 		//开始监听事件
 		while(true) {
-//			System.out.println("start select");
+			System.out.println("start select");
 			int status = selector.select();//实际上还是会阻塞的select,可以设置时间1s如---频繁while耗费资源
-//			System.out.println("ready keys:" + status);
+			System.out.println("ready keys:" + status);
 			Set<SelectionKey> keys = selector.selectedKeys();
 			Iterator<SelectionKey> ikeys =  keys.iterator();
 			while(ikeys.hasNext()) {//key.cannel ,key.remove key.channel.close
@@ -123,15 +123,16 @@ public class ServerBody extends Thread{
 					}
 					if(key.isReadable()) {
 						SocketChannel sc = (SocketChannel) key.channel();//肯定是这种channel
+//						InputStream bu = sc.socket().getInputStream();
+//						BufferedInputStream bu = new BufferedInputStream(sc.socket().getInputStream());
 						ByteBuffer buffer = ByteBuffer.allocate(1024);
 						int len = -1;
 //						ByteArrayOutputStream out = new ByteArrayOutputStream();
 						int i = 0;
-						
-						while((len = sc.read(buffer)) > 0) {
-							
-							String txt = new String(buffer.array());
-//							System.out.println(txt);
+						byte[] b = new byte[1024];
+						while((len = sc.read(buffer)) > 0) {//因为非阻塞通信
+							String txt = new String(b);
+							System.out.println(txt);
 							if(txt.startsWith("end")) {
 								isPic = false;
 							}
@@ -143,7 +144,7 @@ public class ServerBody extends Thread{
 									wfile = new FileOutputStream(f, true);
 								}
 //								System.out.println(buffer.array().length + "," + len);
-								wfile.write(buffer.array(), 0, len);
+								wfile.write(b, 0, len);
 								lenth += len;
 //								wfile.flush();
 							}else {
@@ -154,7 +155,7 @@ public class ServerBody extends Thread{
 									fileName = fileName.contains("\\") ? fileName.substring(fileName.lastIndexOf("\\") + 1) : fileName.substring(fileName.lastIndexOf("/") + 1);
 									System.out.println("receive fileName:" + fileName);
 								}else {
-									System.out.println(i++ + "read from socket:" + len + new String(buffer.array()));
+									System.out.println(i++ + "read from socket:" + len + new String(b));
 //									buffer.flip();//
 //									out.write(buffer.array(), 0, len);
 //									buffer.clear();
@@ -175,12 +176,12 @@ public class ServerBody extends Thread{
 							
 						}
 //						System.out.println("sever read data:" + out.size() + out.toString("UTF-8"));
-						buffer.clear();
-						buffer.put("hello client".getBytes("UTF-8"));
-						buffer.flip();//将起点指针放到0位置，limit指针放到最后一个数据放的位置,来方便读
+//						buffer.clear();
+//						buffer.put("hello client".getBytes("UTF-8"));
+//						buffer.flip();//将起点指针放到0位置，limit指针放到最后一个数据放的位置,来方便读
 						//从buffer中获取数据，都需要flip一下
-						len = sc.write(buffer);
-//						System.out.println("sever write data:" + len);
+//						len = sc.write(buffer);
+						System.out.println("sever write data:" + len);
 					}
 				}
 			}

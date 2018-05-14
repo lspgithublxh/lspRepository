@@ -24,14 +24,14 @@ import java.util.Set;
  * @Version V1.0
  * @Package com.bj58.im.client.ClientTest.NIO
  */
-public class ClientBody extends Thread{
+public class ClientBody2 extends Thread{
 
 	public static void main(String[] args) throws IOException {
 		clientUI();
 	}
 	
 	public static void clientUI() {
-		ClientBody bo = new ClientBody();
+		ClientBody2 bo = new ClientBody2();
 		
 		bo.start();
 		
@@ -53,7 +53,7 @@ public class ClientBody extends Thread{
 	Selector selector = null;
 	SocketChannel socket = null;
 	
-	public ClientBody() {
+	public ClientBody2() {
 		try {
 			selector = Selector.open();
 			socket = SocketChannel.open();
@@ -167,13 +167,11 @@ public class ClientBody extends Thread{
 					long xx = 0;
 					while((l = in.read(b)) > 0) {
 						System.out.println(l);
-						last = l;
-						buffer.clear();
-						buffer.put(b, 0, l);
-						buffer.flip();
-						socket.write(buffer);//会被分成多次来读
+						last = l;//用socket的方法会造成阻塞，从而报错 TODO
+						socket.socket().getOutputStream().write(b, 0, l);;//会被分成多次来读
 						xx += l;
 					}
+					socket.socket().getOutputStream().flush();
 //					System.out.println(xx);
 					//结束的补充字符串
 					buffer.clear();

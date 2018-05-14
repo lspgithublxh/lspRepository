@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
+import java.nio.channels.FileChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
@@ -24,14 +25,14 @@ import java.util.Set;
  * @Version V1.0
  * @Package com.bj58.im.client.ClientTest.NIO
  */
-public class ClientBody extends Thread{
+public class ClientBody3 extends Thread{
 
 	public static void main(String[] args) throws IOException {
 		clientUI();
 	}
 	
 	public static void clientUI() {
-		ClientBody bo = new ClientBody();
+		ClientBody3 bo = new ClientBody3();
 		
 		bo.start();
 		
@@ -53,7 +54,7 @@ public class ClientBody extends Thread{
 	Selector selector = null;
 	SocketChannel socket = null;
 	
-	public ClientBody() {
+	public ClientBody3() {
 		try {
 			selector = Selector.open();
 			socket = SocketChannel.open();
@@ -161,19 +162,33 @@ public class ClientBody extends Thread{
 //					buffer.flip();
 //					socket.write(buffer);
 					FileInputStream in = new FileInputStream(fileName);
+					FileChannel chan = in.getChannel();
 					int l = 0;
 					byte[] b = new byte[1024];
 					int last = 0;
 					long xx = 0;
-					while((l = in.read(b)) > 0) {
-						System.out.println(l);
-						last = l;
-						buffer.clear();
-						buffer.put(b, 0, l);
+					buffer.clear();
+					while((l = chan.read(buffer)) > 0) {
 						buffer.flip();
-						socket.write(buffer);//会被分成多次来读
+						int count = socket.write(buffer);//会被分成多次来读
+						//count是可能为0的
+						while(count == 0) {
+							count = socket.write(buffer);
+							System.out.println("重新传输");
+						}
+						last = l;
 						xx += l;
+						buffer.clear();
 					}
+//					while((l = in.read(b)) > 0) {
+//						System.out.println(l);
+//						last = l;
+//						buffer.clear();
+//						buffer.put(b, 0, l);
+//						buffer.flip();
+//						socket.write(buffer);//会被分成多次来读
+//						xx += l;
+//					}
 //					System.out.println(xx);
 					//结束的补充字符串
 					buffer.clear();
