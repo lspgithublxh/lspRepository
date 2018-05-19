@@ -1,0 +1,567 @@
+{
+    "code": "0",
+    "message": "success",
+    "data": {
+        "operation": [
+            {
+                "content": {
+                    "cateId": "14",
+                    "subdivisionCate": "",
+                    "cateName": "商铺",
+                    "img": "//pic2.58.com//m58/app58/m_static/img/fang/banner@2x.png",
+                    "metaUrl": "//apphouse.58.com/api/list",
+                    "action": "pagetrans",
+                    "logActionType": "spclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "addCount": 548,
+                    "pageType": "list",
+                    "isBackToMain": false
+                }
+            },
+            {
+                "content": {
+                    "cateId": "13",
+                    "subdivisionCate": "",
+                    "cateName": "写字楼",
+                    "img": "//pic2.58.com//m58/app58/m_static/img/fang/banner@2x.png",
+                    "metaUrl": "//apphouse.58.com/api/list",
+                    "action": "pagetrans",
+                    "logActionType": "xzlclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "addCount": 5829,
+                    "pageType": "list",
+                    "isBackToMain": false
+                }
+            },
+            {
+                "content": {
+                    "cateId": "15",
+                    "subdivisionCate": "",
+                    "cateName": "厂房仓库",
+                    "img": "//pic2.58.com//m58/app58/m_static/img/fang/banner@2x.png",
+                    "metaUrl": "//apphouse.58.com/api/list",
+                    "action": "pagetrans",
+                    "logActionType": "cfckclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "addCount": 183,
+                    "pageType": "list",
+                    "isBackToMain": false
+                }
+            },
+            {
+                "content": {
+                    "cateName": "二手房优品",
+                    "img": "//pic2.58.com//m58/app58/m_static/img/fang/banner@2x.png",
+                    "metaUrl": "//helios.58.com/bj/",
+                    "action": "jumpH5",
+                    "logActionType": "heliosclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "pageType": "link"
+                }
+            }
+        ],
+        "entrance": [
+            {
+                "content": {
+                    "cateId": "14",
+                    "subdivisionCate": "",
+                    "title": "商铺出租",
+                    "iconFont": "shangpuchuzu",
+                    "listName": "shangpucz",
+                    "filterParams": {
+                        "filtercate": "shangpucz"
+                    },
+                    "logActionType": "sprentclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "action": "pagetrans",
+                    "pageType": "list",
+                    "isBackToMain": false,
+                    "metaUrl": "//apphouse.58.com/api/list"
+                }
+            },
+            {
+                "content": {
+                    "cateId": "13",
+                    "subdivisionCate": "",
+                    "title": "写字楼出租",
+                    "iconFont": "xiezilouchuzu",
+                    "listName": "zhaozu",
+                    "filterParams": {
+                        "param1092": 0
+                    },
+                    "logActionType": "xzlrentclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "action": "pagetrans",
+                    "pageType": "list",
+                    "isBackToMain": false,
+                    "metaUrl": "//apphouse.58.com/api/list"
+                }
+            },
+            {
+                "content": {
+                    "cateId": "15",
+                    "subdivisionCate": "",
+                    "title": "厂房仓库出租",
+                    "iconFont": "changfangchuzu",
+                    "listName": "fangchan",
+                    "filterParams": "",
+                    "logActionType": "cfckrentclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "action": "pagetrans",
+                    "pageType": "list",
+                    "isBackToMain": false,
+                    "metaUrl": "//apphouse.58.com/api/list"
+                }
+            },
+            {
+                "content": {
+                    "cateId": "14",
+                    "subdivisionCate": "",
+                    "title": "商铺出售",
+                    "iconFont": "shangpuchushou",
+                    "listName": "shangpucs",
+                    "filterParams": {
+                        "filtercate": "shangpucs"
+                    },
+                    "logActionType": "spsellclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "action": "pagetrans",
+                    "pageType": "list",
+                    "isBackToMain": false,
+                    "metaUrl": "//apphouse.58.com/api/list"
+                }
+            },
+            {
+                "content": {
+                    "cateId": "13",
+                    "subdivisionCate": "",
+                    "title": "写字楼出售",
+                    "iconFont": "xiezilouchushou",
+                    "listName": "zhaozu",
+                    "filterParams": {
+                        "param1092": 2
+                    },
+                    "logActionType": "xzlsellclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "action": "pagetrans",
+                    "pageType": "list",
+                    "isBackToMain": false,
+                    "metaUrl": "//apphouse.58.com/api/list"
+                }
+            },
+            {
+                "content": {
+                    "cateId": "15",
+                    "subdivisionCate": "",
+                    "title": "厂房仓库出售",
+                    "iconFont": "changfangchushou",
+                    "listName": "fangchan",
+                    "filterParams": {
+                        "filtercate": "fangchan",
+                        "param1124": 4,
+                        "filterLocal": "bj"
+                    },
+                    "logActionType": "cfckesllclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "action": "pagetrans",
+                    "pageType": "list",
+                    "isBackToMain": false,
+                    "metaUrl": "//apphouse.58.com/api/list"
+                }
+            }
+        ],
+        "shop": [
+            {
+                "content": {
+                    "cateId": "14",
+                    "subdivisionCate": "",
+                    "title": "无转让费",
+                    "iconFont": "",
+                    "listName": "shangpucz",
+                    "filterParams": {
+                        "nsource": "sou",
+                        "key": "无转让费"
+                    },
+                    "logActionType": "wzhrfclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "action": "pagetrans",
+                    "pageType": "list",
+                    "isBackToMain": false,
+                    "metaUrl": "//apphouse.58.com/api/list"
+                }
+            },
+            {
+                "content": {
+                    "cateId": "14",
+                    "subdivisionCate": "",
+                    "title": "酒楼餐馆",
+                    "iconFont": "",
+                    "listName": "shangpucz",
+                    "filterParams": {
+                        "nsource": "sou",
+                        "key": "酒楼餐馆"
+                    },
+                    "logActionType": "jlcgclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "action": "pagetrans",
+                    "pageType": "list",
+                    "isBackToMain": false,
+                    "metaUrl": "//apphouse.58.com/api/list"
+                }
+            },
+            {
+                "content": {
+                    "cateId": "14",
+                    "subdivisionCate": "",
+                    "title": "超市转让",
+                    "iconFont": "",
+                    "listName": "shangpucz",
+                    "filterParams": {
+                        "nsource": "sou",
+                        "key": "超市转让"
+                    },
+                    "logActionType": "chshzhrclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "action": "pagetrans",
+                    "pageType": "list",
+                    "isBackToMain": false,
+                    "metaUrl": "//apphouse.58.com/api/list"
+                }
+            },
+            {
+                "content": {
+                    "cateId": "14",
+                    "subdivisionCate": "",
+                    "title": "宾馆转让",
+                    "iconFont": "",
+                    "listName": "shangpucz",
+                    "filterParams": {
+                        "nsource": "sou",
+                        "key": "宾馆转让"
+                    },
+                    "logActionType": "bgzhrclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "action": "pagetrans",
+                    "pageType": "list",
+                    "isBackToMain": false,
+                    "metaUrl": "//apphouse.58.com/api/list"
+                }
+            },
+            {
+                "content": {
+                    "cateId": "14",
+                    "subdivisionCate": "",
+                    "title": "写字楼配套",
+                    "iconFont": "",
+                    "listName": "shangpucz",
+                    "filterParams": {
+                        "param1111": "511573",
+                        "filterLocal": "bj"
+                    },
+                    "logActionType": "xzlptclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "action": "pagetrans",
+                    "pageType": "list",
+                    "isBackToMain": false,
+                    "metaUrl": "//apphouse.58.com/api/list"
+                }
+            },
+            {
+                "content": {
+                    "cateId": "14",
+                    "subdivisionCate": "",
+                    "title": "住宅底商",
+                    "iconFont": "",
+                    "listName": "shangpucz",
+                    "filterParams": {
+                        "param1111": 3,
+                        "filterLocal": "bj"
+                    },
+                    "logActionType": "zhzhdshclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "action": "pagetrans",
+                    "pageType": "list",
+                    "isBackToMain": false,
+                    "metaUrl": "//apphouse.58.com/api/list"
+                }
+            },
+            {
+                "content": {
+                    "cateId": "14",
+                    "subdivisionCate": "",
+                    "title": "摊位柜台",
+                    "iconFont": "",
+                    "listName": "shangpucz",
+                    "filterParams": {
+                        "param1111": 2,
+                        "filterLocal": "bj"
+                    },
+                    "logActionType": "twgtclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "action": "pagetrans",
+                    "pageType": "list",
+                    "isBackToMain": false,
+                    "metaUrl": "//apphouse.58.com/api/list"
+                }
+            },
+            {
+                "content": {
+                    "cateId": "14",
+                    "subdivisionCate": "",
+                    "title": "商业街卖场",
+                    "iconFont": "",
+                    "listName": "shangpucz",
+                    "filterParams": {
+                        "param1111": 511572,
+                        "filterLocal": "bj"
+                    },
+                    "logActionType": "shyjmchclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "action": "pagetrans",
+                    "pageType": "list",
+                    "isBackToMain": false,
+                    "metaUrl": "//apphouse.58.com/api/list"
+                }
+            }
+        ],
+        "offices": [
+            {
+                "content": {
+                    "cateId": "13",
+                    "subdivisionCate": "",
+                    "title": "核心商圈",
+                    "iconFont": "",
+                    "listName": "zhaozu",
+                    "filterParams": {
+                        "nsource": "sou",
+                        "key": "核心商圈"
+                    },
+                    "logActionType": "hxshqclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "action": "pagetrans",
+                    "pageType": "list",
+                    "isBackToMain": false,
+                    "metaUrl": "//apphouse.58.com/api/list"
+                }
+            },
+            {
+                "content": {
+                    "cateId": "13",
+                    "subdivisionCate": "",
+                    "title": "工位出租",
+                    "iconFont": "",
+                    "listName": "zhaozu",
+                    "filterParams": {
+                        "nsource": "sou",
+                        "key": "工位出租"
+                    },
+                    "logActionType": "gwchzclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "action": "pagetrans",
+                    "pageType": "list",
+                    "isBackToMain": false,
+                    "metaUrl": "//apphouse.58.com/api/list"
+                }
+            },
+            {
+                "content": {
+                    "cateId": "13",
+                    "subdivisionCate": "",
+                    "title": "整层出租",
+                    "iconFont": "",
+                    "listName": "zhaozu",
+                    "filterParams": {
+                        "nsource": "sou",
+                        "key": "整层出租"
+                    },
+                    "logActionType": "zhcchzclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "action": "pagetrans",
+                    "pageType": "list",
+                    "isBackToMain": false,
+                    "metaUrl": "//apphouse.58.com/api/list"
+                }
+            },
+            {
+                "content": {
+                    "cateId": "13",
+                    "subdivisionCate": "",
+                    "title": "整栋出租",
+                    "iconFont": "",
+                    "listName": "zhaozu",
+                    "filterParams": {
+                        "nsource": "sou",
+                        "key": "整栋出租"
+                    },
+                    "logActionType": "zhdchzclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "action": "pagetrans",
+                    "pageType": "list",
+                    "isBackToMain": false,
+                    "metaUrl": "//apphouse.58.com/api/list"
+                }
+            },
+            {
+                "content": {
+                    "cateId": "13",
+                    "subdivisionCate": "",
+                    "title": "精装修",
+                    "iconFont": "",
+                    "listName": "zhaozu",
+                    "filterParams": {
+                        "nsource": "sou",
+                        "key": "精装修"
+                    },
+                    "logActionType": "jzhxclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "action": "pagetrans",
+                    "pageType": "list",
+                    "isBackToMain": false,
+                    "metaUrl": "//apphouse.58.com/api/list"
+                }
+            },
+            {
+                "content": {
+                    "cateId": "13",
+                    "subdivisionCate": "",
+                    "title": "简单装修",
+                    "iconFont": "",
+                    "listName": "zhaozu",
+                    "filterParams": {
+                        "nsource": "sou",
+                        "key": "简单装修"
+                    },
+                    "logActionType": "jdzhxclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "action": "pagetrans",
+                    "pageType": "list",
+                    "isBackToMain": false,
+                    "metaUrl": "//apphouse.58.com/api/list"
+                }
+            },
+            {
+                "content": {
+                    "cateId": "13",
+                    "subdivisionCate": "",
+                    "title": "临近地铁",
+                    "iconFont": "",
+                    "listName": "zhaozu",
+                    "filterParams": {
+                        "nsource": "sou",
+                        "key": "临近地铁"
+                    },
+                    "logActionType": "ljdtclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "action": "pagetrans",
+                    "pageType": "list",
+                    "isBackToMain": false,
+                    "metaUrl": "//apphouse.58.com/api/list"
+                }
+            },
+            {
+                "content": {
+                    "cateId": "13",
+                    "subdivisionCate": "",
+                    "title": "创意园区",
+                    "iconFont": "",
+                    "listName": "zhaozu",
+                    "filterParams": {
+                        "nsource": "sou",
+                        "key": "创意园区"
+                    },
+                    "logActionType": "chyyqclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "action": "pagetrans",
+                    "pageType": "list",
+                    "isBackToMain": false,
+                    "metaUrl": "//apphouse.58.com/api/list"
+                }
+            }
+        ],
+        "factory": [
+            {
+                "content": {
+                    "cateId": "15",
+                    "subdivisionCate": "",
+                    "title": "厂房",
+                    "iconFont": "",
+                    "listName": "changfang",
+                    "filterParams": {
+                        "param1124": "0",
+                        "filtercate": "changfang",
+                        "filterLocal": "bj"
+                    },
+                    "logActionType": "chfclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "action": "pagetrans",
+                    "pageType": "list",
+                    "isBackToMain": false,
+                    "metaUrl": "//apphouse.58.com/api/list"
+                }
+            },
+            {
+                "content": {
+                    "cateId": "15",
+                    "subdivisionCate": "",
+                    "title": "仓库",
+                    "iconFont": "",
+                    "listName": "cangkucf",
+                    "filterParams": {
+                        "param1124": "0",
+                        "filtercate": "cangkucf",
+                        "filterLocal": "bj"
+                    },
+                    "logActionType": "ckclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "action": "pagetrans",
+                    "pageType": "list",
+                    "isBackToMain": false,
+                    "metaUrl": "//apphouse.58.com/api/list"
+                }
+            },
+            {
+                "content": {
+                    "cateId": "15",
+                    "subdivisionCate": "",
+                    "title": "车位",
+                    "iconFont": "",
+                    "listName": "cheku",
+                    "filterParams": {
+                        "param1124": "0",
+                        "filtercate": "cheku",
+                        "filterLocal": "bj"
+                    },
+                    "logActionType": "chwclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "action": "pagetrans",
+                    "pageType": "list",
+                    "isBackToMain": false,
+                    "metaUrl": "//apphouse.58.com/api/list"
+                }
+            },
+            {
+                "content": {
+                    "cateId": "15",
+                    "subdivisionCate": "",
+                    "title": "土地",
+                    "iconFont": "",
+                    "listName": "tudi",
+                    "filterParams": {
+                        "param1124": "0",
+                        "filtercate": "tudi",
+                        "filterLocal": "bj"
+                    },
+                    "logActionType": "tdclick",
+                    "logPageType": "fcapp-sydcindex",
+                    "action": "pagetrans",
+                    "pageType": "list",
+                    "isBackToMain": false,
+                    "metaUrl": "//apphouse.58.com/api/list"
+                }
+            }
+        ],
+        "localCity": "北京",
+        "localName": "bj",
+        "localId": 1
+    }
+}

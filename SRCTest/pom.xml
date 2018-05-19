@@ -1,0 +1,320 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.shenqi.main</groupId>
+  <artifactId>SRCTest</artifactId>
+  <packaging>war</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>SRCTest Maven Webapp</name>
+  <url>http://maven.apache.org</url>
+  <properties>
+	<spring.version>4.3.13.RELEASE</spring.version>
+  </properties>
+  <dependencies>
+  		<dependency>
+			<groupId>com.bj58.wf</groupId>
+			<artifactId>com.bj58.wf.mvc</artifactId>
+			<version>1.0.16</version>
+		</dependency>
+  			<dependency>
+				<groupId>com.bj58.spat.cmc</groupId>
+				<artifactId>com.bj58.spat.cmc.client</artifactId>
+				<version>1.0.2</version>
+			</dependency>
+		  <dependency>
+		    <groupId>commons-io</groupId>
+		    <artifactId>commons-io</artifactId>
+		    <version>2.6</version>
+		</dependency>
+		<dependency>
+		  <groupId>junit</groupId>
+		  <artifactId>junit</artifactId>
+		  <version>3.8.1</version>
+		  <scope>test</scope>
+		</dependency>
+		<dependency>  
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-context</artifactId>  
+            <version>${spring.version}</version>  
+        </dependency>  
+        <dependency>  
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-test</artifactId>  
+            <version>${spring.version}</version>  
+        </dependency>  
+        <dependency>  
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-jdbc</artifactId>  
+            <version>${spring.version}</version>  
+        </dependency>  
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-web -->  
+        <dependency>  
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-web</artifactId>  
+            <version>${spring.version}</version>  
+        </dependency>  
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-webmvc -->  
+        <dependency>  
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-webmvc</artifactId>  
+            <version>${spring.version}</version>  
+        </dependency>  
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-orm -->  
+        <dependency>  
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-orm</artifactId>  
+            <version>${spring.version}</version>  
+        </dependency>  
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-context-support -->  
+        <dependency>  
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-context-support</artifactId>  
+            <version>${spring.version}</version>  
+        </dependency>  
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-aspects -->  
+        <dependency>  
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-aspects</artifactId>  
+            <version>${spring.version}</version>  
+        </dependency>  
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-jms -->  
+        <dependency>  
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-jms</artifactId>  
+            <version>${spring.version}</version>  
+        </dependency>  
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-webmvc-portlet -->  
+        <dependency>  
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-webmvc-portlet</artifactId>  
+            <version>${spring.version}</version>  
+        </dependency>  
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-messaging -->  
+        <dependency>  
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-messaging</artifactId>  
+            <version>${spring.version}</version>  
+        </dependency>  
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-instrument -->  
+        <dependency>  
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-instrument</artifactId>  
+            <version>${spring.version}</version>  
+        </dependency>  
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-framework-bom -->  
+        <dependency>  
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-framework-bom</artifactId>  
+            <version>${spring.version}</version>  
+            <type>pom</type>  
+        </dependency>  
+  
+        <dependency>  
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-core</artifactId>  
+            <version>${spring.version}</version>  
+        </dependency>  
+        <!-- https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-mapper-asl -->  
+        <dependency>  
+            <groupId>org.codehaus.jackson</groupId>  
+            <artifactId>jackson-mapper-asl</artifactId>  
+            <version>1.9.13</version>  
+        </dependency> 
+        <dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.12</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.12</version>
+		</dependency> 
+		<dependency>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-core</artifactId>
+		    <version>2.2</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-api</artifactId>
+		    <version>2.2</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.commons.httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.1.2</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>httpclient</artifactId>
+					<groupId>httpclient</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>4.1.2</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>httpcore</artifactId>
+					<groupId>httpcore</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpmime</artifactId>
+			<version>4.1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient-cache</artifactId>
+			<version>4.1.2</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.bj58.spat</groupId>
+			<artifactId>com.bj58.spat.utility</artifactId>
+			<version>3.6.0-SNAPSHOT</version>
+		</dependency>
+		
+	  <dependency>
+			<groupId>com.bj58.biz</groupId>
+			<artifactId>com.bj58.biz.wfutility</artifactId>
+			<version>0.1.1</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>com.bj58.wf.mvc</artifactId>
+					<groupId>com.bj58.wf</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>com.bj58.wf.mvc</artifactId>
+					<groupId>com.bj58.wf</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>com.bj58.wf.mvc</artifactId>
+					<groupId>com.bj58.wf</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>com.bj58.wf.mvc</artifactId>
+					<groupId>com.bj58.wf</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- 标准地域服务 -->
+		<dependency>
+			<groupId>com.bj58.fang.unity.cmc.service</groupId>
+			<artifactId>com.bj58.fang.unity.service.unitycmc.itf</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.bj58.spat</groupId>
+			<artifactId>com.bj58.spat.scf.serializer</artifactId>
+			<version>1.8.7</version>
+		</dependency>
+	
+		<dependency>
+			<groupId>com.bj58.spat</groupId>
+			<artifactId>com.bj58.spat.scf.protocol</artifactId>
+			<version>2.0.6</version>
+		</dependency>
+	
+		<dependency>
+			<groupId>com.bj58.spat</groupId>
+			<artifactId>com.bj58.spat.scf.client</artifactId>
+			<version>2.2.9</version><!-- 2.1.2 -->
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.apache.httpcomponents</groupId>
+		    <artifactId>httpcore</artifactId>
+		    <version>4.4.9</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.apache.httpcomponents</groupId>
+		    <artifactId>httpclient</artifactId>
+		    <version>4.5</version>
+		</dependency>
+  </dependencies>
+  <build>
+    <finalName>SRCTest</finalName> 
+	<plugins>  
+		<plugin>  
+			<groupId>org.apache.maven.plugins</groupId>  
+			<artifactId>maven-compiler-plugin</artifactId>  
+			<version>3.7.0</version>  
+		</plugin>  
+		<plugin>  
+			<groupId>org.apache.tomcat.maven</groupId>  
+			<artifactId>tomcat7-maven-plugin</artifactId>  
+			<version>2.2</version>  
+			<configuration>  
+				<url>http://localhost:8989/manager/text</url>  
+				<username>tomcat</username>  
+				<password>tomcat</password>  
+			</configuration>  
+		</plugin>  
+		<plugin>  
+			<groupId>org.apache.maven.plugins</groupId>  
+			<artifactId>maven-compiler-plugin</artifactId>  
+			<version>3.7.0</version>  
+			<configuration>  
+				<source>1.8</source>  
+				<target>1.8</target>  
+				<encoding>UTF-8</encoding>  
+				<!-- 指定编码格式，否则在DOS下运行mvn compile命令时会出现莫名的错误，因为系统默认使用GBK编码 -->  
+			</configuration>  
+		</plugin>  
+		<plugin>  
+			<groupId>org.apache.maven.plugins</groupId>  
+			<artifactId>maven-resources-plugin</artifactId>  
+			<version>2.6</version>  
+			<configuration>  
+				<encoding>UTF-8</encoding>  
+				<!-- 指定编码格式，否则在DOS下运行mvn命令时当发生文件资源copy时将使用系统默认使用GBK编码 -->  
+			</configuration>  
+		</plugin>  
+		<plugin>
+				<groupId>com.bj58.appservice</groupId>
+				<artifactId>maven-scf-plugin</artifactId>
+				<version>0.0.4-SNAPSHOT</version>
+				<configuration>
+					<!--scf服务目录 -->
+					<scfhome>D:\download\SCF_4.2.17\scf</scfhome>
+					<!--scf服务名字，即在../ service/deploy目录下相应的名 -->
+					<scfname>Subscrible</scfname>
+					<!-- 默认排除jar包 -->
+					<excludejars>antlrall-*.jar,com.bj58.spat.scf.protocol-*.jar,com.
+						bj58.spat.scf.serializer-*.jar,com.bj58.spat.scf.server-*.jar,com.bj5
+						8.spat.utility-*.jar,commons-logging*.jar,javassist.jar,json-*.jar,lo
+						g4j-*.jar,netty-*.jar,tools.jar,antlr-*.jar,antlr-runtime-*.jar,com.b
+						j58.spat.beanquery-*.jar,com.bj58.spat.core-*.jar,com.bj58.spat.dao-*.
+						jar,commons-discovery-*.jar,httpclient-*.jar,httpcore-*.jar,jaxrpc.ja
+						r,jcl-over-slf4j-*.jar,jyaml-*.jar,memcache-client-*.jar,mysql-connec
+						tor-java-*.jar,slf4j-api-*.jar,slf4j-log4j*.jar,sqljdbc4-*.jar,
+					</excludejars>
+			               <targetJarDirectory>${basedir}/target/jar</targetJarDirectory>	
+						
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.bj58.appservice</groupId>
+						<artifactId>maven-scf-load</artifactId>
+						<!--如果容器是.3.5以上，请使用3.6版本的插件 -->
+						<version>3.6.0-SNAPSHOT</version>
+					</dependency>
+
+				</dependencies>
+			</plugin>
+	</plugins>  
+  </build>
+</project>

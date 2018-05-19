@@ -1,0 +1,60 @@
+{
+    "code": 0,
+    "message": "",
+    "data": {
+        "getTabData": {
+            "tab_data": [
+                {
+                    "tab_name": "二手房",
+                    "tab_key": "home",
+                    "tab_icon_normal_url": "",
+                    "tab_icon_selected_url": "",
+                    "isLogin": false,
+                    "isJumpOut": false,
+                    "target": {
+                        "protocol": {
+                            "title": "二手房",
+                            "pagetype": "childCate",
+                            "pullRefresh": true,
+                            "logParam": {
+                                "webRefresh": "esfindex"
+                            },
+                            "showsift": true,
+                            "list_name": "ershoufang",
+                            "showpub": false,
+                            "url": "https://appfang.58.com/web/list/@local@/zfhousevue.shtml?topcate=house&city=@local@"
+                        },
+                        "showim": true,
+                        "pagetype": "childCate"
+                    }
+                },
+                {
+                    "tab_name": "我的",
+                    "tab_key": "personal",
+                    "tab_icon_normal_url": "",
+                    "tab_icon_selected_url": "",
+                    "isLogin": false,
+                    "isJumpOut": false,
+                    "target": {
+                        "protocol": {
+                            "title": "我的",
+                            "pagetype": "tabmy",
+                            "list_name": "ershoufang",
+                            "url": "https://appfang.58.com/app/ershoufang/center/api_center?userType=1"
+                        },
+                        "top_right_show": true,
+                        "showim": true,
+                        "top_right_text": "我的",
+                        "pagetype": "tabmy",
+                        "tab_notice_url": "https://appfang.58.com/app/ershoufang/center/api_get_notice_point?userType=2"
+                    },
+                    "isLogin": true
+                    }
+                }
+            ],
+            "tab_firstshow_key": "home",
+            "tab_notice_url": "https://appfang.58.com/app/ershoufang/center/api_get_notice_point",
+            "cate_fullpath": "1,37031"
+        }
+    }
+}

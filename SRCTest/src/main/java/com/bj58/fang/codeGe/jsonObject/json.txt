@@ -1,0 +1,42 @@
+"tab_name" => "租房",
+            "tab_key" => "home",
+            "tab_icon_normal_url" => "",
+            "tab_icon_selected_url" => "",
+            "isLogin" => false,
+            "isJumpOut" => false,
+            "target" => array(
+                "protocol" => array(
+                    "title" => "租房",
+                    "pagetype" => "childCate",
+                    "pullRefresh"=>true,//8.1.0版本添加的
+                    "logParam"=>array(
+                        "webRefresh"=>"zfindex"
+                    ),
+                    "showsift" => true,
+                    "list_name" => "zufang",
+                    "showpub" => false,
+                    "url" =>"https://houserent.m.58.com/web/list/@local@/zfhousevue.shtml?topcate=house&city=@local@"
+                ),
+                "top_right_show" => true,
+                "showim" => false,
+                "top_right_text" => "我是房东",
+                "pagetype" => "childCate"
+            ),
+            "host_tab" => array(
+                "target" => array(
+                    "protocol" => array(
+                        "title" => "我是房东",
+                        "pagetype" => "childCate",
+                        "showsift" => true,
+                        "list_name" => "zufang",
+                        "showpub" => false,
+                        "url" =>"https://houserent.m.58.com/landlord/center?topcate=house&city=@local@"
+                    ),
+                    "top_right_show" => true,
+                    "isLogin" => true,
+                    "showim" => true,
+                    "top_right_text" => "我是租客",
+                    "pagetype" => "childCate"
+                ),
+                "isLogin" => true
+            )
