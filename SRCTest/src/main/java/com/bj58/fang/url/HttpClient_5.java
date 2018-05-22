@@ -46,7 +46,7 @@ public class HttpClient_5 {
         httpPost.setHeader("Content-Type","application/json");  //
   
         String value = Base64.encode(data);
-        String jsonParams = String.format("{\"Pic-Size\":\"0*0\",\"Pic-Encoding\":\"base64\",\"Pic-Path\":\"/p1/big/\",\"Pic-Data\":\"%s\"}", value);
+        String jsonParams = String.format("{\"Pic-Size\":\"0*0\",\"Pic-Encoding\":\"base64\",\"Pic-Path\":\"/appfang/ershoufang/tags/\",\"Pic-Data\":\"%s\"}", value);
 		httpPost.setEntity(new StringEntity(jsonParams,ContentType.create("application/json", "utf-8")));
 		HttpResponse httpResponse = httpClient.execute(httpPost);
 		String strResult = "";
@@ -77,7 +77,7 @@ public class HttpClient_5 {
         httpPost.setConfig(requestConfig);
         httpPost.setHeader("Content-Type","application/json");  //
         httpPost.setHeader("Accept", "image/webp,image/apng,image/*,*/*;q=0.8");
-        FileInputStream in = new FileInputStream("D:\\compu.jpg");//合成图会当作是png  compu.jpg 
+        FileInputStream in = new FileInputStream("D:\\download\\新建文件夹\\二手房经纪人主页相关图片\\二手房经纪人主页相关图片\\优质点评.png");//合成图会当作是png  compu.jpg 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         byte[] b = new byte[1024];
         int l = 0;
@@ -86,7 +86,7 @@ public class HttpClient_5 {
         }
         System.out.println(out.toByteArray());
         String value = Base64.encode(out.toByteArray());
-        String jsonParams = String.format("{\"Pic-Size\":\"0*0\",\"Pic-Encoding\":\"base64\",\"Pic-Path\":\"/p1/big/\",\"Pic-Data\":\"%s\"}", value);
+        String jsonParams = String.format("{\"Pic-Size\":\"0*0\",\"Pic-Encoding\":\"base64\",\"Pic-Path\":\"/appfang/ershoufang/tags/\",\"Pic-Data\":\"%s\"}", value);
 		httpPost.setEntity(new StringEntity(jsonParams,ContentType.create("application/json", "utf-8")));
 		HttpResponse httpResponse = httpClient.execute(httpPost);
 		String strResult = "";
