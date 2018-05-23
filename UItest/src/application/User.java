@@ -2,6 +2,7 @@ package application;
 
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.StringProperty;
 
@@ -11,7 +12,7 @@ public class User {
 	private ReadOnlyStringWrapper username;
 	
 	private SimpleIntegerProperty age;
-	
+	private SimpleFloatProperty score;
 	
 	
 	public User() {
@@ -40,6 +41,12 @@ public class User {
 	}
 	public void setAge(SimpleIntegerProperty age) {
 		this.age = age;
+	}
+	public SimpleFloatProperty getScore() {
+		return score;
+	}
+	public void setScore(SimpleFloatProperty score) {
+		this.score = score;
 	}
 	
 	

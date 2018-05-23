@@ -1,11 +1,14 @@
 package application;
 	
 
+import java.io.File;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -22,17 +25,23 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Reflection;
 import javafx.scene.image.Image;
@@ -68,9 +77,10 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  * 继承关系：Object<--Paint<---Color\LinearGradient
@@ -78,6 +88,7 @@ import javafx.stage.Stage;
  *		 Object<--Node<--Parent<---Group\Region.Pane.HBox\Control\WebView
  *		 Object<--Node<--ImageView
  * 		 Object<--Effect<---DropShadow\Reflection
+ * 		 Object<--Window<--Stage
  * @ClassName:Main
  * @Description:
  * @Author lishaoping
@@ -120,16 +131,193 @@ public class Main extends Application {
 			//标签按钮可以设置图标和文本
 //			labelButtonGraph(primaryStage);
 			
-			radioButton(primaryStage);
-			checkBox(primaryStage);
+//			radioButton(primaryStage);
+//			checkBox(primaryStage);
+//			choiceBox(primaryStage);
+			contextMenu(primaryStage);//hyperlink, processbar
 			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
 
+	private void contextMenu(Stage primaryStage) {
+		Group group = new Group();
+		
+		ContextMenu menu = new ContextMenu();
+		MenuItem item = new MenuItem("item1");
+		MenuItem item2 = new MenuItem("item1");
+		menu.getItems().addAll(item, item2);
+		item.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				System.out.println("action event :" + arg0.getEventType().getName());
+			}
+		});
+		menu.setOnShowing(new EventHandler<WindowEvent>() {
+
+			@Override
+			public void handle(WindowEvent arg0) {
+				System.out.println(arg0.getEventType().getName());
+			}
+		});
+		
+		TextField fie = new TextField("");
+		fie.setContextMenu(menu);
+		//hyperlink
+		Hyperlink link = new Hyperlink("Click");
+		link.setContextMenu(menu);
+		link.setLayoutX(100);
+		link.setLayoutY(100);
+		//processBar
+		final User user = new User(new SimpleStringProperty("lsp"), new ReadOnlyStringWrapper("abc"), new SimpleIntegerProperty(5));
+		user.setScore(new SimpleFloatProperty(0.0f));
+		ProgressBar progress = new ProgressBar(0.4);
+		progress.setLayoutX(100);
+		progress.setLayoutY(140);
+		progress.setProgress(0.8);
+		progress.progressProperty().bind(user.getScore());
+		user.getScore().set(0.1f);;
+		System.out.println(user.getScore().doubleValue());
+		final boolean status = false;
+		fie.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+			boolean status = false;
+			@Override
+			public void handle(MouseEvent event) {
+				System.out.println(event.getButton().name());
+				System.out.println(event.getEventType().getName());
+				if(user.getScore().floatValue() - 0.1 < 0.1) {
+					status = true;
+				}else if(1 - user.getScore().floatValue() < 0.1){
+					status = false;
+				}
+				if(status) {
+					user.getScore().set(0.1f + user.getScore().floatValue());
+				}else {
+					user.getScore().set(user.getScore().floatValue() - 0.1f);
+				}
+			}
+		});
+		//ProgressIndicator 
+		ProgressIndicator indicator = new ProgressIndicator(0.1);
+		indicator.setLayoutX(100);
+		indicator.setLayoutY(180);
+		indicator.progressProperty().bind(user.getScore());
+		fie.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+
+			boolean status = false;
+			@Override
+			public void handle(KeyEvent event) {
+				System.out.println(event.getEventType().getName());
+			}
+		});
+		//滚动条和滚动事件--可以忽略
+//		ScrollBar
+		
+		//DatePicker
+		DatePicker picker = new DatePicker(LocalDate.now());
+		picker.setLayoutX(100);
+		picker.setLayoutY(200);
+		//ColorPicker略
+		
+		
+		Button butt = new Button("show_file");
+		butt.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				System.out.println(event.getEventType());
+				//FileChoose
+				FileChooser filec = new FileChooser();
+				filec.setTitle("open a file");
+				filec.setInitialDirectory(new File("D:\\"));
+				filec.setInitialFileName("D:\\a.png");
+				
+				filec.selectedExtensionFilterProperty().addListener(new ChangeListener<ExtensionFilter>() {
+
+					@Override
+					public void changed(ObservableValue<? extends ExtensionFilter> observable, ExtensionFilter oldValue,
+							ExtensionFilter newValue) {
+						System.out.println(observable.getValue().getDescription());
+//						System.out.println(oldValue.getDescription());
+					}
+				});
+				filec.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("ALL Images", "*.*"),
+						new FileChooser.ExtensionFilter("JPG", ".jpg"),
+						new FileChooser.ExtensionFilter("PNG", ".png"),
+						new FileChooser.ExtensionFilter("GIF", ".gif"),
+						new FileChooser.ExtensionFilter("BMP", ".bmp"));
+				File file = filec.showOpenDialog(primaryStage);
+				System.out.println("get file :" + file.getAbsolutePath());
+//				filec.showSaveDialog(primaryStage);
+			}
+		});
+		butt.setLayoutX(100);
+		butt.setLayoutY(220);
+		
+		group.getChildren().add(fie);
+		group.getChildren().add(link);
+		group.getChildren().add(progress);
+		group.getChildren().add(indicator);
+		group.getChildren().add(picker);
+		group.getChildren().add(butt);
+		
+		Scene scene = new Scene(group, 400, 400, Color.WHEAT);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+	}
+
+	private void choiceBox(Stage primaryStage) {
+		VBox box = new VBox(10);
+		
+		ChoiceBox<String> cbox = new ChoiceBox<>(FXCollections.observableArrayList("A", "B", "C", "D"));
+		
+		//		cbox.selectionModelProperty().addListener(new ChangeListener<SingleSelectionModel<String>>() {
+//			@Override
+//			public void changed(ObservableValue<? extends SingleSelectionModel<String>> arg0, SingleSelectionModel<String> arg1, SingleSelectionModel<String> arg2) {
+//					System.out.println(arg0.getValue().getSelectedIndex());
+//					System.out.println(arg0.getValue().getSelectedItem());
+//			}
+//		});
+		cbox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+				System.out.println("index:" + arg0.getValue().intValue());
+			}
+		});
+		
+		box.getChildren().add(cbox);
+		Scene scene = new Scene(box, 400, 400, Color.WHEAT);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+	}
+
 	private void checkBox(Stage primaryStage) {
 		VBox box = new VBox(10);
+		CheckBox check = new CheckBox("A");
+		check.setSelected(true);
+		CheckBox check2 = new CheckBox("B");
+		CheckBox check3 = new CheckBox("C");
+		CheckBox check4 = new CheckBox("D");
+		
+		Tooltip tip = new Tooltip("title of tooltip");
+		tip.setFont(Font.font("微软雅黑", 24));
+		check.setTooltip(tip);
+		check2.setTooltip(tip);
+		check3.setTooltip(tip);
+		check4.setTooltip(tip);
+		check.selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
+				System.out.println("current:" + arg0.getValue());
+			}
+		});
+		
+		box.getChildren().addAll(check, check2, check3, check4);
 		
 		Scene scene = new Scene(box, 400, 400, Color.WHEAT);
 		primaryStage.setScene(scene);
