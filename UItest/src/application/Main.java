@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -25,8 +26,10 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
@@ -37,7 +40,9 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -46,6 +51,9 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Reflection;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -134,11 +142,68 @@ public class Main extends Application {
 //			radioButton(primaryStage);
 //			checkBox(primaryStage);
 //			choiceBox(primaryStage);
-			contextMenu(primaryStage);//hyperlink, processbar
+//			contextMenu(primaryStage);//hyperlink, processbar
+			
+			menuBest(primaryStage);//级联菜单项
+			//宽度绑定窗口的/stage的，那么会一样宽
 			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void menuBest(Stage primaryStage) {
+		BorderPane pane = new BorderPane();
+		Scene scene = new Scene(pane, 400, 400, Color.WHEAT);
+		
+		MenuBar bar = new MenuBar();
+		
+		Menu menu1 = new Menu("File");
+		MenuItem item1 = new MenuItem("New");
+		MenuItem item2 = new MenuItem("Save");
+		MenuItem item3 = new MenuItem("Exit");
+		item3.setOnAction(actionEvent -> Platform.exit());
+		menu1.getItems().addAll(item1, item2, item3);
+		
+		Menu menu2 = new Menu("Web");
+		CheckMenuItem checkItem1 = new CheckMenuItem("HTML");
+		checkItem1.setSelected(true);
+		CheckMenuItem checkItem2 = new CheckMenuItem("CSS");
+		CheckMenuItem checkItem3 = new CheckMenuItem("JS");
+		menu2.getItems().addAll(checkItem1, checkItem2, checkItem3);
+		
+		Menu menu3 = new Menu("SQL");
+		ToggleGroup toggle = new ToggleGroup();
+		RadioMenuItem raItem1 = new RadioMenuItem("MySQL");
+		raItem1.setToggleGroup(toggle);
+		RadioMenuItem raItem2 = new RadioMenuItem("Oracle");
+		raItem2.setToggleGroup(toggle);
+		raItem2.setSelected(true);
+		
+		menu3.getItems().addAll(raItem1, raItem2);
+		
+		//子菜单
+		Menu menu4 = new Menu("Tutorial");
+		menu4.getItems().addAll(new MenuItem("JAVA"), new MenuItem("JAVAFX"), new MenuItem("SWing"));
+		menu3.getItems().add(menu4);
+		
+		//特殊标签
+		CustomMenuItem citem1 = new CustomMenuItem();
+		citem1.setContent(new Slider());
+		citem1.setHideOnClick(false);
+		menu3.getItems().add(citem1);
+		//助记符
+		Menu zjfMenu = new Menu("_File");
+		zjfMenu.setMnemonicParsing(true);
+		zjfMenu.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
+		menu3.getItems().add(zjfMenu);
+		
+		bar.getMenus().addAll(menu1, menu2, menu3);
+		
+		pane.setTop(bar);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+		
 	}
 
 	private void contextMenu(Stage primaryStage) {
@@ -483,6 +548,7 @@ public class Main extends Application {
 		bar.setLayoutY(0);
 		bar.setMinWidth(300);
 		bar.setMinHeight(30);
+		bar.prefWidthProperty().bind(primaryStage.widthProperty());
 		Menu menu = new Menu();
 		menu.setText("menu");//css修饰样式
 		
