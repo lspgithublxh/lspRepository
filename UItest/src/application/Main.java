@@ -85,6 +85,9 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.web.HTMLEditor;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
@@ -93,7 +96,7 @@ import javafx.stage.WindowEvent;
 /**
  * 继承关系：Object<--Paint<---Color\LinearGradient
  * 		 Object<--Node<--Shape<---Ellipse\Text
- *		 Object<--Node<--Parent<---Group\Region.Pane.HBox\Control\WebView
+ *		 Object<--Node<--Parent<---Group\Region.Pane.HBox\Control\WebView\Control.HTMLEditor
  *		 Object<--Node<--ImageView
  * 		 Object<--Effect<---DropShadow\Reflection
  * 		 Object<--Window<--Stage
@@ -144,12 +147,40 @@ public class Main extends Application {
 //			choiceBox(primaryStage);
 //			contextMenu(primaryStage);//hyperlink, processbar
 			
-			menuBest(primaryStage);//级联菜单项
+//			menuBest(primaryStage);//级联菜单项
 			//宽度绑定窗口的/stage的，那么会一样宽
-			
+			//对js, websocket的支持
+			htmlEditor(primaryStage);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void htmlEditor(Stage primaryStage) {
+		VBox box = new VBox(10);
+		HTMLEditor editor = new HTMLEditor();
+		editor.setLayoutX(0);
+		editor.setLayoutY(200);
+		editor.prefHeight(100);
+		editor.prefWidth(150);
+		Button button = new Button("load");
+		WebView view = new WebView();
+		WebEngine engine = view.getEngine();
+		button.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				System.out.println(event.getEventType().getName());
+				System.out.println(editor.getHtmlText());
+				engine.loadContent(editor.getHtmlText());
+			}
+		});
+		
+		box.getChildren().addAll(view, editor, button);
+		
+		
+		Scene scene = new Scene(box, 600, 500, Color.GRAY);
+		primaryStage.setScene(scene);
+		primaryStage.show();
 	}
 
 	private void menuBest(Stage primaryStage) {
