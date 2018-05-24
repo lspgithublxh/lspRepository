@@ -26,6 +26,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
@@ -53,6 +54,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Reflection;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -208,10 +210,17 @@ public class Main extends Application {
 					System.out.println(event.getEventType().getName());
 				}
 			});
-			
+			//新的处理方式：加阴影：
+			SnapshotParameters params = new SnapshotParameters();
+			params.setFill(Color.TRANSPARENT);
+			WritableImage wtimage = view.snapshot(params, null);
+			ImageView view4 = new ImageView(wtimage);
+			DropShadow shadow = new DropShadow(20, 0, 0, Color.RED);
+			view4.setEffect(shadow);
 			box.getChildren().add(view);
 			box.getChildren().add(view2);
 			box.getChildren().add(view3);
+			box.getChildren().add(view4);
 			Scene scene = new Scene(box, 600, 500, Color.GRAY);
 			primaryStage.setScene(scene);
 			primaryStage.show();
