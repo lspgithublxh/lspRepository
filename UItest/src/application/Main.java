@@ -2,6 +2,8 @@ package application;
 	
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -150,10 +152,73 @@ public class Main extends Application {
 //			menuBest(primaryStage);//级联菜单项
 			//宽度绑定窗口的/stage的，那么会一样宽
 			//对js, websocket的支持
-			htmlEditor(primaryStage);
+//			htmlEditor(primaryStage);
+			//2.应用工具
+			circleImage(primaryStage);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void circleImage(Stage primaryStage) {
+		VBox box = new VBox(5);
+		Image image;
+		try {
+			image = new Image(new FileInputStream("D:\\head.jpg"));
+			
+			ImageView view = new ImageView(image);
+			ImageView view2 = new ImageView(image);
+			ImageView view3 = new ImageView(image);
+			//圆角图片
+//			Rectangle rect = new Rectangle(image.getWidth(), image.getHeight());
+//			rect.setArcHeight(image.getWidth());
+//			rect.setArcWidth(image.getWidth());
+//			view.setClip(rect);
+			//圆形图片
+			
+			view.setFitHeight(image.getHeight() / 4);
+			view.setFitWidth(image.getWidth() / 4);
+			view2.setFitHeight(image.getHeight() / 4);
+			view2.setFitWidth(image.getWidth() / 4);
+			view3.setFitHeight(image.getHeight() / 4);
+			view3.setFitWidth(image.getWidth() / 4);
+			
+			Circle circle = new Circle(view.getFitWidth() / 2, view.getFitWidth() / 2, view.getFitWidth() / 2);
+			view.setClip(circle);
+			Circle circle2 = new Circle(view.getFitWidth() / 2, view.getFitWidth() / 2, view.getFitWidth() / 2);
+			view2.setClip(circle2);
+			Circle circle3 = new Circle(view.getFitWidth() / 2, view.getFitWidth() / 2, view.getFitWidth() / 2);
+			view3.setClip(circle3);
+			
+			view3.setOnMouseClicked(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					System.out.println(event.getEventType().getName());
+				}
+			});
+			view2.setOnMouseClicked(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					System.out.println(event.getEventType().getName());
+				}
+			});
+			view.setOnMouseClicked(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					System.out.println(event.getEventType().getName());
+				}
+			});
+			
+			box.getChildren().add(view);
+			box.getChildren().add(view2);
+			box.getChildren().add(view3);
+			Scene scene = new Scene(box, 600, 500, Color.GRAY);
+			primaryStage.setScene(scene);
+			primaryStage.show();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	private void htmlEditor(Stage primaryStage) {
@@ -991,7 +1056,6 @@ public class Main extends Application {
 		r.setStrokeWidth(5);
 		r.setStrokeLineCap(StrokeLineCap.BUTT);
 		r.setFill(Color.ALICEBLUE);//
-		
 		
 		root.getChildren().add(r);
 		primaryStage.setScene(scene);
