@@ -183,7 +183,10 @@ public class Main extends Application {
 		String[] contents = {"今天雾霾好重!!!", "今天洗完澡之后感觉又有点困"};
 		for(String content : contents) {
 			drawContent(group, jianPointX, jianPointY, content);
-			getHeadImg(group, jianPointX, jianPointY);
+			getHeadImg(group, jianPointX, jianPointY, false);
+			jianPointY += 50;
+			drawContentRight(group, 500, jianPointY, content);
+			getHeadImg(group, 500, jianPointY, true);
 			jianPointY += 50;
 		}
 		
@@ -192,7 +195,7 @@ public class Main extends Application {
 		primaryStage.show();
 	}
 
-	private void getHeadImg(Group group, double jianPointX, double jianPointY) {
+	private void getHeadImg(Group group, double jianPointX, double jianPointY, boolean right) {
 		Image image;
 		try {
 			image = new Image(new FileInputStream("D:\\head.jpg"));
@@ -216,7 +219,11 @@ public class Main extends Application {
 			DropShadow shadow = new DropShadow(20, 0, 0, Color.RED);
 			view4.setEffect(shadow);
 			System.out.println(circle3.getRadius());
-			view4.setLayoutX(jianPointX - circle3.getRadius() * 2 - 10);
+			if(right) {
+				view4.setLayoutX(jianPointX + 10);
+			}else {
+				view4.setLayoutX(jianPointX - circle3.getRadius() * 2 - 10);
+			}
 			view4.setLayoutY(jianPointY - circle3.getRadius());
 			group.getChildren().add(view4);
 		}catch (Exception e) {
@@ -224,6 +231,44 @@ public class Main extends Application {
 		}
 	}
 
+	private void drawContentRight(Group group, double jianPointX, double jianPointY, String content) {
+		Font font = Font.font("宋体", 15);
+		Text text = new Text(content);
+		text.setFont(font);
+		text.setFill(Color.BLACK);
+		double strWitdh = text.getLayoutBounds().getWidth();
+		double strHeight = text.getLayoutBounds().getHeight();
+		Path path = new Path();
+		double width = strWitdh;//纯直线长度
+		double height = strHeight;//纯直线长度
+		double radius = 5;
+		double jianLineWidth = 5;
+		double jianLineHeight = 10;
+		double angle = 90;
+		
+		path.getElements().add(new MoveTo(jianPointX, jianPointY));
+		path.getElements().add(new LineTo(jianPointX - jianLineWidth, jianPointY - jianLineHeight));
+		path.getElements().add(new LineTo(jianPointX - jianLineWidth, jianPointY - jianLineHeight - height));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX - jianLineWidth - radius, jianPointY - jianLineHeight - height - radius, false, false));
+		path.getElements().add(new LineTo(jianPointX - jianLineWidth - radius - width, jianPointY - jianLineHeight - height - radius));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX - jianLineWidth - radius - width - radius, jianPointY - jianLineHeight - height, false, false));
+		path.getElements().add(new LineTo(jianPointX - jianLineWidth - radius - width - radius, jianPointY - jianLineHeight));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX - jianLineWidth - radius - width, jianPointY - jianLineHeight + radius, false, false));
+		
+		path.getElements().add(new LineTo(jianPointX - jianLineWidth - radius, jianPointY - jianLineHeight + radius));
+		path.getElements().add(new LineTo(jianPointX, jianPointY));
+		path.setFill(Color.rgb(0x7C, 0xCD, 0x7C));
+		DropShadow shadow = new DropShadow(10, 1, 1, Color.RED);
+		path.setEffect(shadow);
+		
+		text.setX(jianPointX - jianLineWidth - radius - width);
+		text.setY(jianPointY - jianLineHeight - height / 2 + strHeight / 4);
+//		text.applyCss();
+		
+		group.getChildren().add(path);
+		group.getChildren().add(text);
+	}
+	
 	private void drawContent(Group group, double jianPointX, double jianPointY, String content) {
 		Font font = Font.font("宋体", 15);
 		Text text = new Text(content);
@@ -255,7 +300,7 @@ public class Main extends Application {
 		path.setEffect(shadow);
 		
 		text.setX(jianPointX + jianLineWidth + radius);
-		text.setY(jianPointY - jianLineHeight - height / 2 +  + strHeight / 4);
+		text.setY(jianPointY - jianLineHeight - height / 2 + strHeight / 4);
 //		text.applyCss();
 		
 		group.getChildren().add(path);
