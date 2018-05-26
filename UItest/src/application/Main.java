@@ -27,13 +27,17 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
@@ -74,6 +78,7 @@ import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Arc;
+import javafx.scene.shape.ArcTo;
 import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurve;
@@ -89,6 +94,7 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -156,10 +162,72 @@ public class Main extends Application {
 			//对js, websocket的支持
 //			htmlEditor(primaryStage);
 			//2.应用工具
-			circleImage(primaryStage);
+//			messageBoxTip(primaryStage);//自定义对话框，可以作为登陆界面使用...包含图标一起修改
+//			circleImage(primaryStage);
+			talkingContent(primaryStage);
+
+			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void messageBoxTip(Stage primaryStage) {
+		Group group = new Group();
+		Alert alert = new Alert(AlertType.WARNING, "You have got a warning", ButtonType.FINISH);
+		Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+		alertStage.getIcons().add(new Image(this.getClass().getResourceAsStream("a.png")));
+		alert.showAndWait();
+//		Dialog<String> dialog = new Dialog<String>();
+//		dialog.setContentText("Do you have install the right version of jvm?");
+//		
+//		dialog.showAndWait();
+		Scene scene = new Scene(group, 500, 400, Color.WHEAT);
+		primaryStage.getIcons().add(new Image(this.getClass().getResourceAsStream("a.png")));
+		primaryStage.setScene(scene);
+		primaryStage.show();
+	}
+
+	private void talkingContent(Stage primaryStage) {
+		//直线 - 圆弧 来画两种对话框
+		Group group = new Group();
+		Path path = new Path();
+		path.getElements().add(new MoveTo(0, 100));
+		path.getElements().add(new LineTo(5, 90));
+		path.getElements().add(new LineTo(5, 50));
+		path.getElements().add(new ArcTo(5, 5, 90, 10, 45, false, true));
+		path.getElements().add(new LineTo(100, 45));
+		path.getElements().add(new ArcTo(5, 5, 90, 105, 50, false, true));
+		path.getElements().add(new LineTo(105, 90));
+		path.getElements().add(new ArcTo(5, 5, 90, 100, 95, false, true));
+		
+		path.getElements().add(new LineTo(10, 95));
+		path.getElements().add(new LineTo(0, 100));
+		path.setFill(Color.rgb(0x7C, 0xCD, 0x7C));
+		DropShadow shadow = new DropShadow(10, 1, 1, Color.RED);
+		path.setEffect(shadow);
+		
+		Text text = new Text(20, 70, "hello world");
+		Font font = Font.font("宋体", 15);
+		text.setFont(font);
+		text.setFill(Color.BLACK);
+		text.setWrappingWidth(400);//最长的宽度
+		
+//		TextFlow flow = new TextFlow(text);
+		
+//		Label label = new Label("hello world");
+//		Font font = Font.font("宋体", 15);
+//		label.setFont(font);
+//		label.setTextFill(Color.BLUE);
+//		label.setLayoutX(20);
+//		label.setLayoutY(70);
+//		System.out.println(label.getLayoutBounds().getWidth());
+		
+		group.getChildren().add(path);
+		group.getChildren().add(text);
+		Scene scene = new Scene(group, 600, 500, Color.WHEAT);
+		primaryStage.setScene(scene);
+		primaryStage.show();
 	}
 
 	private void circleImage(Stage primaryStage) {
@@ -995,6 +1063,7 @@ public class Main extends Application {
 		path.getElements().add(new LineTo(50, 40));
 		path.getElements().add(new LineTo(30, 50));
 		path.getElements().add(new LineTo(30, 30));
+		
 		Scene scene = new Scene(box, 300, 300, Color.WHEAT);
 		box.getChildren().add(path);
 		primaryStage.setScene(scene);
