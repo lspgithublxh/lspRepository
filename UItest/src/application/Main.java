@@ -168,12 +168,98 @@ public class Main extends Application {
 			//2.应用工具
 //			messageBoxTip(primaryStage);//自定义对话框，可以作为登陆界面使用...包含图标一起修改
 //			circleImage(primaryStage);
-			talkingContent(primaryStage);
-
+//			talkingContent(primaryStage);
+			talkingSpecial(primaryStage);
 			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void talkingSpecial(Stage primaryStage) {
+		Group group = new Group();
+		double jianPointX = 80;
+		double jianPointY = 100;
+		String[] contents = {"今天雾霾好重!!!", "今天洗完澡之后感觉又有点困"};
+		for(String content : contents) {
+			drawContent(group, jianPointX, jianPointY, content);
+			getHeadImg(group, jianPointX, jianPointY);
+			jianPointY += 50;
+		}
+		
+		Scene scene = new Scene(group, 600, 500, Color.WHEAT);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+	}
+
+	private void getHeadImg(Group group, double jianPointX, double jianPointY) {
+		Image image;
+		try {
+			image = new Image(new FileInputStream("D:\\head.jpg"));
+			ImageView view3 = new ImageView(image);
+			view3.setFitHeight(image.getHeight() / 4);
+			view3.setFitWidth(image.getWidth() / 4);
+			
+			Circle circle3 = new Circle(view3.getFitWidth() / 2, view3.getFitWidth() / 2, view3.getFitWidth() / 2);
+			view3.setClip(circle3);
+			view3.setOnMouseClicked(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					System.out.println(event.getEventType().getName());
+				}
+			});
+			//新的处理方式：加阴影：
+			SnapshotParameters params = new SnapshotParameters();
+			params.setFill(Color.TRANSPARENT);
+			WritableImage wtimage = view3.snapshot(params, null);
+			ImageView view4 = new ImageView(wtimage);
+			DropShadow shadow = new DropShadow(20, 0, 0, Color.RED);
+			view4.setEffect(shadow);
+			System.out.println(circle3.getRadius());
+			view4.setLayoutX(jianPointX - circle3.getRadius() * 2 - 10);
+			view4.setLayoutY(jianPointY - circle3.getRadius());
+			group.getChildren().add(view4);
+		}catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+	}
+
+	private void drawContent(Group group, double jianPointX, double jianPointY, String content) {
+		Font font = Font.font("宋体", 15);
+		Text text = new Text(content);
+		text.setFont(font);
+		text.setFill(Color.BLACK);
+		double strWitdh = text.getLayoutBounds().getWidth();
+		double strHeight = text.getLayoutBounds().getHeight();
+		Path path = new Path();
+		double width = strWitdh;//纯直线长度
+		double height = strHeight;//纯直线长度
+		double radius = 5;
+		double jianLineWidth = 5;
+		double jianLineHeight = 10;
+		double angle = 90;
+		
+		path.getElements().add(new MoveTo(jianPointX, jianPointY));
+		path.getElements().add(new LineTo(jianPointX + jianLineWidth, jianPointY - jianLineHeight));
+		path.getElements().add(new LineTo(jianPointX + jianLineWidth, jianPointY - jianLineHeight - height));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX + jianLineWidth + radius, jianPointY - jianLineHeight - height - radius, false, true));
+		path.getElements().add(new LineTo(jianPointX + jianLineWidth + radius + width, jianPointY - jianLineHeight - height - radius));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX + jianLineWidth + radius + width + radius, jianPointY - jianLineHeight - height, false, true));
+		path.getElements().add(new LineTo(jianPointX + jianLineWidth + radius + width + radius, jianPointY - jianLineHeight));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX + jianLineWidth + radius + width, jianPointY - jianLineHeight + radius, false, true));
+		
+		path.getElements().add(new LineTo(jianPointX + jianLineWidth + radius, jianPointY - jianLineHeight + radius));
+		path.getElements().add(new LineTo(jianPointX, jianPointY));
+		path.setFill(Color.rgb(0x7C, 0xCD, 0x7C));
+		DropShadow shadow = new DropShadow(10, 1, 1, Color.RED);
+		path.setEffect(shadow);
+		
+		text.setX(jianPointX + jianLineWidth + radius);
+		text.setY(jianPointY - jianLineHeight - height / 2 +  + strHeight / 4);
+//		text.applyCss();
+		
+		group.getChildren().add(path);
+		group.getChildren().add(text);
 	}
 
 	private void messageBoxTip(Stage primaryStage) {
@@ -207,7 +293,7 @@ public class Main extends Application {
 		double width = strWitdh;//纯直线长度
 		double height = strHeight;//纯直线长度
 		double radius = 5;
-		double jianPointX = 0;
+		double jianPointX = 30;
 		double jianPointY = 100;
 		double jianLineWidth = 5;
 		double jianLineHeight = 10;
