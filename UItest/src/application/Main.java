@@ -8,8 +8,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sun.javafx.tk.Toolkit;
+
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -190,37 +194,59 @@ public class Main extends Application {
 
 	private void talkingContent(Stage primaryStage) {
 		//直线 - 圆弧 来画两种对话框
+		String str = "hello world";
+		Font font = Font.font("宋体", 15);
+		
 		Group group = new Group();
 		Path path = new Path();
-		path.getElements().add(new MoveTo(0, 100));
-		path.getElements().add(new LineTo(5, 90));
-		path.getElements().add(new LineTo(5, 50));
-		path.getElements().add(new ArcTo(5, 5, 90, 10, 45, false, true));
-		path.getElements().add(new LineTo(100, 45));
-		path.getElements().add(new ArcTo(5, 5, 90, 105, 50, false, true));
-		path.getElements().add(new LineTo(105, 90));
-		path.getElements().add(new ArcTo(5, 5, 90, 100, 95, false, true));
+		int width = 90;//纯直线长度
+		int height = 40;//纯直线长度
+		int radius = 5;
+		int jianPointX = 0;
+		int jianPointY = 100;
+		int jianLineWidth = 5;
+		int jianLineHeight = 10;
+		int angle = 90;
 		
-		path.getElements().add(new LineTo(10, 95));
-		path.getElements().add(new LineTo(0, 100));
+		path.getElements().add(new MoveTo(jianPointX, jianPointY));
+		path.getElements().add(new LineTo(jianPointX + jianLineWidth, jianPointY - jianLineHeight));
+		path.getElements().add(new LineTo(jianPointX + jianLineWidth, jianPointY - jianLineHeight - height));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX + jianLineWidth + radius, jianPointY - jianLineHeight - height - radius, false, true));
+		path.getElements().add(new LineTo(jianPointX + jianLineWidth + radius + width, jianPointY - jianLineHeight - height - radius));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX + jianLineWidth + radius + width + radius, jianPointY - jianLineHeight - height, false, true));
+		path.getElements().add(new LineTo(jianPointX + jianLineWidth + radius + width + radius, jianPointY - jianLineHeight));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX + jianLineWidth + radius + width, jianPointY - jianLineHeight + radius, false, true));
+		
+		path.getElements().add(new LineTo(jianPointX + jianLineWidth + radius, jianPointY - jianLineHeight + radius));
+		path.getElements().add(new LineTo(jianPointX, jianPointY));
 		path.setFill(Color.rgb(0x7C, 0xCD, 0x7C));
 		DropShadow shadow = new DropShadow(10, 1, 1, Color.RED);
 		path.setEffect(shadow);
 		
-		Text text = new Text(20, 70, "hello world");
-		Font font = Font.font("宋体", 15);
+		Text text = new Text(str);
+		text.setX(jianPointX + jianLineWidth + radius);
+		text.setY(jianPointY - jianLineHeight - height / 2);
 		text.setFont(font);
 		text.setFill(Color.BLACK);
-		text.setWrappingWidth(400);//最长的宽度
-		
+//		text.setWrappingWidth(400);//最长的宽度
+		text.applyCss();
+		System.out.println(text.layoutXProperty());
+		System.out.println(text.getLayoutBounds().getWidth());//是对的，精准的
+		System.out.println(text.getLayoutBounds().getHeight());
+		System.out.println(text.getLayoutBounds().getMaxX());
+		System.out.println(text.getLayoutBounds().getMinX());
+		System.out.println(Toolkit.getToolkit().getFontLoader().computeStringWidth(str, font));
 //		TextFlow flow = new TextFlow(text);
 		
 //		Label label = new Label("hello world");
-//		Font font = Font.font("宋体", 15);
-//		label.setFont(font);
+//		System.out.println(label.widthProperty().floatValue());
+//		label.setPrefWidth(10);
+//		System.out.println(label.widthProperty().floatValue());
+//		Font font2 = Font.font("宋体", 15);
+//		label.setFont(font2);
 //		label.setTextFill(Color.BLUE);
 //		label.setLayoutX(20);
-//		label.setLayoutY(70);
+//		label.setLayoutY(170);
 //		System.out.println(label.getLayoutBounds().getWidth());
 		
 		group.getChildren().add(path);
