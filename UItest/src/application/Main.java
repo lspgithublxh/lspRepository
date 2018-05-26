@@ -194,19 +194,24 @@ public class Main extends Application {
 
 	private void talkingContent(Stage primaryStage) {
 		//直线 - 圆弧 来画两种对话框
-		String str = "hello world";
+		String str = "hello worldvvvvvvvvvv";
 		Font font = Font.font("宋体", 15);
-		
+		Text text = new Text(str);
+		text.setFont(font);
+		text.setFill(Color.BLACK);
+		double strWitdh = text.getLayoutBounds().getWidth();
+		double strHeight = text.getLayoutBounds().getHeight();
+//		System.out.println(strHeight + ", " + strWitdh + "," + text.getLayoutBounds().getMaxX() + "," + text.getLayoutBounds().getMinX());
 		Group group = new Group();
 		Path path = new Path();
-		int width = 90;//纯直线长度
-		int height = 40;//纯直线长度
-		int radius = 5;
-		int jianPointX = 0;
-		int jianPointY = 100;
-		int jianLineWidth = 5;
-		int jianLineHeight = 10;
-		int angle = 90;
+		double width = strWitdh;//纯直线长度
+		double height = strHeight;//纯直线长度
+		double radius = 5;
+		double jianPointX = 0;
+		double jianPointY = 100;
+		double jianLineWidth = 5;
+		double jianLineHeight = 10;
+		double angle = 90;
 		
 		path.getElements().add(new MoveTo(jianPointX, jianPointY));
 		path.getElements().add(new LineTo(jianPointX + jianLineWidth, jianPointY - jianLineHeight));
@@ -223,11 +228,10 @@ public class Main extends Application {
 		DropShadow shadow = new DropShadow(10, 1, 1, Color.RED);
 		path.setEffect(shadow);
 		
-		Text text = new Text(str);
+		
 		text.setX(jianPointX + jianLineWidth + radius);
-		text.setY(jianPointY - jianLineHeight - height / 2);
-		text.setFont(font);
-		text.setFill(Color.BLACK);
+		text.setY(jianPointY - jianLineHeight - height / 2 +  + strHeight / 4);
+		
 //		text.setWrappingWidth(400);//最长的宽度
 		text.applyCss();
 		System.out.println(text.layoutXProperty());
