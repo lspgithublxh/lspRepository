@@ -76,6 +76,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -197,7 +198,8 @@ public class Main extends Application {
 	}
 
 	private void talkingSpecial(Stage primaryStage) {
-		Group groupOut = new Group();
+		VBox box = new VBox();
+		Pane pane = new Pane();
 		Group group = new Group();
 		double jianPointX = 80;
 		double jianPointY = 100;
@@ -213,9 +215,6 @@ public class Main extends Application {
 			getHeadImg(group, 500, jianPointY, true);
 			jianPointY += 50;
 		}
-		
-//		r.setHeight(jianPointY);
-		
 		//scrollbar
 		ScrollBar sc = new ScrollBar();
 		sc.setMin(0);
@@ -227,7 +226,6 @@ public class Main extends Application {
 		sc.setBlockIncrement(200.0);
 		
 		sc.valueProperty().addListener(new ChangeListener<Number>() {
-
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 				System.out.println(newValue.doubleValue());
@@ -236,41 +234,23 @@ public class Main extends Application {
 		});
 		
 		group.setOnScroll(new EventHandler<ScrollEvent>() {
-
 			@Override
 			public void handle(ScrollEvent event) {
-//				System.out.println("-----sdfs-");
-				System.out.println(group.getLayoutY() + event.getDeltaY());
 				double cu = group.getLayoutY() + event.getDeltaY();
 				if(cu <= 0 && cu >= -360) {
 					group.setLayoutY(group.getLayoutY() + event.getDeltaY());
 				}
-				
-				
-			}});
-		groupOut.setOnScroll(new EventHandler<ScrollEvent>() {
-
-			@Override
-			public void handle(ScrollEvent event) {
-//				group.setLayoutY(group.getLayoutY() + event.getDeltaY());
-			}});
-		groupOut.setOnScroll(new EventHandler<ScrollEvent>() {
-
-			@Override
-			public void handle(ScrollEvent event) {
-//				System.out.println(event.getDeltaY());
-//				System.out.println(event.getMultiplierY());
-//				System.out.println(event.getSceneY());
-//				System.out.println(event.getScreenY());
-//				System.out.println(event.getTextDeltaY());
-//				System.out.println(event.getTotalDeltaY());
-//				System.out.println(event.getY());
-//				System.out.println(event.getTextDeltaYUnits().name());
 			}
 		});
+		pane.getChildren().addAll(group, sc);
+		pane.setPrefHeight(200);
+		box.getChildren().add(pane);
+//		TextField field = new TextField("");
+//		field.setPrefWidth(600);
+//		field.setPrefHeight(100);
+//		box.getChildren().add(field);
 		
-		groupOut.getChildren().addAll(group, sc);
-		Scene scene = new Scene(groupOut, 600, 500, Color.WHEAT);
+		Scene scene = new Scene(box, 600, 500, Color.WHEAT);
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
