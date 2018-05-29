@@ -27,6 +27,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -52,6 +53,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.RadioMenuItem;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
@@ -68,6 +70,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.FlowPane;
@@ -152,6 +155,7 @@ public class Main extends Application {
 //			menubarLayout(primaryStage);
 //			gridLayout(primaryStage);//登陆界面
 //			scrollLayout(primaryStage);//TitledPane 标题面板略   手风琴Accordion
+//			scrollPane(primaryStage);
 			
 			//标签按钮可以设置图标和文本
 //			labelButtonGraph(primaryStage);
@@ -176,11 +180,31 @@ public class Main extends Application {
 		}
 	}
 
+	private void scrollPane(Stage primaryStage) {
+		VBox box = new VBox(10);
+		ScrollPane pane = new ScrollPane();
+		pane.setPrefSize(400, 400);//决定宽高
+		pane.setFitToHeight(true);
+		pane.setFitToWidth(true);
+		
+		box.getChildren().add(pane);
+		HTMLEditor editor = new HTMLEditor();
+		box.getChildren().add(editor);
+		
+		Scene scene = new Scene(box, 800, 600, Color.WHEAT);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+	}
+
 	private void talkingSpecial(Stage primaryStage) {
+		Group groupOut = new Group();
 		Group group = new Group();
 		double jianPointX = 80;
 		double jianPointY = 100;
-		String[] contents = {"今天雾霾好重!!!", "今天洗完澡之后感觉又有点困"};
+		String[] contents = {"今天雾霾好重!!!", "今天洗完澡之后感觉又有点困", "今天星期一"};
+		Rectangle r = new Rectangle(0, 0, 600, 6000);
+		r.setFill(Color.WHEAT);
+		group.getChildren().add(r);
 		for(String content : contents) {
 			drawContent(group, jianPointX, jianPointY, content);
 			getHeadImg(group, jianPointX, jianPointY, false);
@@ -190,7 +214,63 @@ public class Main extends Application {
 			jianPointY += 50;
 		}
 		
-		Scene scene = new Scene(group, 600, 500, Color.WHEAT);
+//		r.setHeight(jianPointY);
+		
+		//scrollbar
+		ScrollBar sc = new ScrollBar();
+		sc.setMin(0);
+		sc.setLayoutX(580);
+		sc.setOrientation(Orientation.VERTICAL);
+		sc.setPrefHeight(500);
+		sc.setMax(6000);
+		sc.setUnitIncrement(200.0);
+		sc.setBlockIncrement(200.0);
+		
+		sc.valueProperty().addListener(new ChangeListener<Number>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				System.out.println(newValue.doubleValue());
+				group.setLayoutY(-newValue.doubleValue());
+			}
+		});
+		
+		group.setOnScroll(new EventHandler<ScrollEvent>() {
+
+			@Override
+			public void handle(ScrollEvent event) {
+//				System.out.println("-----sdfs-");
+				System.out.println(group.getLayoutY() + event.getDeltaY());
+				double cu = group.getLayoutY() + event.getDeltaY();
+				if(cu <= 0 && cu >= -360) {
+					group.setLayoutY(group.getLayoutY() + event.getDeltaY());
+				}
+				
+				
+			}});
+		groupOut.setOnScroll(new EventHandler<ScrollEvent>() {
+
+			@Override
+			public void handle(ScrollEvent event) {
+//				group.setLayoutY(group.getLayoutY() + event.getDeltaY());
+			}});
+		groupOut.setOnScroll(new EventHandler<ScrollEvent>() {
+
+			@Override
+			public void handle(ScrollEvent event) {
+//				System.out.println(event.getDeltaY());
+//				System.out.println(event.getMultiplierY());
+//				System.out.println(event.getSceneY());
+//				System.out.println(event.getScreenY());
+//				System.out.println(event.getTextDeltaY());
+//				System.out.println(event.getTotalDeltaY());
+//				System.out.println(event.getY());
+//				System.out.println(event.getTextDeltaYUnits().name());
+			}
+		});
+		
+		groupOut.getChildren().addAll(group, sc);
+		Scene scene = new Scene(groupOut, 600, 500, Color.WHEAT);
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
