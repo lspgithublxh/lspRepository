@@ -10,6 +10,7 @@ import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.ScrollBar;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -30,7 +31,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class UI_Normal extends Application{
+public class Main2 extends Application{
 
 	public static void main(String[] args) {
 		launch(args);
@@ -40,11 +41,23 @@ public class UI_Normal extends Application{
 	public void start(Stage arg0) throws Exception {
 		// TODO Auto-generated method stub
 		talkingSpecial(arg0);
+		//只有使用滚动pane
+		
 	}
 
+	private void scrollPane(Stage primaryStage) {
+		ScrollPane pane = new ScrollPane();
+		pane.setPrefHeight(200);
+		
+	}
+	
 	private void talkingSpecial(Stage primaryStage) {
 		VBox box = new VBox();
-		Pane pane = new Pane();
+		ScrollPane pane = new ScrollPane();
+		pane.setPrefSize(600, 400);//决定宽高
+//		pane.setFitToHeight(true);
+//		pane.setFitToWidth(true);
+		Pane groupOut = new Pane();
 		Pane group = new Pane();
 		double jianPointX = 80;
 		double jianPointY = 100;
@@ -87,13 +100,14 @@ public class UI_Normal extends Application{
 				}
 			}
 		});
-		pane.getChildren().addAll(group, sc);
-		pane.setPrefHeight(200);
+		groupOut.getChildren().addAll(group);//, sc
+		pane.setContent(groupOut);
+//		pane.setPrefHeight(200);
 		box.getChildren().add(pane);
-//		TextField field = new TextField("");
-//		field.setPrefWidth(600);
-//		field.setPrefHeight(100);
-//		box.getChildren().add(field);
+		TextField field = new TextField("");
+		field.setPrefWidth(600);
+		field.setPrefHeight(100);
+		box.getChildren().add(field);
 		
 		Scene scene = new Scene(box, 600, 500, Color.WHEAT);
 		primaryStage.setScene(scene);

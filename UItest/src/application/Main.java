@@ -156,7 +156,7 @@ public class Main extends Application {
 //			menubarLayout(primaryStage);
 //			gridLayout(primaryStage);//登陆界面
 //			scrollLayout(primaryStage);//TitledPane 标题面板略   手风琴Accordion
-//			scrollPane(primaryStage);
+			scrollPane(primaryStage);
 			
 			//标签按钮可以设置图标和文本
 //			labelButtonGraph(primaryStage);
@@ -174,7 +174,7 @@ public class Main extends Application {
 //			messageBoxTip(primaryStage);//自定义对话框，可以作为登陆界面使用...包含图标一起修改
 //			circleImage(primaryStage);
 //			talkingContent(primaryStage);
-			talkingSpecial(primaryStage);
+//			talkingSpecial(primaryStage);
 			
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -187,6 +187,7 @@ public class Main extends Application {
 		pane.setPrefSize(400, 400);//决定宽高
 		pane.setFitToHeight(true);
 		pane.setFitToWidth(true);
+		pane.setContent(new Text("good"));
 		
 		box.getChildren().add(pane);
 		HTMLEditor editor = new HTMLEditor();
