@@ -71,38 +71,39 @@ public class Main2 extends Application{
 		Rectangle r = new Rectangle(0, 0, 600, 6000);
 		r.setFill(Color.WHEAT);
 		group.getChildren().add(r);
-//		for(String content : contents) {
-//			drawContent(group, jianPointX, jianPointY, content);
-//			getHeadImg(group, jianPointX, jianPointY, false);
-//			jianPointY += 50;
-//			jianPointY = drawContentRight(group, 500, jianPointY, content);
-//			getHeadImg(group, 500, jianPointY, true);
-//			jianPointY += 50;
-//		}
+		for(String content : contents) {
+			drawContent(group, jianPointX, jianPointY, content);
+			getHeadImg(group, jianPointX, jianPointY, false);
+			jianPointY += 50;
+			jianPointY = drawContentRight(group, 500, jianPointY, content);
+			getHeadImg(group, 500, jianPointY, true);
+			jianPointY += 50;
+		}
 		final Double[] jianPointYArr = {jianPointY};
 		//scrollbar
-		ScrollBar sc = new ScrollBar();
-		sc.setMin(0);
-		sc.setLayoutX(580);
-		sc.setOrientation(Orientation.VERTICAL);
-		sc.setPrefHeight(500);
-		sc.setMax(6000);
-		sc.setUnitIncrement(200.0);
-		sc.setBlockIncrement(200.0);
-		
-		sc.valueProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				System.out.println(newValue.doubleValue());
-				group.setLayoutY(-newValue.doubleValue());
-			}
-		});
+//		ScrollBar sc = new ScrollBar();
+//		sc.setMin(-6000);
+//		sc.setLayoutX(580);
+//		sc.setOrientation(Orientation.VERTICAL);
+//		sc.setPrefHeight(500);
+//		sc.setMax(6000);
+//		sc.setUnitIncrement(200.0);
+//		sc.setBlockIncrement(200.0);
+//		
+//		sc.valueProperty().addListener(new ChangeListener<Number>() {
+//			@Override
+//			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+//				System.out.println(newValue.doubleValue());
+////				group.setLayoutY(-newValue.doubleValue());
+//				group.setLayoutY(group.getLayoutY() + oldValue.doubleValue() - newValue.doubleValue());
+//			}
+//		});
 		
 		group.setOnScroll(new EventHandler<ScrollEvent>() {
 			@Override
 			public void handle(ScrollEvent event) {
 				double cu = group.getLayoutY() + event.getDeltaY();
-				if(cu <= 0 && cu >= -360) {
+				if(cu <= 0) {// && cu >= -360
 					group.setLayoutY(group.getLayoutY() + event.getDeltaY());
 				}
 			}
