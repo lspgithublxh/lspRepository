@@ -1,21 +1,27 @@
 package application.ui;
 
 import java.io.FileInputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
@@ -65,14 +71,15 @@ public class Main2 extends Application{
 		Rectangle r = new Rectangle(0, 0, 600, 6000);
 		r.setFill(Color.WHEAT);
 		group.getChildren().add(r);
-		for(String content : contents) {
-			drawContent(group, jianPointX, jianPointY, content);
-			getHeadImg(group, jianPointX, jianPointY, false);
-			jianPointY += 50;
-			jianPointY = drawContentRight(group, 500, jianPointY, content);
-			getHeadImg(group, 500, jianPointY, true);
-			jianPointY += 50;
-		}
+//		for(String content : contents) {
+//			drawContent(group, jianPointX, jianPointY, content);
+//			getHeadImg(group, jianPointX, jianPointY, false);
+//			jianPointY += 50;
+//			jianPointY = drawContentRight(group, 500, jianPointY, content);
+//			getHeadImg(group, 500, jianPointY, true);
+//			jianPointY += 50;
+//		}
+		final Double[] jianPointYArr = {jianPointY};
 		//scrollbar
 		ScrollBar sc = new ScrollBar();
 		sc.setMin(0);
@@ -104,14 +111,62 @@ public class Main2 extends Application{
 		pane.setContent(groupOut);
 //		pane.setPrefHeight(200);
 		box.getChildren().add(pane);
-		TextField field = new TextField("");
-		field.setPrefWidth(600);
-		field.setPrefHeight(100);
-		box.getChildren().add(field);
+		TextArea area = new TextArea();
+		area.setPrefWidth(600);
+		area.setPrefHeight(100);
+		final Map<String, String> pressedKeyMap = new HashMap<String, String>();
+		area.setOnKeyPressed(new EventHandler<KeyEvent>() {
+			
+			@Override
+			public void handle(KeyEvent event) {
+				String key = event.getCode().getName();
+				if("Enter".equals(key) && "Ctrl".equals(pressedKeyMap.get("keyPressed"))) {
+					double old = jianPointYArr[0];
+					printInput(group, jianPointX, jianPointYArr, area);
+					group.setLayoutY(group.getLayoutY() + old - jianPointYArr[0]);
+				}
+				pressedKeyMap.put("keyPressed", key);
+			}
+			
+		});
+		area.setOnKeyReleased(new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent event) {
+				String key = event.getCode().getName();
+				if(key.equals(pressedKeyMap.get("keyPressed"))) {
+					pressedKeyMap.remove("keyPressed");
+				}
+			}
+		});
+		box.getChildren().add(area);
+		Button button = new Button("发送");
+		button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			
+			@Override
+			public void handle(MouseEvent event) {
+				double old = jianPointYArr[0];
+				printInput(group, jianPointX, jianPointYArr, area);
+				group.setLayoutY(group.getLayoutY() + old - jianPointYArr[0]);
+			}
+			
+		});
+		button.setAlignment(Pos.BOTTOM_RIGHT);
 		
-		Scene scene = new Scene(box, 600, 500, Color.WHEAT);
+		box.getChildren().add(button);
+		Scene scene = new Scene(box, 600, 530, Color.WHEAT);
 		primaryStage.setScene(scene);
 		primaryStage.show();
+	}
+	
+	private void printInput(Pane group, double jianPointX, final Double[] jianPointYArr, TextArea area) {
+		String content = area.getText();
+		drawContent(group, jianPointX, jianPointYArr[0], content);
+		getHeadImg(group, jianPointX, jianPointYArr[0], false);
+		jianPointYArr[0] += 50;
+		jianPointYArr[0] = drawContentRight(group, 500, jianPointYArr[0], content);
+		getHeadImg(group, 500, jianPointYArr[0], true);
+		jianPointYArr[0] += 50;
+		area.clear();
 	}
 	
 	private void drawContent(Pane group, double jianPointX, double jianPointY, String content) {
