@@ -156,7 +156,7 @@ public class Main extends Application {
 //			menubarLayout(primaryStage);
 //			gridLayout(primaryStage);//登陆界面
 //			scrollLayout(primaryStage);//TitledPane 标题面板略   手风琴Accordion
-			scrollPane(primaryStage);
+//			scrollPane(primaryStage);
 			
 			//标签按钮可以设置图标和文本
 //			labelButtonGraph(primaryStage);
@@ -172,7 +172,7 @@ public class Main extends Application {
 //			htmlEditor(primaryStage);
 			//2.应用工具
 //			messageBoxTip(primaryStage);//自定义对话框，可以作为登陆界面使用...包含图标一起修改
-//			circleImage(primaryStage);
+			circleImage(primaryStage);
 //			talkingContent(primaryStage);
 //			talkingSpecial(primaryStage);
 			

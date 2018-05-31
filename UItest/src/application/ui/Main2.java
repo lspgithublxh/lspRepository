@@ -8,11 +8,14 @@ import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
@@ -24,6 +27,10 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -58,7 +65,35 @@ public class Main2 extends Application{
 	}
 	
 	private void talkingSpecial(Stage primaryStage) {
+		HBox hbox = new HBox();
+		VBox boxleftMost = new VBox();
+		boxleftMost.setPrefWidth(50);
+		boxleftMost.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY	, new Insets(0))));//new BackgroundFill(Color.BLACK, CornerRadii.EMPTY	, new Insets(0))
+		Label blank = new Label("");
+		blank.setPrefHeight(20);
+		boxleftMost.getChildren().add(blank);
+		Text text = new Text("  联系人  ");
+		text.setFont(Font.font("微软雅黑", 12));
+		text.setFill(Color.WHITE);
+		boxleftMost.getChildren().add(text);
+		
+		VBox boxleft = new VBox();
+		boxleft.setPrefWidth(50);
+		for(int i = 0; i < 4; i++) {
+			Label b = new Label("");
+			b.setPrefHeight(20);
+			boxleft.getChildren().add(b);
+			getHeadImg(boxleft, 0, 0, false);
+		}
+		
+//		Label b2 = new Label("");
+//		b2.setPrefHeight(20);
+//		boxleft.getChildren().add(b2);
+//		getHeadImg(boxleft, 0, 0, false);
+		hbox.getChildren().add(boxleftMost);
+		hbox.getChildren().add(boxleft);
 		VBox box = new VBox();
+		hbox.getChildren().add(box);
 		ScrollPane pane = new ScrollPane();
 		pane.setPrefSize(600, 400);//决定宽高
 //		pane.setFitToHeight(true);
@@ -130,7 +165,7 @@ public class Main2 extends Application{
 		button.setAlignment(Pos.BOTTOM_RIGHT);
 		
 		box.getChildren().add(button);
-		Scene scene = new Scene(box, 600, 530, Color.WHEAT);
+		Scene scene = new Scene(hbox, 600, 530, Color.WHEAT);
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
