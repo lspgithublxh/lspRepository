@@ -66,19 +66,19 @@ public class Main2 extends Application{
 		Pane groupOut = new Pane();
 		Pane group = new Pane();
 		double jianPointX = 80;
-		double jianPointY = 100;
+		double jianPointY = 400;
 		String[] contents = {"今天雾霾好重!!!", "今天洗完澡之后感觉又有点困", "今天星期一"};
 		Rectangle r = new Rectangle(0, 0, 600, 6000);
 		r.setFill(Color.WHEAT);
 		group.getChildren().add(r);
-		for(String content : contents) {
-			drawContent(group, jianPointX, jianPointY, content);
-			getHeadImg(group, jianPointX, jianPointY, false);
-			jianPointY += 50;
-			jianPointY = drawContentRight(group, 500, jianPointY, content);
-			getHeadImg(group, 500, jianPointY, true);
-			jianPointY += 50;
-		}
+//		for(String content : contents) {
+//			drawContent(group, jianPointX, jianPointY, content);
+//			getHeadImg(group, jianPointX, jianPointY, false);
+//			jianPointY += 50;
+//			jianPointY = drawContentRight(group, 500, jianPointY, content);
+//			getHeadImg(group, 500, jianPointY, true);
+//			jianPointY += 50;
+//		}
 		final Double[] jianPointYArr = {jianPointY};
 		//scrollbar
 //		ScrollBar sc = new ScrollBar();
@@ -124,6 +124,7 @@ public class Main2 extends Application{
 				if("Enter".equals(key) && "Ctrl".equals(pressedKeyMap.get("keyPressed"))) {
 					double old = jianPointYArr[0];
 					printInput(group, jianPointX, jianPointYArr, area);
+					
 					group.setLayoutY(group.getLayoutY() + old - jianPointYArr[0]);
 				}
 				pressedKeyMap.put("keyPressed", key);
@@ -147,6 +148,7 @@ public class Main2 extends Application{
 			public void handle(MouseEvent event) {
 				double old = jianPointYArr[0];
 				printInput(group, jianPointX, jianPointYArr, area);
+				
 				group.setLayoutY(group.getLayoutY() + old - jianPointYArr[0]);
 			}
 			
