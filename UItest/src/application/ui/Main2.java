@@ -79,11 +79,12 @@ public class Main2 extends Application{
 			blank.setPrefHeight(20);
 			boxleftMost.getChildren().add(blank);
 			Text text = new Text(String.format("  %s  ", t));
-			text.setFont(Font.font("微软雅黑", 12));
-			text.setFill(Color.WHITE);
+			text.setFont(Font.font("宋体", FontWeight.BOLD, 12));
+			text.setFill("联系人".equals(t) ? Color.rgb(0, 0xff, 0) : Color.WHITE);
 			boxleftMost.getChildren().add(text);
+			
 		}
-		
+		int winWidth = 840;
 		VBox boxleft = new VBox();
 		boxleft.setPrefWidth(50);
 		for(int i = 0; i < 4; i++) {
@@ -103,14 +104,14 @@ public class Main2 extends Application{
 		VBox box = new VBox();
 		hbox.getChildren().add(box);
 		ScrollPane pane = new ScrollPane();
-		pane.setPrefSize(800, 400);//决定宽高
+		pane.setPrefSize(winWidth, 400);//决定宽高
 //		pane.setFitToHeight(true);
 //		pane.setFitToWidth(true);
 		Pane groupOut = new Pane();
 		Pane group = new Pane();
 		double jianPointX = 80;
 		double jianPointY = 400;
-		Rectangle r = new Rectangle(0, 0, 800, 6000);
+		Rectangle r = new Rectangle(0, 0, winWidth, 6000);
 		r.setFill(Color.WHEAT);
 		group.getChildren().add(r);
 
@@ -130,7 +131,7 @@ public class Main2 extends Application{
 //		pane.setPrefHeight(200);
 		box.getChildren().add(pane);
 		TextArea area = new TextArea();
-		area.setPrefWidth(800);
+		area.setPrefWidth(winWidth);
 		area.setPrefHeight(100);
 		final Map<String, String> pressedKeyMap = new HashMap<String, String>();
 		area.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -173,7 +174,7 @@ public class Main2 extends Application{
 		button.setAlignment(Pos.BOTTOM_RIGHT);
 		
 		box.getChildren().add(button);
-		Scene scene = new Scene(hbox, 800, 530, Color.WHEAT);
+		Scene scene = new Scene(hbox, winWidth, 530, Color.WHEAT);
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
@@ -270,10 +271,9 @@ public class Main2 extends Application{
 				Text text = new Text("  布冯告  ");
 				text.setFill(Color.BLACK);
 				text.setFont(Font.font("宋体", FontWeight.BOLD, 12));
-//				text.setTextAlignment(TextAlignment.CENTER);
 				vbox.getChildren().add(text);
-//				hbox.setPadding(new Insets(10));
 				hbox.getChildren().add(vbox);
+				hbox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.1), CornerRadii.EMPTY, new Insets(0))));
 				group.getChildren().add(hbox);
 			}else {
 				group.getChildren().add(view4);
