@@ -67,10 +67,12 @@ public class DateTest{
 //		String rs = "6d22z6WKOnTXxJyU7I0RXKRvzHS/dKXFJV5Z2VPTf5ZNxaQ0vp98ct5PJw";
 		String rs = "427eBAD5eHcn8CCBtJWe401Thv6SHbvjLgnOy9InQWj+Pg";
 		rs = "eecd8Q0MY8gl7CGNrZ2USykU%2BqN7BvqlYhLdBtDqVcU%2FRplvVSdAi7GJrQ";
+		rs = "ece4nTyFU44%2BBBSKIPUz4FPiyWp6SEQ0OE%252FE0NqUN1yvUsdd6kttUjA%2BWw";
 //		rs = "455eyNcPw2EHF2bmNSbMSvkuJh5aQJxzaS4Tx%252BsaA%252BenLgeOamlINrcmOg";
 //		rs = authEncode("sdfsf");//39424825471246   sdfsf这个不能解密
 //		System.out.println(rs + "--------xxx");
 		System.out.println(authDecode(rs) + " --------");
+		
 //		System.out.println(authDecode("5d7bJwMo0wdLLpIpxkaQiG+lv4kQEd3KJi/Uz+WhUpu4vQ"));
 //		System.out.println(Math.round(System.currentTimeMillis() / 1000));
 //		System.out.println(System.currentTimeMillis());rs

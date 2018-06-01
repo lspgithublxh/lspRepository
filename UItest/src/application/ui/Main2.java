@@ -41,7 +41,9 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 public class Main2 extends Application{
@@ -65,17 +67,21 @@ public class Main2 extends Application{
 	}
 	
 	private void talkingSpecial(Stage primaryStage) {
+		primaryStage.getIcons().add(new Image(this.getClass().getResourceAsStream("../a.png")));
 		HBox hbox = new HBox();
 		VBox boxleftMost = new VBox();
 		boxleftMost.setPrefWidth(50);
 		boxleftMost.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY	, new Insets(0))));//new BackgroundFill(Color.BLACK, CornerRadii.EMPTY	, new Insets(0))
-		Label blank = new Label("");
-		blank.setPrefHeight(20);
-		boxleftMost.getChildren().add(blank);
-		Text text = new Text("  联系人  ");
-		text.setFont(Font.font("微软雅黑", 12));
-		text.setFill(Color.WHITE);
-		boxleftMost.getChildren().add(text);
+		String[] texts  = {"联系人", "朋友圈", "公众号", "小程序"};
+		for(String t : texts) {
+			Label blank = new Label("");
+			blank.setPrefHeight(20);
+			boxleftMost.getChildren().add(blank);
+			Text text = new Text(String.format("  %s  ", t));
+			text.setFont(Font.font("微软雅黑", 12));
+			text.setFill(Color.WHITE);
+			boxleftMost.getChildren().add(text);
+		}
 		
 		VBox boxleft = new VBox();
 		boxleft.setPrefWidth(50);
@@ -84,6 +90,7 @@ public class Main2 extends Application{
 			b.setPrefHeight(20);
 			boxleft.getChildren().add(b);
 			getHeadImg(boxleft, 0, 0, false);
+			//增加带文本的图片，或者加文字
 		}
 		
 //		Label b2 = new Label("");
@@ -95,14 +102,14 @@ public class Main2 extends Application{
 		VBox box = new VBox();
 		hbox.getChildren().add(box);
 		ScrollPane pane = new ScrollPane();
-		pane.setPrefSize(600, 400);//决定宽高
+		pane.setPrefSize(800, 400);//决定宽高
 //		pane.setFitToHeight(true);
 //		pane.setFitToWidth(true);
 		Pane groupOut = new Pane();
 		Pane group = new Pane();
 		double jianPointX = 80;
 		double jianPointY = 400;
-		Rectangle r = new Rectangle(0, 0, 600, 6000);
+		Rectangle r = new Rectangle(0, 0, 800, 6000);
 		r.setFill(Color.WHEAT);
 		group.getChildren().add(r);
 
@@ -122,7 +129,7 @@ public class Main2 extends Application{
 //		pane.setPrefHeight(200);
 		box.getChildren().add(pane);
 		TextArea area = new TextArea();
-		area.setPrefWidth(600);
+		area.setPrefWidth(800);
 		area.setPrefHeight(100);
 		final Map<String, String> pressedKeyMap = new HashMap<String, String>();
 		area.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -165,7 +172,7 @@ public class Main2 extends Application{
 		button.setAlignment(Pos.BOTTOM_RIGHT);
 		
 		box.getChildren().add(button);
-		Scene scene = new Scene(hbox, 600, 530, Color.WHEAT);
+		Scene scene = new Scene(hbox, 800, 530, Color.WHEAT);
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
@@ -175,8 +182,8 @@ public class Main2 extends Application{
 		drawContent(group, jianPointX, jianPointYArr[0], content);
 		getHeadImg(group, jianPointX, jianPointYArr[0], false);
 		jianPointYArr[0] += 50;
-		jianPointYArr[0] = drawContentRight(group, 500, jianPointYArr[0], content);
-		getHeadImg(group, 500, jianPointYArr[0], true);
+		jianPointYArr[0] = drawContentRight(group, 600, jianPointYArr[0], content);
+		getHeadImg(group, 600, jianPointYArr[0], true);
 		jianPointYArr[0] += 50;
 		area.clear();
 	}
@@ -248,7 +255,21 @@ public class Main2 extends Application{
 				view4.setLayoutX(jianPointX - circle3.getRadius() * 2 - 10);
 			}
 			view4.setLayoutY(jianPointY - circle3.getRadius());
-			group.getChildren().add(view4);
+			//分图片的来源组
+			if(group.getClass().getName().endsWith(".VBox") && jianPointX == jianPointY && jianPointX == 0.0) {
+				HBox hbox = new HBox();
+				hbox.setPrefWidth(100);
+				hbox.getChildren().add(view4);
+				Text text = new Text("  布冯告  ");
+				text.setFill(Color.BLACK);
+				text.setFont(Font.font("宋体", FontWeight.BOLD, 12));
+				text.setTextAlignment(TextAlignment.CENTER);
+				hbox.getChildren().add(text);
+				group.getChildren().add(hbox);
+			}else {
+				group.getChildren().add(view4);
+			}
+			
 		}catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
