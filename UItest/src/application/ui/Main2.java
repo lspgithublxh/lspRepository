@@ -44,6 +44,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextBoundsType;
 import javafx.stage.Stage;
 
 public class Main2 extends Application{
@@ -257,14 +258,22 @@ public class Main2 extends Application{
 			view4.setLayoutY(jianPointY - circle3.getRadius());
 			//分图片的来源组
 			if(group.getClass().getName().endsWith(".VBox") && jianPointX == jianPointY && jianPointX == 0.0) {
-				HBox hbox = new HBox();
+				HBox hbox = new HBox(5);
 				hbox.setPrefWidth(100);
-				hbox.getChildren().add(view4);
+				hbox.setPrefHeight(30);
+				VBox vboxImage = new VBox();
+				vboxImage.setPadding(new Insets(0, 0, 0, 5));
+				vboxImage.getChildren().add(view4);
+				hbox.getChildren().add(vboxImage);
+				VBox vbox = new VBox();
+				vbox.setPadding(new Insets(15, 0, 0, 0));
 				Text text = new Text("  布冯告  ");
 				text.setFill(Color.BLACK);
 				text.setFont(Font.font("宋体", FontWeight.BOLD, 12));
-				text.setTextAlignment(TextAlignment.CENTER);
-				hbox.getChildren().add(text);
+//				text.setTextAlignment(TextAlignment.CENTER);
+				vbox.getChildren().add(text);
+//				hbox.setPadding(new Insets(10));
+				hbox.getChildren().add(vbox);
 				group.getChildren().add(hbox);
 			}else {
 				group.getChildren().add(view4);
