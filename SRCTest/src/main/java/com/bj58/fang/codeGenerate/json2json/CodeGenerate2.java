@@ -3,7 +3,7 @@ package com.bj58.fang.codeGenerate.json2json;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-public class CodeGenerate {
+public class CodeGenerate2 {
 
 	public static void main(String[] args) {
 //		String content = "{    \"title\": {        \"text\": \"用户评价\",        \"count\": 2    },    \"content\": [        {            \"date\": \"2018-5-15\",            \"content\": \"hahahahaha\",            \"satisfy\": \"超赞\",            \"satisfyUrl\": \"http://img.58cdn.com.cn/fangrs/img/fc6a30d0e6bec4d32857024af0f17a5f.png\",            \"title\": \"匿名用户\",            \"highLevelUrl\": \"\",            \"tags\": [                {                    \"content\": \"熟悉政策\",                    \"contentColor\": \"#517A99\",                    \"bgColor\": \"#517A99\"                },                {                    \"content\": \"熟悉政策\",                    \"contentColor\": \"#517A99\",                    \"bgColor\": \"#517A99\"                },                {                    \"content\": \"熟悉政策\",                    \"contentColor\": \"#517A99\",                    \"bgColor\": \"#517A99\"                }            ]        },        {            \"date\": \"2018-5-15\",            \"content\": \"hahahahaha\",            \"satisfy\": \"超赞\",            \"satisfyUrl\": \"http://img.58cdn.com.cn/fangrs/img/fc6a30d0e6bec4d32857024af0f17a5f.png\",            \"title\": \"匿名用户\",            \"highLevelUrl\": \"\",            \"tags\": [                {                    \"content\": \"熟悉政策\",                    \"contentColor\": \"#517A99\",                    \"bgColor\": \"#517A99\"                },                {                    \"content\": \"熟悉政策\",                    \"contentColor\": \"#517A99\",                    \"bgColor\": \"#517A99\"                },                {                    \"content\": \"熟悉政策\",                    \"contentColor\": \"#517A99\",                    \"bgColor\": \"#517A99\"                }            ]        }    ],    \"fullStar\": \"http://img.58cdn.com.cn/fangrs/img/fc6a30d0e6bec4d32857024af0f17a5f.png\",    \"emptyStar\": \"http://img.58cdn.com.cn/fangrs/img/8967a463d2571a98ec8eb2b5e88855dc.png\",    \"type\": \"evaluate\",    \"note\": \"Ta没有评价纪录~\"}";
@@ -42,8 +42,9 @@ public class CodeGenerate {
 				System.out.println(String.format("%s.put(\"%s\", \"" +"%s\");",name, key, val));
 //				System.out.println(name + ".put(" + key + ",\"" + val + "\");");
 			}else if(type.contains("JSONObject")) {
-				printJSON((JSONObject)val, key);
-				System.out.println(String.format("%s.put(\"%s\", %s);", name, key, key));
+				String variblename = key + System.currentTimeMillis();
+				printJSON((JSONObject)val, variblename);
+				System.out.println(String.format("%s.put(\"%s\", %s);", name, key, variblename));
 			}else if(type.contains("JSONArray")) {
 				JSONArray arr = (JSONArray) val;
 				String valuename = key + System.currentTimeMillis();
