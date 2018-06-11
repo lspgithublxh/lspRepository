@@ -29,6 +29,7 @@ public class Client {
     private BufferedReader br;  
       
     public static void main(String[] args) {  
+    	System.setProperty("java.net.preferIPv4Stack" , "true");
         new Client().start();  
     }  
       
@@ -41,7 +42,7 @@ public class Client {
   
             //TODO在此输入外网地址和端口  
             String ip = "127.0.0.1";  //xxx.xxxx.xxxx.xxxx
-            int port = 8888;  
+            int port = 9999;  
             socket.connect(new InetSocketAddress(ip, port));  
               
             //首次与外网服务器通信的端口  

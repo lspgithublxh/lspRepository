@@ -54,14 +54,14 @@ public class ServerThread extends Thread {
                     System.out.println("打洞到 " + ip + ":" + port);  
                       
                     for (ServerThread server : Server.connections) {  
-                        if (server.socket.getInetAddress().getHostAddress().equals(ip)  
-                                && server.socket.getPort() == Integer.parseInt(port)) {  
+                        if ( server.socket.getPort() == Integer.parseInt(port)) {  //server.socket.getInetAddress().getHostAddress().equals(ip)  
+                           // &&
                              System.out.println("start autoConn_" + ip + ":" + port);
                             //发送命令通知目标节点进行穿透连接  
                             server.pw.write("autoConn_" + socket.getInetAddress().getHostAddress() + "_" + socket.getPort()  
                                     + "\n");  
                             server.pw.flush();  
-                              
+                            System.out.println("finish autoConn_" + ip + ":" + port);
                             break;  
                         }  
                     }  

@@ -33,8 +33,8 @@ public class Server {
 		while(true) {
 			Socket s = socket.accept();
 			System.out.println(s.getReuseAddress());
-			System.out.println(s.getInetAddress().getHostAddress() + ":" + s.getPort());
-			haoIp.put(i++ + "", s.getInetAddress().getHostAddress() + ":" + s.getPort());
+			System.out.println(s.getInetAddress().getHostAddress() + ":" + s.getPort() + "," + s.getLocalPort());
+			haoIp.put(i++ + "", s.getInetAddress().getHostAddress() + ":" + s.getPort() + "," + s.getLocalPort());
 			OutputStream out = s.getOutputStream();
 			InputStream in = s.getInputStream();
 			new ReadThread(in, out).start();
