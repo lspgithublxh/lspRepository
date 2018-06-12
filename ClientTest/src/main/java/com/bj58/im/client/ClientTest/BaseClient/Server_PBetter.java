@@ -9,6 +9,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -26,7 +27,7 @@ public class Server_PBetter {
 		ServerSocket socket = new ServerSocket(10000);
 		System.out.println("start listen at 10000");
 		zhouqiclear();
-		int host = 1;
+		
 		while(true) {
 			Socket s = socket.accept();
 			//1.上线通知：
@@ -40,21 +41,23 @@ public class Server_PBetter {
 				WriteThread wr2 = new WriteThread(ns.getOutputStream());
 //				wr2.start();
 				wr2.writeNow("-----------上线通知--------");
-				wr2.writeNow("online:" + s.getRemoteSocketAddress().toString().substring(1));
-				hasOnline += ns.getRemoteSocketAddress().toString().substring(1) + ";";
+				String remote = s.getRemoteSocketAddress().toString();
+				String local = ns.getRemoteSocketAddress().toString();
+				wr2.writeNow("online:" + remote.substring(remote.indexOf(":")) + ";" + s.getRemoteSocketAddress().toString().substring(1));
+				hasOnline += local.substring(remote.indexOf(":")) + ";" + local.substring(1) + "%";
 			}
 			//已经上线的通知：
 			
 			//2.加入列表,可以和上面线程同步// TODO 
-			numSocket.put("client" + host++, s);
+			numSocket.put("client" + s.getRemoteSocketAddress(), s);
 			OutputStream out = s.getOutputStream();
 			InputStream in = s.getInputStream();
-			new ReadThread(in).start();
+			new ReadThread(in, s).start();
 			
 			WriteThread wr = new WriteThread(out);
 			wr.start();
 			wr.writeNow("-----------hello--------");
-			wr.writeNow(hasOnline);
+			wr.writeNow(hasOnline.substring(0, hasOnline.length() - 1));
 			//这里证明，一个outputstream只能被绑定一次----且直接写发不出去 TODO
 //			s.getOutputStream().write("xxxxx".getBytes());
 //			s.getOutputStream().flush();
@@ -107,13 +110,17 @@ public class Server_PBetter {
 		}).start();
 	}
 	
+	Map<String, String> portMap = new HashMap<String, String>();
+	
 	public class ReadThread extends Thread{
 		
 		public InputStream in = null;
 
-		public ReadThread(InputStream in) {
+		Socket s = null;
+		public ReadThread(InputStream in, Socket s) {
 			super();
 			this.in = in;
+			this.s = s;
 		}
 		
 		@Override
@@ -124,6 +131,10 @@ public class Server_PBetter {
 					while(true) {
 						String line = dataIn.readUTF();
 						System.out.println("client:" + line);
+						if(line.startsWith("client-server:")) {
+							portMap.put("client" + s.getRemoteSocketAddress(), line.split(":")[1]);
+							System.out.println("portMap now : " + portMap);
+						}
 					}
 				} catch (IOException e) {
 					e.printStackTrace();

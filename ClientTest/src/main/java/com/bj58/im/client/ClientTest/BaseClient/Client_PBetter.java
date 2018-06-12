@@ -17,8 +17,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -43,7 +45,9 @@ public class Client_PBetter {
 		OutputStream out = socket.getOutputStream();
 		InputStream in = socket.getInputStream();
 		new ReadThread(in).start();
-		new WriteThread(out).start();
+		WriteThread writeT = new WriteThread(out);
+		writeT.start();
+		
 		//add : 自己的model
 		new Thread(new Runnable() {
 			
@@ -51,12 +55,21 @@ public class Client_PBetter {
 			public void run() {
 				ServerSocket serv;
 				try {
-					serv = new ServerSocket(11568);// TODO  11567 11345
+					int port = 11568;
+					serv = new ServerSocket(port);// TODO  11567 11345
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							writeT.writeNow("client-server:" + port);
+						}
+						
+					}).start();
 					while(true) {
 						Socket s = serv.accept();
 						new ReadThread(s.getInputStream()).start();
 						new WriteThread(s.getOutputStream()).start();
 					}
+					
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -75,6 +88,8 @@ public class Client_PBetter {
 	public Client_PBetter() {
 		
 	}
+	
+	Map<String, String> onlineMap = new HashMap<String, String>();
 	
 public class ReadThread extends Thread{
 		
@@ -102,6 +117,18 @@ public class ReadThread extends Thread{
 						outf.write(("server:" + line + "\r\n").getBytes());
 						outf.flush();
 						outf.close();
+						if(line.startsWith("online:")) {
+							String[] ipPo = line.split(";");
+							onlineMap.put(ipPo[0], ipPo[1]);//qq - ip-port上线
+							System.out.println("now , onlineList:" + onlineMap);
+						}else if(line.startsWith("onlinelist:")) {
+							String[] ipPo = line.split("%");
+							for(String zh : ipPo) {
+								String[] nip = zh.split(";");
+								onlineMap.put(nip[0], nip[1]);
+							}
+							System.out.println("now , onlineList:" + onlineMap);
+						}
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -141,6 +168,22 @@ public class WriteThread_fast extends Thread{
 		public WriteThread(OutputStream out) {
 			super();
 			this.out = out;
+		}
+		
+		public void writeNow(String line) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
+			DataOutputStream outData = new DataOutputStream(out);
+			try {
+				outData.writeUTF(line);
+				outData.flush();
+				System.out.println("client:" + line);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		@Override
