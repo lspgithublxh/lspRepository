@@ -15,7 +15,7 @@ public class CalendarTest {
 		long week = 7 * 24 * 60 * 60 * 1000;
 		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		try {
-			long start = f.parse("2018-06-04 00:00:00").getTime();
+			long start = f.parse("2018-06-06 00:00:00").getTime();
 			System.out.println(start);
 			long t2 = f.parse("2018-06-11 00:00:00").getTime();
 			long t3 = f.parse("2018-06-18 00:00:00").getTime();

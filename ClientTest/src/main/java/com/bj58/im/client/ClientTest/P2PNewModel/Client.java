@@ -29,6 +29,7 @@ private static void test() {
 			System.out.println("get port : " + port);
 			int listenPort = Integer.valueOf(port);
 			Socket s = new Socket("localhost", 11123);
+			System.out.println("localport to server:" + s.toString());
 			c.new WriteThread(s.getOutputStream(), listenPort).start();
 			c.new ReadThread(s.getInputStream(), listenPort).start();
 			ServerSocket server = new ServerSocket(listenPort);
@@ -59,7 +60,7 @@ public class WriteThread extends Thread{
 		
 		@Override
 		public void run() {
-			
+			System.out.println("client write to other:");
 			DataOutputStream outData = new DataOutputStream(out);
 			try {
 				outData.writeUTF("hello");
@@ -70,11 +71,14 @@ public class WriteThread extends Thread{
 			int i = 0;
 			while(true) {
 				try {
-					Thread.sleep(2000);
+					Thread.sleep(4000);
 				} catch (InterruptedException e1) {
 					e1.printStackTrace();
 				}
 				String line = "";
+				if(i == 2) {
+					break;
+				}
 				if(i++ == 0) {
 					line = "woo:127.0.0.1-" + listenPort;
 						
@@ -110,15 +114,15 @@ public class ReadThread extends Thread{
 	@Override
 	public void run() {
 		DataInputStream dataIn = new DataInputStream(in);
-		
 			try {
 				while(true) {
 					String line = dataIn.readUTF();
-					System.out.println("server:" + line);
+					System.out.println("received:" + line);
 					if(line.startsWith("online:")) {
 						System.out.println("online :" + line);
 					}else if(line.startsWith("listen:")) {
 						//建立链接
+						System.out.println("客户端开始建立新上线机器的连接：" + line);
 						String[] ipport = line.substring(line.indexOf(":") + 1).split("-");
 						Socket sx = new Socket(ipport[0], Integer.valueOf(ipport[1]));
 						new WriteThread(sx.getOutputStream(), listenPort).start();

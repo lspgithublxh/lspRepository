@@ -41,8 +41,9 @@ public class Server {
 						List<String> li = new ArrayList<>();
 						for(String num : server.numSocket.keySet()) {
 							Socket ns = server.numSocket.get(num);
-							if(ns == null || ns.isClosed() || !ns.getKeepAlive()) {
+							if(ns == null || ns.isClosed() ) {//|| !ns.getKeepAlive()
 								System.out.println("offline:" + ns);
+								System.out.println(ns + ";" + ns.isClosed() );//+ ";" + ns.getKeepAlive()
 								li.add(num);
 							}
 						}
@@ -77,13 +78,14 @@ public class Server {
 				//1.上线通知：
 				for(String num : server.numSocket.keySet()) {
 					Socket ns = server.numSocket.get(num);
-					System.out.println("send online:");
+					System.out.println("用" +ns.toString() +  "发送内容:online:" + s.toString());
 					server.new WriteThread2(ns.getOutputStream(), "online:" + s.toString()).start();
 				}
 				//2.加入列表,可以和上面线程同步// TODO 
 				server.numSocket.put("client" + host++, s);
 				//3.读
-				server.new ReadThread(s, server);
+				server.new ReadThread(s, server).start();
+				server.new WriteThread2(s.getOutputStream(), "hello, client").start();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -104,6 +106,7 @@ public class Server {
 		
 		@Override
 		public void run() {
+			System.out.println("有新机器上线，发送给已上线机器:" + line);
 			DataOutputStream outData = new DataOutputStream(out);
 			try {
 				outData.write(line.getBytes());
@@ -172,9 +175,10 @@ public class ReadThread extends Thread{
 						for(String num : server.numSocket.keySet()) {
 							Socket ns = server.numSocket.get(num);
 							if(!s.getRemoteSocketAddress().toString().equals(ns.getRemoteSocketAddress().toString())) {
+								System.out.println("用" + ns.toString() + "发送内容：" + online);
 								server.new WriteThread2(ns.getOutputStream(), "listen:" + online).start();
 								//上线通知
-								System.out.println("真正通知上线机器所在的listen port");
+								System.out.println("真正通知上线机器所在的listen port" + online);
 							}
 						}
 					}else {
