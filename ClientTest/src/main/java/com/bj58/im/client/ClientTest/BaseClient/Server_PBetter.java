@@ -134,6 +134,16 @@ public class Server_PBetter {
 						if(line.startsWith("client-server:")) {
 							portMap.put("client" + s.getRemoteSocketAddress(), line.split(":")[1]);
 							System.out.println("portMap now : " + portMap);
+							//所有的其他ns发送：
+							for(String num : numSocket.keySet()) {
+								Socket ns = numSocket.get(num);
+								if(ns != s) {
+									WriteThread wr2 = new WriteThread(ns.getOutputStream());
+									String remote = s.getRemoteSocketAddress().toString();//占用的端口作为他的key
+									wr2.writeNow("client-server:" + remote.substring(remote.indexOf(":")) + ";" + line.split(":")[1]);
+									System.out.println("client-server port is :" + line.split(":")[1]);
+								}
+							}
 						}
 					}
 				} catch (IOException e) {

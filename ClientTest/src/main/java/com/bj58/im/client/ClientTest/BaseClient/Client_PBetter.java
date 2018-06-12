@@ -55,7 +55,7 @@ public class Client_PBetter {
 			public void run() {
 				ServerSocket serv;
 				try {
-					int port = 11568;
+					int port = 11567;
 					serv = new ServerSocket(port);// TODO  11567 11345
 					new Thread(new Runnable() {
 						@Override
@@ -90,6 +90,8 @@ public class Client_PBetter {
 	}
 	
 	Map<String, String> onlineMap = new HashMap<String, String>();
+	
+	Map<String, String> keyportMap = new HashMap<String, String>();
 	
 public class ReadThread extends Thread{
 		
@@ -128,6 +130,11 @@ public class ReadThread extends Thread{
 								onlineMap.put(nip[0], nip[1]);
 							}
 							System.out.println("now , onlineList:" + onlineMap);
+						}else if(line.startsWith("client-server:")) {//服务端 发来的，
+							String[] keyPort = line.substring(line.indexOf(":") + 1).split(";");		
+							keyportMap.put(keyPort[0], keyPort[1]);
+							System.out.println("now, client-server:" + keyportMap);
+							//成功发现端口，可以尝试连接客户端了！！
 						}
 					}
 				} catch (IOException e) {

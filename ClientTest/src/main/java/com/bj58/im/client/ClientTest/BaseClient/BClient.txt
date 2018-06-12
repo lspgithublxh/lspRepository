@@ -66,3 +66,10 @@ server:-----------上线通知--------
 server:online::52956;127.0.0.1:52956
 server:-----------hello--------
 server:onlinelist::52950;127.0.0.1:52950
+server:-----------hello--------
+server:onlinelist
+server:-----------上线通知--------
+server:online::61404;127.0.0.1:61404
+server:-----------hello--------
+server:client-server::61404;11567
+server:onlinelist::61392;127.0.0.1:61392
