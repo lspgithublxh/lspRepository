@@ -131,7 +131,7 @@ public class Server_PBetter {
 					while(true) {
 						String line = dataIn.readUTF();
 						System.out.println("client:" + line);
-						if(line.startsWith("client-server:")) {
+						if(line.startsWith("client-server:")) {//新上线的client都会发过来
 							portMap.put("client" + s.getRemoteSocketAddress(), line.split(":")[1]);
 							System.out.println("portMap now : " + portMap);
 							//所有的其他ns发送：

@@ -34,17 +34,18 @@ import java.util.Scanner;
  */
 public class Client_PBetter {
 	public static void main(String[] args) throws UnknownHostException, IOException {
-		new Client_PBetter().startClient();
+		System.out.println(args[0]);
+		new Client_PBetter().startClient(args[0]);
 	}
 	
 	
-	public void startClient() throws UnknownHostException, IOException {
+	public void startClient(String arg0) throws UnknownHostException, IOException {
 		Socket socket = new Socket("localhost", 10000);
 		System.out.println("start connect to localhost, 10000");
 		
 		OutputStream out = socket.getOutputStream();
 		InputStream in = socket.getInputStream();
-		new ReadThread(in).start();
+		new ReadThread(in, socket).start();
 		WriteThread writeT = new WriteThread(out);
 		writeT.start();
 		
@@ -55,7 +56,7 @@ public class Client_PBetter {
 			public void run() {
 				ServerSocket serv;
 				try {
-					int port = 11567;
+					int port = Integer.valueOf(arg0);
 					serv = new ServerSocket(port);// TODO  11567 11345
 					new Thread(new Runnable() {
 						@Override
@@ -66,7 +67,7 @@ public class Client_PBetter {
 					}).start();
 					while(true) {
 						Socket s = serv.accept();
-						new ReadThread(s.getInputStream()).start();
+						new ReadThread(s.getInputStream(), s).start();
 						new WriteThread(s.getOutputStream()).start();
 					}
 					
@@ -96,10 +97,11 @@ public class Client_PBetter {
 public class ReadThread extends Thread{
 		
 		public InputStream in = null;
-
-		public ReadThread(InputStream in) {
+		Socket soc = null;
+		public ReadThread(InputStream in, Socket soc) {
 			super();
 			this.in = in;
+			this.soc = soc;
 		}
 		
 		@Override
@@ -118,23 +120,32 @@ public class ReadThread extends Thread{
 						System.out.println("server:" + line);
 						outf.write(("server:" + line + "\r\n").getBytes());
 						outf.flush();
-						outf.close();
+//						outf.close();
 						if(line.startsWith("online:")) {
 							String[] ipPo = line.split(";");
-							onlineMap.put(ipPo[0], ipPo[1]);//qq - ip-port上线
+							onlineMap.put(ipPo[0].substring(ipPo[0].lastIndexOf(":") + 1), ipPo[1]);//qq - ip-port上线
 							System.out.println("now , onlineList:" + onlineMap);
 						}else if(line.startsWith("onlinelist:")) {
 							String[] ipPo = line.split("%");
 							for(String zh : ipPo) {
 								String[] nip = zh.split(";");
-								onlineMap.put(nip[0], nip[1]);
+								onlineMap.put(nip[0].substring(nip[0].lastIndexOf(":") + 1), nip[1]);
 							}
 							System.out.println("now , onlineList:" + onlineMap);
-						}else if(line.startsWith("client-server:")) {//服务端 发来的，
+						}else if(line.startsWith("client-server:")) {//服务端 发来的，则应该作为主动方向新起客户端发起连接－－－或者有这种能力
 							String[] keyPort = line.substring(line.indexOf(":") + 1).split(";");		
-							keyportMap.put(keyPort[0], keyPort[1]);
+							keyportMap.put(keyPort[0].substring(1), keyPort[1]);
 							System.out.println("now, client-server:" + keyportMap);
 							//成功发现端口，可以尝试连接客户端了！！
+							Socket so = new Socket("localhost", Integer.valueOf(keyPort[1]));
+							new ReadThread(so.getInputStream(), so).start();
+							WriteThread wth = new WriteThread(so.getOutputStream());
+							wth.writeNow("client to client: I am you friend.");
+							wth.start();
+						}else if(line.startsWith("client to client:")) {
+							//此时应该调用写线程进行回复
+							System.out.println("em, ok, good");
+							new WriteThread(soc.getOutputStream()).writeNow("good ,i received: my friend..");
 						}
 					}
 				} catch (IOException e) {
