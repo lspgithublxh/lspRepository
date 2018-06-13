@@ -144,7 +144,7 @@ public class ReadThread extends Thread{
 							wth.start();
 						}else if(line.startsWith("client to client:")) {
 							//此时应该调用写线程进行回复
-							System.out.println("em, ok, good");
+							System.out.println("em, ok, good.");
 							new WriteThread(soc.getOutputStream()).writeNow("good ,i received: my friend..");
 						}
 					}

@@ -113,3 +113,12 @@ server:online::54304;127.0.0.1:54304
 server:-----------hello--------
 server:client-server::54304;11579
 server:onlinelist::54299;127.0.0.1:54299
+server:-----------hello--------
+server:onlinelist
+server:-----------上线通知--------
+server:online::54489;127.0.0.1:54489
+server:-----------hello--------
+server:client-server::54489;11579
+server:onlinelist::54484;127.0.0.1:54484
+server:client to client: I am you friend.
+server:good ,i received: my friend..
