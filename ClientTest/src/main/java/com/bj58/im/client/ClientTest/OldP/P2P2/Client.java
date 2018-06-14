@@ -1,4 +1,4 @@
-package com.bj58.im.client.ClientTest.P2P2;
+package com.bj58.im.client.ClientTest.OldP.P2P2;
 import java.io.BufferedReader;  
 import java.io.IOException;  
 import java.io.InputStreamReader;  

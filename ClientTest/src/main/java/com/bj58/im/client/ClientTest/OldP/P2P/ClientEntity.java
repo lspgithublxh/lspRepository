@@ -1,4 +1,4 @@
-package com.bj58.im.client.ClientTest.P2P;
+package com.bj58.im.client.ClientTest.OldP.P2P;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

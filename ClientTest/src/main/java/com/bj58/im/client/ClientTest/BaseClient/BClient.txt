@@ -122,3 +122,13 @@ server:client-server::54489;11579
 server:onlinelist::54484;127.0.0.1:54484
 server:client to client: I am you friend.
 server:good ,i received: my friend..
+server:yes
+server:-----------hello--------
+server:onlinelist
+server:-----------上线通知--------
+server:online::60001;127.0.0.1:60001
+server:-----------hello--------
+server:client-server::60001;12767
+server:client to client: I am you friend.
+server:good ,i received: my friend..
+server:onlinelist::59912;127.0.0.1:59912

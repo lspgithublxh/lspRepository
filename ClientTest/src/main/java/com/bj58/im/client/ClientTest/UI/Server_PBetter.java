@@ -1,4 +1,4 @@
-package com.bj58.im.client.ClientTest.BaseClient;
+package com.bj58.im.client.ClientTest.UI;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
