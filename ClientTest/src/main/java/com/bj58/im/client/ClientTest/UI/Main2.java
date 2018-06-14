@@ -1,8 +1,12 @@
 package com.bj58.im.client.ClientTest.UI;
 
 import java.io.FileInputStream;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import com.bj58.im.client.ClientTest.UI.Client_PBetter.WriteThread;
 
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -57,8 +61,12 @@ public class Main2 extends Application{
 	public void start(Stage arg0) throws Exception {
 		// TODO Auto-generated method stub
 		talkingSpecial(arg0);
+//		System.out.println(this.getParameters().getNamed());
+		System.out.println(this.getParameters().getRaw().get(0));
 		//只有使用滚动pane
 		//socket的程序的生成
+		String port = this.getParameters().getRaw().get(0);
+		new Client_PBetter(this).startClient(port);
 	}
 
 	private void scrollPane(Stage primaryStage) {
@@ -67,7 +75,7 @@ public class Main2 extends Application{
 		
 	}
 	
-	Map<String, Object[]> config = new HashMap<String, Object[]>();
+	Map<String,List<Object>> config = new HashMap<String, List<Object>>();
 	
 	private void talkingSpecial(Stage primaryStage) {
 		primaryStage.getIcons().add(new Image(this.getClass().getResourceAsStream("../a.png")));
@@ -118,7 +126,7 @@ public class Main2 extends Application{
 		group.getChildren().add(r);
 
 		final Double[] jianPointYArr = {jianPointY};
-		config.put("Tom", new Object[] {group, jianPointYArr});
+		config.put("Tom", Arrays.asList(new Object[] {group, jianPointYArr}));
 		group.setOnScroll(new EventHandler<ScrollEvent>() {
 			@Override
 			public void handle(ScrollEvent event) {
@@ -144,6 +152,9 @@ public class Main2 extends Application{
 				if("Enter".equals(key) && "Ctrl".equals(pressedKeyMap.get("keyPressed"))) {
 					writeTextMessage(group, jianPointX, jianPointYArr, area.getText());
 					area.clear();
+					//发送
+					WriteThread wt = (WriteThread) config.get("Tom").get(2);
+					wt.writeNow(area.getText());
 //					double old = jianPointYArr[0];
 //					printInput(group, jianPointX, jianPointYArr, area);
 //					
@@ -172,6 +183,9 @@ public class Main2 extends Application{
 				printInput(group, jianPointX, jianPointYArr, area);
 				
 				group.setLayoutY(group.getLayoutY() + old - jianPointYArr[0]);
+				//发送
+				WriteThread wt = (WriteThread) config.get("Tom").get(2);
+				wt.writeNow(area.getText());
 			}
 			
 		});
@@ -183,6 +197,8 @@ public class Main2 extends Application{
 		primaryStage.show();
 	}
 	
+	Client_PBetter cp = null;
+	
 	/**
 	 * 对外提供的写接口
 	 * @param 
@@ -192,9 +208,13 @@ public class Main2 extends Application{
 	 * @return void
 	 */
 	public void writeRightTextMessage(String name, String content) {
-		Object[] conf = config.get(name);
-		Pane group = (Pane) conf[0];
-		final Double[] jianPointYArr = (Double[]) conf[1];
+		//提取名称：
+		WriteThread wt = (WriteThread) cp.configMap.get(content)[0];
+		wt.writeNow("ok, ui received!");
+		config.get(name).add(wt);
+		List<Object> conf = config.get(name);
+		Pane group = (Pane) conf.get(0);
+		final Double[] jianPointYArr = (Double[]) conf.get(1);
 		double old = jianPointYArr[0];
 		
 		jianPointYArr[0] = drawContentRight(group, 600, jianPointYArr[0], content);

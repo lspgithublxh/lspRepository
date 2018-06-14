@@ -132,3 +132,5 @@ server:client-server::60001;12767
 server:client to client: I am you friend.
 server:good ,i received: my friend..
 server:onlinelist::59912;127.0.0.1:59912
+server:-----------hello--------
+server:-----------hello--------

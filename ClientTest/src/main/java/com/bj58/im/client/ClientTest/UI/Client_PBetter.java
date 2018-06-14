@@ -38,6 +38,13 @@ public class Client_PBetter {
 		new Client_PBetter().startClient(args[0]);
 	}
 	
+	Main2 ui;
+	
+	public Client_PBetter(Main2 ui) {
+		this.ui = ui;
+	}
+	
+	Map<String, Object[]> configMap = new HashMap<String, Object[]>();
 	
 	public void startClient(String arg0) throws UnknownHostException, IOException {
 		Socket socket = new Socket("localhost", 10000);
@@ -68,7 +75,13 @@ public class Client_PBetter {
 					while(true) {
 						Socket s = serv.accept();
 						new ReadThread(s.getInputStream(), s).start();
-						new WriteThread(s.getOutputStream()).start();
+						WriteThread wt = new WriteThread(s.getOutputStream());
+						//本名
+						String name = "Jetty";
+						configMap.put(name, new Object[] {new WriteThread(s.getOutputStream())});
+						//向ui发起建立新pane方法，并写入内容...目前向老pane写
+						ui.writeRightTextMessage("Tom", name);
+						wt.start();
 					}
 					
 				} catch (IOException e) {
@@ -102,7 +115,7 @@ public class ReadThread extends Thread{
 		@Override
 		public void run() {
 			DataInputStream dataIn = new DataInputStream(in);
-			
+			boolean writeOk = false;
 				try {
 					while(true) {
 						try {
@@ -135,12 +148,22 @@ public class ReadThread extends Thread{
 							Socket so = new Socket("localhost", Integer.valueOf(keyPort[1]));
 							new ReadThread(so.getInputStream(), so).start();
 							WriteThread wth = new WriteThread(so.getOutputStream());
-							wth.writeNow("client to client: I am you friend.");
+							wth.writeNow("client to client: I am you friend.Tom" + wth.hashCode());
 							wth.start();
 						}else if(line.startsWith("client to client:")) {
 							//此时应该调用写线程进行回复
 							System.out.println("em, ok, good.");
+							String name = line.substring(line.indexOf("\\.") + 1);
+							configMap.put(name, new Object[] {new WriteThread(soc.getOutputStream())});
+							//向ui发起建立新pane方法，并写入内容...目前向老pane写
+							ui.writeRightTextMessage("Tom", name);
 							new WriteThread(soc.getOutputStream()).writeNow("good ,i received: my friend..");
+							writeOk = true;
+						}else {
+							if(writeOk) {
+								ui.writeRightTextMessage("Tom", line);//发送的消息都写入
+							}
+							
 						}
 					}
 				} catch (IOException e) {
