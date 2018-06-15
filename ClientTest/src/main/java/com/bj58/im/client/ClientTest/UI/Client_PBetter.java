@@ -27,6 +27,8 @@ import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import javafx.application.Platform;
+
 /**
  * 一旦连接另外一个客户端，需要在console输入两次，第一次是给client的，第二次是给server的。
  * @ClassName:Client_P
@@ -106,6 +108,12 @@ public class Client_PBetter {
 //							sublock.wait();
 //						}
 						messageQueue.put(name);//看会不会有消息遗漏
+						Platform.runLater(new Runnable() {
+							@Override
+							public void run() {
+								ui.writeRightTextMessage("Tom", name);
+							}
+						});
 					}
 					
 				} catch (IOException e) {
@@ -117,26 +125,27 @@ public class Client_PBetter {
 			}
 		}).start();
 		//后者启动移动一个socket连接已经启动的客户端 TODO
-		while(true) {
-			String value = "no message";
-			try {
-				value = messageQueue.take();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-//			synchronized (mainlock) {
-//				try {
-//					sublock.notifyAll();
-//					mainlock.wait();//还可以设置超时时间,有写的时候才会退出
-//					value = content[0];
-//				} catch (InterruptedException e) {
-//					e.printStackTrace();
-//				}
-//				//这里还能不能获得同步锁不好说
+//		while(true) {
+//			String value = "no message";
+//			try {
+//				value = messageQueue.take();
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
 //			}
-			//正事情：
-			ui.writeRightTextMessage("Tom", value);
-		}
+//
+//			//正事情：
+//			ui.writeRightTextMessage("Tom", value);
+//		}
+//		synchronized (mainlock) {
+//		try {
+//			sublock.notifyAll();
+//			mainlock.wait();//还可以设置超时时间,有写的时候才会退出
+//			value = content[0];
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+//		//这里还能不能获得同步锁不好说
+//	}
 	}
 	
 	FileOutputStream outf = null;
@@ -206,6 +215,12 @@ public class ReadThread extends Thread{
 							} catch (InterruptedException e) {
 								e.printStackTrace();
 							}//看会不会有消息遗漏
+							Platform.runLater(new Runnable() {
+								@Override
+								public void run() {
+									ui.writeRightTextMessage("Tom", name);
+								}
+							});
 						}else if(line.startsWith("client to client:")) {
 							//此时应该调用写线程进行回复
 							System.out.println("em, ok, good.");
@@ -213,6 +228,14 @@ public class ReadThread extends Thread{
 							configMap.put(name, new Object[] {new WriteThread(soc.getOutputStream())});
 							//向ui发起建立新pane方法，并写入内容...目前向老pane写
 //							ui.writeRightTextMessage("Tom", name);
+							Platform.runLater(new Runnable() {
+								@Override
+								public void run() {
+									System.out.println("runfirst");
+									ui.writeRightTextMessage("Tom", name);
+									
+								}
+							});
 							try {
 								messageQueue.put(name);
 							} catch (InterruptedException e) {
@@ -223,6 +246,13 @@ public class ReadThread extends Thread{
 						}else {
 							if(writeOk) {
 //								ui.writeRightTextMessage("Tom", line);//发送的消息都写入
+								Platform.runLater(new Runnable() {
+									@Override
+									public void run() {
+										System.out.println("runSecond");
+										ui.writeRightTextMessage("Tom", "Jetty");
+									}
+								});
 								try {
 									messageQueue.put(line);
 								} catch (InterruptedException e) {

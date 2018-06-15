@@ -51,6 +51,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextBoundsType;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class Main2 extends Application{
 
@@ -70,7 +71,23 @@ public class Main2 extends Application{
 		Client_PBetter cp = new Client_PBetter(this);
 		this.cp = cp;
 		cp.startClient(port);
+		System.out.println(Thread.currentThread().getClass());
 		
+		arg0.onShownProperty().addListener(new ChangeListener<EventHandler>() {
+			@Override
+			public void changed(ObservableValue<? extends EventHandler> observable, EventHandler oldValue,
+					EventHandler newValue) {
+				System.out.println("shown ............. ok");//此时仍然没有出来内容
+			}
+		});
+		arg0.setOnShown(new EventHandler<WindowEvent>() {
+
+			@Override
+			public void handle(WindowEvent event) {
+				
+				System.out.println("the shown event occure");
+				
+			}});
 	}
 
 	private void scrollPane(Stage primaryStage) {
@@ -238,7 +255,7 @@ public class Main2 extends Application{
 	public void writeRightTextMessage(String name, String content) {
 		//提取名称：
 		WriteThread wt = (WriteThread) cp.configMap.get(content)[0];
-		wt.writeNow("ok, ui received!");
+		wt.writeNow("ok, ui received!");//又会传递过来，形成死循环
 		config.get(name).add(wt);
 		List<Object> conf = config.get(name);
 		Pane group = (Pane) conf.get(0);
