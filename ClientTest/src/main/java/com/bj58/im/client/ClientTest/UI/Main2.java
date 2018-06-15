@@ -1,6 +1,7 @@
 package com.bj58.im.client.ClientTest.UI;
 
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -66,7 +67,10 @@ public class Main2 extends Application{
 		//只有使用滚动pane
 		//socket的程序的生成
 		String port = this.getParameters().getRaw().get(0);
-		new Client_PBetter(this).startClient(port);
+		Client_PBetter cp = new Client_PBetter(this);
+		this.cp = cp;
+		cp.startClient(port);
+		
 	}
 
 	private void scrollPane(Stage primaryStage) {
@@ -126,7 +130,7 @@ public class Main2 extends Application{
 		group.getChildren().add(r);
 
 		final Double[] jianPointYArr = {jianPointY};
-		config.put("Tom", Arrays.asList(new Object[] {group, jianPointYArr}));
+		config.put("Tom", new ArrayList<>(Arrays.asList(new Object[] {group, jianPointYArr})));
 		group.setOnScroll(new EventHandler<ScrollEvent>() {
 			@Override
 			public void handle(ScrollEvent event) {
@@ -198,6 +202,30 @@ public class Main2 extends Application{
 	}
 	
 	Client_PBetter cp = null;
+	
+	/**
+	 * 对外提供的第二个接口
+	 * @param 
+	 * @author lishaoping
+	 * @Date 2018年6月14日
+	 * @Package com.bj58.im.client.ClientTest.UI
+	 * @return void
+	 */
+	public void writeLeftTextMessage(String name, String content) {
+		//提取名称：
+		WriteThread wt = (WriteThread) cp.configMap.get(content)[0];
+		wt.writeNow("ok, ui send message!");
+		config.get(name).add(wt);
+		List<Object> conf = config.get(name);
+		Pane group = (Pane) conf.get(0);
+		final Double[] jianPointYArr = (Double[]) conf.get(1);
+		double old = jianPointYArr[0];
+		
+		jianPointYArr[0] = drawContentRight(group, 80, jianPointYArr[0], content);
+		getHeadImg(group, 80, jianPointYArr[0], true);
+		jianPointYArr[0] += 50;
+		group.setLayoutY(group.getLayoutY() + old - jianPointYArr[0]);
+	}
 	
 	/**
 	 * 对外提供的写接口

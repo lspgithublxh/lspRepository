@@ -134,3 +134,41 @@ server:good ,i received: my friend..
 server:onlinelist::59912;127.0.0.1:59912
 server:-----------hello--------
 server:-----------hello--------
+server:-----------hello--------
+server:onlinelist
+server:-----------上线通知--------
+server:online::59186;127.0.0.1:59186
+server:-----------hello--------
+server:client-server::59186;12987
+server:client to client: I am you friend.Tom1023515300
+server:onlinelist::59181;127.0.0.1:59181
+server:-----------hello--------
+server:onlinelist
+server:-----------上线通知--------
+server:online::59479;127.0.0.1:59479
+server:-----------hello--------
+server:client-server::59479;12987
+server:client to client: I am you friend.Tom601223914
+server:onlinelist::59467;127.0.0.1:59467
+server:-----------hello--------
+server:onlinelist
+server:-----------上线通知--------
+server:online::59963;127.0.0.1:59963
+server:-----------hello--------
+server:client-server::59963;12987
+server:ok, ui received!
+server:client to client: I am you friend.Tom2004618991
+server:ok, ui received!
+server:onlinelist::59949;127.0.0.1:59949
+server:-----------hello--------
+server:onlinelist
+server:-----------上线通知--------
+server:online::60791;127.0.0.1:60791
+server:-----------hello--------
+server:client-server::60791;12987
+server:client to client: I am you friend.Tom1522157207
+server:ok, ui received!
+server:ok, ui received!
+server:onlinelist::60788;127.0.0.1:60788
+server:-----------hello--------
+server:onlinelist
