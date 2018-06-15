@@ -276,9 +276,10 @@ public class Main2 extends Application{
 		double old = jianPointYArr[0];
 		drawContent(group, jianPointX, jianPointYArr[0], content);
 		getHeadImg(group, jianPointX, jianPointYArr[0], false);
-		jianPointYArr[0] += 50;
-		jianPointYArr[0] = drawContentRight(group, 600, jianPointYArr[0], content);
-		getHeadImg(group, 600, jianPointYArr[0], true);
+		//暂时不画右边
+//		jianPointYArr[0] += 50;
+//		jianPointYArr[0] = drawContentRight(group, 600, jianPointYArr[0], content);
+//		getHeadImg(group, 600, jianPointYArr[0], true);
 		jianPointYArr[0] += 50;
 		group.setLayoutY(group.getLayoutY() + old - jianPointYArr[0]);
 	}
@@ -287,11 +288,12 @@ public class Main2 extends Application{
 		String content = area.getText();
 		drawContent(group, jianPointX, jianPointYArr[0], content);
 		getHeadImg(group, jianPointX, jianPointYArr[0], false);
+		//右边暂时不画
+//		jianPointYArr[0] += 50;
+//		jianPointYArr[0] = drawContentRight(group, 600, jianPointYArr[0], content);
+//		getHeadImg(group, 600, jianPointYArr[0], true);
 		jianPointYArr[0] += 50;
-		jianPointYArr[0] = drawContentRight(group, 600, jianPointYArr[0], content);
-		getHeadImg(group, 600, jianPointYArr[0], true);
-		jianPointYArr[0] += 50;
-		area.clear();
+//		area.clear();
 	}
 	
 	private void drawContent(Pane group, double jianPointX, double jianPointY, String content) {
