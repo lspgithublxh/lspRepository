@@ -172,10 +172,11 @@ public class Main2 extends Application{
 				String key = event.getCode().getName();
 				if("Enter".equals(key) && "Ctrl".equals(pressedKeyMap.get("keyPressed"))) {
 					writeTextMessage(group, jianPointX, jianPointYArr, area.getText());
-					area.clear();
 					//发送
 					WriteThread wt = (WriteThread) config.get("Tom").get(2);
 					wt.writeNow(area.getText());
+					System.out.println(area.getText());
+					area.clear();
 //					double old = jianPointYArr[0];
 //					printInput(group, jianPointX, jianPointYArr, area);
 //					
@@ -207,6 +208,7 @@ public class Main2 extends Application{
 				//发送
 				WriteThread wt = (WriteThread) config.get("Tom").get(2);
 				wt.writeNow(area.getText());
+				area.clear();
 			}
 			
 		});
@@ -254,9 +256,11 @@ public class Main2 extends Application{
 	 */
 	public void writeRightTextMessage(String name, String content) {
 		//提取名称：
-		WriteThread wt = (WriteThread) cp.configMap.get(content)[0];
-		wt.writeNow("ok, ui received!");//又会传递过来，形成死循环
-		config.get(name).add(wt);
+		if(cp.configMap.containsKey(content)) {//第一次足够，后面都不需要了---不需要再次add
+			WriteThread wt = (WriteThread) cp.configMap.get(content)[0];
+			wt.writeNow("ok, ui received!");//又会传递过来，形成死循环
+			config.get(name).add(wt);
+		}
 		List<Object> conf = config.get(name);
 		Pane group = (Pane) conf.get(0);
 		final Double[] jianPointYArr = (Double[]) conf.get(1);

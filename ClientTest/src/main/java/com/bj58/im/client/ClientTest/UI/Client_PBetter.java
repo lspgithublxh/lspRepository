@@ -98,7 +98,7 @@ public class Client_PBetter {
 						new ReadThread(s.getInputStream(), s).start();
 						WriteThread wt = new WriteThread(s.getOutputStream());
 						//本名
-						String name = "Jetty";
+						String name = "Tom";
 						configMap.put(name, new Object[] {new WriteThread(s.getOutputStream())});
 						//向ui发起建立新pane方法，并写入内容...目前向老pane写
 						wt.start();
@@ -171,6 +171,7 @@ public class ReadThread extends Thread{
 		public void run() {
 			DataInputStream dataIn = new DataInputStream(in);
 			boolean writeOk = false;
+			boolean servWriteOk = false;
 				try {
 					while(true) {
 						try {
@@ -180,7 +181,7 @@ public class ReadThread extends Thread{
 							e.printStackTrace();
 						}
 						String line = dataIn.readUTF();
-						System.out.println("server:" + line);
+						System.out.println("====ting-----server:" + line);
 						outf.write(("server:" + line + "\r\n").getBytes());
 						outf.flush();
 //						outf.close();
@@ -221,6 +222,7 @@ public class ReadThread extends Thread{
 									ui.writeRightTextMessage("Tom", name);
 								}
 							});
+							servWriteOk = true;
 						}else if(line.startsWith("client to client:")) {
 							//此时应该调用写线程进行回复
 							System.out.println("em, ok, good.");
@@ -244,13 +246,14 @@ public class ReadThread extends Thread{
 							new WriteThread(soc.getOutputStream()).writeNow("good ,i received: my friend..");
 							writeOk = true;
 						}else {
-							if(writeOk) {
+							System.out.println(servWriteOk);
+							if(writeOk || configMap.size() > 0) {
 //								ui.writeRightTextMessage("Tom", line);//发送的消息都写入
 								Platform.runLater(new Runnable() {
 									@Override
 									public void run() {
 										System.out.println("runSecond");
-										ui.writeRightTextMessage("Tom", "Jetty");
+										ui.writeRightTextMessage("Tom", line);
 									}
 								});
 								try {

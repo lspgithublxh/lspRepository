@@ -260,3 +260,157 @@ server:good ,i received: my friend..
 server:ok, ui received!
 server:ok, ui received!
 server:onlinelist::53063;127.0.0.1:53063
+server:-----------hello--------
+server:onlinelist
+server:-----------上线通知--------
+server:online::54280;127.0.0.1:54280
+server:-----------hello--------
+server:client-server::54280;12987
+server:client to client: I am you friend.Tom2024227203
+server:ok, ui received!
+server:good ,i received: my friend..
+server:ok, ui received!
+server:ok, ui received!
+server:ok, ui received!
+server:onlinelist::54279;127.0.0.1:54279
+server:
+server:-----------hello--------
+server:onlinelist
+server:-----------上线通知--------
+server:online::54719;127.0.0.1:54719
+server:-----------hello--------
+server:client-server::54719;12987
+server:client to client: I am you friend.Tom83150968
+server:good ,i received: my friend..
+server:ok, ui received!
+server:ok, ui received!
+server:ok, ui received!
+server:ok, ui received!
+server:onlinelist::54718;127.0.0.1:54718
+server:
+server:ok, ui received!
+server:
+server:ok, ui received!
+server:
+server:ok, ui received!
+server:-----------hello--------
+server:onlinelist
+server:-----------上线通知--------
+server:online::54839;127.0.0.1:54839
+server:-----------hello--------
+server:client-server::54839;12987
+server:client to client: I am you friend.Tom260817829
+server:ok, ui received!
+server:good ,i received: my friend..
+server:ok, ui received!
+server:ok, ui received!
+server:ok, ui received!
+server:onlinelist::54838;127.0.0.1:54838
+server:
+server:ok, ui received!
+server:-----------hello--------
+server:onlinelist
+server:-----------上线通知--------
+server:online::54876;127.0.0.1:54876
+server:-----------hello--------
+server:client-server::54876;12987
+server:client to client: I am you friend.Tom2110583121
+server:good ,i received: my friend..
+server:ok, ui received!
+server:ok, ui received!
+server:ok, ui received!
+server:ok, ui received!
+server:onlinelist::54873;127.0.0.1:54873
+server:嗯
+server:ok, ui received!
+server:-----------hello--------
+server:onlinelist
+server:-----------上线通知--------
+server:online::54947;127.0.0.1:54947
+server:-----------hello--------
+server:client-server::54947;12987
+server:client to client: I am you friend.Tom1783175000
+server:good ,i received: my friend..
+server:ok, ui received!
+server:ok, ui received!
+server:ok, ui received!
+server:ok, ui received!
+server:onlinelist::54946;127.0.0.1:54946
+server:比如
+server:ok, ui received!
+server:-----------hello--------
+server:onlinelist
+server:-----------上线通知--------
+server:online::54962;127.0.0.1:54962
+server:-----------hello--------
+server:client-server::54962;12987
+server:client to client: I am you friend.Tom1303359898
+server:ok, ui received!
+server:good ,i received: my friend..
+server:ok, ui received!
+server:ok, ui received!
+server:onlinelist::54961;127.0.0.1:54961
+server:比如
+server:好的啊
+server:-----------hello--------
+server:onlinelist
+server:-----------上线通知--------
+server:online::55041;127.0.0.1:55041
+server:-----------hello--------
+server:client-server::55041;12987
+server:client to client: I am you friend.Tom1303359898
+server:ok, ui received!
+server:good ,i received: my friend..
+server:ok, ui received!
+server:ok, ui received!
+server:onlinelist::55040;127.0.0.1:55040
+server:电风扇
+server:电风扇
+server:好
+server:什么
+server:-----------hello--------
+server:onlinelist
+server:-----------上线通知--------
+server:online::55104;127.0.0.1:55104
+server:client-server::55104;12987
+server:-----------hello--------
+server:client to client: I am you friend.Tom2095141639
+server:ok, ui received!
+server:good ,i received: my friend..
+server:ok, ui received!
+server:ok, ui received!
+server:onlinelist::55096;127.0.0.1:55096
+server:电风扇
+server:顶顶顶
+server:-----------hello--------
+server:onlinelist
+server:-----------上线通知--------
+server:online::55140;127.0.0.1:55140
+server:client-server::55140;12987
+server:-----------hello--------
+server:ok, ui received!
+server:client to client: I am you friend.Tom1303359898
+server:good ,i received: my friend..
+server:ok, ui received!
+server:ok, ui received!
+server:onlinelist::55139;127.0.0.1:55139
+server:
+server:
+server:电风扇
+server:杀杀杀
+server:-----------hello--------
+server:onlinelist
+server:-----------上线通知--------
+server:online::55223;127.0.0.1:55223
+server:-----------hello--------
+server:client-server::55223;12987
+server:ok, ui received!
+server:client to client: I am you friend.Tom601223914
+server:good ,i received: my friend..
+server:ok, ui received!
+server:ok, ui received!
+server:onlinelist::55216;127.0.0.1:55216
+server:
+server:电风扇
+server:搜搜
+server:士大夫
