@@ -433,3 +433,65 @@ server:啥事
 server:别来五羊
 
 server:好的
+server:-----------hello--------
+server:onlinelist
+server:-----------上线通知--------
+server:online::52866;127.0.0.1:52866
+server:-----------hello--------
+server:-----------hello--------
+server:onlinelist
+server:-----------上线通知--------
+server:online::52910;127.0.0.1:52910
+server:-----------hello--------
+server:client-server::52910;12987
+server:client to client: I am you friend.Tom2024227203
+server:ok, ui received!
+server:ok, ui received!
+server:good ,i received: my friend..
+server:ok, ui received!
+server:onlinelist::52907;127.0.0.1:52907
+server:和i和i
+server:-----------hello--------
+server:onlinelist
+server:-----------上线通知--------
+server:online::53192;127.0.0.1:53192
+server:-----------hello--------
+server:client-server::53192;12987
+server:client to client: I am you friend.Tom815541398
+server:ok, ui received!
+server:good ,i received: my friend..
+server:ok, ui received!
+server:ok, ui received!
+server:onlinelist::53189;127.0.0.1:53189
+server:巅峰时代
+server:电风扇
+server:-----------hello--------
+server:onlinelist
+server:-----------上线通知--------
+server:online::53271;127.0.0.1:53271
+server:-----------hello--------
+server:client-server::53271;12678
+server:client to client: I am you friend.Tom83150968
+server:ok, ui received!
+server:good ,i received: my friend..
+server:ok, ui received!
+server:ok, ui received!
+server:onlinelist::53264;127.0.0.1:53264
+server:嗯顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶
+server:-----------hello--------
+server:onlinelist
+server:-----------上线通知--------
+server:online::53359;127.0.0.1:53359
+server:client-server::53359;12987
+server:-----------hello--------
+server:client to client: I am you friend.Tom1178480088
+server:ok, ui received!
+server:ok, ui received!
+server:good ,i received: my friend..
+server:ok, ui received!
+server:onlinelist::53354;127.0.0.1:53354
+server:顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶
+server:顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶的
+server:顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶
+server:-----------hello--------
+server:onlinelist

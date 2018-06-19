@@ -53,6 +53,16 @@ import javafx.scene.text.TextBoundsType;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+/**
+ * 设计思想1：指令分发控制模块，   在本模块内，对UI程序提供，使得UI调用本模块时，只需要向指令分发控制模块输入“指令和参数”即可，后续工作直接让本模块完成，实现UI和本模块的完全解耦----甚至是一个指令消息队列。。。同时，分类处理+解耦让程序更清晰更容易拓展更精准拓展更便捷增删改
+ * 
+ * @ClassName:Main2
+ * @Description:
+ * @Author lishaoping
+ * @Date 2018年6月19日
+ * @Version V1.0
+ * @Package com.bj58.im.client.ClientTest.UI
+ */
 public class Main2 extends Application{
 
 	public static void main(String[] args) {
@@ -397,7 +407,7 @@ public class Main2 extends Application{
 		text.setFont(font);
 		text.setFill(Color.BLACK);
 		double lineHeight = text.getLayoutBounds().getHeight();
-		text.setWrappingWidth(30);
+		text.setWrappingWidth(250);
 		double strWitdh = text.getLayoutBounds().getWidth();
 		double strHeight = text.getLayoutBounds().getHeight();
 		Path path = new Path();
