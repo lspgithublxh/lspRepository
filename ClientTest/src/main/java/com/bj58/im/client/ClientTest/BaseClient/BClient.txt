@@ -495,3 +495,155 @@ server:顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶的
 server:顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶
 server:-----------hello--------
 server:onlinelist
+server:-----------hello--------
+server:onlinelist
+server:-----------hello--------
+server:onlinelist
+server:-----------上线通知--------
+server:online::54995;127.0.0.1:54995
+server:-----------hello--------
+server:client-server::54995;11378
+server:client to client: I am you friend.Tom1581824708
+server:good ,i received: my friend..
+server:onlinelist::54994;127.0.0.1:54994
+server:-----------hello--------
+server:onlinelist|{/127.0.0.1:52657={socket=Socket[addr=/127.0.0.1,port=52657,localport=10000]}}
+server:-----------上线通知--------
+server:online::52666;127.0.0.1:52666
+server:-----------hello--------
+server:onlinelist|{/127.0.0.1:52657={socket=Socket[addr=/127.0.0.1,port=52657,localport=10000]}, /127.0.0.1:52666={socket=Socket[addr=/127.0.0.1,port=52666,localport=10000]}}
+server:-----------hello--------
+server:onlinelist|{/127.0.0.1:52731={socket=Socket[addr=/127.0.0.1,port=52731,localport=10000]}}
+server:-----------hello--------
+server:onlinelist|{/127.0.0.1:50869={}}
+server:-----------hello--------
+server:onlinelist|{/127.0.0.1:50950={}}
+server:-----------上线通知--------
+server:online::50961;127.0.0.1:50961
+server:-----------hello--------
+server:onlinelist|{/127.0.0.1:50950={}, /127.0.0.1:50961={}}
+server:-----------hello--------
+server:onlinelist|{/127.0.0.1:51024={}}
+server:-----------hello--------
+server:onlinelist|{/127.0.0.1:51158={}}
+server:-----------hello--------
+server:onlinelist|{/127.0.0.1:51237={serverIP=0.0.0.0/0.0.0.0:11567, serverPort=11567}}
+server:-----------hello--------
+server:onlinelist|{/127.0.0.1:51251={serverIP=0.0.0.0/0.0.0.0:11567, serverPort=11567}}
+server:-----------hello--------
+server:onlinelist|{/127.0.0.1:51265={}}
+server:-----------hello--------
+server:onlinelist|{/127.0.0.1:51332={serverIP=127.0.0.1, serverPort=11567}}
+server:-----------上线通知--------
+server:online::51346;127.0.0.1:51346
+server:-----------hello--------
+server:client-server|/127.0.0.1:51346|127.0.0.1|11378
+server:client to client: I am you friend.Tom1349838142
+server:good ,i received: my friend..
+server:onlinelist|{/127.0.0.1:51346={serverIP=127.0.0.1, serverPort=11378}, /127.0.0.1:51332={serverIP=127.0.0.1, serverPort=11567}}
+server:-----------hello--------
+server:onlinelist|{/127.0.0.1:51517={serverIP=127.0.0.1, serverPort=11567}}
+server:-----------上线通知--------
+server:online::51521;127.0.0.1:51521
+server:-----------hello--------
+server:client-server|/127.0.0.1:51521|127.0.0.1|11378
+server:client to client: I am you friend.Tom1133936704
+server:good ,i received: my friend..
+server:onlinelist|{/127.0.0.1:51517={serverIP=127.0.0.1, serverPort=11567}, /127.0.0.1:51521={serverIP=127.0.0.1, serverPort=11378}}
+server:-----------hello--------
+server:onlinelist|{/127.0.0.1:51637={serverIP=127.0.0.1, serverPort=11567}}
+server:-----------上线通知--------
+server:-----------hello--------
+server:onlinelist|{/127.0.0.1:51649={serverIP=127.0.0.1, serverPort=11567}}
+server:-----------hello--------
+server:onlinelist|{/127.0.0.1:51649={serverIP=127.0.0.1, serverPort=11567}, /127.0.0.1:51653={serverIP=127.0.0.1, serverPort=11378}}
+server:-----------上线通知--------
+server:online::51653;127.0.0.1:51653
+server:client-server|/127.0.0.1:51653|127.0.0.1|11378
+server:client to client: I am you friend.Tom1349838142
+server:good ,i received: my friend..
+server:-----------hello--------
+server:onlinelist|/127.0.0.1:52010-127.0.0.1-11567
+server:-----------上线通知--------
+server:online::52022;127.0.0.1:52022
+server:-----------hello--------
+server:client-server|/127.0.0.1:52022|127.0.0.1|11378
+server:client to client: I am you friend.Tom1351569277
+server:good ,i received: my friend..
+server:onlinelist|/127.0.0.1:52010-127.0.0.1-11567|/127.0.0.1:52022-127.0.0.1-11378
+server:-----------hello--------
+server:onlinelist|/127.0.0.1:60234-127.0.0.1-11567
+server:-----------上线通知--------
+server:online::60236;127.0.0.1:60236
+server:-----------hello--------
+server:client-server|/127.0.0.1:60236|127.0.0.1|11378
+server:client to client: I am you friend.Tom86517254
+server:good ,i received: my friend..
+server:onlinelist|/127.0.0.1:60236-127.0.0.1-11378|/127.0.0.1:60234-127.0.0.1-11567
+server:-----------hello--------
+server:onlinelist|/127.0.0.1:54474-127.0.0.1-11567
+server:-----------上线通知--------
+server:online::54477;127.0.0.1:54477
+server:-----------hello--------
+server:client-server|/127.0.0.1:54477|127.0.0.1|11378
+server:client to client: I am you friend.Tom2129325972
+server:good ,i received: my friend..
+server:onlinelist|/127.0.0.1:54474-127.0.0.1-11567|/127.0.0.1:54477-127.0.0.1-11378
+server:-----------hello--------
+server:-----------hello--------
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:-----------上线通知--------
+server:online::61122;127.0.0.1:61122
+server:-----------hello--------
+server:client-server|127.0.0.1|11378
+server:client to client:localhost:11567
+server:good ,i received: my friend..
+server:onlinelist|127.0.0.1-11378
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:-----------上线通知--------
+server:online::61205;127.0.0.1:61205
+server:-----------hello--------
+server:client-server|127.0.0.1|11378
+server:client to client:localhost:11567
+server:good ,i received: my friend..
+server:onlinelist|127.0.0.1-11378
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::61654;127.0.0.1:61654
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11378
+server:client to client:localhost:11567
+server:good ,i received: my friend..
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::61941;127.0.0.1:61941
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11378
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:得到
+server:电风扇
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::62260;127.0.0.1:62260
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11378
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::62297;127.0.0.1:62297
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11378
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:对方是否
+server:电风扇
+server:车哦给你共嘎
+server:电风扇

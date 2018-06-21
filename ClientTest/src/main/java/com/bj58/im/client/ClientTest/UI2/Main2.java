@@ -1,4 +1,4 @@
-package com.bj58.im.client.ClientTest.UI;
+package com.bj58.im.client.ClientTest.UI2;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
@@ -7,9 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.bj58.im.client.ClientTest.UI.Client_PBetter.WriteThread;
+import com.bj58.im.client.ClientTest.UI2.Client_PBetter.WriteThread;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -73,12 +74,13 @@ public class Main2 extends Application{
 	@Override
 	public void start(Stage arg0) throws Exception {
 		// TODO Auto-generated method stub
-		talkingSpecial(arg0);
+		String port = this.getParameters().getRaw().get(0);
+		talkingSpecial(arg0, port);
 //		System.out.println(this.getParameters().getNamed());
 		System.out.println(this.getParameters().getRaw().get(0));
 		//只有使用滚动pane
 		//socket的程序的生成
-		String port = this.getParameters().getRaw().get(0);
+		
 		Client_PBetter cp = new Client_PBetter(this);
 		this.cp = cp;
 		cp.startClient(port);
@@ -107,9 +109,14 @@ public class Main2 extends Application{
 		
 	}
 	
-	Map<String,List<Object>> config = new HashMap<String, List<Object>>();
+	//a.自己的配置信息：只需要serverport + ip-port + 面板相关的信息             自己就是self/myself 
+	//b.上线人----上线人的配置信息
 	
-	private void talkingSpecial(Stage primaryStage) {
+	Map<String, Map<String, Object>> config = new HashMap<String, Map<String, Object>>();
+	//c.当前用户名：CurrentUser
+	String currentUser = "Self";
+	
+	private void talkingSpecial(Stage primaryStage, String port) {
 		primaryStage.getIcons().add(new Image(this.getClass().getResourceAsStream("../a.png")));
 		HBox hbox = new HBox();
 		VBox boxleftMost = new VBox();
@@ -158,7 +165,11 @@ public class Main2 extends Application{
 		group.getChildren().add(r);
 
 		final Double[] jianPointYArr = {jianPointY};
-		config.put("Tom", new ArrayList<>(Arrays.asList(new Object[] {group, jianPointYArr})));
+		Map<String, Object> configM = new HashMap<String, Object>();
+		configM.put("Pane", group);
+		configM.put("YPoint", jianPointYArr);
+		configM.put("serverPort", port);
+		config.put("Self", configM);//一个客户端的号：serverport和Tom来定义 TODO 以后可以通过登陆界面输入
 		group.setOnScroll(new EventHandler<ScrollEvent>() {
 			@Override
 			public void handle(ScrollEvent event) {
@@ -184,7 +195,7 @@ public class Main2 extends Application{
 				if("Enter".equals(key) && "Ctrl".equals(pressedKeyMap.get("keyPressed"))) {
 					writeTextMessage(group, jianPointX, jianPointYArr, area.getText());
 					//发送
-					WriteThread wt = (WriteThread) config.get("Tom").get(2);
+					WriteThread wt = (WriteThread) config.get(currentUser).get("WriteThread");
 					wt.writeNow(area.getText());
 					System.out.println(area.getText());
 					area.clear();
@@ -217,7 +228,7 @@ public class Main2 extends Application{
 				
 				group.setLayoutY(group.getLayoutY() + old - jianPointYArr[0]);
 				//发送
-				WriteThread wt = (WriteThread) config.get("Tom").get(2);
+				WriteThread wt = (WriteThread) config.get(currentUser).get("WriteThread");
 				wt.writeNow(area.getText());
 				area.clear();
 			}
@@ -241,20 +252,70 @@ public class Main2 extends Application{
 	 * @Package com.bj58.im.client.ClientTest.UI
 	 * @return void
 	 */
-	public void writeLeftTextMessage(String name, String content) {
+	public void writeLeftTextMessage(String username, String content) {
 		//提取名称：
-		WriteThread wt = (WriteThread) cp.configMap.get(content)[0];
-		wt.writeNow("ok, ui send message!");
-		config.get(name).add(wt);
-		List<Object> conf = config.get(name);
-		Pane group = (Pane) conf.get(0);
-		final Double[] jianPointYArr = (Double[]) conf.get(1);
+//		WriteThread wt = (WriteThread) config.get(username).get("WriteThread");
+//		wt.writeNow("ok, ui send message!");
+//		config.get(username).put("WriteThread", wt);
+		Map<String, Object> conf = config.get(username);
+		Pane group = (Pane) conf.get("Pane");
+		final Double[] jianPointYArr = (Double[]) conf.get("YPoint");
 		double old = jianPointYArr[0];
 		
 		jianPointYArr[0] = drawContentRight(group, 80, jianPointYArr[0], content);
 		getHeadImg(group, 80, jianPointYArr[0], true);
 		jianPointYArr[0] += 50;
 		group.setLayoutY(group.getLayoutY() + old - jianPointYArr[0]);
+	}
+	
+	/**
+	 * 消息处理中心,但是如果要直接执行，需要PlatForm.runlater
+	 * @param 
+	 * @author lishaoping
+	 * @Date 2018年6月19日
+	 * @Package com.bj58.im.client.ClientTest.UI2
+	 * @return void
+	 */
+	public void cmdHandleCenter(String username, String cmd_param, Object[] entity) {
+		String[] cmdParam = cmd_param.split("_");
+		if("online".equals(cmdParam[0])) {
+			
+		}else if("offline".equals(cmdParam[0])) {
+			
+		}else if("clientToMe".equals(cmdParam[0])) {//第二个ui被动接受连接
+			System.out.println("真正知道对方的server ip-port了");
+			addWriteThread(username, entity);
+			receivedMessage(username, "上线提醒");
+			currentUser = username;
+		}else if("readClient".equals(cmdParam[0])) {//读取到另一个client发来的消息
+			receivedMessage(username, (String)entity[0]);
+		}else if("clientServerPort".equals(cmdParam[0])) {//获取到另一个客户端的server的port,并主动连接
+			addWriteThread(username, entity);
+			currentUser = username;
+		}else if("accept".equals(cmdParam[0])) {//对方server ip-port此时还不知道
+//			addWriteThread(username, entity);
+//			receivedMessage(username, "上线提醒");
+//			currentUser = username;
+		}
+	}
+
+	private void receivedMessage(String username, String message) {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				writeRightTextMessage(username, message);
+			}
+		});
+	}
+
+	private void addWriteThread(String username, Object[] entity) {
+		if(config.containsKey(username)) {
+			config.get(username).put("WriteThread", entity[0]);
+		}else {
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("WriteThread", entity[0]);
+			config.put(username, params);
+		}
 	}
 	
 	/**
@@ -265,19 +326,20 @@ public class Main2 extends Application{
 	 * @Package com.bj58.im.client.ClientTest.UI
 	 * @return void
 	 */
-	public void writeRightTextMessage(String name, String content) {
+	public void writeRightTextMessage(String username, String cmd_param) {//name,为用户， content为“指令-参数”
 		//提取名称：
-		if(cp.configMap.containsKey(content)) {//第一次足够，后面都不需要了---不需要再次add
-			WriteThread wt = (WriteThread) cp.configMap.get(content)[0];
-			wt.writeNow("ok, ui received!");//又会传递过来，形成死循环
-			config.get(name).add(wt);
-		}
-		List<Object> conf = config.get(name);
-		Pane group = (Pane) conf.get(0);
-		final Double[] jianPointYArr = (Double[]) conf.get(1);
+//		if(cp.configMap.containsKey(username)) {//第一次足够，后面都不需要了---不需要再次add
+//			WriteThread wt = (WriteThread) cp.configMap.get(username)[0];
+//			wt.writeNow("ok, ui received!");//又会传递过来，形成死循环
+//			config.get(username).put("WriteThread", wt);
+//		}
+		Map<String, Object> conf = config.get(username);
+		System.out.println(username);
+		Pane group = (Pane) conf.get("Pane");
+		final Double[] jianPointYArr = (Double[]) conf.get("YPoint");
 		double old = jianPointYArr[0];
 		
-		jianPointYArr[0] = drawContentRight(group, 600, jianPointYArr[0], content);
+		jianPointYArr[0] = drawContentRight(group, 600, jianPointYArr[0], cmd_param);
 		getHeadImg(group, 600, jianPointYArr[0], true);
 		jianPointYArr[0] += 50;
 		group.setLayoutY(group.getLayoutY() + old - jianPointYArr[0]);
