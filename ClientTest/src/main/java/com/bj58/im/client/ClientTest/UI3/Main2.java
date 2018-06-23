@@ -1,6 +1,11 @@
-package com.bj58.im.client.ClientTest.UI2;
+package com.bj58.im.client.ClientTest.UI3;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -85,22 +90,30 @@ public class Main2 extends Application{
 		this.cp = cp;
 		cp.startClient(port);
 		System.out.println(Thread.currentThread().getClass());
-		
-		arg0.onShownProperty().addListener(new ChangeListener<EventHandler>() {
+		//新功能,保存聊天记录
+		new Thread(new Runnable() {
+			
 			@Override
-			public void changed(ObservableValue<? extends EventHandler> observable, EventHandler oldValue,
-					EventHandler newValue) {
-				System.out.println("shown ............. ok");//此时仍然没有出来内容
+			public void run() {
+				ObjectOutputStream out;
+				while(true) {
+					try {
+						Thread.sleep(1000);
+						out = new ObjectOutputStream(new FileOutputStream(new File("D:\\obj.txt")));
+						out.writeObject(config);
+						Thread.sleep(1000 * 10);
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					
+				}
+				
 			}
-		});
-		arg0.setOnShown(new EventHandler<WindowEvent>() {
-
-			@Override
-			public void handle(WindowEvent event) {
-				
-				System.out.println("the shown event occure");
-				
-			}});
+		}).start();
 	}
 
 	private void scrollPane(Stage primaryStage) {
@@ -198,6 +211,7 @@ public class Main2 extends Application{
 					WriteThread wt = (WriteThread) config.get(currentUser).get("WriteThread");
 					wt.writeNow(area.getText());
 					System.out.println(area.getText());
+					saveMessage(area.getText(), 1);
 					area.clear();
 //					double old = jianPointYArr[0];
 //					printInput(group, jianPointX, jianPointYArr, area);
@@ -230,8 +244,11 @@ public class Main2 extends Application{
 				//发送
 				WriteThread wt = (WriteThread) config.get(currentUser).get("WriteThread");
 				wt.writeNow(area.getText());
+				saveMessage(area.getText(), 1);
 				area.clear();
 			}
+
+			
 			
 		});
 		button.setAlignment(Pos.BOTTOM_RIGHT);
@@ -240,6 +257,11 @@ public class Main2 extends Application{
 		Scene scene = new Scene(hbox, winWidth, 530, Color.WHEAT);
 		primaryStage.setScene(scene);
 		primaryStage.show();
+	}
+	
+	private void saveMessage(String text, int direction) {
+		List<Message> mesList = (List<Message>) config.get(currentUser).get("message");
+		mesList.add(new Message(mesList.size() + 1, text, 1, direction));
 	}
 	
 	Client_PBetter cp = null;
@@ -287,11 +309,16 @@ public class Main2 extends Application{
 			addWriteThread(username, entity);
 			receivedMessage(username, "上线提醒");
 			currentUser = username;
-		}else if("readClient".equals(cmdParam[0])) {//读取到另一个client发来的消息
+			config.get(username).put("message", new ArrayList<Message>());
+		}else if("readClient".equals(cmdParam[0])) {//读取到另一个client发来的消息,,,以后每次对话，两方都是这里获取到数据的
 			receivedMessage(username, (String)entity[0]);
+			//加入消息文件存储
+			saveMessage((String)entity[0], 2);
+			
 		}else if("clientServerPort".equals(cmdParam[0])) {//获取到另一个客户端的server的port,并主动连接
 			addWriteThread(username, entity);
 			currentUser = username;
+			config.get(username).put("message", new ArrayList<Message>());
 		}else if("accept".equals(cmdParam[0])) {//对方server ip-port此时还不知道
 //			addWriteThread(username, entity);
 //			receivedMessage(username, "上线提醒");
@@ -316,6 +343,8 @@ public class Main2 extends Application{
 			params.put("WriteThread", entity[0]);
 			config.put(username, params);
 		}
+		//只在首次会调用
+		config.get(username).put("message", entity[0]);
 	}
 	
 	/**

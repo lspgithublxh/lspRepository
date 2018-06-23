@@ -647,3 +647,16 @@ server:对方是否
 server:电风扇
 server:车哦给你共嘎
 server:电风扇
+server:-----------hello--------
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::54766;127.0.0.1:54766
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11378
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:呵呵呵
+
+server:what
+server:没铆钉

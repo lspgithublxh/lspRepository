@@ -77,7 +77,7 @@ public class HttpClient_5 {
         httpPost.setConfig(requestConfig);
         httpPost.setHeader("Content-Type","application/json");  //
         httpPost.setHeader("Accept", "image/webp,image/apng,image/*,*/*;q=0.8");
-        FileInputStream in = new FileInputStream("D:\\download\\微信图片_20180605164114.png");//合成图会当作是png  compu.jpg 
+        FileInputStream in = new FileInputStream("D:\\download\\timg.gif");//合成图会当作是png  compu.jpg 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         byte[] b = new byte[1024];
         int l = 0;
