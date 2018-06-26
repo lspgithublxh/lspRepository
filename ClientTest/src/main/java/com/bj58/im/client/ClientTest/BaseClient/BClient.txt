@@ -800,3 +800,20 @@ server:good ,i received: my friend..
 server:呵呵
 server:呵呵
 server:神
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::50578;127.0.0.1:50578
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:呵呵
+server:不去死
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::50027;127.0.0.1:50027
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567

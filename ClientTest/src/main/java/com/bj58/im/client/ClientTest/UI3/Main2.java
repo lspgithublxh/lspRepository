@@ -143,6 +143,8 @@ public class Main2 extends Application{
 	
 	Map<String, String> headImgMap = new HashMap<String, String>();
 	
+	VBox boxleft = new VBox();
+	
 	private void talkingSpecial(Stage primaryStage, String port) {
 		primaryStage.getIcons().add(new Image(this.getClass().getResourceAsStream("../a.png")));
 		HBox hbox = new HBox();
@@ -163,13 +165,10 @@ public class Main2 extends Application{
 		}
 		int winWidth = 840;
 		//2.增加头像栏， 根据历史对话消息增加头像;;有头像则有配置config,切换头像则强行遍历根据id或者名称找到用户对应的vbox行元素 
-		VBox boxleft = new VBox();
+		
 		boxleft.setPrefWidth(50);
 		for(int i = 0; i < 4; i++) {
-			Label b = new Label("");
-			b.setPrefHeight(20);
-			boxleft.getChildren().add(b);
-			getHeadImg(boxleft, 0, 0, false);
+			addHeadDuihua(boxleft, false);
 			//增加带文本的图片，或者加文字
 		}
 		
@@ -275,6 +274,13 @@ public class Main2 extends Application{
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
+
+	private void addHeadDuihua(VBox boxleft, boolean isRight) {
+		Label b = new Label("");
+		b.setPrefHeight(20);
+		boxleft.getChildren().add(b);
+		getHeadImg(boxleft, 0, 0, isRight);
+	}
 	
 	private void saveMessage(String text, int direction) {
 		List<Message> mesList = (List<Message>) config.get(currentUser).get("message");
@@ -325,18 +331,29 @@ public class Main2 extends Application{
 			addWriteThread(username, entity);
 			receivedMessage(username, "上线提醒");
 			System.out.println("真正知道对方的server ip-port了");
-			currentUser = username;System.out.println("shangxian------" + username);
+			currentUser = username;
 			config.get(username).put("message", new ArrayList<Message>());
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					addHeadDuihua(boxleft, true);
+				}
+			});
 		}else if("readClient".equals(cmdParam[0])) {//读取到另一个client发来的消息,,,以后每次对话，两方都是这里获取到数据的
 			receivedMessage(username, (String)entity[0]);
 			//加入消息文件存储
 			saveMessage((String)entity[0], 2);
 			
 		}else if("clientServerPort".equals(cmdParam[0])) {//获取到另一个客户端的server的port,并主动连接
-			System.out.println("connect to------" + username);
 			addWriteThread(username, entity);
 			currentUser = username;
 			config.get(username).put("message", new ArrayList<Message>());
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					addHeadDuihua(boxleft, true);
+				}
+			});
 		}else if("accept".equals(cmdParam[0])) {//对方server ip-port此时还不知道
 //			addWriteThread(username, entity);
 //			receivedMessage(username, "上线提醒");
