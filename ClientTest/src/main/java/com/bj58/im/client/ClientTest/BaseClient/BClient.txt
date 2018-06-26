@@ -660,3 +660,35 @@ server:呵呵呵
 
 server:what
 server:没铆钉
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::53239;127.0.0.1:53239
+server:-----------上线通知--------
+server:online::53242;127.0.0.1:53242
+server:-----------上线通知--------
+server:online::53243;127.0.0.1:53243
+server:-----------上线通知--------
+server:online::53244;127.0.0.1:53244
+server:-----------上线通知--------
+server:online::53245;127.0.0.1:53245
+server:-----------上线通知--------
+server:online::53246;127.0.0.1:53246
+server:-----------上线通知--------
+server:online::53247;127.0.0.1:53247
+server:-----------上线通知--------
+server:online::53248;127.0.0.1:53248
+server:-----------上线通知--------
+server:online::52872;127.0.0.1:52872
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::59746;127.0.0.1:59746
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11378
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:好的
+server:什么
+
+server:	折
+server:扣扣

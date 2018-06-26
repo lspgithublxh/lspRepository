@@ -90,7 +90,7 @@ public class Client_PBetter {
 					serv = new ServerSocket(port);// TODO  11567 11345
 					new Thread(new Runnable() {
 						@Override
-						public void run() {
+						public void run() {//应当传递一个json，最好，这样还可以传递头像、姓名、等更基本的信息
 							writeT.writeNow("client-server|" + "127.0.0.1" + "|" + port);
 						}
 						

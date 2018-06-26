@@ -62,7 +62,7 @@ import javafx.stage.WindowEvent;
 /**
  * 设计思想1：指令分发控制模块，   在本模块内，对UI程序提供，使得UI调用本模块时，只需要向指令分发控制模块输入“指令和参数”即可，后续工作直接让本模块完成，实现UI和本模块的完全解耦----甚至是一个指令消息队列。。。同时，分类处理+解耦让程序更清晰更容易拓展更精准拓展更便捷增删改。
  * 		·····如online:12567
- * 
+ * 任务2：消息到来切换用户和新增头像
  * @ClassName:Main2
  * @Description:
  * @Author lishaoping
@@ -114,6 +114,10 @@ public class Main2 extends Application{
 				
 			}
 		}).start();
+		//初始化headimgMap
+		headImgMap.put("127.0.0.1:11378", "D:\\head.jpg");
+		headImgMap.put("127.0.0.1:11567", "D:\\head2.jpg");
+		currentUser = "127.0.0.1:" + port;
 	}
 
 	private void scrollPane(Stage primaryStage) {
@@ -129,9 +133,12 @@ public class Main2 extends Application{
 	//c.当前用户名：CurrentUser
 	String currentUser = "Self";
 	
+	Map<String, String> headImgMap = new HashMap<String, String>();
+	
 	private void talkingSpecial(Stage primaryStage, String port) {
 		primaryStage.getIcons().add(new Image(this.getClass().getResourceAsStream("../a.png")));
 		HBox hbox = new HBox();
+		//1.增加最左边的目录栏:空格label + 文本text方式
 		VBox boxleftMost = new VBox();
 		boxleftMost.setPrefWidth(50);
 		boxleftMost.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY	, new Insets(0))));//new BackgroundFill(Color.BLACK, CornerRadii.EMPTY	, new Insets(0))
@@ -147,6 +154,7 @@ public class Main2 extends Application{
 			
 		}
 		int winWidth = 840;
+		//2.增加头像栏， 根据历史对话消息增加头像;;有头像则有配置config,切换头像则强行遍历根据id或者名称找到用户对应的vbox行元素 
 		VBox boxleft = new VBox();
 		boxleft.setPrefWidth(50);
 		for(int i = 0; i < 4; i++) {
@@ -163,6 +171,7 @@ public class Main2 extends Application{
 //		getHeadImg(boxleft, 0, 0, false);
 		hbox.getChildren().add(boxleftMost);
 		hbox.getChildren().add(boxleft);
+		//3.增加对话框栏
 		VBox box = new VBox();
 		hbox.getChildren().add(box);
 		ScrollPane pane = new ScrollPane();
