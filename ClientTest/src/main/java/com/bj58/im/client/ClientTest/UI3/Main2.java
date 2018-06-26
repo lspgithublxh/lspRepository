@@ -68,8 +68,13 @@ public class Main2 extends Application{
 	
 	@Override
 	public void start(Stage arg0) throws Exception {
-		// TODO Auto-generated method stub
+		//初始化headimgMap
 		String port = this.getParameters().getRaw().get(0);
+		headImgMap.put("127.0.0.1:11345", "D:\\head.jpg");
+		headImgMap.put("127.0.0.1:11567", "D:\\head2.jpg");
+		currentUser = "127.0.0.1:" + port;
+		headImgMap.put("Self", currentUser);
+		
 		talkingSpecial(arg0, port);
 //		System.out.println(this.getParameters().getNamed());
 		System.out.println(this.getParameters().getRaw().get(0));
@@ -120,11 +125,7 @@ public class Main2 extends Application{
 				return null;
 			}
 		}).start();
-		//初始化headimgMap
-		headImgMap.put("127.0.0.1:11345", "D:\\head.jpg");
-		headImgMap.put("127.0.0.1:11567", "D:\\head2.jpg");
-		currentUser = "127.0.0.1:" + port;
-		headImgMap.put("Self", currentUser);
+		
 	}
 
 	private void scrollPane(Stage primaryStage) {
