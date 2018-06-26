@@ -7,30 +7,23 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.bj58.im.client.ClientTest.UI2.Client_PBetter.WriteThread;
+import com.bj58.im.client.ClientTest.UI3.Client_PBetter.WriteThread;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -54,10 +47,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.scene.text.TextBoundsType;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 /**
  * 设计思想1：指令分发控制模块，   在本模块内，对UI程序提供，使得UI调用本模块时，只需要向指令分发控制模块输入“指令和参数”即可，后续工作直接让本模块完成，实现UI和本模块的完全解耦----甚至是一个指令消息队列。。。同时，分类处理+解耦让程序更清晰更容易拓展更精准拓展更便捷增删改。
@@ -100,7 +90,8 @@ public class Main2 extends Application{
 					try {
 						Thread.sleep(1000);
 						out = new ObjectOutputStream(new FileOutputStream(new File("D:\\obj.txt")));
-						out.writeObject(config);
+						
+						out.writeObject(getNewConfig());
 						Thread.sleep(1000 * 10);
 					} catch (FileNotFoundException e) {
 						e.printStackTrace();
@@ -113,11 +104,27 @@ public class Main2 extends Application{
 				}
 				
 			}
+
+			private Object getNewConfig() {
+				Map<String, Map<String, Object>> config2 = new HashMap<String, Map<String, Object>>();
+				for(String key : config.keySet()) {
+					Map<String, Object> c = new HashMap<String, Object>();
+					config2.put(key, c);
+					Map<String, Object> c2 = config.get(key);
+					for(String k2 : c2.keySet()) {
+						if(!"Pane".equals(k2) && !"WriteThread".equals(k2)) {
+							c.put(k2, c2.get(k2));
+						}
+					}
+				}
+				return null;
+			}
 		}).start();
 		//初始化headimgMap
-		headImgMap.put("127.0.0.1:11378", "D:\\head.jpg");
+		headImgMap.put("127.0.0.1:11345", "D:\\head.jpg");
 		headImgMap.put("127.0.0.1:11567", "D:\\head2.jpg");
 		currentUser = "127.0.0.1:" + port;
+		headImgMap.put("Self", currentUser);
 	}
 
 	private void scrollPane(Stage primaryStage) {
@@ -314,10 +321,10 @@ public class Main2 extends Application{
 		}else if("offline".equals(cmdParam[0])) {
 			
 		}else if("clientToMe".equals(cmdParam[0])) {//第二个ui被动接受连接
-			System.out.println("真正知道对方的server ip-port了");
 			addWriteThread(username, entity);
 			receivedMessage(username, "上线提醒");
-			currentUser = username;
+			System.out.println("真正知道对方的server ip-port了");
+			currentUser = username;System.out.println("shangxian------" + username);
 			config.get(username).put("message", new ArrayList<Message>());
 		}else if("readClient".equals(cmdParam[0])) {//读取到另一个client发来的消息,,,以后每次对话，两方都是这里获取到数据的
 			receivedMessage(username, (String)entity[0]);
@@ -325,6 +332,7 @@ public class Main2 extends Application{
 			saveMessage((String)entity[0], 2);
 			
 		}else if("clientServerPort".equals(cmdParam[0])) {//获取到另一个客户端的server的port,并主动连接
+			System.out.println("connect to------" + username);
 			addWriteThread(username, entity);
 			currentUser = username;
 			config.get(username).put("message", new ArrayList<Message>());
@@ -447,7 +455,7 @@ public class Main2 extends Application{
 	private void getHeadImg(Pane group, double jianPointX, double jianPointY, boolean right) {
 		Image image;
 		try {
-			image = new Image(new FileInputStream("D:\\head.jpg"));
+			image = new Image(new FileInputStream(right ? headImgMap.get(currentUser) : headImgMap.get(headImgMap.get("Self"))));//"D:\\head.jpg"
 			ImageView view3 = new ImageView(image);
 			view3.setFitHeight(image.getHeight() / 4);
 			view3.setFitWidth(image.getWidth() / 4);

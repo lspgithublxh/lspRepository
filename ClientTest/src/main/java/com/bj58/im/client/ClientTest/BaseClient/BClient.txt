@@ -692,3 +692,111 @@ server:什么
 
 server:	折
 server:扣扣
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::59958;127.0.0.1:59958
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11378
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:呵呵呵
+server:呵呵
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::60289;127.0.0.1:60289
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11378
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:ke
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::60628;127.0.0.1:60628
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11378
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::60669;127.0.0.1:60669
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11378
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::60809;127.0.0.1:60809
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11378
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:电风扇
+server:电风扇
+server:和
+server:和
+server:-----------hello--------
+server:-----------hello--------
+server:-----------hello--------
+server:-----------hello--------
+server:-----------hello--------
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::65317;127.0.0.1:65317
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::65534;127.0.0.1:65534
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:电风扇
+server:电风扇
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::49294;127.0.0.1:49294
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:电风扇
+server:发射点
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::49632;127.0.0.1:49632
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:电风扇
+server:好的
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::49794;127.0.0.1:49794
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::50299;127.0.0.1:50299
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:呵呵
+server:呵呵
+server:神

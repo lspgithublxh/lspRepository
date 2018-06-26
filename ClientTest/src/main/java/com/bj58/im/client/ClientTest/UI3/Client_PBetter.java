@@ -237,7 +237,7 @@ public class ReadThread extends Thread{
 							String name = "Hink";
 							System.out.println("clientServerPort_1");
 //							duifangname = keyPort[1] + ":" + keyPort[2];//此时duifangname是服务端
-							ui.cmdHandleCenter(duifangname, 
+							ui.cmdHandleCenter(keyPort[1] + ":" + keyPort[2], 
 									"clientServerPort_1", new Object[] {new WriteThread(so.getOutputStream())});
 //							configMap.put(name, new Object[] {new WriteThread(so.getOutputStream())});
 							//向ui发起建立新pane方法，并写入内容...目前向老pane写
