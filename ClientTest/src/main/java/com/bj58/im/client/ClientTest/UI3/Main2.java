@@ -516,7 +516,25 @@ public class Main2 extends Application{
 				text.setFont(Font.font("宋体", FontWeight.BOLD, 12));
 				vbox.getChildren().add(text);
 				hbox.getChildren().add(vbox);
-				hbox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.1), CornerRadii.EMPTY, new Insets(0))));
+				if(right) {
+					hbox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.5), CornerRadii.EMPTY, new Insets(0))));
+				}else {
+					hbox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.1), CornerRadii.EMPTY, new Insets(0))));
+				}
+				hbox.setOnMouseEntered(new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent me) {
+						System.out.println("mouse over" + me.getSceneX());
+						hbox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.3), CornerRadii.EMPTY, new Insets(0))));
+					}
+				});
+				hbox.setOnMouseExited(new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent me) {
+						System.out.println("mouse out" + me.getSceneX());
+						hbox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.1), CornerRadii.EMPTY, new Insets(0))));
+					}
+				});
 				group.getChildren().add(hbox);
 			}else {
 				group.getChildren().add(view4);

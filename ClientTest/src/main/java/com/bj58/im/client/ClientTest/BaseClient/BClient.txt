@@ -817,3 +817,38 @@ server:-----------hello--------
 server:onlinelist|127.0.0.1-11567
 server:client-server|127.0.0.1|11345
 server:client to client:127.0.0.1:11567
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::50192;127.0.0.1:50192
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:很
+server:好的
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::50805;127.0.0.1:50805
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:-----------hello--------
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::51168;127.0.0.1:51168
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::51406;127.0.0.1:51406
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
