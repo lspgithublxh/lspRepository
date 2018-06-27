@@ -918,3 +918,39 @@ server:client to client:127.0.0.1:11567
 server:good ,i received: my friend..
 server:地方
 server:电风扇
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::62925;127.0.0.1:62925
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:这是一件好事
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::63667;127.0.0.1:63667
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:呵呵
+server:呵呵
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::54692;127.0.0.1:54692
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::63846;127.0.0.1:63846
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:哼

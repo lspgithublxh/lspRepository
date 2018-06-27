@@ -470,15 +470,18 @@ public class Main2 extends Application{
 		group.getChildren().add(path);
 		group.getChildren().add(text);
 	}
+	
+	HBox currHBox = null;
+	
 	private void getHeadImg(Pane group, double jianPointX, double jianPointY, boolean right) {
 		Image image;
 		try {
 			image = new Image(new FileInputStream(right ? headImgMap.get(currentUser) : headImgMap.get(headImgMap.get("Self"))));//"D:\\head.jpg"
 			ImageView view3 = new ImageView(image);
-			view3.setFitHeight(image.getHeight() / 4);
-			view3.setFitWidth(image.getWidth() / 4);
+			view3.setFitHeight(58);//image.getHeight() / 4
+			view3.setFitWidth(44);//image.getWidth() / 4
 			
-			Circle circle3 = new Circle(view3.getFitWidth() / 2, view3.getFitWidth() / 2, view3.getFitWidth() / 2);
+			Circle circle3 = new Circle(22, 22, 22);//view3.getFitWidth() / 2, view3.getFitWidth() / 2, view3.getFitWidth() / 2
 			view3.setClip(circle3);
 			view3.setOnMouseClicked(new EventHandler<MouseEvent>() {
 				@Override
@@ -518,6 +521,7 @@ public class Main2 extends Application{
 				vbox.getChildren().add(text);
 				hbox.getChildren().add(vbox);
 				if(right) {
+					currHBox = hbox;
 					hbox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.5), CornerRadii.EMPTY, new Insets(0))));
 				}else {
 					hbox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.1), CornerRadii.EMPTY, new Insets(0))));
@@ -526,14 +530,18 @@ public class Main2 extends Application{
 					@Override
 					public void handle(MouseEvent me) {
 						System.out.println("mouse over" + me.getSceneX());
-						hbox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.3), CornerRadii.EMPTY, new Insets(0))));
+						if(hbox != currHBox) {
+							hbox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.3), CornerRadii.EMPTY, new Insets(0))));
+						}
 					}
 				});
 				hbox.setOnMouseExited(new EventHandler<MouseEvent>() {
 					@Override
 					public void handle(MouseEvent me) {
 						System.out.println("mouse out" + me.getSceneX());
-						hbox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.1), CornerRadii.EMPTY, new Insets(0))));
+						if(hbox != currHBox) {
+							hbox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.1), CornerRadii.EMPTY, new Insets(0))));
+						}
 					}
 				});
 				hbox.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -549,6 +557,7 @@ public class Main2 extends Application{
 						for(Message s : ms) {
 							System.out.println(s);
 						}
+						currHBox = shbox;//防止hover事件改变对话框颜色
 					}
 				});
 				group.getChildren().add(hbox);
