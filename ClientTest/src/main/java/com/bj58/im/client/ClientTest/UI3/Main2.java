@@ -514,6 +514,7 @@ public class Main2 extends Application{
 				Text text = new Text("  布冯告  ");
 				text.setFill(Color.BLACK);
 				text.setFont(Font.font("宋体", FontWeight.BOLD, 12));
+				text.setId(currentUser);//此时说明是增加对话框头图像 TODO
 				vbox.getChildren().add(text);
 				hbox.getChildren().add(vbox);
 				if(right) {
@@ -533,6 +534,21 @@ public class Main2 extends Application{
 					public void handle(MouseEvent me) {
 						System.out.println("mouse out" + me.getSceneX());
 						hbox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.1), CornerRadii.EMPTY, new Insets(0))));
+					}
+				});
+				hbox.setOnMouseClicked(new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent me) {
+						System.out.println("mouse clicked" + me.getSceneX());
+						//对话框切换
+						HBox shbox = (HBox) me.getSource();
+						VBox svbox = (VBox) shbox.getChildren().get(1);
+						Text stext = (Text) svbox.getChildren().get(0);
+						System.out.println(stext.getId());
+						List<Message> ms = (List<Message>) config.get(stext.getId()).get("message");
+						for(Message s : ms) {
+							System.out.println(s);
+						}
 					}
 				});
 				group.getChildren().add(hbox);

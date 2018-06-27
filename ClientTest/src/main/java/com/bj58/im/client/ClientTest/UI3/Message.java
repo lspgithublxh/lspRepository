@@ -59,6 +59,11 @@ public class Message implements Serializable{
 	public void setDirection(Integer direction) {
 		this.direction = direction;
 	}
+	@Override
+	public String toString() {
+		return "Message [id=" + id + ", text=" + text + ", type=" + type + ", params=" + params + ", direction="
+				+ direction + "]";
+	}
 	
 	
 }

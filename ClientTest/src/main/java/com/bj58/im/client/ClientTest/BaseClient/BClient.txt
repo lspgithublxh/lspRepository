@@ -852,3 +852,69 @@ server:onlinelist|127.0.0.1-11567
 server:client-server|127.0.0.1|11345
 server:client to client:127.0.0.1:11567
 server:good ,i received: my friend..
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::62895;127.0.0.1:62895
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:嗯
+server:哦
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::49700;127.0.0.1:49700
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:电风扇
+server:电风扇出差
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::49933;127.0.0.1:49933
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::52558;127.0.0.1:52558
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::52734;127.0.0.1:52734
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:电风扇
+server:电风扇
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::52810;127.0.0.1:52810
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:d'd
+server:d'f's
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::53166;127.0.0.1:53166
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:地方
+server:电风扇
