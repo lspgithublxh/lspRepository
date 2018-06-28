@@ -53,6 +53,8 @@ import javafx.stage.Stage;
  * 设计思想1：指令分发控制模块，   在本模块内，对UI程序提供，使得UI调用本模块时，只需要向指令分发控制模块输入“指令和参数”即可，后续工作直接让本模块完成，实现UI和本模块的完全解耦----甚至是一个指令消息队列。。。同时，分类处理+解耦让程序更清晰更容易拓展更精准拓展更便捷增删改。
  * 		·····如online:12567
  * 任务2：消息到来切换用户和新增头像
+ * 事件处理3：非当前用户发送来消息切换用户
+ * 事件处理4：点击切换用户
  * @ClassName:Main2
  * @Description:
  * @Author lishaoping
@@ -72,6 +74,7 @@ public class Main2 extends Application{
 		String port = this.getParameters().getRaw().get(0);
 		headImgMap.put("127.0.0.1:11345", "D:\\head.jpg");
 		headImgMap.put("127.0.0.1:11567", "D:\\head2.jpg");
+		headImgMap.put("127.0.0.1:11376", "D:\\head3.jpg");
 		currentUser = "127.0.0.1:" + port;
 		headImgMap.put("Self", currentUser);
 		
@@ -167,7 +170,7 @@ public class Main2 extends Application{
 		//2.增加头像栏， 根据历史对话消息增加头像;;有头像则有配置config,切换头像则强行遍历根据id或者名称找到用户对应的vbox行元素 
 		
 		boxleft.setPrefWidth(50);
-		for(int i = 0; i < 4; i++) {
+		for(int i = 0; i < 1; i++) {//只存自己一个而已---做一个标记
 			addHeadDuihua(boxleft, false);
 			//增加带文本的图片，或者加文字
 		}
@@ -222,7 +225,7 @@ public class Main2 extends Application{
 			public void handle(KeyEvent event) {
 				String key = event.getCode().getName();
 				if("Enter".equals(key) && "Ctrl".equals(pressedKeyMap.get("keyPressed"))) {
-					writeTextMessage(group, jianPointX, jianPointYArr, area.getText());
+					writeTextMessage(group, jianPointX, (Double[])config.get(currentUser).get("YPoint"), area.getText());
 					//发送
 					WriteThread wt = (WriteThread) config.get(currentUser).get("WriteThread");
 					wt.writeNow(area.getText());
@@ -253,10 +256,11 @@ public class Main2 extends Application{
 			
 			@Override
 			public void handle(MouseEvent event) {
-				double old = jianPointYArr[0];
-				printInput(group, jianPointX, jianPointYArr, area);
-				
-				group.setLayoutY(group.getLayoutY() + old - jianPointYArr[0]);
+//				double old = jianPointYArr[0];
+//				printInput(group, jianPointX, jianPointYArr, area);
+//				
+//				group.setLayoutY(group.getLayoutY() + old - jianPointYArr[0]);
+				writeTextMessage(group, jianPointX, (Double[])config.get(currentUser).get("YPoint"), area.getText());
 				//发送
 				WriteThread wt = (WriteThread) config.get(currentUser).get("WriteThread");
 				wt.writeNow(area.getText());
@@ -409,6 +413,15 @@ public class Main2 extends Application{
 		group.setLayoutY(group.getLayoutY() + old - jianPointYArr[0]);
 	}
 	
+	public void writeRightTextMessage(Pane group, double jianPointX, final Double[] jianPointYArr, String content) {
+		double old = jianPointYArr[0];
+		jianPointYArr[0] = drawContentRight(group, 600, jianPointYArr[0], content);
+		getHeadImg(group, jianPointX, jianPointYArr[0], true);
+		
+		jianPointYArr[0] += 50;
+		group.setLayoutY(group.getLayoutY() + old - jianPointYArr[0]);
+	}
+	
 	public void writeTextMessage(Pane group, double jianPointX, final Double[] jianPointYArr, String content) {
 		double old = jianPointYArr[0];
 		drawContent(group, jianPointX, jianPointYArr[0], content);
@@ -521,8 +534,13 @@ public class Main2 extends Application{
 				vbox.getChildren().add(text);
 				hbox.getChildren().add(vbox);
 				if(right) {
+					//也要把前一个清空
+					if(currHBox != null) {
+						currHBox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.1), CornerRadii.EMPTY, new Insets(0))));
+					}
 					currHBox = hbox;
 					hbox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.5), CornerRadii.EMPTY, new Insets(0))));
+					
 				}else {
 					hbox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.1), CornerRadii.EMPTY, new Insets(0))));
 				}
@@ -552,11 +570,26 @@ public class Main2 extends Application{
 						HBox shbox = (HBox) me.getSource();
 						VBox svbox = (VBox) shbox.getChildren().get(1);
 						Text stext = (Text) svbox.getChildren().get(0);
-						System.out.println(stext.getId());
+						//清空pane， 恢复初始
+						Pane pane_ = (Pane) config.get(stext.getId()).get("Pane");//全局共享一个
+						pane_.setLayoutY(0);
+						pane_.getChildren().clear();
+						Rectangle r = new Rectangle(0, 0, 840, 6000);
+						r.setFill(Color.WHEAT);
+						pane_.getChildren().add(r);
+						double jianPointY = 400;//与消息复现有关
+						final Double[] jianPointYArr = {jianPointY};
 						List<Message> ms = (List<Message>) config.get(stext.getId()).get("message");
+						currentUser = stext.getId();//正确获取头像
 						for(Message s : ms) {
-							System.out.println(s);
+							if(s.getDirection() == 1) {//自己
+								writeTextMessage(pane_, 80, jianPointYArr, s.text);
+							}else {//对方消息
+								writeRightTextMessage(pane_, 600, jianPointYArr, s.text);
+							}
 						}
+						//更新config
+						config.get(stext.getId()).put("YPoint", jianPointYArr);
 						currHBox = shbox;//防止hover事件改变对话框颜色
 					}
 				});
