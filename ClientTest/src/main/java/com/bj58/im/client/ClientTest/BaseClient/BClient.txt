@@ -1347,3 +1347,79 @@ server:good ,i received: my friend..
 server:client-server|127.0.0.1|11376
 server:client to client:127.0.0.1:11567
 server:good ,i received: my friend..
+server:-----------hello--------
+server:-----------hello--------
+server:-----------hello--------
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::49365;127.0.0.1:49365
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:-----------上线通知--------
+server:online::49411;127.0.0.1:49411
+server:-----------上线通知--------
+server:online::49411;127.0.0.1:49411
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11345|127.0.0.1-11567
+server:client-server|127.0.0.1|11376
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:client-server|127.0.0.1|11376
+server:client to client:127.0.0.1:11345
+server:good ,i received: my friend..
+server:-----------hello--------
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::50201;127.0.0.1:50201
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:-----------上线通知--------
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:online::50210;127.0.0.1:50210
+server:-----------上线通知--------
+server:online::50210;127.0.0.1:50210
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11345|127.0.0.1-11567
+server:client-server|127.0.0.1|11376
+server:client to client:127.0.0.1:11345
+server:good ,i received: my friend..
+server:client-server|127.0.0.1|11376
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:切换
+server:切换
+server:切花你
+
+server:切换了
+
+server:好的的吗
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::49835;127.0.0.1:49835
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:-----------上线通知--------
+server:online::49843;127.0.0.1:49843
+server:-----------上线通知--------
+server:online::49843;127.0.0.1:49843
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11345|127.0.0.1-11567
+server:client-server|127.0.0.1|11376
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:client-server|127.0.0.1|11376
+server:client to client:127.0.0.1:11345
+server:good ,i received: my friend..
+server:得到
+server:好说
+server:嗯
+server:来一条
+server:的

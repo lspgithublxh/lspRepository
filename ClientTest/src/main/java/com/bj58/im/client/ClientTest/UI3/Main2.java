@@ -77,7 +77,9 @@ public class Main2 extends Application{
 		headImgMap.put("127.0.0.1:11376", "D:\\head3.jpg");
 		currentUser = "127.0.0.1:" + port;
 		headImgMap.put("Self", currentUser);
-		
+		//可有可不有的：
+		Map<String, Object> selfConfig = new HashMap<String, Object>();
+		config.put(currentUser, selfConfig);
 		talkingSpecial(arg0, port);
 //		System.out.println(this.getParameters().getNamed());
 		System.out.println(this.getParameters().getRaw().get(0));
@@ -351,7 +353,12 @@ public class Main2 extends Application{
 					Platform.runLater(new Runnable() {
 						@Override
 						public void run() {
+							if(currHBox != null) {
+								currHBox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.1), CornerRadii.EMPTY, new Insets(0))));
+							}
+							hbox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.5), CornerRadii.EMPTY, new Insets(0))));
 							changePane(hbox, username);
+							
 						}
 					});
 				}
@@ -588,7 +595,7 @@ public class Main2 extends Application{
 
 					
 				});
-//				config.get(currentUser).put("Hbox", hbox);
+				config.get(currentUser).put("Hbox", hbox);
 				group.getChildren().add(hbox);
 			}else {
 				group.getChildren().add(view4);
