@@ -344,6 +344,18 @@ public class Main2 extends Application{
 				}
 			});
 		}else if("readClient".equals(cmdParam[0])) {//读取到另一个client发来的消息,,,以后每次对话，两方都是这里获取到数据的
+			// 通信的当前对方， 已经改变了--是新用户了，那么要切换pane--当前用户为准
+			if(currentUser != username) {
+				HBox hbox = (HBox) config.get(username).get("Hbox");
+				if(hbox != null) {
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							changePane(hbox, username);
+						}
+					});
+				}
+			}
 			receivedMessage(username, (String)entity[0]);
 			//加入消息文件存储
 			saveMessage((String)entity[0], 2);
@@ -571,28 +583,12 @@ public class Main2 extends Application{
 						VBox svbox = (VBox) shbox.getChildren().get(1);
 						Text stext = (Text) svbox.getChildren().get(0);
 						//清空pane， 恢复初始
-						Pane pane_ = (Pane) config.get(stext.getId()).get("Pane");//全局共享一个
-						pane_.setLayoutY(0);
-						pane_.getChildren().clear();
-						Rectangle r = new Rectangle(0, 0, 840, 6000);
-						r.setFill(Color.WHEAT);
-						pane_.getChildren().add(r);
-						double jianPointY = 400;//与消息复现有关
-						final Double[] jianPointYArr = {jianPointY};
-						List<Message> ms = (List<Message>) config.get(stext.getId()).get("message");
-						currentUser = stext.getId();//正确获取头像
-						for(Message s : ms) {
-							if(s.getDirection() == 1) {//自己
-								writeTextMessage(pane_, 80, jianPointYArr, s.text);
-							}else {//对方消息
-								writeRightTextMessage(pane_, 600, jianPointYArr, s.text);
-							}
-						}
-						//更新config
-						config.get(stext.getId()).put("YPoint", jianPointYArr);
-						currHBox = shbox;//防止hover事件改变对话框颜色
+						changePane(shbox, stext.getId());
 					}
+
+					
 				});
+//				config.get(currentUser).put("Hbox", hbox);
 				group.getChildren().add(hbox);
 			}else {
 				group.getChildren().add(view4);
@@ -603,6 +599,28 @@ public class Main2 extends Application{
 		}
 	}
 
+	private void changePane(HBox shbox, String username) {
+		Pane pane_ = (Pane) config.get(username).get("Pane");//全局共享一个
+		pane_.setLayoutY(0);
+		pane_.getChildren().clear();
+		Rectangle r = new Rectangle(0, 0, 840, 6000);
+		r.setFill(Color.WHEAT);
+		pane_.getChildren().add(r);
+		double jianPointY = 400;//与消息复现有关
+		final Double[] jianPointYArr = {jianPointY};
+		List<Message> ms = (List<Message>) config.get(username).get("message");
+		currentUser = username;//正确获取头像
+		for(Message s : ms) {
+			if(s.getDirection() == 1) {//自己
+				writeTextMessage(pane_, 80, jianPointYArr, s.text);
+			}else {//对方消息
+				writeRightTextMessage(pane_, 600, jianPointYArr, s.text);
+			}
+		}
+		//更新config
+		config.get(username).put("YPoint", jianPointYArr);
+		currHBox = shbox;//防止hover事件改变对话框颜色
+	}
 	
 	private double drawContentRight(Pane group, double jianPointX, double jianPointY, String content) {
 		Font font = Font.font("宋体", 15);
