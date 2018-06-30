@@ -141,7 +141,7 @@ public class Main extends Application {
 //			polygon(primaryStage);//多边形快速画法,顺序给定点
 //			cubicCurve(primaryStage);//三次曲线，控制点两个， 起点终点各一个
 			
-//			textDraw(primaryStage);
+			textDraw(primaryStage);
 //			gradientRectangle(primaryStage);
 //			textReflect(primaryStage);
 //			textNextLine(primaryStage);
@@ -172,7 +172,7 @@ public class Main extends Application {
 //			htmlEditor(primaryStage);
 			//2.应用工具
 //			messageBoxTip(primaryStage);//自定义对话框，可以作为登陆界面使用...包含图标一起修改
-			circleImage(primaryStage);
+//			circleImage(primaryStage);
 //			talkingContent(primaryStage);
 //			talkingSpecial(primaryStage);
 			
@@ -1214,7 +1214,18 @@ public class Main extends Application {
 		Font font = Font.font("微软雅黑", FontWeight.BOLD, 15);
 		text.setFont(font);
 		
+		Text text2 = new Text(150, 150, "2018年5月21号--------------");
+		text2.setFill(Color.RED);
+//		text2.prefWidth(30);
+//		text2.setWrappingWidth(30);
+		System.out.println(text2.getLayoutBounds().getWidth());
+		text2.setWrappingWidth(30);
+		System.out.println(text2.getLayoutBounds().getWidth());
+		System.out.println(text2.getWrappingWidth());
+		System.out.println();
 		group.getChildren().add(text);
+		
+		group.getChildren().add(text2);
 		
 		primaryStage.setScene(scene);
 		primaryStage.show();

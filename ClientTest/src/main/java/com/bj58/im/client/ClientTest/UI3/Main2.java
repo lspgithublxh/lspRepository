@@ -352,8 +352,6 @@ public class Main2 extends Application{
 				changePane = true;
 			}
 			receivedMessage(username, (String)entity[0], changePane);
-			
-			
 		}else if("clientServerPort".equals(cmdParam[0])) {//获取到另一个客户端的server的port,并主动连接
 			addWriteThread(username, entity);
 			currentUser = username;
@@ -444,7 +442,7 @@ public class Main2 extends Application{
 	
 	public void writeTextMessage(Pane group, double jianPointX, final Double[] jianPointYArr, String content) {
 		double old = jianPointYArr[0];
-		drawContent(group, jianPointX, jianPointYArr[0], content);
+		jianPointYArr[0] = drawContent(group, jianPointX, jianPointYArr[0], content);
 		getHeadImg(group, jianPointX, jianPointYArr[0], false);
 		//暂时不画右边
 //		jianPointYArr[0] += 50;
@@ -466,11 +464,16 @@ public class Main2 extends Application{
 //		area.clear();
 	}
 	
-	private void drawContent(Pane group, double jianPointX, double jianPointY, String content) {
+	private double drawContent(Pane group, double jianPointX, double jianPointY, String content) {
 		Font font = Font.font("宋体", 15);
 		Text text = new Text(content);
 		text.setFont(font);
 		text.setFill(Color.BLACK);
+		double rest = 0;
+		if(text.getLayoutBounds().getWidth() > 250) {
+			text.setWrappingWidth(250);
+			rest = 10;
+		}
 		double strWitdh = text.getLayoutBounds().getWidth();
 		double strHeight = text.getLayoutBounds().getHeight();
 		Path path = new Path();
@@ -480,6 +483,7 @@ public class Main2 extends Application{
 		double jianLineWidth = 5;
 		double jianLineHeight = 10;
 		double angle = 90;
+		jianPointY += height;
 		
 		path.getElements().add(new MoveTo(jianPointX, jianPointY));
 		path.getElements().add(new LineTo(jianPointX + jianLineWidth, jianPointY - jianLineHeight));
@@ -497,11 +501,12 @@ public class Main2 extends Application{
 		path.setEffect(shadow);
 		
 		text.setX(jianPointX + jianLineWidth + radius);
-		text.setY(jianPointY - jianLineHeight - height / 2 + strHeight / 4);
+		text.setY(jianPointY - jianLineHeight - height / 2 + strHeight / 4 - rest);
 //		text.applyCss();
 		
 		group.getChildren().add(path);
 		group.getChildren().add(text);
+		return jianPointY;
 	}
 	
 	HBox currHBox = null;
@@ -640,8 +645,12 @@ public class Main2 extends Application{
 		Text text = new Text(content);
 		text.setFont(font);
 		text.setFill(Color.BLACK);
+		double rest = 0;
+		if(text.getLayoutBounds().getWidth() > 250) {
+			text.setWrappingWidth(250);
+			rest = 10;
+		}
 		double lineHeight = text.getLayoutBounds().getHeight();
-		text.setWrappingWidth(250);
 		double strWitdh = text.getLayoutBounds().getWidth();
 		double strHeight = text.getLayoutBounds().getHeight();
 		Path path = new Path();
@@ -669,7 +678,7 @@ public class Main2 extends Application{
 		path.setEffect(shadow);
 		
 		text.setX(jianPointX - jianLineWidth - radius - width);
-		text.setY(jianPointY - jianLineHeight - height + lineHeight / 2 + radius);
+		text.setY(jianPointY - jianLineHeight - height + lineHeight / 2 + radius - rest);
 		
 //		text.applyCss();
 		
