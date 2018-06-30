@@ -1600,3 +1600,23 @@ server:电风扇
 server:是
 server:是
 server:是
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::60092;127.0.0.1:60092
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:-----------上线通知--------
+server:online::60100;127.0.0.1:60100
+server:-----------上线通知--------
+server:online::60100;127.0.0.1:60100
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11345|127.0.0.1-11567
+server:client-server|127.0.0.1|11376
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:client-server|127.0.0.1|11376
+server:client to client:127.0.0.1:11345
+server:good ,i received: my friend..

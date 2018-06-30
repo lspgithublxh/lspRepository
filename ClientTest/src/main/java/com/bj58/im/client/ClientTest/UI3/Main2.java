@@ -335,7 +335,7 @@ public class Main2 extends Application{
 			
 		}else if("clientToMe".equals(cmdParam[0])) {//第二个ui被动接受连接
 			addWriteThread(username, entity);
-			receivedMessage(username, "上线提醒");
+			receivedMessage(username, "上线提醒", false);
 			System.out.println("真正知道对方的server ip-port了");
 			currentUser = username;
 			config.get(username).put("message", new ArrayList<Message>());
@@ -347,25 +347,12 @@ public class Main2 extends Application{
 			});
 		}else if("readClient".equals(cmdParam[0])) {//读取到另一个client发来的消息,,,以后每次对话，两方都是这里获取到数据的
 			// 通信的当前对方， 已经改变了--是新用户了，那么要切换pane--当前用户为准
+			boolean changePane = false;
 			if(currentUser != username) {
-				HBox hbox = (HBox) config.get(username).get("Hbox");
-				if(hbox != null) {
-					Platform.runLater(new Runnable() {
-						@Override
-						public void run() {
-							if(currHBox != null) {
-								currHBox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.1), CornerRadii.EMPTY, new Insets(0))));
-							}
-							hbox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.5), CornerRadii.EMPTY, new Insets(0))));
-							changePane(hbox, username);
-							
-						}
-					});
-				}
+				changePane = true;
 			}
-			receivedMessage(username, (String)entity[0]);
-			//加入消息文件存储
-			saveMessage((String)entity[0], 2);
+			receivedMessage(username, (String)entity[0], changePane);
+			
 			
 		}else if("clientServerPort".equals(cmdParam[0])) {//获取到另一个客户端的server的port,并主动连接
 			addWriteThread(username, entity);
@@ -384,11 +371,25 @@ public class Main2 extends Application{
 		}
 	}
 
-	private void receivedMessage(String username, String message) {
+	private void receivedMessage(String username, String message, boolean changePane) {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
+				if(changePane) {
+					HBox hbox = (HBox) config.get(username).get("Hbox");
+					if(hbox != null) {
+						if(currHBox != null) {
+							currHBox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.1), CornerRadii.EMPTY, new Insets(0))));
+						}
+						hbox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.5), CornerRadii.EMPTY, new Insets(0))));
+						changePane(hbox, username);
+					}
+				}
 				writeRightTextMessage(username, message);
+				if(!"上线提醒".equals(message)) {
+					//加入消息文件存储
+					saveMessage(message, 2);
+				}
 			}
 		});
 	}
