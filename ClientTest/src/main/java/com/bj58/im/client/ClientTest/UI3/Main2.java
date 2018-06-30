@@ -590,6 +590,11 @@ public class Main2 extends Application{
 						VBox svbox = (VBox) shbox.getChildren().get(1);
 						Text stext = (Text) svbox.getChildren().get(0);
 						//清空pane， 恢复初始
+						if(currHBox != null) {
+							currHBox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.1), CornerRadii.EMPTY, new Insets(0))));
+						}
+						shbox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.5), CornerRadii.EMPTY, new Insets(0))));
+						//
 						changePane(shbox, stext.getId());
 					}
 
