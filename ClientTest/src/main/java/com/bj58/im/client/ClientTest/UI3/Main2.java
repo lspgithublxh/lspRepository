@@ -55,6 +55,7 @@ import javafx.stage.Stage;
  * 任务2：消息到来切换用户和新增头像
  * 事件处理3：非当前用户发送来消息切换用户
  * 事件处理4：点击切换用户
+ * 5.和自己通信、点击联系人而通信、名字传输
  * @ClassName:Main2
  * @Description:
  * @Author lishaoping
@@ -77,6 +78,10 @@ public class Main2 extends Application{
 		headImgMap.put("127.0.0.1:11376", "D:\\head3.jpg");
 		currentUser = "127.0.0.1:" + port;
 		headImgMap.put("Self", currentUser);
+		nameMap.put("127.0.0.1:11345", "水杯");
+		nameMap.put("127.0.0.1:11567", "电源");
+		nameMap.put("127.0.0.1:11376", "背包");
+		//nameMap
 		//可有可不有的：
 		Map<String, Object> selfConfig = new HashMap<String, Object>();
 		config.put(currentUser, selfConfig);
@@ -148,6 +153,8 @@ public class Main2 extends Application{
 	
 	Map<String, String> headImgMap = new HashMap<String, String>();
 	
+	Map<String, String> nameMap = new HashMap<String, String>();
+	
 	VBox boxleft = new VBox();
 	
 	private void talkingSpecial(Stage primaryStage, String port) {
@@ -157,6 +164,8 @@ public class Main2 extends Application{
 		VBox boxleftMost = new VBox();
 		boxleftMost.setPrefWidth(50);
 		boxleftMost.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY	, new Insets(0))));//new BackgroundFill(Color.BLACK, CornerRadii.EMPTY	, new Insets(0))
+		//纯粹加一个头像
+		justGetHeadImg(boxleftMost);
 		String[] texts  = {"聊天记录", "联系人", "朋友圈", "公众号", "小程序"};
 		for(String t : texts) {
 			Label blank = new Label("");
@@ -511,6 +520,31 @@ public class Main2 extends Application{
 	
 	HBox currHBox = null;
 	
+	private void justGetHeadImg(Pane group) {
+		try {
+			Image image = new Image(new FileInputStream(headImgMap.get(headImgMap.get("Self"))));
+			ImageView view3 = new ImageView(image);
+			view3.setFitHeight(58);//image.getHeight() / 4
+			view3.setFitWidth(44);
+			Circle circle3 = new Circle(20, 20, 20);
+			view3.setClip(circle3);
+			//新的处理方式：加阴影：
+			SnapshotParameters params = new SnapshotParameters();
+			params.setFill(Color.TRANSPARENT);
+			WritableImage wtimage = view3.snapshot(params, null);
+			ImageView view4 = new ImageView(wtimage);
+			DropShadow shadow = new DropShadow(20, 0, 0, Color.RED);
+			view4.setEffect(shadow);
+			HBox vbox = new HBox();
+			Label la = new Label("  ");
+			vbox.getChildren().add(la);
+			vbox.getChildren().add(view4);
+			group.getChildren().add(vbox);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	private void getHeadImg(Pane group, double jianPointX, double jianPointY, boolean right) {
 		Image image;
 		try {
@@ -552,7 +586,7 @@ public class Main2 extends Application{
 				hbox.getChildren().add(vboxImage);
 				VBox vbox = new VBox();
 				vbox.setPadding(new Insets(15, 0, 0, 0));
-				Text text = new Text("  布冯告  ");
+				Text text = new Text(String.format("  %s  ", nameMap.get(currentUser)));
 				text.setFill(Color.BLACK);
 				text.setFont(Font.font("宋体", FontWeight.BOLD, 12));
 				text.setId(currentUser);//此时说明是增加对话框头图像 TODO

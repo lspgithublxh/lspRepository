@@ -1808,3 +1808,40 @@ server:啥问题
 server:小问题
 server:啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦
 server:从噢噢噢噢噢噢噢噢噢噢噢噢噢噢噢噢哦哦
+server:-----------hello--------
+server:-----------hello--------
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::61007;127.0.0.1:61007
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:-----------hello--------
+server:-----------hello--------
+server:-----------hello--------
+server:-----------hello--------
+server:-----------hello--------
+server:-----------hello--------
+server:-----------hello--------
+server:-----------hello--------
+server:-----------hello--------
+server:-----------hello--------
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::61745;127.0.0.1:61745
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:-----------上线通知--------
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:online::61752;127.0.0.1:61752
+server:-----------上线通知--------
+server:online::61752;127.0.0.1:61752
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11345|127.0.0.1-11567
+server:client-server|127.0.0.1|11376
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
+server:client-server|127.0.0.1|11376
+server:client to client:127.0.0.1:11345
+server:good ,i received: my friend..
