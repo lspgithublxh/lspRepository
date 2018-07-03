@@ -1,4 +1,4 @@
-package com.bj58.im.client.ClientTest.UI3;
+package com.bj58.im.client.ClientTest.UI4;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,13 +11,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.bj58.im.client.ClientTest.UI3.Client_PBetter.WriteThread;
+import com.bj58.im.client.ClientTest.UI4.Client_PBetter.WriteThread;
 
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
@@ -48,6 +49,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  * 设计思想1：指令分发控制模块，   在本模块内，对UI程序提供，使得UI调用本模块时，只需要向指令分发控制模块输入“指令和参数”即可，后续工作直接让本模块完成，实现UI和本模块的完全解耦----甚至是一个指令消息队列。。。同时，分类处理+解耦让程序更清晰更容易拓展更精准拓展更便捷增删改。
@@ -136,7 +138,18 @@ public class Main2 extends Application{
 				return null;
 			}
 		}).start();
-		
+		arg0.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			@Override
+			public void handle(WindowEvent event) {
+//				event.consume();
+//				System.out.println(event.getSource());
+//				System.out.println(event.getTarget());
+//				System.out.println(event.getEventType());
+				System.out.println(config);
+				cp.offline();
+//				System.exit(1);//或者一个一个地关闭socket连接
+			}
+		});
 	}
 
 	private void scrollPane(Stage primaryStage) {
@@ -341,7 +354,17 @@ public class Main2 extends Application{
 		String[] cmdParam = cmd_param.split("_");
 		if("online".equals(cmdParam[0])) {
 			
-		}else if("offline".equals(cmdParam[0])) {
+		}else if("closeWindow".equals(cmdParam[0])) {
+			//username是服务器， entity是下线的机器-客户端
+			HBox hbox = (HBox) config.get((String)entity[0]).get("Hbox");
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					offLineOne(hbox);
+				}
+				
+			});
+		} if("offline".equals(cmdParam[0])) {
 			
 		}else if("clientToMe".equals(cmdParam[0])) {//第二个ui被动接受连接
 			addWriteThread(username, entity);
@@ -379,6 +402,36 @@ public class Main2 extends Application{
 		}
 	}
 
+	private void offLineOne(HBox hbox) {
+		VBox box = (VBox) hbox.getParent();
+		int i = 0;
+		for(; i < box.getChildren().size() - 1; i += 2) {
+//			Node label = box.getChildren().get(i);
+			HBox hx = (HBox) box.getChildren().get(i + 1);
+			if(hx == hbox) {
+				box.getChildren().remove(i);
+				box.getChildren().remove(i + 1);
+				break;
+			}
+		}
+		//切换pane, 找到下一个hbox高亮显示
+		HBox curHb = null;
+		if(box.getChildren().size() >= i + 2) {
+			//直接取i + 1作为 下一个hbox
+			curHb = (HBox) box.getChildren().get(i + 1);
+		}else if(box.getChildren().size() > 0) {
+			//选取 length -1作为hbox
+			curHb = (HBox) box.getChildren().get(box.getChildren().size() - 1);
+		}else {
+			return;
+		}
+		curHb.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.5), CornerRadii.EMPTY, new Insets(0))));
+		//
+		VBox svbox = (VBox) curHb.getChildren().get(1);
+		Text stext = (Text) svbox.getChildren().get(0);
+		changePane(curHb, stext.getId());
+	}
+	
 	private void receivedMessage(String username, String message, boolean changePane) {
 		Platform.runLater(new Runnable() {
 			@Override
