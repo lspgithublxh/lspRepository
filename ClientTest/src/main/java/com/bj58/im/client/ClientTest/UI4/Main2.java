@@ -147,7 +147,7 @@ public class Main2 extends Application{
 //				System.out.println(event.getEventType());
 				System.out.println(config);
 				cp.offline();
-//				System.exit(1);//或者一个一个地关闭socket连接
+				System.exit(1);//或者一个一个地关闭socket连接
 			}
 		});
 	}
@@ -195,10 +195,10 @@ public class Main2 extends Application{
 		//2.增加头像栏， 根据历史对话消息增加头像;;有头像则有配置config,切换头像则强行遍历根据id或者名称找到用户对应的vbox行元素 
 		
 		boxleft.setPrefWidth(50);
-		for(int i = 0; i < 1; i++) {//只存自己一个而已---做一个标记
-			addHeadDuihua(boxleft, false);
-			//增加带文本的图片，或者加文字
-		}
+//		for(int i = 0; i < 1; i++) {//只存自己一个而已---做一个标记
+//			addHeadDuihua(boxleft, false);
+//			//增加带文本的图片，或者加文字
+//		}
 		
 //		Label b2 = new Label("");
 //		b2.setPrefHeight(20);
@@ -354,9 +354,9 @@ public class Main2 extends Application{
 		String[] cmdParam = cmd_param.split("_");
 		if("online".equals(cmdParam[0])) {
 			
-		}else if("closeWindow".equals(cmdParam[0])) {
+		}else if("closeWindow".equals(cmdParam[0])) {//此时username是server
 			//username是服务器， entity是下线的机器-客户端
-			HBox hbox = (HBox) config.get((String)entity[0]).get("Hbox");
+			HBox hbox = (HBox) config.get((String)entity[0]).get("Hbox");//此时username是server
 			Platform.runLater(new Runnable() {
 				@Override
 				public void run() {
@@ -364,6 +364,7 @@ public class Main2 extends Application{
 				}
 				
 			});
+			config.remove((String)entity[0]);//移除用户动态配置--剩余操作以后
 		} if("offline".equals(cmdParam[0])) {
 			
 		}else if("clientToMe".equals(cmdParam[0])) {//第二个ui被动接受连接
@@ -405,14 +406,27 @@ public class Main2 extends Application{
 	private void offLineOne(HBox hbox) {
 		VBox box = (VBox) hbox.getParent();
 		int i = 0;
+		HBox hx = null;
 		for(; i < box.getChildren().size() - 1; i += 2) {
 //			Node label = box.getChildren().get(i);
-			HBox hx = (HBox) box.getChildren().get(i + 1);
+			hx = (HBox) box.getChildren().get(i + 1);
 			if(hx == hbox) {
 				box.getChildren().remove(i);
-				box.getChildren().remove(i + 1);
+				box.getChildren().remove(i);//此时就是下一个元素
 				break;
 			}
+		}
+		//移除用户会话config
+		//相同才需要切换---不同不用
+		if(box.getChildren().size() == 0) {
+			Pane p = (Pane) config.get("Self").get("Pane");
+			p.getChildren().clear();
+			Rectangle r = new Rectangle(0, 0, 840, 6000);
+			r.setFill(Color.WHEAT);
+			p.getChildren().add(r);
+		}
+		if(hx != currHBox) {
+			return;
 		}
 		//切换pane, 找到下一个hbox高亮显示
 		HBox curHb = null;

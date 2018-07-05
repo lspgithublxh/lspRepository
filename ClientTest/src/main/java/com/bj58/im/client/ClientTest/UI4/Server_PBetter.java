@@ -89,9 +89,9 @@ public class Server_PBetter {
 			@Override
 			public void run() {
 				try {
-					Thread.sleep(3000);
+//					Thread.sleep(3000);
 					while(true) {
-						Thread.sleep(1000);
+//						Thread.sleep(1000);
 						List<String> li = new ArrayList<>();
 						for(String num : numSocket.keySet()) {
 							Socket ns = numSocket.get(num);
@@ -114,8 +114,6 @@ public class Server_PBetter {
 							}
 						}
 					}
-				} catch (InterruptedException e) {
-					e.printStackTrace();
 				} catch (SocketException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
@@ -246,7 +244,7 @@ public class Server_PBetter {
 		
 		public void writeNow(String line) {
 			try {
-				Thread.sleep(500);
+				Thread.sleep(100);
 			} catch (InterruptedException e1) {
 				e1.printStackTrace();
 			}
