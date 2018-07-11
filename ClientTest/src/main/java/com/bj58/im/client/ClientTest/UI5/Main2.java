@@ -1,4 +1,4 @@
-package com.bj58.im.client.ClientTest.UI4;
+package com.bj58.im.client.ClientTest.UI5;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,6 +15,9 @@ import com.bj58.im.client.ClientTest.UI4.Client_PBetter.WriteThread;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -23,6 +26,9 @@ import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.effect.DropShadow;
@@ -48,8 +54,10 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 /**
  * 设计思想1：指令分发控制模块，   在本模块内，对UI程序提供，使得UI调用本模块时，只需要向指令分发控制模块输入“指令和参数”即可，后续工作直接让本模块完成，实现UI和本模块的完全解耦----甚至是一个指令消息队列。。。同时，分类处理+解耦让程序更清晰更容易拓展更精准拓展更便捷增删改。
@@ -60,6 +68,7 @@ import javafx.stage.WindowEvent;
  * 5.和自己通信、点击联系人而通信、名字传输
  * 6.视频通信、文件传输、语音显示、视频播放、表情、多媒体文本
  * 7.除非二进制流--或者字符流：否则使用javafx--且不适用WebView对象做聊天UI就会很麻烦了。
+ * 		--------------不必很好解决UI体验问题，但是解决后台问题
  *   ----图片展示：可做 ImageView 可编辑的容器--从而显示图片可以---否则用file形式上传图片--然后发送和显示
  *   ----视频播放：可做 MediaView
  *   ----
@@ -244,6 +253,25 @@ public class Main2 extends Application{
 		pane.setContent(groupOut);
 //		pane.setPrefHeight(200);
 		box.getChildren().add(pane);
+		//增加一个文件发射栏
+		MenuBar bar = new MenuBar();
+		Menu menu1 = new Menu("File");
+		MenuItem item1 = new MenuItem("Choose");
+		menu1.getItems().addAll(item1);
+		bar.getMenus().add(menu1);
+		item1.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				System.out.println(event.getEventType());
+//				System.out.println(event.getSource());
+				String filePath = chooseFile(primaryStage);
+				System.out.println(filePath);
+//				writeTextMessage(group, jianPointX, jianPointYArr, filePath);
+				writeImageMessage(group, jianPointX, jianPointYArr, filePath);
+			}
+		});
+		
+		box.getChildren().add(bar);
 		TextArea area = new TextArea();
 		area.setPrefWidth(winWidth);
 		area.setPrefHeight(100);
@@ -308,6 +336,31 @@ public class Main2 extends Application{
 		primaryStage.show();
 	}
 
+	private String chooseFile(Stage primaryStage) {
+		FileChooser filec = new FileChooser();
+		filec.setTitle("open a file");
+		filec.setInitialDirectory(new File("D:\\"));
+		filec.setInitialFileName("D:\\a.png");
+		
+		filec.selectedExtensionFilterProperty().addListener(new ChangeListener<ExtensionFilter>() {
+
+			@Override
+			public void changed(ObservableValue<? extends ExtensionFilter> observable, ExtensionFilter oldValue,
+					ExtensionFilter newValue) {
+				System.out.println(observable.getValue().getDescription());
+//				System.out.println(oldValue.getDescription());
+			}
+		});
+		filec.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("ALL Images", "*.*"),
+				new FileChooser.ExtensionFilter("JPG", ".jpg"),
+				new FileChooser.ExtensionFilter("PNG", ".png"),
+				new FileChooser.ExtensionFilter("GIF", ".gif"),
+				new FileChooser.ExtensionFilter("BMP", ".bmp"));
+		File file = filec.showOpenDialog(primaryStage);
+		System.out.println("get file :" + file.getAbsolutePath());
+		return file.getAbsolutePath();
+	}
+	
 	private void addHeadDuihua(VBox boxleft, boolean isRight) {
 		Label b = new Label("");
 		b.setPrefHeight(20);
@@ -521,6 +574,14 @@ public class Main2 extends Application{
 		group.setLayoutY(group.getLayoutY() + old - jianPointYArr[0]);
 	}
 	
+	public void writeImageMessage(Pane group, double jianPointX, final Double[] jianPointYArr, String content) {
+		double old = jianPointYArr[0];
+		jianPointYArr[0] = drawImageContent(group, jianPointX, jianPointYArr[0], content);
+		getHeadImg(group, jianPointX, jianPointYArr[0], false);
+		jianPointYArr[0] += 50;
+		group.setLayoutY(group.getLayoutY() + old - jianPointYArr[0]);
+	}
+	
 	public void writeTextMessage(Pane group, double jianPointX, final Double[] jianPointYArr, String content) {
 		double old = jianPointYArr[0];
 		jianPointYArr[0] = drawContent(group, jianPointX, jianPointYArr[0], content);
@@ -543,6 +604,51 @@ public class Main2 extends Application{
 //		getHeadImg(group, 600, jianPointYArr[0], true);
 		jianPointYArr[0] += 50;
 //		area.clear();
+	}
+	
+	private double drawImageContent(Pane group, double jianPointX, double jianPointY, String filePath) {
+		Image image;
+		try {
+			int height_img = 58;
+			int width_img = 44;
+			image = new Image(new FileInputStream(filePath));
+			ImageView view3 = new ImageView(image);
+			view3.setFitHeight(height_img);//image.getHeight() / 4
+			view3.setFitWidth(width_img);//"D:\\head.jpg"
+			
+			Path path = new Path();
+			double width = width_img;//纯直线长度
+			double height = height_img;//纯直线长度
+			double radius = 5;
+			double jianLineWidth = 5;
+			double jianLineHeight = 10;
+			double angle = 90;
+			jianPointY += height;
+			
+			path.getElements().add(new MoveTo(jianPointX, jianPointY));
+			path.getElements().add(new LineTo(jianPointX + jianLineWidth, jianPointY - jianLineHeight));
+			path.getElements().add(new LineTo(jianPointX + jianLineWidth, jianPointY - jianLineHeight - height));
+			path.getElements().add(new ArcTo(radius, radius, angle, jianPointX + jianLineWidth + radius, jianPointY - jianLineHeight - height - radius, false, true));
+			path.getElements().add(new LineTo(jianPointX + jianLineWidth + radius + width, jianPointY - jianLineHeight - height - radius));
+			path.getElements().add(new ArcTo(radius, radius, angle, jianPointX + jianLineWidth + radius + width + radius, jianPointY - jianLineHeight - height, false, true));
+			path.getElements().add(new LineTo(jianPointX + jianLineWidth + radius + width + radius, jianPointY - jianLineHeight));
+			path.getElements().add(new ArcTo(radius, radius, angle, jianPointX + jianLineWidth + radius + width, jianPointY - jianLineHeight + radius, false, true));
+			
+			path.getElements().add(new LineTo(jianPointX + jianLineWidth + radius, jianPointY - jianLineHeight + radius));
+			path.getElements().add(new LineTo(jianPointX, jianPointY));
+			path.setFill(Color.rgb(0x7C, 0xCD, 0x7C));
+			DropShadow shadow = new DropShadow(10, 1, 1, Color.RED);
+			path.setEffect(shadow);
+			view3.setLayoutX(jianPointX + jianLineWidth + radius);
+			view3.setLayoutY(jianPointY - jianLineHeight - height);//+ height_img / 4
+			
+			group.getChildren().add(path);
+			group.getChildren().add(view3);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		return jianPointY;
 	}
 	
 	private double drawContent(Pane group, double jianPointX, double jianPointY, String content) {

@@ -4,6 +4,7 @@ package application;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,8 +72,11 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -80,6 +84,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
@@ -110,6 +117,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
 
 /**
  * 继承关系：Object<--Paint<---Color\LinearGradient
@@ -141,7 +150,7 @@ public class Main extends Application {
 //			polygon(primaryStage);//多边形快速画法,顺序给定点
 //			cubicCurve(primaryStage);//三次曲线，控制点两个， 起点终点各一个
 			
-			textDraw(primaryStage);
+//			textDraw(primaryStage);
 //			gradientRectangle(primaryStage);
 //			textReflect(primaryStage);
 //			textNextLine(primaryStage);
@@ -175,10 +184,137 @@ public class Main extends Application {
 //			circleImage(primaryStage);
 //			talkingContent(primaryStage);
 //			talkingSpecial(primaryStage);
+//			mediaTest(primaryStage);
+//			voiceTest(primaryStage);
 			
+			fileChooser(primaryStage);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void fileChooser(Stage primaryStage) {
+		Pane pane = new Pane();
+		Button butt = new Button("show_file");
+		butt.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				System.out.println(event.getEventType());
+				//打开一个FileChoose
+				FileChooser filec = new FileChooser();
+				filec.setTitle("open a file");
+				filec.setInitialDirectory(new File("D:\\"));
+				filec.setInitialFileName("D:\\a.png");
+				
+				filec.selectedExtensionFilterProperty().addListener(new ChangeListener<ExtensionFilter>() {
+
+					@Override
+					public void changed(ObservableValue<? extends ExtensionFilter> observable, ExtensionFilter oldValue,
+							ExtensionFilter newValue) {
+						System.out.println(observable.getValue().getDescription());
+//						System.out.println(oldValue.getDescription());
+					}
+				});
+				filec.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("ALL Images", "*.*"),
+						new FileChooser.ExtensionFilter("JPG", ".jpg"),
+						new FileChooser.ExtensionFilter("PNG", ".png"),
+						new FileChooser.ExtensionFilter("GIF", ".gif"),
+						new FileChooser.ExtensionFilter("BMP", ".bmp"));
+				File file = filec.showOpenDialog(primaryStage);
+				System.out.println("get file :" + file.getAbsolutePath());
+//				filec.showSaveDialog(primaryStage);
+			}
+		});
+		butt.setLayoutX(100);
+		butt.setLayoutY(220);
+		
+		MenuBar bar = new MenuBar();
+		
+		Menu menu1 = new Menu("File");
+		
+		MenuItem item1 = new MenuItem("New");
+		MenuItem item2 = new MenuItem("Save");
+		MenuItem item3 = new MenuItem("Exit");
+		item3.setOnAction(actionEvent -> Platform.exit());
+		menu1.getItems().addAll(item1, item2, item3);
+		bar.getMenus().add(menu1);
+		
+		pane.getChildren().add(bar);
+		pane.getChildren().add(butt);
+		Scene scene = new Scene(pane, 800, 600);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+		
+	}
+	
+	private void voiceTest(Stage primaryStage) {
+		try {
+			FileInputStream in = new FileInputStream("D:\\KuGou\\abd.mp3");
+			AudioStream stream = new AudioStream(in);
+			AudioPlayer.player.start(stream);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void mediaTest(Stage primaryStage) {
+		Pane pane = new Pane();
+		pane.setPrefSize(400, 400);//决定宽高
+		pane.setBackground(new Background(new BackgroundFill(Color.ANTIQUEWHITE, new CornerRadii(10), new Insets(10))));
+		Scene scene = new Scene(pane, 800, 600);
+		String url = "file:///D:/video.mp4";//"D:\\video.mp4";//\\新建文件夹\\微信截图
+		Media media = new Media(url);
+		MediaPlayer player = new MediaPlayer(media);
+		player.setAutoPlay(false);
+		player.setCycleCount(1);
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(3000);
+					System.out.println("start 播放");
+//					player.play();
+//					player.pause();
+//					Thread.sleep(2000);
+//					player.play();
+//					player.stop();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
+		MediaView view = new MediaView(player);
+		view.setLayoutX(100);
+		view.setLayoutY(100);
+		view.setFitHeight(400);
+		view.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent arg0) {
+				System.out.println("click");
+				player.play();
+			}
+			
+		});
+		
+//		view.setFitWidth(100);
+//		System.out.println(this.getClass().getResourceAsStream(("D:\\新建文件夹\\微信截图\\video.mp4")));
+		Rectangle r = new Rectangle(30, 30, 50, 50);
+		r.setArcWidth(10);
+		r.setArcHeight(10);
+		r.setStroke(Color.RED);
+		r.setStrokeWidth(5);
+		r.setStrokeLineCap(StrokeLineCap.BUTT);
+		r.setFill(Color.ALICEBLUE);//
+//		
+		pane.getChildren().add(r);
+		pane.getChildren().add(view);
+		primaryStage.setScene(scene);
+		primaryStage.show();
 	}
 
 	private void scrollPane(Stage primaryStage) {
@@ -542,9 +678,10 @@ public class Main extends Application {
 				System.out.println(event.getEventType().getName());
 				System.out.println(editor.getHtmlText());
 				engine.loadContent(editor.getHtmlText());
+				
 			}
 		});
-		
+		engine.load("https://www.baidu.com");
 		box.getChildren().addAll(view, editor, button);
 		
 		
