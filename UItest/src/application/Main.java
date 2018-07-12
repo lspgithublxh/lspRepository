@@ -184,7 +184,7 @@ public class Main extends Application {
 //			circleImage(primaryStage);
 //			talkingContent(primaryStage);
 //			talkingSpecial(primaryStage);
-//			mediaTest(primaryStage);
+			mediaTest(primaryStage);
 //			voiceTest(primaryStage);
 			
 			fileChooser(primaryStage);

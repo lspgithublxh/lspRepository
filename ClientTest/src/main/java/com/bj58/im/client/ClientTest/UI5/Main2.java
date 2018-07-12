@@ -44,6 +44,9 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcTo;
 import javafx.scene.shape.Circle;
@@ -254,22 +257,7 @@ public class Main2 extends Application{
 //		pane.setPrefHeight(200);
 		box.getChildren().add(pane);
 		//增加一个文件发射栏
-		MenuBar bar = new MenuBar();
-		Menu menu1 = new Menu("File");
-		MenuItem item1 = new MenuItem("Choose");
-		menu1.getItems().addAll(item1);
-		bar.getMenus().add(menu1);
-		item1.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				System.out.println(event.getEventType());
-//				System.out.println(event.getSource());
-				String filePath = chooseFile(primaryStage);
-				System.out.println(filePath);
-//				writeTextMessage(group, jianPointX, jianPointYArr, filePath);
-				writeImageMessage(group, jianPointX, jianPointYArr, filePath);
-			}
-		});
+		MenuBar bar = getMenuBar(primaryStage, group, jianPointX, jianPointYArr);
 		
 		box.getChildren().add(bar);
 		TextArea area = new TextArea();
@@ -335,6 +323,50 @@ public class Main2 extends Application{
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
+
+	private MenuBar getMenuBar(Stage primaryStage, Pane group, double jianPointX, final Double[] jianPointYArr) {
+		MenuBar bar = new MenuBar();
+		Menu menu1 = new Menu("File");
+		MenuItem item1 = new MenuItem("Choose");
+		menu1.getItems().addAll(item1);
+		bar.getMenus().add(menu1);
+		item1.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				System.out.println(event.getEventType());
+//				System.out.println(event.getSource());
+				String filePath = chooseFile(primaryStage);
+				System.out.println(filePath);
+//				writeTextMessage(group, jianPointX, jianPointYArr, filePath);
+				writeImageMessage(group, jianPointX, jianPointYArr, filePath);
+			}
+		});
+		Menu menu2 = new Menu("Video");
+		MenuItem item2 = new MenuItem("Choose");
+		menu2.getItems().addAll(item2);
+		bar.getMenus().add(menu2);
+		item2.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				System.out.println(event.getEventType());
+//				System.out.println(event.getSource());
+				String filePath = chooseFile(primaryStage);
+				System.out.println(filePath);
+				writeVideoMessage(group, jianPointX, jianPointYArr, filePath);
+			}
+			
+		});
+		return bar;
+	}
+
+	private void writeVideoMessage(Pane group, double jianPointX, Double[] jianPointYArr, String filePath) {
+		double old = jianPointYArr[0];
+		jianPointYArr[0] = drawVideoContent(group, jianPointX, jianPointYArr[0], filePath);
+		getHeadImg(group, jianPointX, jianPointYArr[0], false);
+		jianPointYArr[0] += 50;
+		group.setLayoutY(group.getLayoutY() + old - jianPointYArr[0]);
+	}
+	
 
 	private String chooseFile(Stage primaryStage) {
 		FileChooser filec = new FileChooser();
@@ -604,6 +636,56 @@ public class Main2 extends Application{
 //		getHeadImg(group, 600, jianPointYArr[0], true);
 		jianPointYArr[0] += 50;
 //		area.clear();
+	}
+	
+	private Double drawVideoContent(Pane group, double jianPointX, Double jianPointY, String filePath){
+		int height_video = 150;
+		int width_video = 100;
+		Media media = new Media("file:///" + filePath.replace("\\", "/"));
+		MediaPlayer player = new MediaPlayer(media);
+		player.setAutoPlay(false);
+		player.setCycleCount(1);
+		MediaView view = new MediaView(player);
+		view.setFitWidth(width_video);
+		view.setFitHeight(height_video);
+		view.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent arg0) {
+				System.out.println("click");
+				player.play();
+			}
+		});
+		
+		Path path = new Path();
+		double width = width_video;//纯直线长度
+		double height = height_video;//纯直线长度
+		double radius = 5;
+		double jianLineWidth = 5;
+		double jianLineHeight = 10;
+		double angle = 90;
+		jianPointY += height;
+		
+		path.getElements().add(new MoveTo(jianPointX, jianPointY));
+		path.getElements().add(new LineTo(jianPointX + jianLineWidth, jianPointY - jianLineHeight));
+		path.getElements().add(new LineTo(jianPointX + jianLineWidth, jianPointY - jianLineHeight - height));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX + jianLineWidth + radius, jianPointY - jianLineHeight - height - radius, false, true));
+		path.getElements().add(new LineTo(jianPointX + jianLineWidth + radius + width, jianPointY - jianLineHeight - height - radius));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX + jianLineWidth + radius + width + radius, jianPointY - jianLineHeight - height, false, true));
+		path.getElements().add(new LineTo(jianPointX + jianLineWidth + radius + width + radius, jianPointY - jianLineHeight));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX + jianLineWidth + radius + width, jianPointY - jianLineHeight + radius, false, true));
+		
+		path.getElements().add(new LineTo(jianPointX + jianLineWidth + radius, jianPointY - jianLineHeight + radius));
+		path.getElements().add(new LineTo(jianPointX, jianPointY));
+		path.setFill(Color.rgb(0x7C, 0xCD, 0x7C));
+		DropShadow shadow = new DropShadow(10, 1, 1, Color.RED);
+		path.setEffect(shadow);
+		view.setLayoutX(jianPointX + jianLineWidth + radius);
+		view.setLayoutY(jianPointY - jianLineHeight - height);//+ height_img / 4
+		
+		group.getChildren().add(path);
+		group.getChildren().add(view);
+		
+		return jianPointY;
 	}
 	
 	private double drawImageContent(Pane group, double jianPointX, double jianPointY, String filePath) {
