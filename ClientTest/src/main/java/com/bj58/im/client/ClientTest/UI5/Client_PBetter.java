@@ -1,5 +1,8 @@
 package com.bj58.im.client.ClientTest.UI5;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -7,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -33,6 +37,7 @@ import javafx.application.Platform;
  * 一旦连接另外一个客户端，需要在console输入两次，第一次是给client的，第二次是给server的。
  * 2.上线时建立client列表； 静候时建立client列表。。。。。此时都唯独缺乏WriteThread   ..... 只有主动连接和被动接受时 才增加WriteThread
  *  3.时序问题
+ *  4.发送--接收不到的问题：从通信过程来分析看：可能是被忽视了---被server忽视了---丢弃了。
  * @ClassName:Client_P
  * @Description:
  * @Author lishaoping
@@ -155,9 +160,16 @@ public class ReadThread extends Thread{
 		@Override
 		public void run() {
 			DataInputStream dataIn = new DataInputStream(in);
+//			BufferedInputStream bi = new BufferedInputStream(dataIn);
+			byte[] b = new byte[1024];
 			boolean writeOk = false;
 			boolean servWriteOk = false;
 				try {
+					boolean isText = true;
+					String fileName = "";
+					String fileType = "";
+					long fileLength = 0;
+					ByteArrayOutputStream out = new ByteArrayOutputStream();
 					while(true) {
 						try {
 							outf = new FileOutputStream("D:\\project\\my_project\\ClientTest\\src\\main"
@@ -165,15 +177,52 @@ public class ReadThread extends Thread{
 						} catch (FileNotFoundException e) {
 							e.printStackTrace();
 						}
-						String line = dataIn.readUTF();
+						String line = null;
+						if(!isText) {
+							int len = 1024;
+							FileOutputStream o = new FileOutputStream("D:\\cache\\" + fileName);
+							System.out.println("start blocking data........");
+							int now_len = 0;
+							boolean read_ok = false;
+							while(true) {//dataIn.readFully(b); 先阻塞方式读
+								if(read_ok) {
+									break;
+								}
+								try {
+									dataIn.readFully(b);
+									now_len += len;
+								}catch (Exception e) {
+									break;
+								}
+								if(now_len - fileLength >= 0) {//肯定超不了1024
+									len = (int) (1024 - (now_len - fileLength));
+									read_ok = true;
+								}
+								for(int i = 900; i < 1024; i++) {
+									System.out.print(b[i] + ",");
+								}
+								System.out.println();
+								out.write(b, 0, len);
+								o.write(b, 0, len);
+							}
+							
+							System.out.println("end blocking data........");
+							//文件得到：
+							o.flush();
+							o.close();
+							isText = true;
+							continue;
+						}else {
+//							int len = bi.read(b);
+//							line = new String(b, 0, len);
+						}
+						System.out.println("start......blocking");
+						line = dataIn.readUTF();//需要客户端调用writeUTF，否则不退出
 						System.out.println("====ting-----server:" + line);
 						outf.write(("server:" + line + "\r\n").getBytes());
 						outf.flush();
-//						outf.close();
 						if(line.startsWith("online:")) {//服务端发送来的，但是无法知道client的server信息
-//							String[] ipPo = line.split(";");
-//							onlineMap.put(ipPo[0].substring(ipPo[0].lastIndexOf(":") + 1), ipPo[1]);//qq - ip-port上线
-//							System.out.println("now , onlineList:" + onlineMap);
+
 						}else if(line.startsWith("onlinelist|")) {//只有刚上线的client才会收到，服务端发来的，每个client上线会发送server ipport给服务端，
 							System.out.println(line);
 							String[] clientArr = line.split("\\|");
@@ -189,12 +238,6 @@ public class ReadThread extends Thread{
 							}
 							System.out.println(ui.config);
 							System.out.println("-----onlinelist-----" + clientArr[1]);
-//							String[] ipPo = line.split("%");
-//							for(String zh : ipPo) {
-//								String[] nip = zh.split(";");
-//								onlineMap.put(nip[0].substring(nip[0].lastIndexOf(":") + 1), nip[1]);
-//							}
-//							System.out.println("now , onlineList:" + onlineMap);
 						}else if(line.startsWith("client-server|")) {//服务端广播转发来的，则应该作为主动方向新起客户端发起连接－－－或者有这种能力
 							String[] keyPort = line.split("\\|");
 							Map<String, Object> config = new HashMap<String, Object>();
@@ -203,8 +246,6 @@ public class ReadThread extends Thread{
 							config.put("Pane", ui.config.get("Self").get("Pane"));
 							config.put("YPoint", ui.config.get("Self").get("YPoint"));
 							ui.config.put(keyPort[1] + ":" + keyPort[2], config);
-//							keyportMap.put(keyPort[0].substring(1), keyPort[1]);
-//							System.out.println("now, client-server:" + keyportMap);
 							//成功发现端口，可以尝试连接客户端了！！
 							Socket so = new Socket(keyPort[1], Integer.valueOf(keyPort[2]));
 							new ReadThread(so.getInputStream(), so, keyPort[1] + ":" + keyPort[2], zijiname).start();
@@ -214,23 +255,9 @@ public class ReadThread extends Thread{
 							//主动发送方 -add
 							String name = "Hink";
 							System.out.println("clientServerPort_1");
-//							duifangname = keyPort[1] + ":" + keyPort[2];//此时duifangname是服务端
 							ui.cmdHandleCenter(keyPort[1] + ":" + keyPort[2], 
 									"clientServerPort_1", new Object[] {new WriteThread(so.getOutputStream())});
-//							configMap.put(name, new Object[] {new WriteThread(so.getOutputStream())});
 							//向ui发起建立新pane方法，并写入内容...目前向老pane写
-//							ui.writeRightTextMessage("Tom", name);
-//							try {
-//								messageQueue.put(name);
-//							} catch (InterruptedException e) {
-//								e.printStackTrace();
-//							}//看会不会有消息遗漏
-//							Platform.runLater(new Runnable() {
-//								@Override
-//								public void run() {
-//									ui.writeRightTextMessage("Tom", name);
-//								}
-//							});
 							servWriteOk = true;
 						}else if(line.startsWith("client to client:")) {
 							//此时应该调用写线程进行回复
@@ -239,33 +266,11 @@ public class ReadThread extends Thread{
 							//此时duifangname必然是--
 							duifangname = ipPort[1] + ":" + ipPort[2];
 							//同时真正知道上线了--因为知道对方server ip-port了 TODO TODO
-//							Map<String, Object> config = new HashMap<String, Object>();
-//							config.put("serverIP", ipPort[1]);
-//							config.put("serverPort", ipPort[2]);
-//							config.put("Pane", ui.config.get("Self").get("Pane"));
-//							config.put("YPoint", ui.config.get("Self").get("YPoint"));
-//							ui.config.put(ipPort[1] + ":" + ipPort[2], config);
 							//通知真正上线了
 							ui.cmdHandleCenter(duifangname, 
 									"clientToMe_1", new Object[] {new WriteThread(soc.getOutputStream())});
-//							String name = line.substring(line.indexOf("\\.") + 1);
 							//先不接受信息
-//							configMap.put(name, new Object[] {new WriteThread(soc.getOutputStream())});
 							//向ui发起建立新pane方法，并写入内容...目前向老pane写
-//							ui.writeRightTextMessage("Tom", name);
-//							Platform.runLater(new Runnable() {
-//								@Override
-//								public void run() {
-//									System.out.println("runfirst");
-//									ui.writeRightTextMessage("Tom", name);
-//									
-//								}
-//							});
-//							try {
-//								messageQueue.put(name);
-//							} catch (InterruptedException e) {
-//								e.printStackTrace();
-//							}
 							new WriteThread(soc.getOutputStream()).writeNow("good ,i received: my friend..");
 							writeOk = true;
 						}else if(line.startsWith("close_window|")){
@@ -273,25 +278,20 @@ public class ReadThread extends Thread{
 							String[] dt = line.split("\\|");
 							//移除socket和移除头像：和清除相应内容
 							ui.cmdHandleCenter(duifangname, "closeWindow_1", new Object[] {dt[1]});
+						}else if(line.startsWith("trans_file|")){//trans_file|abc.png|pic|1400
+							isText = false;
+							String[] dt = line.split("\\|");
+							fileName = dt[1];
+							fileType = dt[2];
+							fileLength = Long.valueOf(dt[3]);
+							System.out.println(line);
+							
 						}else {
 							System.out.println("---the client:" + duifangname);
 							if(ui.config.containsKey(duifangname)) {
 								System.out.println("readClient_1");
 								ui.cmdHandleCenter(duifangname, 
 										"readClient_1", new Object[] {line});
-//								ui.writeRightTextMessage("Tom", line);//发送的消息都写入
-//								Platform.runLater(new Runnable() {
-//									@Override
-//									public void run() {
-//										System.out.println("runSecond");
-//										ui.writeRightTextMessage(soc.getRemoteSocketAddress().toString(), line);
-//									}
-//								});
-//								try {
-//									messageQueue.put(line);
-//								} catch (InterruptedException e) {
-//									e.printStackTrace();
-//								}
 							}
 							
 						}
@@ -342,6 +342,36 @@ public class WriteThread_fast extends Thread{
 				outData.writeUTF(line);
 				outData.flush();
 				System.out.println("client:" + line);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		public void writeByteArray(byte[] content) {
+			//无法发送----对于byte[]
+			DataOutputStream outData = new DataOutputStream(out);
+			try {
+				outData.write(content);
+				outData.flush();//可以不
+				System.out.println("write data:" + content.length);
+//				System.out.println("client:" + new String(content));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+//			try {
+//				out.write(content);
+//				out.flush();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+		}
+		
+		public void writeByteArray(byte[] content, int off, int len) {
+			DataOutputStream outData = new DataOutputStream(out);
+			try {
+				outData.write(content, off, len);
+				outData.flush();
+				System.out.println("client:" + new String(content));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

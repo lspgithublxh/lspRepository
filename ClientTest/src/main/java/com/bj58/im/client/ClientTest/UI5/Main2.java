@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.bj58.im.client.ClientTest.UI4.Client_PBetter.WriteThread;
+import com.bj58.im.client.ClientTest.UI5.Client_PBetter.WriteThread;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -74,7 +74,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
  * 		--------------不必很好解决UI体验问题，但是解决后台问题
  *   ----图片展示：可做 ImageView 可编辑的容器--从而显示图片可以---否则用file形式上传图片--然后发送和显示
  *   ----视频播放：可做 MediaView
- *   ----
+ *   ----图片-视频传输：知道大小，然后传，server读大小各字节
  * @ClassName:Main2
  * @Description:
  * @Author lishaoping
@@ -339,7 +339,14 @@ public class Main2 extends Application{
 				System.out.println(filePath);
 //				writeTextMessage(group, jianPointX, jianPointYArr, filePath);
 				writeImageMessage(group, jianPointX, jianPointYArr, filePath);
+				WriteThread wt = (WriteThread) config.get(currentUser).get("WriteThread");
+				//发送媒体文件
+				sendMediaFile(wt, filePath);
+				//保存发送信息
+				saveMessage(filePath, 2);
+				
 			}
+
 		});
 		Menu menu2 = new Menu("Video");
 		MenuItem item2 = new MenuItem("Choose");
@@ -357,6 +364,51 @@ public class Main2 extends Application{
 			
 		});
 		return bar;
+	}
+	
+	private void sendMediaFile(WriteThread wt, String filePath) {
+		
+		File f = new File(filePath);
+		long len = f.length();
+		String cmd = String.format("trans_file|%s|pic|%s|", filePath.substring(filePath.lastIndexOf("\\") + 1), len);
+		byte[] front = new byte[1024];//限制1024
+		byte[] content = cmd.getBytes();
+		for(int i = 0; i < content.length; i++) {//都是正数
+			front[i] = content[i];
+		}
+		for(int i = content.length; i < 1024; i++) {
+			front[i] = 0;
+		}
+//		wt.writeByteArray(front);
+		wt.writeNow(new String(front));
+		//发送文件
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+		System.out.println("start --- send data---:");
+		FileInputStream in;
+//		wt.writeNow(new String(front));//无法收到了
+//		wt.writeByteArray(front);//无法收到了
+		try {
+			in = new FileInputStream(f);
+			int s_len = 0;
+			byte[] buf = new byte[1024];
+			while((s_len = in.read(buf)) > 0) {
+				if(s_len < 1024) {//充0补齐
+					for(int i = s_len; i < 1024; i++) {
+						buf[i] = 0;
+					}
+				}
+				wt.writeByteArray(buf);
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("end --- send ");
 	}
 
 	private void writeVideoMessage(Pane group, double jianPointX, Double[] jianPointYArr, String filePath) {
