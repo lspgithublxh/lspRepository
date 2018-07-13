@@ -1,5 +1,6 @@
 package com.bj58.im.client.ClientTest.UI5;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -383,7 +384,7 @@ public class Main2 extends Application{
 		wt.writeNow(new String(front));
 		//发送文件
 		try {
-			Thread.sleep(3000);
+			Thread.sleep(100);
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
@@ -452,6 +453,11 @@ public class Main2 extends Application{
 		getHeadImg(boxleft, 0, 0, isRight);
 	}
 	
+	private void saveMediaMessage(String text, int direction) {
+		List<Message> mesList = (List<Message>) config.get(currentUser).get("message");
+		mesList.add(new Message(mesList.size() + 1, text, 2, direction));
+	}
+	
 	private void saveMessage(String text, int direction) {
 		List<Message> mesList = (List<Message>) config.get(currentUser).get("message");
 		mesList.add(new Message(mesList.size() + 1, text, 1, direction));
@@ -495,7 +501,13 @@ public class Main2 extends Application{
 		String[] cmdParam = cmd_param.split("_");
 		if("online".equals(cmdParam[0])) {
 			
-		}else if("closeWindow".equals(cmdParam[0])) {//此时username是server
+		}else if("transFile".equals(cmdParam[0])){
+			boolean changePane = false;
+			if(currentUser != username) {
+				changePane = true;
+			}
+			receivedMediaMessage(username, "pic".equals(cmdParam[1]) ? (byte[])entity[0] : null,  cmdParam[2], cmdParam[1], changePane, (String) entity[1]);
+		} if("closeWindow".equals(cmdParam[0])) {//此时username是server
 			//username是服务器， entity是下线的机器-客户端
 			HBox hbox = (HBox) config.get((String)entity[0]).get("Hbox");//此时username是server
 			Platform.runLater(new Runnable() {
@@ -587,6 +599,34 @@ public class Main2 extends Application{
 		changePane(curHb, stext.getId());
 	}
 	
+	private void receivedMediaMessage(String username, byte[] data, String fileName, String type, boolean changePane, String savePath) {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				if(changePane) {
+					HBox hbox = (HBox) config.get(username).get("Hbox");
+					if(hbox != null) {
+						if(currHBox != null) {
+							currHBox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.1), CornerRadii.EMPTY, new Insets(0))));
+						}
+						hbox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.5), CornerRadii.EMPTY, new Insets(0))));
+						changePane(hbox, username);
+					}
+				}
+				writeRightMediaMessage(username, fileName, data, type, savePath);
+				if("pic".equals(type)) {
+					//加入消息文件存储
+					saveMediaMessage(fileName, 2);
+				}else {
+					//加入消息文件存储
+					saveMediaMessage(fileName, 3);
+				}
+				
+				
+			}
+		});
+	}
+	
 	private void receivedMessage(String username, String message, boolean changePane) {
 		Platform.runLater(new Runnable() {
 			@Override
@@ -620,6 +660,23 @@ public class Main2 extends Application{
 		}
 		//只在首次会调用
 		config.get(username).put("message", entity[0]);
+	}
+	
+	public void writeRightMediaMessage(String username, String cmd_param, byte[] content, String type, String savePath) {//name,为用户， content为“指令-参数”
+		//提取名称：
+		Map<String, Object> conf = config.get(username);
+		System.out.println(username);
+		Pane group = (Pane) conf.get("Pane");
+		final Double[] jianPointYArr = (Double[]) conf.get("YPoint");
+		double old = jianPointYArr[0];
+		if("pic".equals(type)) {
+			jianPointYArr[0] = drawImageContentRight(group, 600, jianPointYArr[0], content, cmd_param);
+		}else {
+			jianPointYArr[0] = drawMediaContentRight(group, 600, jianPointYArr[0], cmd_param, savePath);
+		}
+		getHeadImg(group, 600, jianPointYArr[0], true);
+		jianPointYArr[0] += 50;
+		group.setLayoutY(group.getLayoutY() + old - jianPointYArr[0]);
 	}
 	
 	/**
@@ -984,6 +1041,108 @@ public class Main2 extends Application{
 		//更新config
 		config.get(username).put("YPoint", jianPointYArr);
 		currHBox = shbox;//防止hover事件改变对话框颜色
+	}
+	
+	private double drawMediaContentRight(Pane group, double jianPointX, double jianPointY, String cmd_param, String savePath) {
+		int height_video = 150;
+		int width_video = 100;
+		String filePath = "file:///" + savePath.replace("\\", "/");
+		Media media = new Media(filePath);
+		MediaPlayer player = new MediaPlayer(media);
+		player.setAutoPlay(false);
+		player.setCycleCount(1);
+		MediaView view = new MediaView(player);
+		view.setFitWidth(width_video);
+		view.setFitHeight(height_video);
+		view.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent arg0) {
+				System.out.println("click");
+				player.play();
+			}
+		});
+		
+		double strWitdh = width_video;
+		double strHeight = height_video;
+		Path path = new Path();
+		double width = strWitdh;//纯直线长度
+		double height = strHeight;//纯直线长度
+		double radius = 5;
+		double jianLineWidth = 5;
+		double jianLineHeight = 10;
+		double angle = 90;
+		jianPointY += height;
+		
+		path.getElements().add(new MoveTo(jianPointX, jianPointY));
+		path.getElements().add(new LineTo(jianPointX - jianLineWidth, jianPointY - jianLineHeight));
+		path.getElements().add(new LineTo(jianPointX - jianLineWidth, jianPointY - jianLineHeight - height));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX - jianLineWidth - radius, jianPointY - jianLineHeight - height - radius, false, false));
+		path.getElements().add(new LineTo(jianPointX - jianLineWidth - radius - width, jianPointY - jianLineHeight - height - radius));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX - jianLineWidth - radius - width - radius, jianPointY - jianLineHeight - height, false, false));
+		path.getElements().add(new LineTo(jianPointX - jianLineWidth - radius - width - radius, jianPointY - jianLineHeight));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX - jianLineWidth - radius - width, jianPointY - jianLineHeight + radius, false, false));
+		
+		path.getElements().add(new LineTo(jianPointX - jianLineWidth - radius, jianPointY - jianLineHeight + radius));
+		path.getElements().add(new LineTo(jianPointX, jianPointY));
+		path.setFill(Color.rgb(0x7C, 0xCD, 0x7C));
+		DropShadow shadow = new DropShadow(10, 1, 1, Color.RED);
+		path.setEffect(shadow);
+		
+		view.setLayoutX(jianPointX - jianLineWidth - radius - width);
+		view.setLayoutY(jianPointY - jianLineHeight - height + radius );
+		
+//		text.applyCss();
+		
+		group.getChildren().add(path);
+		group.getChildren().add(view);
+		
+		return jianPointY;
+	}
+	
+	
+	private double drawImageContentRight(Pane group, double jianPointX, double jianPointY, byte[] content, String fileName) {
+		int height_img = 58;
+		int width_img = 44;
+		Image image = new Image(new ByteArrayInputStream(content));
+		ImageView view3 = new ImageView(image);
+		view3.setFitHeight(height_img);//image.getHeight() / 4
+		view3.setFitWidth(width_img);//"D:\\head.jpg"
+		
+		double strWitdh = width_img;
+		double strHeight = height_img;
+		Path path = new Path();
+		double width = strWitdh;//纯直线长度
+		double height = strHeight;//纯直线长度
+		double radius = 5;
+		double jianLineWidth = 5;
+		double jianLineHeight = 10;
+		double angle = 90;
+		jianPointY += height;
+		
+		path.getElements().add(new MoveTo(jianPointX, jianPointY));
+		path.getElements().add(new LineTo(jianPointX - jianLineWidth, jianPointY - jianLineHeight));
+		path.getElements().add(new LineTo(jianPointX - jianLineWidth, jianPointY - jianLineHeight - height));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX - jianLineWidth - radius, jianPointY - jianLineHeight - height - radius, false, false));
+		path.getElements().add(new LineTo(jianPointX - jianLineWidth - radius - width, jianPointY - jianLineHeight - height - radius));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX - jianLineWidth - radius - width - radius, jianPointY - jianLineHeight - height, false, false));
+		path.getElements().add(new LineTo(jianPointX - jianLineWidth - radius - width - radius, jianPointY - jianLineHeight));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX - jianLineWidth - radius - width, jianPointY - jianLineHeight + radius, false, false));
+		
+		path.getElements().add(new LineTo(jianPointX - jianLineWidth - radius, jianPointY - jianLineHeight + radius));
+		path.getElements().add(new LineTo(jianPointX, jianPointY));
+		path.setFill(Color.rgb(0x7C, 0xCD, 0x7C));
+		DropShadow shadow = new DropShadow(10, 1, 1, Color.RED);
+		path.setEffect(shadow);
+		
+		view3.setLayoutX(jianPointX - jianLineWidth - radius - width);
+		view3.setLayoutY(jianPointY - jianLineHeight - height);
+		
+//		text.applyCss();
+		
+		group.getChildren().add(path);
+		group.getChildren().add(view3);
+		
+		return jianPointY;
 	}
 	
 	private double drawContentRight(Pane group, double jianPointX, double jianPointY, String content) {

@@ -180,7 +180,8 @@ public class ReadThread extends Thread{
 						String line = null;
 						if(!isText) {
 							int len = 1024;
-							FileOutputStream o = new FileOutputStream("D:\\cache\\" + fileName);
+							String file_save = "D:\\cache\\" + System.currentTimeMillis() + fileName;
+							FileOutputStream o = new FileOutputStream(file_save);
 							System.out.println("start blocking data........");
 							int now_len = 0;
 							boolean read_ok = false;
@@ -210,7 +211,18 @@ public class ReadThread extends Thread{
 							//文件得到：
 							o.flush();
 							o.close();
+							o = null;
 							isText = true;
+							//调用显示图片的
+							System.out.println("read media from client!!" + fileName);
+							if("pic".equals(fileType)) {
+								ui.cmdHandleCenter(duifangname, 
+										"transFile_" + fileType + "_" + fileName, new Object[] {out.toByteArray(), file_save});
+							}else {
+								ui.cmdHandleCenter(duifangname, 
+										"transFile_" + fileType + "_" + fileName, new Object[] {null, file_save});
+							}
+							out.reset();
 							continue;
 						}else {
 //							int len = bi.read(b);
