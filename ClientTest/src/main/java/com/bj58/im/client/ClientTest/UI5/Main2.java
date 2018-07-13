@@ -361,6 +361,11 @@ public class Main2 extends Application{
 				String filePath = chooseFile(primaryStage);
 				System.out.println(filePath);
 				writeVideoMessage(group, jianPointX, jianPointYArr, filePath);
+				WriteThread wt = (WriteThread) config.get(currentUser).get("WriteThread");
+				//发送媒体文件
+				sendMediaFile(wt, filePath);
+				//保存发送信息
+				saveMessage(filePath, 3);
 			}
 			
 		});
@@ -368,10 +373,13 @@ public class Main2 extends Application{
 	}
 	
 	private void sendMediaFile(WriteThread wt, String filePath) {
-		
+		String type = filePath.toLowerCase().endsWith("jpg") || 
+				filePath.toLowerCase().endsWith("png") || 
+				filePath.toLowerCase().endsWith("bmp") ||
+				filePath.toLowerCase().endsWith("gif") ? "pic" : "ved";
 		File f = new File(filePath);
 		long len = f.length();
-		String cmd = String.format("trans_file|%s|pic|%s|", filePath.substring(filePath.lastIndexOf("\\") + 1), len);
+		String cmd = String.format("trans_file|%s|%s|%s|", filePath.substring(filePath.lastIndexOf("\\") + 1), type, len);
 		byte[] front = new byte[1024];//限制1024
 		byte[] content = cmd.getBytes();
 		for(int i = 0; i < content.length; i++) {//都是正数
