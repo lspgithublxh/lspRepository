@@ -47,6 +47,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaPlayer.Status;
 import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcTo;
@@ -768,8 +769,13 @@ public class Main2 extends Application{
 		view.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent arg0) {
-				System.out.println("click");
-				player.play();
+				System.out.println("click:" + player.statusProperty().get().name());
+				if(player.getStatus() == Status.PLAYING) {
+					player.pause();
+				}else {
+					player.play();
+				}
+				
 			}
 		});
 		
@@ -1066,7 +1072,11 @@ public class Main2 extends Application{
 			@Override
 			public void handle(MouseEvent arg0) {
 				System.out.println("click");
-				player.play();
+				if(player.getStatus() == Status.PLAYING) {
+					player.pause();
+				}else {
+					player.play();
+				}
 			}
 		});
 		
