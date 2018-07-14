@@ -184,7 +184,7 @@ public class Main extends Application {
 //			circleImage(primaryStage);
 //			talkingContent(primaryStage);
 //			talkingSpecial(primaryStage);
-			mediaTest(primaryStage);
+//			mediaTest(primaryStage);
 //			voiceTest(primaryStage);
 			
 			fileChooser(primaryStage);
@@ -205,7 +205,8 @@ public class Main extends Application {
 				FileChooser filec = new FileChooser();
 				filec.setTitle("open a file");
 				filec.setInitialDirectory(new File("D:\\"));
-				filec.setInitialFileName("D:\\a.png");
+				filec.setInitialFileName("za.png");
+				
 				
 				filec.selectedExtensionFilterProperty().addListener(new ChangeListener<ExtensionFilter>() {
 
@@ -216,11 +217,12 @@ public class Main extends Application {
 //						System.out.println(oldValue.getDescription());
 					}
 				});
-				filec.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("ALL Images", "*.*"),
-						new FileChooser.ExtensionFilter("JPG", ".jpg"),
-						new FileChooser.ExtensionFilter("PNG", ".png"),
-						new FileChooser.ExtensionFilter("GIF", ".gif"),
-						new FileChooser.ExtensionFilter("BMP", ".bmp"));
+				filec.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("类型", "file.jpg"));
+//				filec.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("ALL Images", "*.*"),
+//						new FileChooser.ExtensionFilter("JPG", ".jpg"),
+//						new FileChooser.ExtensionFilter("PNG", ".png"),
+//						new FileChooser.ExtensionFilter("GIF", ".gif"),
+//						new FileChooser.ExtensionFilter("BMP", ".bmp"));
 				File file = filec.showOpenDialog(primaryStage);
 				System.out.println("get file :" + file.getAbsolutePath());
 //				filec.showSaveDialog(primaryStage);

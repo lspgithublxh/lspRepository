@@ -501,7 +501,7 @@ public class Main2 extends Application{
 		filec.setTitle("select the file");
 		filec.setInitialDirectory(new File(filePath.substring(0, filePath.lastIndexOf("\\") + 1)));
 		filec.setInitialFileName(filePath.substring(filePath.lastIndexOf("\\") + 1));
-		System.out.println(filePath.substring(filePath.lastIndexOf("\\") + 1));
+		filec.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("类型", filePath.substring(filePath.lastIndexOf("\\") + 1)));
 		
 		File file = filec.showOpenDialog(primaryStage);
 		return file.getAbsolutePath();
