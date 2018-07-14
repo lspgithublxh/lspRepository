@@ -1,6 +1,7 @@
 package com.bj58.im.client.ClientTest.UI5;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -16,8 +17,8 @@ public class Message implements Serializable{
 
 	public Integer id;//消息索引
 	public String text;//文本内容
-	public Integer type;//类型   : 1文本 2 文件
-	public Map<String, Object> params;
+	public Integer type;//类型   : 1文本 2 图片 3 视频 4一般文件
+	public Map<String, Object> params = new HashMap<String, Object>();
 	public Integer direction;//是对方还是自己发送的，左边或者右边  1自己 2对方
 	public Integer getId() {
 		return id;

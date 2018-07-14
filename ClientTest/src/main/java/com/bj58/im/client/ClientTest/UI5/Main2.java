@@ -1,11 +1,13 @@
 package com.bj58.im.client.ClientTest.UI5;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -340,12 +342,34 @@ public class Main2 extends Application{
 				String filePath = chooseFile(primaryStage);
 				System.out.println(filePath);
 //				writeTextMessage(group, jianPointX, jianPointYArr, filePath);
-				writeImageMessage(group, jianPointX, jianPointYArr, filePath);
+//				writeImageMessage(group, jianPointX, jianPointYArr, filePath);
+				//1.此时的jianPointYArr可能被复制了---而不是引用 所以：要currentUser方式：(Double[])config.get(currentUser).get("YPoint")
+				try {
+//					writeImageMessage_Data(group, jianPointX, jianPointYArr, new FileInputStream(filePath));
+					writeImageMessage_Data(group, jianPointX, (Double[])config.get(currentUser).get("YPoint"), new FileInputStream(filePath));
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
 				WriteThread wt = (WriteThread) config.get(currentUser).get("WriteThread");
 				//发送媒体文件
 				sendMediaFile(wt, filePath);
 				//保存发送信息
-				saveMessage(filePath, 2);
+//				saveMessage(filePath, 2);
+				ByteArrayOutputStream ou = new ByteArrayOutputStream();
+				byte[] d = new byte[1024];
+				int l = 0;
+				FileInputStream fi;
+				try {
+					fi = new FileInputStream(filePath);
+					while((l = fi.read(d)) > 0) {
+						ou.write(d, 0, l);
+					}
+					saveMediaMessage("pic", 1, 2, ou.toByteArray(), "");//还是定方案为图片依然保存到本地最好！！否则聊天使得内存暴涨
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				
 			}
 
@@ -361,12 +385,14 @@ public class Main2 extends Application{
 //				System.out.println(event.getSource());
 				String filePath = chooseFile(primaryStage);
 				System.out.println(filePath);
-				writeVideoMessage(group, jianPointX, jianPointYArr, filePath);
+//				writeVideoMessage(group, jianPointX, jianPointYArr, filePath);
+				writeVideoMessage(group, jianPointX, (Double[])config.get(currentUser).get("YPoint"), filePath);
 				WriteThread wt = (WriteThread) config.get(currentUser).get("WriteThread");
 				//发送媒体文件
 				sendMediaFile(wt, filePath);
 				//保存发送信息
-				saveMessage(filePath, 3);
+//				saveMessage(filePath, 3);
+				saveMediaMessage("vid", 1, 3, null, filePath);
 			}
 			
 		});
@@ -462,9 +488,15 @@ public class Main2 extends Application{
 		getHeadImg(boxleft, 0, 0, isRight);
 	}
 	
-	private void saveMediaMessage(String text, int direction) {
+	private void saveMediaMessage(String text, int direction, int type, byte[] data, String savePath) {
 		List<Message> mesList = (List<Message>) config.get(currentUser).get("message");
-		mesList.add(new Message(mesList.size() + 1, text, 2, direction));
+		Message mes = new Message(mesList.size() + 1, text, type, direction);
+		if(type == 2) {
+			mes.params.put("picData", data);
+		}else if(type == 3) {
+			mes.params.put("videoUrl", savePath);
+		}
+		mesList.add(mes);
 	}
 	
 	private void saveMessage(String text, int direction) {
@@ -476,7 +508,7 @@ public class Main2 extends Application{
 	
 	/**
 	 * 对外提供的第二个接口
-	 * @param 
+	 * @param  有问题的方法：因为80 和 drawContentRight矛盾
 	 * @author lishaoping
 	 * @Date 2018年6月14日
 	 * @Package com.bj58.im.client.ClientTest.UI
@@ -515,6 +547,7 @@ public class Main2 extends Application{
 			if(currentUser != username) {
 				changePane = true;
 			}
+			currentUser = username;
 			receivedMediaMessage(username, "pic".equals(cmdParam[1]) ? (byte[])entity[0] : null,  cmdParam[2], cmdParam[1], changePane, (String) entity[1]);
 		} if("closeWindow".equals(cmdParam[0])) {//此时username是server
 			//username是服务器， entity是下线的机器-客户端
@@ -625,10 +658,10 @@ public class Main2 extends Application{
 				writeRightMediaMessage(username, fileName, data, type, savePath);
 				if("pic".equals(type)) {
 					//加入消息文件存储
-					saveMediaMessage(fileName, 2);
+					saveMediaMessage(fileName, 2, 2, data, savePath);
 				}else {
 					//加入消息文件存储
-					saveMediaMessage(fileName, 3);
+					saveMediaMessage(fileName, 2, 3, data, savePath);
 				}
 				
 				
@@ -669,6 +702,27 @@ public class Main2 extends Application{
 		}
 		//只在首次会调用
 		config.get(username).put("message", entity[0]);
+	}
+	
+	/**
+	 * 切换pane用
+	 * @param 
+	 * @author lishaoping
+	 * @Date 2018年7月14日
+	 * @Package com.bj58.im.client.ClientTest.UI5
+	 * @return void
+	 */
+	public void writeRightMediaMessage_ChangePane(Pane group,Double[] jianPointYArr, byte[] content, String type, String savePath) {//name,为用户， content为“指令-参数”
+		//提取名称：
+		double old = jianPointYArr[0];
+		if("pic".equals(type)) {
+			jianPointYArr[0] = drawImageContentRight(group, 600, jianPointYArr[0], content, "---");
+		}else {
+			jianPointYArr[0] = drawMediaContentRight(group, 600, jianPointYArr[0], "---", savePath);
+		}
+		getHeadImg(group, 600, jianPointYArr[0], true);
+		jianPointYArr[0] += 50;
+		group.setLayoutY(group.getLayoutY() + old - jianPointYArr[0]);
 	}
 	
 	public void writeRightMediaMessage(String username, String cmd_param, byte[] content, String type, String savePath) {//name,为用户， content为“指令-参数”
@@ -720,6 +774,14 @@ public class Main2 extends Application{
 		jianPointYArr[0] = drawContentRight(group, 600, jianPointYArr[0], content);
 		getHeadImg(group, jianPointX, jianPointYArr[0], true);
 		
+		jianPointYArr[0] += 50;
+		group.setLayoutY(group.getLayoutY() + old - jianPointYArr[0]);
+	}
+	
+	public void writeImageMessage_Data(Pane group, double jianPointX, final Double[] jianPointYArr, InputStream data) {
+		double old = jianPointYArr[0];
+		jianPointYArr[0] = drawImageContent_data(group, jianPointX, jianPointYArr[0], data);
+		getHeadImg(group, jianPointX, jianPointYArr[0], false);
 		jianPointYArr[0] += 50;
 		group.setLayoutY(group.getLayoutY() + old - jianPointYArr[0]);
 	}
@@ -810,6 +872,48 @@ public class Main2 extends Application{
 		
 		return jianPointY;
 	}
+	
+	private double drawImageContent_data(Pane group, double jianPointX, double jianPointY, InputStream data) {
+		Image image;
+		int height_img = 58;
+		int width_img = 44;
+		image = new Image(data);
+		ImageView view3 = new ImageView(image);
+		view3.setFitHeight(height_img);//image.getHeight() / 4
+		view3.setFitWidth(width_img);//"D:\\head.jpg"
+		
+		Path path = new Path();
+		double width = width_img;//纯直线长度
+		double height = height_img;//纯直线长度
+		double radius = 5;
+		double jianLineWidth = 5;
+		double jianLineHeight = 10;
+		double angle = 90;
+		jianPointY += height;
+		
+		path.getElements().add(new MoveTo(jianPointX, jianPointY));
+		path.getElements().add(new LineTo(jianPointX + jianLineWidth, jianPointY - jianLineHeight));
+		path.getElements().add(new LineTo(jianPointX + jianLineWidth, jianPointY - jianLineHeight - height));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX + jianLineWidth + radius, jianPointY - jianLineHeight - height - radius, false, true));
+		path.getElements().add(new LineTo(jianPointX + jianLineWidth + radius + width, jianPointY - jianLineHeight - height - radius));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX + jianLineWidth + radius + width + radius, jianPointY - jianLineHeight - height, false, true));
+		path.getElements().add(new LineTo(jianPointX + jianLineWidth + radius + width + radius, jianPointY - jianLineHeight));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX + jianLineWidth + radius + width, jianPointY - jianLineHeight + radius, false, true));
+		
+		path.getElements().add(new LineTo(jianPointX + jianLineWidth + radius, jianPointY - jianLineHeight + radius));
+		path.getElements().add(new LineTo(jianPointX, jianPointY));
+		path.setFill(Color.rgb(0x7C, 0xCD, 0x7C));
+		DropShadow shadow = new DropShadow(10, 1, 1, Color.RED);
+		path.setEffect(shadow);
+		view3.setLayoutX(jianPointX + jianLineWidth + radius);
+		view3.setLayoutY(jianPointY - jianLineHeight - height);//+ height_img / 4
+		
+		group.getChildren().add(path);
+		group.getChildren().add(view3);
+		
+		return jianPointY;
+	}
+	
 	
 	private double drawImageContent(Pane group, double jianPointX, double jianPointY, String filePath) {
 		Image image;
@@ -1045,11 +1149,32 @@ public class Main2 extends Application{
 		final Double[] jianPointYArr = {jianPointY};
 		List<Message> ms = (List<Message>) config.get(username).get("message");
 		currentUser = username;//正确获取头像
+		System.out.println(ms);
 		for(Message s : ms) {
 			if(s.getDirection() == 1) {//自己
-				writeTextMessage(pane_, 80, jianPointYArr, s.text);
+				if(s.getType() == 1) {
+					writeTextMessage(pane_, 80, jianPointYArr, s.text);
+				}else if(s.getType() == 2) {
+					//先统一用data方式----其实用filepath方式是可以的
+					writeImageMessage_Data(pane_, 80, jianPointYArr, new ByteArrayInputStream((byte[])(s.getParams().get("picData"))));
+				}else if(s.getType() == 3) {
+					writeVideoMessage(pane_, 80, jianPointYArr, (String)(s.getParams().get("videoUrl")));
+				}
+				System.out.println("自己的消息");
 			}else {//对方消息
-				writeRightTextMessage(pane_, 600, jianPointYArr, s.text);
+				if(s.getType() == 1) {
+					writeRightTextMessage(pane_, 600, jianPointYArr, s.text);
+				}else if(s.getType() == 2) {
+					//先统一用data方式----其实用filepath方式是可以的
+//					writeRightMediaMessage(username, "", (byte[])s.getParams().get("picData"), "pic", "");
+					writeRightMediaMessage_ChangePane(pane_, jianPointYArr, (byte[])s.getParams().get("picData"),  "pic", "");
+//					writeImageMessage_Data(pane_, 80, jianPointYArr, new ByteArrayInputStream((byte[])(s.getParams().get("picData"))));
+				}else if(s.getType() == 3) {
+					writeRightMediaMessage_ChangePane(pane_, jianPointYArr, null,  "ved", (String)(s.getParams().get("videoUrl")));
+//					writeRightMediaMessage(username, "", (byte[])s.getParams().get("picData"), "ved", (String)(s.getParams().get("videoUrl")));
+//					writeVideoMessage(pane_, 80, jianPointYArr, (String)(s.getParams().get("videoUrl")));
+				}
+				System.out.println("对方的消息");
 			}
 		}
 		//更新config
