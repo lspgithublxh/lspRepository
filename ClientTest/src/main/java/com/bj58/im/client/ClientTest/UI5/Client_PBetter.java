@@ -3,6 +3,7 @@ package com.bj58.im.client.ClientTest.UI5;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -168,8 +169,12 @@ public class ReadThread extends Thread{
 						}
 						String line = null;
 						if(!isText) {
+							File dir = new File("D:\\cache1");
+							if(!dir.exists()) {
+								dir.mkdirs();
+							}
 							int len = 1024;
-							String file_save = "D:\\cache\\" + System.currentTimeMillis() + fileName;
+							String file_save = "D:\\cache1\\" + System.currentTimeMillis() + fileName;
 							FileOutputStream o = new FileOutputStream(file_save);
 							System.out.println("start blocking data........");
 							int now_len = 0;

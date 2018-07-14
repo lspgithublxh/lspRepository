@@ -21,6 +21,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -79,6 +80,8 @@ import javafx.stage.FileChooser.ExtensionFilter;
  *   ----图片展示：可做 ImageView 可编辑的容器--从而显示图片可以---否则用file形式上传图片--然后发送和显示
  *   ----视频播放：可做 MediaView
  *   ----图片-视频传输：知道大小，然后传，server读大小各字节
+ *   ----一般文件传输
+ *  8.局域网ip搜索：上线用户
  * @ClassName:Main2
  * @Description:
  * @Author lishaoping
@@ -94,6 +97,7 @@ public class Main2 extends Application{
 	
 	@Override
 	public void start(Stage arg0) throws Exception {
+		stage = arg0;
 		//初始化headimgMap
 		String port = this.getParameters().getRaw().get(0);
 		headImgMap.put("127.0.0.1:11345", "D:\\head.jpg");
@@ -190,6 +194,8 @@ public class Main2 extends Application{
 	Map<String, String> nameMap = new HashMap<String, String>();
 	
 	VBox boxleft = new VBox();
+	
+	Stage stage = null;
 	
 	private void talkingSpecial(Stage primaryStage, String port) {
 		primaryStage.getIcons().add(new Image(this.getClass().getResourceAsStream("../a.png")));
@@ -330,7 +336,7 @@ public class Main2 extends Application{
 
 	private MenuBar getMenuBar(Stage primaryStage, Pane group, double jianPointX, final Double[] jianPointYArr) {
 		MenuBar bar = new MenuBar();
-		Menu menu1 = new Menu("File");
+		Menu menu1 = new Menu("Picture");
 		MenuItem item1 = new MenuItem("Choose");
 		menu1.getItems().addAll(item1);
 		bar.getMenus().add(menu1);
@@ -340,6 +346,12 @@ public class Main2 extends Application{
 				System.out.println(event.getEventType());
 //				System.out.println(event.getSource());
 				String filePath = chooseFile(primaryStage);
+				if(filePath.toLowerCase().endsWith("jpg") || filePath.toLowerCase().endsWith("png") || filePath.toLowerCase().endsWith("bmp") ||
+						filePath.toLowerCase().endsWith("gif")) {
+				}else {
+					return;
+				}
+				
 				System.out.println(filePath);
 //				writeTextMessage(group, jianPointX, jianPointYArr, filePath);
 //				writeImageMessage(group, jianPointX, jianPointYArr, filePath);
@@ -384,6 +396,9 @@ public class Main2 extends Application{
 				System.out.println(event.getEventType());
 //				System.out.println(event.getSource());
 				String filePath = chooseFile(primaryStage);
+				if(!filePath.toLowerCase().endsWith("mp4")) {
+					return;
+				}
 				System.out.println(filePath);
 //				writeVideoMessage(group, jianPointX, jianPointYArr, filePath);
 				writeVideoMessage(group, jianPointX, (Double[])config.get(currentUser).get("YPoint"), filePath);
@@ -396,6 +411,32 @@ public class Main2 extends Application{
 			}
 			
 		});
+		
+		Menu menu3 = new Menu("File");
+		MenuItem item3 = new MenuItem("Choose");
+		menu3.getItems().addAll(item3);
+		item3.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				String filePath = chooseFile(primaryStage);
+				try {
+					writeFileMessage(group, jianPointX, (Double[])config.get(currentUser).get("YPoint"), new FileInputStream("D:\\file.jpg"));
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+				group.getChildren().get(group.getChildren().size() - 2).setOnMouseClicked(new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent arg0) {
+						String rs = chooseFile_perament(primaryStage, filePath);
+					}
+				});
+				WriteThread wt = (WriteThread) config.get(currentUser).get("WriteThread");
+				//发送媒体文件
+				sendMediaFile(wt, filePath);
+				saveMediaMessage("vid", 1, 4, null, filePath);
+			}
+		});
+		bar.getMenus().add(menu3);
 		return bar;
 	}
 	
@@ -403,7 +444,7 @@ public class Main2 extends Application{
 		String type = filePath.toLowerCase().endsWith("jpg") || 
 				filePath.toLowerCase().endsWith("png") || 
 				filePath.toLowerCase().endsWith("bmp") ||
-				filePath.toLowerCase().endsWith("gif") ? "pic" : "ved";
+				filePath.toLowerCase().endsWith("gif") ? "pic" : filePath.toLowerCase().endsWith("mp4") ? "ved" : "file";
 		File f = new File(filePath);
 		long len = f.length();
 		String cmd = String.format("trans_file|%s|%s|%s|", filePath.substring(filePath.lastIndexOf("\\") + 1), type, len);
@@ -455,7 +496,17 @@ public class Main2 extends Application{
 		group.setLayoutY(group.getLayoutY() + old - jianPointYArr[0]);
 	}
 	
-
+	private String chooseFile_perament(Stage primaryStage, String filePath) {
+		FileChooser filec = new FileChooser();
+		filec.setTitle("select the file");
+		filec.setInitialDirectory(new File(filePath.substring(0, filePath.lastIndexOf("\\") + 1)));
+		filec.setInitialFileName(filePath.substring(filePath.lastIndexOf("\\") + 1));
+		System.out.println(filePath.substring(filePath.lastIndexOf("\\") + 1));
+		
+		File file = filec.showOpenDialog(primaryStage);
+		return file.getAbsolutePath();
+	}
+	
 	private String chooseFile(Stage primaryStage) {
 		FileChooser filec = new FileChooser();
 		filec.setTitle("open a file");
@@ -495,6 +546,8 @@ public class Main2 extends Application{
 			mes.params.put("picData", data);
 		}else if(type == 3) {
 			mes.params.put("videoUrl", savePath);
+		}else {
+			mes.params.put("picUrl", savePath);
 		}
 		mesList.add(mes);
 	}
@@ -659,9 +712,11 @@ public class Main2 extends Application{
 				if("pic".equals(type)) {
 					//加入消息文件存储
 					saveMediaMessage(fileName, 2, 2, data, savePath);
-				}else {
+				}else if("ved".equals(type)){
 					//加入消息文件存储
 					saveMediaMessage(fileName, 2, 3, data, savePath);
+				}else {
+					saveMediaMessage(fileName, 2, 4, data, savePath);
 				}
 				
 				
@@ -717,8 +772,20 @@ public class Main2 extends Application{
 		double old = jianPointYArr[0];
 		if("pic".equals(type)) {
 			jianPointYArr[0] = drawImageContentRight(group, 600, jianPointYArr[0], content, "---");
-		}else {
+		}else if("ved".equals(type)){
 			jianPointYArr[0] = drawMediaContentRight(group, 600, jianPointYArr[0], "---", savePath);
+		}else {
+			try {
+				jianPointYArr[0] = drawImageContentRight_Path(group, 600, jianPointYArr[0], new FileInputStream("D:\\file.jpg"));
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			group.getChildren().get(group.getChildren().size() - 1).setOnMouseClicked(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent arg0) {
+					chooseFile_perament(stage, savePath);
+				}
+			});
 		}
 		getHeadImg(group, 600, jianPointYArr[0], true);
 		jianPointYArr[0] += 50;
@@ -734,8 +801,21 @@ public class Main2 extends Application{
 		double old = jianPointYArr[0];
 		if("pic".equals(type)) {
 			jianPointYArr[0] = drawImageContentRight(group, 600, jianPointYArr[0], content, cmd_param);
-		}else {
+		}else if("ved".equals(type)){
 			jianPointYArr[0] = drawMediaContentRight(group, 600, jianPointYArr[0], cmd_param, savePath);
+		}else {
+			try {
+				jianPointYArr[0] = drawImageContentRight_Path(group, 600, jianPointYArr[0], new FileInputStream("D:\\file.jpg"));
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			group.getChildren().get(group.getChildren().size() - 1).setOnMouseClicked(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent arg0) {
+					chooseFile_perament(stage, savePath);
+				}
+			});
+			
 		}
 		getHeadImg(group, 600, jianPointYArr[0], true);
 		jianPointYArr[0] += 50;
@@ -774,6 +854,14 @@ public class Main2 extends Application{
 		jianPointYArr[0] = drawContentRight(group, 600, jianPointYArr[0], content);
 		getHeadImg(group, jianPointX, jianPointYArr[0], true);
 		
+		jianPointYArr[0] += 50;
+		group.setLayoutY(group.getLayoutY() + old - jianPointYArr[0]);
+	}
+	
+	public void writeFileMessage(Pane group, double jianPointX, final Double[] jianPointYArr, InputStream data) {
+		double old = jianPointYArr[0];
+		jianPointYArr[0] = drawImageContent_data(group, jianPointX, jianPointYArr[0], data);
+		getHeadImg(group, jianPointX, jianPointYArr[0], false);
 		jianPointYArr[0] += 50;
 		group.setLayoutY(group.getLayoutY() + old - jianPointYArr[0]);
 	}
@@ -817,6 +905,50 @@ public class Main2 extends Application{
 		jianPointYArr[0] += 50;
 //		area.clear();
 	}
+	
+//	private Double drawFileContent(Pane group, double jianPointX, Double jianPointY, String filePath){
+//		Image image = null;
+//		int height_img = 58;
+//		int width_img = 44;
+//		try {
+//			image = new Image(new FileInputStream("D:\\file.jpg"));
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		}
+//		ImageView view3 = new ImageView(image);
+//		view3.setFitHeight(height_img);//image.getHeight() / 4
+//		view3.setFitWidth(width_img);//"D:\\head.jpg"
+//		Path path = new Path();
+//		double width = width_img;//纯直线长度
+//		double height = height_img;//纯直线长度
+//		double radius = 5;
+//		double jianLineWidth = 5;
+//		double jianLineHeight = 10;
+//		double angle = 90;
+//		jianPointY += height;
+//		
+//		path.getElements().add(new MoveTo(jianPointX, jianPointY));
+//		path.getElements().add(new LineTo(jianPointX + jianLineWidth, jianPointY - jianLineHeight));
+//		path.getElements().add(new LineTo(jianPointX + jianLineWidth, jianPointY - jianLineHeight - height));
+//		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX + jianLineWidth + radius, jianPointY - jianLineHeight - height - radius, false, true));
+//		path.getElements().add(new LineTo(jianPointX + jianLineWidth + radius + width, jianPointY - jianLineHeight - height - radius));
+//		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX + jianLineWidth + radius + width + radius, jianPointY - jianLineHeight - height, false, true));
+//		path.getElements().add(new LineTo(jianPointX + jianLineWidth + radius + width + radius, jianPointY - jianLineHeight));
+//		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX + jianLineWidth + radius + width, jianPointY - jianLineHeight + radius, false, true));
+//		
+//		path.getElements().add(new LineTo(jianPointX + jianLineWidth + radius, jianPointY - jianLineHeight + radius));
+//		path.getElements().add(new LineTo(jianPointX, jianPointY));
+//		path.setFill(Color.rgb(0x7C, 0xCD, 0x7C));
+//		DropShadow shadow = new DropShadow(10, 1, 1, Color.RED);
+//		path.setEffect(shadow);
+//		view3.setLayoutX(jianPointX + jianLineWidth + radius);
+//		view3.setLayoutY(jianPointY - jianLineHeight - height);//+ height_img / 4
+//		
+//		group.getChildren().add(path);
+//		group.getChildren().add(view3);
+//		return jianPointY;
+//		
+//	}
 	
 	private Double drawVideoContent(Pane group, double jianPointX, Double jianPointY, String filePath){
 		int height_video = 150;
@@ -1159,6 +1291,18 @@ public class Main2 extends Application{
 					writeImageMessage_Data(pane_, 80, jianPointYArr, new ByteArrayInputStream((byte[])(s.getParams().get("picData"))));
 				}else if(s.getType() == 3) {
 					writeVideoMessage(pane_, 80, jianPointYArr, (String)(s.getParams().get("videoUrl")));
+				}else {
+					try {
+						writeImageMessage_Data(pane_, 80, jianPointYArr, new FileInputStream("D:\\file.jpg"));
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					}
+					pane_.getChildren().get(pane_.getChildren().size() - 2).setOnMouseClicked(new EventHandler<MouseEvent>() {
+						@Override
+						public void handle(MouseEvent arg0) {
+							chooseFile_perament(stage, (String)(s.getParams().get("fileUrl")));
+						}
+					});
 				}
 				System.out.println("自己的消息");
 			}else {//对方消息
@@ -1173,6 +1317,8 @@ public class Main2 extends Application{
 					writeRightMediaMessage_ChangePane(pane_, jianPointYArr, null,  "ved", (String)(s.getParams().get("videoUrl")));
 //					writeRightMediaMessage(username, "", (byte[])s.getParams().get("picData"), "ved", (String)(s.getParams().get("videoUrl")));
 //					writeVideoMessage(pane_, 80, jianPointYArr, (String)(s.getParams().get("videoUrl")));
+				}else {
+					writeRightMediaMessage_ChangePane(pane_, jianPointYArr, null,  "file", (String)(s.getParams().get("picUrl")));
 				}
 				System.out.println("对方的消息");
 			}
@@ -1242,6 +1388,50 @@ public class Main2 extends Application{
 		return jianPointY;
 	}
 	
+	private double drawImageContentRight_Path(Pane group, double jianPointX, double jianPointY, InputStream filein) {
+		int height_img = 58;
+		int width_img = 44;
+		Image image = new Image(filein);
+		ImageView view3 = new ImageView(image);
+		view3.setFitHeight(height_img);//image.getHeight() / 4
+		view3.setFitWidth(width_img);//"D:\\head.jpg"
+		
+		double strWitdh = width_img;
+		double strHeight = height_img;
+		Path path = new Path();
+		double width = strWitdh;//纯直线长度
+		double height = strHeight;//纯直线长度
+		double radius = 5;
+		double jianLineWidth = 5;
+		double jianLineHeight = 10;
+		double angle = 90;
+		jianPointY += height;
+		
+		path.getElements().add(new MoveTo(jianPointX, jianPointY));
+		path.getElements().add(new LineTo(jianPointX - jianLineWidth, jianPointY - jianLineHeight));
+		path.getElements().add(new LineTo(jianPointX - jianLineWidth, jianPointY - jianLineHeight - height));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX - jianLineWidth - radius, jianPointY - jianLineHeight - height - radius, false, false));
+		path.getElements().add(new LineTo(jianPointX - jianLineWidth - radius - width, jianPointY - jianLineHeight - height - radius));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX - jianLineWidth - radius - width - radius, jianPointY - jianLineHeight - height, false, false));
+		path.getElements().add(new LineTo(jianPointX - jianLineWidth - radius - width - radius, jianPointY - jianLineHeight));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX - jianLineWidth - radius - width, jianPointY - jianLineHeight + radius, false, false));
+		
+		path.getElements().add(new LineTo(jianPointX - jianLineWidth - radius, jianPointY - jianLineHeight + radius));
+		path.getElements().add(new LineTo(jianPointX, jianPointY));
+		path.setFill(Color.rgb(0x7C, 0xCD, 0x7C));
+		DropShadow shadow = new DropShadow(10, 1, 1, Color.RED);
+		path.setEffect(shadow);
+		
+		view3.setLayoutX(jianPointX - jianLineWidth - radius - width);
+		view3.setLayoutY(jianPointY - jianLineHeight - height);
+		
+//		text.applyCss();
+		
+		group.getChildren().add(path);
+		group.getChildren().add(view3);
+		
+		return jianPointY;
+	}
 	
 	private double drawImageContentRight(Pane group, double jianPointX, double jianPointY, byte[] content, String fileName) {
 		int height_img = 58;
