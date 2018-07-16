@@ -12,6 +12,7 @@ import java.util.List;
 import com.sun.javafx.tk.Toolkit;
 
 import javafx.application.Application;
+import javafx.application.ConditionalFeature;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
@@ -29,10 +30,19 @@ import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
+import javafx.geometry.Point3D;
 import javafx.geometry.Pos;
+import javafx.scene.AmbientLight;
+import javafx.scene.Camera;
 import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.PerspectiveCamera;
+import javafx.scene.PointLight;
 import javafx.scene.Scene;
+import javafx.scene.SceneAntialiasing;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.SubScene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -90,13 +100,18 @@ import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Paint;
+import javafx.scene.paint.PhongMaterial;
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcTo;
 import javafx.scene.shape.ArcType;
+import javafx.scene.shape.Box;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurve;
+import javafx.scene.shape.Cylinder;
+import javafx.scene.shape.DrawMode;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.LineTo;
@@ -110,6 +125,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Translate;
 import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -150,7 +167,7 @@ public class Main extends Application {
 //			polygon(primaryStage);//多边形快速画法,顺序给定点
 //			cubicCurve(primaryStage);//三次曲线，控制点两个， 起点终点各一个
 			
-//			textDraw(primaryStage);
+			textDraw(primaryStage);
 //			gradientRectangle(primaryStage);
 //			textReflect(primaryStage);
 //			textNextLine(primaryStage);
@@ -187,10 +204,119 @@ public class Main extends Application {
 //			mediaTest(primaryStage);
 //			voiceTest(primaryStage);
 			
-			fileChooser(primaryStage);
+//			fileChooser(primaryStage);
+//			camera(primaryStage);
+//			camera_show(primaryStage);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void camera_show(Stage stage) {
+		if (!Platform.isSupported(ConditionalFeature.SCENE3D)) {
+			throw new RuntimeException(
+					"*** ERROR: common conditional SCENE3D is not supported");
+		}
+ 
+		stage.setTitle("JavaFX MSAA demo");
+ 
+		Group root = new Group();
+		Scene scene = new Scene(root, 1000, 800);
+		scene.setFill(Color.color(0.2, 0.2, 0.2, 1.0));
+ 
+		HBox hbox = new HBox();
+		hbox.setLayoutX(75);
+		hbox.setLayoutY(200);
+ 
+		PhongMaterial phongMaterial = new PhongMaterial(Color.color(1.0, 0.7,
+				0.8));
+		Cylinder cylinder1 = new Cylinder(100, 200);
+		cylinder1.setMaterial(phongMaterial);
+		SubScene noMsaa = createSubScene("MSAA = false", cylinder1,
+				Color.TRANSPARENT, new PerspectiveCamera(), false);
+		hbox.getChildren().add(noMsaa);
+ 
+		Cylinder cylinder2 = new Cylinder(100, 200);
+		cylinder2.setMaterial(phongMaterial);
+		SubScene msaa = createSubScene("MSAA = true", cylinder2,
+				Color.TRANSPARENT, new PerspectiveCamera(), true);
+		hbox.getChildren().add(msaa);
+ 
+		Slider slider = new Slider(0, 360, 0);
+		slider.setBlockIncrement(1);
+		slider.setTranslateX(425);
+		slider.setTranslateY(625);
+		cylinder1.rotateProperty().bind(slider.valueProperty());
+		cylinder2.rotateProperty().bind(slider.valueProperty());
+		root.getChildren().addAll(hbox, slider);
+ 
+		stage.setScene(scene);
+		stage.show();
+	}
+ 
+	private static Parent setTitle(String str) {
+		final VBox vbox = new VBox();
+		final Text text = new Text(str);
+		text.setFont(Font.font("Times New Roman", 24));
+		text.setFill(Color.WHEAT);
+		vbox.getChildren().add(text);
+		return vbox;
+	}
+ 
+	private static SubScene createSubScene(String title, Node node,
+			Paint fillPaint, Camera camera, boolean msaa) {
+		Group root = new Group();
+ 
+		PointLight light = new PointLight(Color.WHITE);
+		light.setTranslateX(50);
+		light.setTranslateY(-300);
+		light.setTranslateZ(-400);
+		PointLight light2 = new PointLight(Color.color(0.6, 0.3, 0.4));
+		light2.setTranslateX(400);
+		light2.setTranslateY(0);
+		light2.setTranslateZ(-400);
+ 
+		AmbientLight ambientLight = new AmbientLight(Color.color(0.2, 0.2, 0.2));
+		node.setRotationAxis(new Point3D(2, 1, 0).normalize());
+		node.setTranslateX(180);
+		node.setTranslateY(180);
+		root.getChildren().addAll(setTitle(title), ambientLight, light, light2,
+				node);
+ 
+		SubScene subScene = new SubScene(root, 500, 400, true,
+				msaa ? SceneAntialiasing.BALANCED : SceneAntialiasing.DISABLED);
+		subScene.setFill(fillPaint);
+		subScene.setCamera(camera);
+ 
+		return subScene;
+	}
+
+	
+	private void camera(Stage primaryStage) {
+		Box box = new Box(5, 5, 5);
+		box.setMaterial(new PhongMaterial(Color.RED));
+		box.setDrawMode(DrawMode.LINE);
+		
+		PerspectiveCamera camera = new PerspectiveCamera(true);
+		camera.getTransforms().addAll(
+				new Rotate(-20, Rotate.Y_AXIS),
+				new Rotate(-20, Rotate.X_AXIS),
+				new Translate(0, 0, -15));
+		Group root = new Group();
+		root.getChildren().add(camera);
+		root.getChildren().add(box);
+//		
+		SubScene subscene = new SubScene(root, 500, 500);
+		subscene.setFill(Color.ANTIQUEWHITE);
+		subscene.setCamera(camera);
+		
+		Group group = new Group();
+		group.getChildren().add(subscene);
+		Scene scene = new Scene(group);
+		
+		primaryStage.setScene(scene);
+		primaryStage.setResizable(true);
+		primaryStage.show();
 	}
 
 	private void fileChooser(Stage primaryStage) {
