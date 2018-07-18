@@ -40,27 +40,27 @@ public class HttpClient_5_wos {
 			'7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 	
 	public static void main(String[] args) throws IOException, OutOfMemoryError, NoSuchAlgorithmException {
-		FileInputStream in;
-		try {
-			in = new FileInputStream("D:\\download\\timg.gif");//D:\\news4.jpg
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-	        byte[] b = new byte[1024];
-	        int l = 0;
-	        while((l = in.read(b)) > 0) {
-	        	out.write(b, 0, l);
-	        }
-//			String url = updloadBySpecial(out.toByteArray());
-	        String url = uploadByWOS(out.toByteArray(), String.format("%s_%s.jpg", "14587", System.currentTimeMillis()));
-			System.out.println(url);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}//合成图会当作是png  compu.jpg 
-		catch (IOException e) {
-			e.printStackTrace();
-		}
+//		FileInputStream in;
+//		try {
+//			in = new FileInputStream("D:\\download\\timg.gif");//D:\\news4.jpg
+//			ByteArrayOutputStream out = new ByteArrayOutputStream();
+//	        byte[] b = new byte[1024];
+//	        int l = 0;
+//	        while((l = in.read(b)) > 0) {
+//	        	out.write(b, 0, l);
+//	        }
+////			String url = updloadBySpecial(out.toByteArray());
+//	        String url = uploadByWOS(out.toByteArray(), String.format("%s_%s.jpg", "14587", System.currentTimeMillis()));
+//			System.out.println(url);
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		}//合成图会当作是png  compu.jpg 
+//		catch (IOException e) {
+//			e.printStackTrace();
+//		}
         
 //		wosJava();
-//		abc("http://testv1.wos.58dns.org/GIhdCbAZyGwhj/applandordsharepic/", "16.png");
+		abc("http://testv1.wos.58dns.org/GIhdCbAZyGwhj/applandordsharepic/", "16.png");
 	}
 
 	private static void wosJava() {
@@ -186,7 +186,7 @@ public class HttpClient_5_wos {
         entity.addPart("op", new StringBody("upload", Charset.forName("UTF-8")));
 //        entity.addPart("appid", new StringBody(appid));
 //        entity.addPart("bucket", new StringBody(bucket));
-//        entity.addPart("sha", new StringBody(getSha1(out.toByteArray())));
+        entity.addPart("sha", new StringBody(getSha1(out.toByteArray())));
 //        entity.addPart("insertOnly", new StringBody("1"));
 //        entity.addPart("ttl", new StringBody("168"));
         httpPost.setEntity(entity);
