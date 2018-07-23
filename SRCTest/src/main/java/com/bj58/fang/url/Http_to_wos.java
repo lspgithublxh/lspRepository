@@ -1,5 +1,7 @@
 package com.bj58.fang.url;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Date;
@@ -9,7 +11,6 @@ import java.util.Map;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpMessage;
-import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -23,9 +24,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import com.alibaba.fastjson.JSONObject;
-import com.bj58.spat.wos.ClientConfig;
 import com.bj58.spat.wos.exception.WosException;
-import com.bj58.spat.wos.http.DefaultWosHttpClient;
 import com.bj58.spat.wos.http.HttpContentType;
 import com.bj58.spat.wos.http.HttpMethod;
 import com.bj58.spat.wos.http.HttpRequest;
@@ -59,8 +58,15 @@ public class Http_to_wos {
 		String secretId = "mb6jTMoxEzEHYN2yhLCnw1U7W0LTKDHz";
 		
 		String bucket = "applandordsharepic";
-		String filename = "file9.jpg";
+		String filename = "file12.jpg";
 		String fileContent = FileUtils.getFileContent("D:\\" + filename);
+		FileInputStream in = new FileInputStream("D:\\" + filename);//合成图会当作是png  compu.jpg 
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        byte[] b = new byte[1024];
+        int l = 0;
+        while((l = in.read(b)) > 0) {
+        	out.write(b, 0, l);
+        }
 		String sign = getToken_online_self(bucket, filename, true);
 		String url = "http://"+uploadDomain+"/"+appid+"/"+bucket+"/" + filename;//buildUrl(config.getUploadWosEndPointDomain(), request.getBucketName(), request.getFileName());
         HttpRequest httpRequest = new HttpRequest();
@@ -74,7 +80,7 @@ public class Http_to_wos {
         httpRequest.setMethod(HttpMethod.POST);
         httpRequest.setContentType(HttpContentType.MULTIPART_FORM_DATA);
         
-        return sendPostRequest(httpRequest);
+        return sendPostRequest(httpRequest, out.toByteArray());
     }
 	
 	
@@ -118,7 +124,7 @@ public class Http_to_wos {
 			
 		}
 	 
-	 public String sendPostRequest(HttpRequest httpRequest) throws Exception {
+	 public String sendPostRequest(HttpRequest httpRequest, byte[] data) throws Exception {
 		  HttpPost httpPost = new HttpPost(httpRequest.getUrl());
 		  RequestConfig requestConfig = RequestConfig.custom().
 	                setConnectTimeout(1000).setConnectionRequestTimeout(1000)
@@ -126,7 +132,8 @@ public class Http_to_wos {
 		  httpPost.setConfig(requestConfig);
 		  setHeaders(httpPost, httpRequest.getHeaders());
 		  
-		  setMultiPartEntity(httpPost, httpRequest.getParams());
+//		  setMultiPartEntity(httpPost, httpRequest.getParams());
+		  setMultiPartEntity_(httpPost, httpRequest.getParams(), data);
 		  
 		  CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
         int http_statuscode = httpResponse.getStatusLine().getStatusCode();
@@ -143,18 +150,18 @@ public class Http_to_wos {
 	 
 	 private String getResponseString(CloseableHttpResponse httpResponse)
 	            throws ParseException, IOException
-	        {
-	            String httpResponseStr = null;
-	            HttpEntity httpEntity = httpResponse.getEntity();
-	            if(httpEntity != null)
-	                httpResponseStr = EntityUtils.toString(httpEntity, "UTF-8");
-	            EntityUtils.consumeQuietly(httpEntity);
-	            httpResponse.close();
-	            if(httpResponseStr == null)
-	                return "";
-	            else
-	                return httpResponseStr;
-	        }
+    {
+        String httpResponseStr = null;
+        HttpEntity httpEntity = httpResponse.getEntity();
+        if(httpEntity != null)
+            httpResponseStr = EntityUtils.toString(httpEntity, "UTF-8");
+        EntityUtils.consumeQuietly(httpEntity);
+        httpResponse.close();
+        if(httpResponseStr == null)
+            return "";
+        else
+            return httpResponseStr;
+    }
 	  
 	  private static void setHeaders(HttpMessage message, Map headers)
 	    {
@@ -169,7 +176,7 @@ public class Http_to_wos {
 	        }
 	    }
 	  
-	  private void setMultiPartEntity_(HttpPost httpPost, Map params)
+	  private void setMultiPartEntity_(HttpPost httpPost, Map params, byte[] data)
 		        throws Exception
 	  {
       ContentType utf8TextPlain = ContentType.create("text/plain", Consts.UTF_8);
@@ -178,7 +185,7 @@ public class Http_to_wos {
       {
           String sendPostRequest = (String)i$.next();
           if(sendPostRequest.equals("filecontent"))
-              entityBuilder.addBinaryBody("filecontent", ((String)params.get("filecontent")).getBytes(Charset.forName("ISO-8859-1")), ContentType.DEFAULT_BINARY, "1.jpg");
+              entityBuilder.addBinaryBody("filecontent", data, ContentType.DEFAULT_BINARY, "1.jpg");//((String)params.get("filecontent")).getBytes(Charset.forName("ISO-8859-1"))
           else
               entityBuilder.addTextBody(sendPostRequest, (String)params.get(sendPostRequest), utf8TextPlain);
       }
