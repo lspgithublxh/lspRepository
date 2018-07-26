@@ -143,7 +143,7 @@ import sun.audio.AudioStream;
  *		 Object<--Node<--Parent<---Group\Region.Pane.HBox\Control\WebView\Control.HTMLEditor
  *		 Object<--Node<--ImageView
  * 		 Object<--Effect<---DropShadow\Reflection
- * 		 Object<--Window<--Stage
+ * 		 Object<--Window<--Stage\PopupWindow.PopupControl
  * @ClassName:Main
  * @Description:
  * @Author lishaoping
@@ -167,7 +167,7 @@ public class Main extends Application {
 //			polygon(primaryStage);//多边形快速画法,顺序给定点
 //			cubicCurve(primaryStage);//三次曲线，控制点两个， 起点终点各一个
 			
-			textDraw(primaryStage);
+//			textDraw(primaryStage);
 //			gradientRectangle(primaryStage);
 //			textReflect(primaryStage);
 //			textNextLine(primaryStage);
@@ -180,6 +180,7 @@ public class Main extends Application {
 //			hboxLayout(primaryStage);
 //			borderPane(primaryStage);
 //			menubarLayout(primaryStage);
+//			popUpWindow(primaryStage);
 //			gridLayout(primaryStage);//登陆界面
 //			scrollLayout(primaryStage);//TitledPane 标题面板略   手风琴Accordion
 //			scrollPane(primaryStage);
@@ -190,7 +191,7 @@ public class Main extends Application {
 //			radioButton(primaryStage);
 //			checkBox(primaryStage);
 //			choiceBox(primaryStage);
-//			contextMenu(primaryStage);//hyperlink, processbar
+//			contextMenu(primaryStage);//hyperlink, processbar  右键 出现 下拉选项  
 			
 //			menuBest(primaryStage);//级联菜单项
 			//宽度绑定窗口的/stage的，那么会一样宽
@@ -204,13 +205,15 @@ public class Main extends Application {
 //			mediaTest(primaryStage);
 //			voiceTest(primaryStage);
 			
-//			fileChooser(primaryStage);
+			fileChooser(primaryStage);//特性和ContextMenu一样，是直接作用于primaryStage上显示的。。。如果新窗口可以：new Stage
 //			camera(primaryStage);
 //			camera_show(primaryStage);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
+
+	
 
 	public void camera_show(Stage stage) {
 		if (!Platform.isSupported(ConditionalFeature.SCENE3D)) {
@@ -1207,6 +1210,12 @@ public class Main extends Application {
 		
 	}
 
+	private void popUpWindow(Stage primaryStage) {
+		Group group = new Group();
+		
+		
+	}
+	
 	private void menubarLayout(Stage primaryStage) {
 		Group group = new Group();
 		MenuBar bar = new MenuBar();
@@ -1237,6 +1246,29 @@ public class Main extends Application {
 		Scene scene = new Scene(group, 400, 400, Color.WHEAT);
 		primaryStage.setScene(scene);
 		BorderPane pane = new BorderPane();
+		pane.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+//				System.out.println(event.getSource());
+//				System.out.println(event.getZ());
+//				System.out.println(event.isPopupTrigger());
+//				System.out.println(event.getButton());
+//				System.out.println(event.getEventType());
+//				System.out.println(event.getPickResult());
+//				System.out.println(event.getTarget());
+//				System.out.println();//激发事件
+				System.out.println(event.getSource());
+				System.out.println(event.getZ());
+				System.out.println(event.isPopupTrigger());//区分左右鼠标键
+				System.out.println(event.getButton());//区分左右鼠标键
+				System.out.println(event.getEventType());
+				System.out.println(event.getPickResult());
+				System.out.println(event.getTarget());
+				System.out.println();//激发事件
+			}
+			
+		});
 		pane.prefHeightProperty().bind(scene.heightProperty());
 		pane.prefWidthProperty().bind(scene.widthProperty());
 		pane.setTop(bar);
