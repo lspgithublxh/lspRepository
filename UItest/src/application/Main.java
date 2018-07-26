@@ -1,6 +1,8 @@
 package application;
 	
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -75,6 +77,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Reflection;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -205,15 +208,43 @@ public class Main extends Application {
 //			mediaTest(primaryStage);
 //			voiceTest(primaryStage);
 			
-			fileChooser(primaryStage);//特性和ContextMenu一样，是直接作用于primaryStage上显示的。。。如果新窗口可以：new Stage
+//			fileChooser(primaryStage);//特性和ContextMenu一样，是直接作用于primaryStage上显示的。。。如果新窗口可以：new Stage
 //			camera(primaryStage);
 //			camera_show(primaryStage);
+			image_test();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	
+
+	private void image_test() {
+		FileInputStream in;
+		try {
+			in = new FileInputStream("D:\\head.jpg");
+			ByteArrayOutputStream bon = new ByteArrayOutputStream();
+			int len = 0;
+			byte[] d = new byte[1024];
+			while((len = in.read(d)) > 0) {
+				bon.write(d, 0, len);
+			}
+			for(byte x : bon.toByteArray()) {
+				System.out.print(x + ",");
+			}
+			System.out.println();
+			Image image = new Image(new ByteArrayInputStream(bon.toByteArray()));
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+	}
+
+
 
 	public void camera_show(Stage stage) {
 		if (!Platform.isSupported(ConditionalFeature.SCENE3D)) {

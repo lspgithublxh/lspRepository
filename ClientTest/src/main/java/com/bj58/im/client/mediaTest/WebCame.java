@@ -1,6 +1,8 @@
 package com.bj58.im.client.mediaTest;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -108,21 +110,22 @@ public class WebCame extends Application{
 					}
 					//2.右键菜单
 					if(event.isPopupTrigger()) {//表示右键触发
-//						MenuBar bar = new MenuBar();
-//						bar.setLayoutX(event.getSceneX());
-//						bar.setLayoutY(event.getSceneY());
-////						bar.setMaxWidth(30);
-//						Menu menu = new Menu("menu");
-//						menu.setVisible(true);
-//						MenuItem item = new MenuItem("one");
-//						menu.getItems().add(item);
-//						bar.getMenus().add(menu);
-//						root.getChildren().add(bar);
 						
 						ContextMenu cm = new ContextMenu();
 						MenuItem item = new MenuItem("保存");
-						MenuItem item1 = new MenuItem("另存为");
 						item.setOnAction(new EventHandler<ActionEvent>() {
+							@Override
+							public void handle(ActionEvent arg0) {
+								try {
+									File f = new File("D:\\cache1\\save" + System.currentTimeMillis() + ".jpg");
+									ImageIO.write(SwingFXUtils.fromFXImage(view.getImage(), new BufferedImage((int)view.getImage().getWidth(), (int)view.getImage().getHeight(), BufferedImage.TYPE_INT_ARGB)), "PNG", f);
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+							}
+						});
+						MenuItem item1 = new MenuItem("另存为");
+						item1.setOnAction(new EventHandler<ActionEvent>() {
 							@Override
 							public void handle(ActionEvent event) {
 								
@@ -142,7 +145,25 @@ public class WebCame extends Application{
 							
 						});
 						MenuItem item2 = new MenuItem("发送");
+						item2.setOnAction(new EventHandler<ActionEvent>() {
+							@Override
+							public void handle(ActionEvent event) {
+								ByteArrayOutputStream output = new ByteArrayOutputStream();
+								BufferedImage bimage = SwingFXUtils.fromFXImage(view.getImage(), new BufferedImage((int)view.getImage().getWidth(), (int)view.getImage().getHeight(), BufferedImage.TYPE_INT_ARGB));
+								try {
+									ImageIO.write(bimage, "png", output);
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+								//output里的数据可以发送了。
+								//打开新窗口， 展示
+								createWindow(output.toByteArray());
+							}
+
+						});
 						cm.getItems().add(item);
+						cm.getItems().add(item1);
+						cm.getItems().add(item2);
 						cm.show(primaryStage);
 						
 					}
@@ -179,6 +200,20 @@ public class WebCame extends Application{
 
 		primaryStage.setScene(scene);
 		primaryStage.show();
+	}
+	
+	private void createWindow(byte[] data) {
+		System.out.println("send ok");
+		Stage stage = new Stage();
+		Group root = new Group();
+		Pane pane = new Pane();
+		root.getChildren().add(pane);
+		ImageView view = new ImageView(new Image(new ByteArrayInputStream(data)));
+		pane.getChildren().add(view);
+		Scene scene = new Scene(root);
+		stage.setScene(scene);
+		stage.show();
+		
 	}
 	
 	Object lock = new Object();
