@@ -110,67 +110,14 @@ public class WebCame extends Application{
 					}
 					//2.右键菜单
 					if(event.isPopupTrigger()) {//表示右键触发
-						
-						ContextMenu cm = new ContextMenu();
-						MenuItem item = new MenuItem("保存");
-						item.setOnAction(new EventHandler<ActionEvent>() {
-							@Override
-							public void handle(ActionEvent arg0) {
-								try {
-									File f = new File("D:\\cache1\\save" + System.currentTimeMillis() + ".jpg");
-									ImageIO.write(SwingFXUtils.fromFXImage(view.getImage(), new BufferedImage((int)view.getImage().getWidth(), (int)view.getImage().getHeight(), BufferedImage.TYPE_INT_ARGB)), "PNG", f);
-								} catch (IOException e) {
-									e.printStackTrace();
-								}
-							}
-						});
-						MenuItem item1 = new MenuItem("另存为");
-						item1.setOnAction(new EventHandler<ActionEvent>() {
-							@Override
-							public void handle(ActionEvent event) {
-								
-								FileChooser fcs = new FileChooser();
-								fcs.setInitialDirectory(new File("D:\\cache1"));
-								fcs.setInitialFileName("拍照图片" + System.currentTimeMillis() + ".jpg");
-								fcs.setTitle("另存为");
-								File f = fcs.showSaveDialog(primaryStage);
-								System.out.println(f);
-								String path = f.getAbsolutePath();
-								try {
-									ImageIO.write(SwingFXUtils.fromFXImage(view.getImage(), new BufferedImage((int)view.getImage().getWidth(), (int)view.getImage().getHeight(), BufferedImage.TYPE_INT_ARGB)), "PNG", f);
-								} catch (IOException e) {
-									e.printStackTrace();
-								}//另一种方法：字节保存方法
-							}
-							
-						});
-						MenuItem item2 = new MenuItem("发送");
-						item2.setOnAction(new EventHandler<ActionEvent>() {
-							@Override
-							public void handle(ActionEvent event) {
-								ByteArrayOutputStream output = new ByteArrayOutputStream();
-								BufferedImage bimage = SwingFXUtils.fromFXImage(view.getImage(), new BufferedImage((int)view.getImage().getWidth(), (int)view.getImage().getHeight(), BufferedImage.TYPE_INT_ARGB));
-								try {
-									ImageIO.write(bimage, "png", output);
-								} catch (IOException e) {
-									e.printStackTrace();
-								}
-								//output里的数据可以发送了。
-								//打开新窗口， 展示
-								createWindow(output.toByteArray());
-							}
-
-						});
-						cm.getItems().add(item);
-						cm.getItems().add(item1);
-						cm.getItems().add(item2);
-						cm.show(primaryStage);
-						
+						createdropDownMenuHandler(primaryStage, event, view);
 					}
 					//3.打开对话框
 				}
 				
 			}
+
+			
 			
 		});
 		
@@ -192,6 +139,15 @@ public class WebCame extends Application{
 							}
 						}
 					});
+					view.setOnMouseClicked(new EventHandler<MouseEvent>() {
+						@Override
+						public void handle(MouseEvent event) {
+							if(event.isPopupTrigger()) {
+								createdropDownMenuHandler(primaryStage, event, view);
+								//弹出小窗口 显示成功提示
+							}
+						}
+					});
 				}
 			}
 
@@ -205,15 +161,91 @@ public class WebCame extends Application{
 	private void createWindow(byte[] data) {
 		System.out.println("send ok");
 		Stage stage = new Stage();
+		stage.setTitle("图片处理");
+		stage.setHeight(500);
+		stage.setWidth(500);
 		Group root = new Group();
 		Pane pane = new Pane();
+		pane.setPrefWidth(400);
+		pane.setPrefHeight(400);
+		pane.setLayoutX(50);
+		pane.setLayoutY(50);
 		root.getChildren().add(pane);
 		ImageView view = new ImageView(new Image(new ByteArrayInputStream(data)));
 		pane.getChildren().add(view);
+		view.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				if(event.isPopupTrigger()) {
+					createdropDownMenuHandler(stage, event, view);
+					//弹出小窗口 显示成功提示
+				}
+			}
+		});
+		
 		Scene scene = new Scene(root);
 		stage.setScene(scene);
 		stage.show();
 		
+	}
+	
+	private void createdropDownMenuHandler(Stage primaryStage, MouseEvent event, ImageView view) {
+		ContextMenu cm = new ContextMenu();
+		MenuItem item = new MenuItem("保存");
+		item.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				try {
+					File f = new File("D:\\cache1\\save" + System.currentTimeMillis() + ".jpg");
+					ImageIO.write(SwingFXUtils.fromFXImage(view.getImage(), new BufferedImage((int)view.getImage().getWidth(), (int)view.getImage().getHeight(), BufferedImage.TYPE_INT_ARGB)), "PNG", f);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		MenuItem item1 = new MenuItem("另存为");
+		item1.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				
+				FileChooser fcs = new FileChooser();
+				fcs.setInitialDirectory(new File("D:\\cache1"));
+				fcs.setInitialFileName("拍照图片" + System.currentTimeMillis() + ".jpg");
+				fcs.setTitle("另存为");
+				File f = fcs.showSaveDialog(primaryStage);
+				System.out.println(f);
+				String path = f.getAbsolutePath();
+				try {
+					ImageIO.write(SwingFXUtils.fromFXImage(view.getImage(), new BufferedImage((int)view.getImage().getWidth(), (int)view.getImage().getHeight(), BufferedImage.TYPE_INT_ARGB)), "PNG", f);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}//另一种方法：字节保存方法
+			}
+			
+		});
+		MenuItem item2 = new MenuItem("发送");
+		item2.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				ByteArrayOutputStream output = new ByteArrayOutputStream();
+				BufferedImage bimage = SwingFXUtils.fromFXImage(view.getImage(), new BufferedImage((int)view.getImage().getWidth(), (int)view.getImage().getHeight(), BufferedImage.TYPE_INT_ARGB));
+				try {
+					ImageIO.write(bimage, "png", output);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				//output里的数据可以发送了。
+				//打开新窗口， 展示
+				createWindow(output.toByteArray());
+			}
+
+		});
+		cm.getItems().add(item);
+		cm.getItems().add(item1);
+		cm.getItems().add(item2);
+		cm.setAnchorX(event.getScreenX());
+		cm.setAnchorY(event.getScreenY());
+		cm.show(primaryStage);
 	}
 	
 	Object lock = new Object();
