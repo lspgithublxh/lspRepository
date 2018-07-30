@@ -494,11 +494,21 @@ public class Main2 extends Application{
 					}
 					ImageView view = new ImageView(cacheImage);
 					view.setLayoutY(300);
+					view.setOnMouseClicked(new EventHandler<MouseEvent>() {
+						@Override
+						public void handle(MouseEvent event) {
+							if(event.isPopupTrigger()) {
+								createdropDownMenuHandler(primaryStage, event, view);
+								//弹出小窗口 显示成功提示
+							}
+						}
+					});
 					if(root.getChildren().size() == 2) {
 						root.getChildren().add(view);
 					}else if(root.getChildren().size() >= 3){
 						root.getChildren().set(2, view);
 					}
+					
 				}
 			}
 		});
@@ -518,15 +528,6 @@ public class Main2 extends Application{
 								pane.getChildren().set(0, view);
 							}else {
 								pane.getChildren().add(view);
-							}
-						}
-					});
-					view.setOnMouseClicked(new EventHandler<MouseEvent>() {
-						@Override
-						public void handle(MouseEvent event) {
-							if(event.isPopupTrigger()) {
-								createdropDownMenuHandler(primaryStage, event, view);
-								//弹出小窗口 显示成功提示
 							}
 						}
 					});
@@ -621,36 +622,55 @@ public class Main2 extends Application{
 		pane.setPrefHeight(400);
 		root.getChildren().add(pane);
 		VBox box = new VBox(10);
+		Pane show_confirm = new Pane();
+		pane.setPrefWidth(400);
+		pane.setPrefHeight(100);
+		HBox seletedText = new HBox(4);
+		
 		for(String keyname : config.keySet()) {
+			if("Self".equals(keyname)) {
+				continue;
+			}
 			Map<String, Object> sconfig = config.get(keyname);
 			HBox user1 = new HBox(5);
 			ImageView head = justGetHeadImg_pure(headImgMap.get(keyname));//获取当前圆头像 headImgMap.get(headImgMap.get("Self"))
 			Text name = new Text(nameMap.get(keyname));
 			user1.getChildren().add(head);
 			user1.getChildren().add(name);
+			user1.setOnMouseClicked(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					addUserHandle(keyname, seletedText);
+				}
+
+			});
 			box.getChildren().add(user1);
 		}
 		
 		pane.getChildren().add(box);
 		
-		Pane show_confirm = new Pane();
-		pane.setPrefWidth(400);
-		pane.setPrefHeight(100);
-		HBox seletedText = new HBox(4);
+		
 		Button button = new Button("确定");
 		button.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
+				System.out.println("切换pane + 发送图片");
 				//1.切换pane并显示图片
 				//2.发送图片
 			}
 		});
+		button.setLayoutY(100);
 		show_confirm.getChildren().add(seletedText);
 		show_confirm.getChildren().add(button);
 		root.getChildren().add(show_confirm);
 		Scene scene = new Scene(root);
 		stage.setScene(scene);
 		stage.show();
+	}
+	
+	private void addUserHandle(String keyname, HBox seletedText) {
+		Text t = new Text(keyname);
+		seletedText.getChildren().add(t);
 	}
 	
 	private void sendMediaFile(WriteThread wt, String filePath) {
