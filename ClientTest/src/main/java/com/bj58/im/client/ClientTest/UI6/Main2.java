@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -599,7 +600,7 @@ public class Main2 extends Application{
 				}
 				//output里的数据可以发送了。
 				//打开新窗口， 展示
-				createWindow(output.toByteArray());
+				createWindow(output.toByteArray(), primaryStage);
 			}
 
 		});
@@ -611,7 +612,7 @@ public class Main2 extends Application{
 		cm.show(primaryStage);
 	}
 	
-	private void createWindow(byte[] data) {
+	private void createWindow(byte[] data, Stage primaryStage) {
 		Stage stage = new Stage();
 		stage.setTitle("选择好友");
 		stage.setHeight(300);
@@ -624,8 +625,9 @@ public class Main2 extends Application{
 		show_confirm.setPrefHeight(300);
 		HBox seletedText = new HBox(4);
 		seletedText.setLayoutY(120);
+		List<String> sendUserIdList = new ArrayList<String>();
 		for(String keyname : config.keySet()) {
-			if("Self".equals(keyname)) {
+			if("Self".equals(keyname) || keyname.equals(headImgMap.get("Self"))) {
 				continue;
 			}
 			Map<String, Object> sconfig = config.get(keyname);
@@ -646,6 +648,7 @@ public class Main2 extends Application{
 						return;
 					}
 					addUserHandle(keyname, seletedText, name);
+					sendUserIdList.add(keyname);
 					int index = seletedText.getChildren().size() - 1;
 					Text last = (Text) seletedText.getChildren().get(index);
 					last.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -664,7 +667,6 @@ public class Main2 extends Application{
 							}
 						}
 					});
-					
 				}
 			};
 			user1.getChildren().add(head);
@@ -678,8 +680,31 @@ public class Main2 extends Application{
 			@Override
 			public void handle(ActionEvent event) {
 				System.out.println("切换pane + 发送图片");
-				//1.切换pane并显示图片
-				//2.发送图片
+				for(String userid : sendUserIdList) {
+					
+					Pane group = (Pane) config.get(userid).get("Pane");
+					//显示，切换，发送
+					writeImageMessage_Data(group, 80, (Double[])config.get(userid).get("YPoint"), new ByteArrayInputStream(data));
+					HBox hbox = (HBox) config.get(userid).get("Hbox");
+					if(hbox != null) {
+						if(currHBox != null) {
+							currHBox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.1), CornerRadii.EMPTY, new Insets(0))));
+						}
+						hbox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.5), CornerRadii.EMPTY, new Insets(0))));
+						changePane(hbox, userid);
+					}
+					WriteThread wt = (WriteThread) config.get(userid).get("WriteThread");
+					//发送媒体文件
+					sendByteArray(wt, data, "camera" + System.currentTimeMillis() + ".jpg");
+					//保存发送信息
+//					saveMessage(filePath, 2);
+					saveMediaMessage("pic", 1, 2, data, "");//还是定方案为图片依然保存到本地最好！！否则聊天使得内存暴涨
+					//2.发送图片
+					//关闭窗口
+					stage.close();
+					primaryStage.close();
+				}
+				
 			}
 		});
 		button.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -703,6 +728,42 @@ public class Main2 extends Application{
 		t.setLayoutY(name.getLayoutY());
 		t.setLayoutX(seletedText.getChildren().size() * 20);//个数增加
 		seletedText.getChildren().add(t);
+	}
+	
+	private void sendByteArray(WriteThread wt, byte[] data, String filename) {
+		String cmd = String.format("trans_file|%s|%s|%s|", filename, "pic", data.length);
+		byte[] front = new byte[1024];//限制1024
+		byte[] content = cmd.getBytes();
+		for(int i = 0; i < content.length; i++) {//都是正数
+			front[i] = content[i];
+		}
+		for(int i = content.length; i < 1024; i++) {
+			front[i] = 0;
+		}
+		//发送内容
+		wt.writeNow(new String(front));
+		//发送文件
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+		System.out.println("start --- send data---:");
+		for(int i = 0; i < data.length; i+= 1024) {
+			int blankNeed = 0;
+			int end = i + 1024;
+			byte[] buf = new byte[1024];
+			if(i + 1024 > data.length) {
+				blankNeed = data.length - i;
+				end = data.length;
+			}
+			for(int j = i; j < end; j++) {
+				buf[j - i] = data[j];
+			}
+			wt.writeByteArray(buf);//
+		}
+//		wt.writeByteArray(data);//会不会遗漏？会
+		System.out.println("end --- send ");
 	}
 	
 	private void sendMediaFile(WriteThread wt, String filePath) {
