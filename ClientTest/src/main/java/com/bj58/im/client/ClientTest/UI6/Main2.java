@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +32,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
@@ -616,10 +618,6 @@ public class Main2 extends Application{
 		stage.setWidth(200);
 		Group root = new Group();
 		
-//		Pane pane = new Pane();
-//		pane.setPrefWidth(200);
-//		pane.setPrefHeight(200);
-		
 		VBox box = new VBox(10);
 		Pane show_confirm = new Pane();
 		show_confirm.setPrefWidth(200);
@@ -648,6 +646,25 @@ public class Main2 extends Application{
 						return;
 					}
 					addUserHandle(keyname, seletedText, name);
+					int index = seletedText.getChildren().size() - 1;
+					Text last = (Text) seletedText.getChildren().get(index);
+					last.setOnMouseClicked(new EventHandler<MouseEvent>() {
+						@Override
+						public void handle(MouseEvent event) {
+							if(event.isPopupTrigger()) {
+								clickCount = 0;
+								Iterator<Node> i = seletedText.getChildren().iterator();
+								while(i.hasNext()) {
+									Text  n = (Text) i.next();
+									if(n.getText().equals(last.getText())) {
+										i.remove();
+										break;
+									}
+								}
+							}
+						}
+					});
+					
 				}
 			};
 			user1.getChildren().add(head);
@@ -655,9 +672,7 @@ public class Main2 extends Application{
 			user1.setOnMouseClicked(handler);
 			box.getChildren().add(user1);//放后面才会生效
 		}
-		
 		show_confirm.getChildren().add(box);
-		
 		Button button = new Button("确定");
 		button.setOnAction(new EventHandler<ActionEvent>() {
 			@Override

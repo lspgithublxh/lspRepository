@@ -3333,3 +3333,11 @@ server:onlinelist|127.0.0.1-11567
 server:client-server|127.0.0.1|11345
 server:client to client:127.0.0.1:11567
 server:good ,i received: my friend..
+server:-----------hello--------
+server:-----------上线通知--------
+server:online::59635;127.0.0.1:59635
+server:-----------hello--------
+server:onlinelist|127.0.0.1-11567
+server:client-server|127.0.0.1|11345
+server:client to client:127.0.0.1:11567
+server:good ,i received: my friend..
