@@ -333,8 +333,6 @@ public class Main2 extends Application{
 				saveMessage(area.getText(), 1);
 				area.clear();
 			}
-
-			
 			
 		});
 		button.setAlignment(Pos.BOTTOM_RIGHT);
@@ -493,7 +491,7 @@ public class Main2 extends Application{
 						e.printStackTrace();
 					}
 					ImageView view = new ImageView(cacheImage);
-					view.setLayoutY(300);
+					view.setLayoutY(250);
 					view.setOnMouseClicked(new EventHandler<MouseEvent>() {
 						@Override
 						public void handle(MouseEvent event) {
@@ -614,19 +612,20 @@ public class Main2 extends Application{
 	private void createWindow(byte[] data) {
 		Stage stage = new Stage();
 		stage.setTitle("选择好友");
-		stage.setHeight(500);
-		stage.setWidth(500);
+		stage.setHeight(300);
+		stage.setWidth(200);
 		Group root = new Group();
-		Pane pane = new Pane();
-		pane.setPrefWidth(400);
-		pane.setPrefHeight(400);
-		root.getChildren().add(pane);
+		
+//		Pane pane = new Pane();
+//		pane.setPrefWidth(200);
+//		pane.setPrefHeight(200);
+		
 		VBox box = new VBox(10);
 		Pane show_confirm = new Pane();
-		pane.setPrefWidth(400);
-		pane.setPrefHeight(100);
+		show_confirm.setPrefWidth(200);
+		show_confirm.setPrefHeight(300);
 		HBox seletedText = new HBox(4);
-		
+		seletedText.setLayoutY(120);
 		for(String keyname : config.keySet()) {
 			if("Self".equals(keyname)) {
 				continue;
@@ -635,20 +634,29 @@ public class Main2 extends Application{
 			HBox user1 = new HBox(5);
 			ImageView head = justGetHeadImg_pure(headImgMap.get(keyname));//获取当前圆头像 headImgMap.get(headImgMap.get("Self"))
 			Text name = new Text(nameMap.get(keyname));
-			user1.getChildren().add(head);
-			user1.getChildren().add(name);
-			user1.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			VBox kong = new VBox();
+			Label b = new Label(" ");
+//			b.setPrefHeight(20);
+			kong.getChildren().add(b);
+			kong.getChildren().add(name);
+			EventHandler<MouseEvent> handler = new EventHandler<MouseEvent>() {
+				int clickCount = 0;
 				@Override
 				public void handle(MouseEvent event) {
-					addUserHandle(keyname, seletedText);
+					clickCount++;
+					if(clickCount > 1) {
+						return;
+					}
+					addUserHandle(keyname, seletedText, name);
 				}
-
-			});
-			box.getChildren().add(user1);
+			};
+			user1.getChildren().add(head);
+			user1.getChildren().add(kong);
+			user1.setOnMouseClicked(handler);
+			box.getChildren().add(user1);//放后面才会生效
 		}
 		
-		pane.getChildren().add(box);
-		
+		show_confirm.getChildren().add(box);
 		
 		Button button = new Button("确定");
 		button.setOnAction(new EventHandler<ActionEvent>() {
@@ -659,17 +667,26 @@ public class Main2 extends Application{
 				//2.发送图片
 			}
 		});
-		button.setLayoutY(100);
+		button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				System.out.println(event.getSceneX());
+			}
+		});
+		button.setLayoutY(150);
 		show_confirm.getChildren().add(seletedText);
 		show_confirm.getChildren().add(button);
-		root.getChildren().add(show_confirm);
+		root.getChildren().add(show_confirm);//放后面会生效,放一个pane是对的，多了前面的pane事件不生效
+		
 		Scene scene = new Scene(root);
 		stage.setScene(scene);
 		stage.show();
 	}
 	
-	private void addUserHandle(String keyname, HBox seletedText) {
-		Text t = new Text(keyname);
+	private void addUserHandle(String keyname, HBox seletedText, Text name) {
+		Text t = new Text(nameMap.get(keyname));
+		t.setLayoutY(name.getLayoutY());
+		t.setLayoutX(seletedText.getChildren().size() * 20);//个数增加
 		seletedText.getChildren().add(t);
 	}
 	
