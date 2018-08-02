@@ -4,6 +4,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +14,8 @@ import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
 
 import com.github.sarxos.webcam.Webcam;
+import com.github.sarxos.webcam.util.ImageUtils;
+import com.github.sarxos.webcam.util.NixVideoDevUtils;
 import com.sun.javafx.iio.ImageStorage.ImageType;
 import com.sun.javafx.tk.FileChooserType;
 
@@ -44,9 +48,46 @@ public class WebCame extends Application{
 	public static void main(String[] args) {
 //		test();
 		System.out.println(System.getProperty("com.ibm.vm.bitmode"));
-		launch(args);
+//		launch(args);
+		test2();
 	}
 	
+	private static void test2() {
+		Webcam came = Webcam.getDefault();
+		came.open();
+		File file = new File("D:\\cache1\\abc" + System.currentTimeMillis() + ".avi");
+		FileOutputStream out = null;
+		try {
+			file.createNewFile();
+			out = new FileOutputStream(file);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		int times = 0;
+		while(true) {
+			System.out.println("times" + times);
+			if(times++ > 30) {
+				break;
+			}
+			ByteArrayOutputStream output = new ByteArrayOutputStream();
+			try {
+				ImageIO.write(came.getImage(), "png", output);//ImageUtils.toByteArray(arg0, arg1)
+				out.write(output.toByteArray());
+				out.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		try {
+			out.flush();
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		//
+		NixVideoDevUtils.getVideoFiles();
+		new NixVideoDevUtils();
+	}
 	
 	/**
 	 * 自动保存一张图片---且不会关闭
