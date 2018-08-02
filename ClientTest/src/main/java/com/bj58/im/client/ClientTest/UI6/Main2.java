@@ -683,8 +683,7 @@ public class Main2 extends Application{
 				for(String userid : sendUserIdList) {
 					
 					Pane group = (Pane) config.get(userid).get("Pane");
-					//显示，切换，发送
-					writeImageMessage_Data(group, 80, (Double[])config.get(userid).get("YPoint"), new ByteArrayInputStream(data));
+					//切换，显示，发送
 					HBox hbox = (HBox) config.get(userid).get("Hbox");
 					if(hbox != null) {
 						if(currHBox != null) {
@@ -693,6 +692,8 @@ public class Main2 extends Application{
 						hbox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.5), CornerRadii.EMPTY, new Insets(0))));
 						changePane(hbox, userid);
 					}
+					writeImageMessage_Data(group, 80, (Double[])config.get(userid).get("YPoint"), new ByteArrayInputStream(data));
+					
 					WriteThread wt = (WriteThread) config.get(userid).get("WriteThread");
 					//发送媒体文件
 					sendByteArray(wt, data, "camera" + System.currentTimeMillis() + ".jpg");
