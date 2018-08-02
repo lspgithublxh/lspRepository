@@ -23,7 +23,7 @@ public class JimToMovTest {
 		came.open();
 		
 		
-		DefaultMovieInfoProvider p = new DefaultMovieInfoProvider("ss.mov");
+		DefaultMovieInfoProvider p = new DefaultMovieInfoProvider("file://D:/cache1/luzhi" + System.currentTimeMillis() + ".mov");
 		p.setFPS((float) (100 / 3.6));//帧频率  每秒钟10帧
 		p.setMWidth(320);
 		p.setMHeight(240);
