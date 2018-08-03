@@ -580,7 +580,7 @@ public class Main2 extends Application{
 							}else {
 								pane.getChildren().add(view);
 							}
-							isGoon_luzhi(new ImageView(image2), pane, bi);
+							isGoon_luzhi(new ImageView(image2), root, bi);
 						}
 					});
 				}
@@ -663,18 +663,18 @@ public class Main2 extends Application{
 	}
 	
 	
-	private void isGoon_luzhi(ImageView view, Pane root, BufferedImage bi) {
+	private void isGoon_luzhi(ImageView view, Group root, BufferedImage bi) {
 		if(luzhi_start) {
 			view.setLayoutY(250);
 			//会耗时一点, 先加，后保存，而不是实时保存-----当然可以做到:但不好:帧数
 			imageList.add(bi);//不阻塞
 			System.out.println("当前元素个数：" + imageList.size());
-			if(root.getChildren().size() == 2) {
+			if(root.getChildren().size() == 3) {
 				root.getChildren().add(view);//
-			}else if(root.getChildren().size() >= 3){
-				root.getChildren().set(2, view);
+			}else if(root.getChildren().size() >= 4){
+				root.getChildren().set(3, view);
 			}
-			
+			//
 		}
 	}
 	
