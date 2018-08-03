@@ -530,7 +530,22 @@ public class Main2 extends Application{
 		button2.setLayoutX(180);
 		button2.setLayoutY(200);
 		button2.setDisable(true);
-		root.getChildren().addAll(button, button2);
+		Button button3 = new Button("查看文件");
+		button3.setLayoutX(260);
+		button3.setLayoutY(200);
+		button3.setDisable(true);
+		String[] fileNames = new String[] {"", ""};
+		button3.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				FileChooser chooser = new FileChooser();
+				chooser.setInitialDirectory(new File(fileNames[0]));
+				chooser.setInitialFileName(fileNames[1]);
+				chooser.setTitle("选择录制的视频");
+				chooser.showOpenDialog(primaryStage);
+			}
+		});
+		root.getChildren().addAll(button, button2, button3);
 		long[] t1 = {0};
 		button.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
@@ -539,6 +554,7 @@ public class Main2 extends Application{
 				button2.setDisable(false);
 				luzhi_start = true;
 				t1[0] = System.currentTimeMillis();
+				button3.setDisable(true);
 			}
 		});
 		button2.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -550,8 +566,12 @@ public class Main2 extends Application{
 				button2.setDisable(true);
 				luzhi_start = false;
 				//只运行一次
-				String filename = "file://D:/cache1/luzhi" + System.currentTimeMillis() + ".mp4";
-				startSaveTofile(filename);
+				String fn = "luzhi" + System.currentTimeMillis() + ".mp4";
+				String filename = "file://D:/cache1/luzhi" + fn;
+				fileNames[0] = "D:\\cache1\\";
+				fileNames[1] = fn;
+				button3.setDisable(true);
+				startSaveTofile(filename, button3);
 				
 			}
 		});
@@ -669,16 +689,16 @@ public class Main2 extends Application{
 			//会耗时一点, 先加，后保存，而不是实时保存-----当然可以做到:但不好:帧数
 			imageList.add(bi);//不阻塞
 			System.out.println("当前元素个数：" + imageList.size());
-			if(root.getChildren().size() == 3) {
+			if(root.getChildren().size() == 4) {
 				root.getChildren().add(view);//
-			}else if(root.getChildren().size() >= 4){
-				root.getChildren().set(3, view);
+			}else if(root.getChildren().size() >= 5){
+				root.getChildren().set(4, view);
 			}
 			//
 		}
 	}
 	
-	private void startSaveTofile(String file) {
+	private void startSaveTofile(String file, Button button3) {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -709,6 +729,7 @@ public class Main2 extends Application{
 				}
 				System.out.println(System.currentTimeMillis() - t1);
 				System.out.println("保存完毕");
+				button3.setDisable(false);
 			}
 		}).start();
 	}
