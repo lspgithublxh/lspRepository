@@ -16,8 +16,6 @@ import com.sun.javafx.tk.Toolkit;
 import javafx.application.Application;
 import javafx.application.ConditionalFeature;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -55,7 +53,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
@@ -77,7 +74,6 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Reflection;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -127,7 +123,6 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.scene.web.HTMLEditor;
@@ -205,13 +200,13 @@ public class Main extends Application {
 //			circleImage(primaryStage);
 //			talkingContent(primaryStage);
 //			talkingSpecial(primaryStage);
-//			mediaTest(primaryStage);
+			mediaTest(primaryStage);
 //			voiceTest(primaryStage);
 			
 //			fileChooser(primaryStage);//特性和ContextMenu一样，是直接作用于primaryStage上显示的。。。如果新窗口可以：new Stage
 //			camera(primaryStage);
 //			camera_show(primaryStage);
-			image_test();
+//			image_test();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -427,7 +422,7 @@ public class Main extends Application {
 		pane.setPrefSize(400, 400);//决定宽高
 		pane.setBackground(new Background(new BackgroundFill(Color.ANTIQUEWHITE, new CornerRadii(10), new Insets(10))));
 		Scene scene = new Scene(pane, 800, 600);
-		String url = "file:///D:/video.mp4";//"D:\\video.mp4";//\\新建文件夹\\微信截图
+		String url = "file://D:/cache1/luzhi1533260464595.mp4";//"D:\\video.mp4";//\\新建文件夹\\微信截图 file:///D:/video.mp4
 		Media media = new Media(url);
 		MediaPlayer player = new MediaPlayer(media);
 		player.setAutoPlay(false);

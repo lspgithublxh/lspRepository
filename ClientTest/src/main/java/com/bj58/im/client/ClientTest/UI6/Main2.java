@@ -16,12 +16,22 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.imageio.ImageIO;
+
+import org.jim2mov.core.DefaultMovieInfoProvider;
+import org.jim2mov.core.FrameSavedListener;
+import org.jim2mov.core.ImageProvider;
+import org.jim2mov.core.Jim2Mov;
+import org.jim2mov.core.MovieInfoProvider;
+import org.jim2mov.core.MovieSaveException;
 
 import com.bj58.im.client.ClientTest.App;
 import com.bj58.im.client.ClientTest.UI6.Client_PBetter.WriteThread;
 import com.github.sarxos.webcam.Webcam;
+import com.github.sarxos.webcam.util.ImageUtils;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -91,6 +101,7 @@ import javafx.stage.WindowEvent;
  *   ----图片-视频传输：知道大小，然后传，server读大小各字节
  *   ----一般文件传输
  *  8.局域网ip搜索：上线用户
+ *  9.视频录制--本地。视频直播---使用老连接|使用新连接----不关心对方各种配置--而只需要打开新的窗口
  * @ClassName:Main2
  * @Description:
  * @Author lishaoping
@@ -451,8 +462,7 @@ public class Main2 extends Application{
 		bar.getMenus().add(menu3);
 		
 		Menu menu4 = new Menu("Camera");
-		MenuItem item4 = new MenuItem("Open");
-		menu4.getItems().addAll(item4);
+		MenuItem item4 = new MenuItem("拍照");
 		item4.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -463,13 +473,120 @@ public class Main2 extends Application{
 				cameraPictureAndSave(stage);
 			}
 		});
+		MenuItem item42 = new MenuItem("视频录制");
+		item42.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				Stage stage = new Stage();
+				stage.setTitle("调用摄像头");
+				stage.setHeight(500);
+				stage.setWidth(500);
+				luzhiVideo(stage);
+			}
+		});
+		menu4.getItems().addAll(item4, item42);
 		bar.getMenus().add(menu4);
+		Menu menu5 = new Menu("Live");//视频直播
+		MenuItem item5 = new MenuItem("Open");
+		menu5.getItems().addAll(item5);
+		item4.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				Stage stage = new Stage();
+				stage.setTitle("视频直播");
+				stage.setHeight(500);
+				stage.setWidth(500);
+				live(stage);
+			}
+		});
+		bar.getMenus().add(menu5);
 		return bar;
 	}
 	
 	Object lock = new Object();
+	Object lockLuzhi = new Object();
 	Image cacheImage = null;
 	Boolean stop = false;
+	Boolean luzhi_start = false;
+	BlockingQueue<BufferedImage> imageQu = new LinkedBlockingQueue<BufferedImage>(500);
+	
+	private void live(Stage primaryStage) {
+		
+	}
+	
+	private void luzhiVideo(Stage primaryStage) {
+		Group root = new Group();
+		Pane pane = new Pane();
+		pane.setMaxHeight(300);
+		root.getChildren().add(pane);
+		Scene scene = new Scene(root, 500, 600, Color.rgb(0x11, 0x11, 0x11, 0.1));
+		Webcam came = Webcam.getDefault();//只有一个摄像头System.out.println(Webcam.getWebcams().size());
+		came.open();
+		Button button = new Button("开始录制");
+		button.setLayoutX(100);
+		button.setLayoutY(200);
+		Button button2 = new Button("结束录制");
+		button2.setLayoutX(180);
+		button2.setLayoutY(200);
+		button2.setDisable(true);
+		root.getChildren().addAll(button, button2);
+		button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				button.setDisable(true);
+				button2.setDisable(false);
+				luzhi_start = true;
+			}
+		});
+		button2.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				System.out.println("点击激活");
+				button.setText("重新录制");
+				button.setDisable(false);
+				button2.setDisable(true);
+				luzhi_start = false;
+				//只运行一次
+				String filename = "file://D:/cache1/luzhi" + System.currentTimeMillis() + ".mp4";
+				startSaveTofile(filename);
+				System.out.println("保存完毕");
+			}
+		});
+		//显示
+		long t1 = System.currentTimeMillis();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				//
+				while(true) {
+					if(luzhi_start) {
+						if(System.currentTimeMillis() - t1 > 8 * 1000) {
+							luzhi_start = false;
+//							button2.fireEvent(new MouseEvent(null, null, MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, null, 0, false, false, false, false, false, false, false, false, false, false, null));
+						}
+					}
+					BufferedImage bi = came.getImage();
+					Image image2 = SwingFXUtils.toFXImage(bi, new WritableImage(100, 100));
+					
+					ImageView view = new ImageView(image2);
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							if(pane.getChildren().size() > 0) {
+								pane.getChildren().set(0, view);
+							}else {
+								pane.getChildren().add(view);
+							}
+							isGoon_luzhi(view, pane, bi);
+						}
+					});
+				}
+			}
+		}).start();
+		primaryStage.setScene(scene);
+		primaryStage.show();
+		
+	}
 	
 	private void cameraPictureAndSave(Stage primaryStage) {
 		Group root = new Group();
@@ -543,6 +660,55 @@ public class Main2 extends Application{
 	}
 	
 	
+	private void isGoon_luzhi(ImageView view, Pane root, BufferedImage bi) {
+		if(luzhi_start) {
+			//会耗时一点, 先加，后保存，而不是实时保存-----当然可以做到:但不好:帧数
+			imageQu.offer(bi);//不阻塞
+			System.out.println("当前元素个数：" + imageQu.size());
+			if(root.getChildren().size() == 2) {
+				root.getChildren().add(view);//
+			}else if(root.getChildren().size() >= 3){
+				root.getChildren().set(2, view);
+			}
+			
+			
+		}
+	}
+	
+	private void startSaveTofile(String file) {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				DefaultMovieInfoProvider p = new DefaultMovieInfoProvider(file);
+				p.setFPS((float) (100 / 3.6));//帧频率  每秒钟10帧
+				p.setMWidth(320);
+				p.setMHeight(240);
+				p.setNumberOfFrames(imageQu.size());//帧数，无限
+				long t1 = System.currentTimeMillis();
+				try {
+					Jim2Mov jm = new Jim2Mov(new ImageProvider() {
+						@Override
+						public byte[] getImage(int arg0) {
+							System.out.println("生产第" + arg0 + "帧");
+							byte[] d = null;
+							d = ImageUtils.toByteArray(imageQu.poll(), "jpg");//阻塞方式
+							System.out.println(d.length);
+							return d;
+						}}, p, 
+					new FrameSavedListener() {
+						@Override
+						public void frameSaved(int arg0) {
+						System.out.println("保存了第" + arg0 + "帧");
+					}});
+					jm.saveMovie(MovieInfoProvider.TYPE_QUICKTIME_JPEG);//TYPE_QUICKTIME_JPEG
+				} catch (MovieSaveException e) {
+					e.printStackTrace();
+				}
+				System.out.println(System.currentTimeMillis() - t1);
+			}
+		}).start();
+	}
+
 	private void isGoon(Image image2) {
 		if(stop) {
 			cacheImage = image2;
