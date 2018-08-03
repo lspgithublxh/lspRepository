@@ -508,7 +508,8 @@ public class Main2 extends Application{
 	Image cacheImage = null;
 	Boolean stop = false;
 	Boolean luzhi_start = false;
-	BlockingQueue<BufferedImage> imageQu = new LinkedBlockingQueue<BufferedImage>(500);
+//	BlockingQueue<BufferedImage> imageQu = new LinkedBlockingQueue<BufferedImage>(500);
+	List<BufferedImage> imageList = new ArrayList<>();
 	
 	private void live(Stage primaryStage) {
 		
@@ -530,12 +531,14 @@ public class Main2 extends Application{
 		button2.setLayoutY(200);
 		button2.setDisable(true);
 		root.getChildren().addAll(button, button2);
+		long[] t1 = {0};
 		button.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				button.setDisable(true);
 				button2.setDisable(false);
 				luzhi_start = true;
+				t1[0] = System.currentTimeMillis();
 			}
 		});
 		button2.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -549,18 +552,18 @@ public class Main2 extends Application{
 				//只运行一次
 				String filename = "file://D:/cache1/luzhi" + System.currentTimeMillis() + ".mp4";
 				startSaveTofile(filename);
-				System.out.println("保存完毕");
+				
 			}
 		});
 		//显示
-		long t1 = System.currentTimeMillis();
+		
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				//
 				while(true) {
 					if(luzhi_start) {
-						if(System.currentTimeMillis() - t1 > 8 * 1000) {
+						if(System.currentTimeMillis() - t1[0] > 8 * 1000) {
 							luzhi_start = false;
 //							button2.fireEvent(new MouseEvent(null, null, MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, null, 0, false, false, false, false, false, false, false, false, false, false, null));
 						}
@@ -577,7 +580,7 @@ public class Main2 extends Application{
 							}else {
 								pane.getChildren().add(view);
 							}
-							isGoon_luzhi(view, pane, bi);
+							isGoon_luzhi(new ImageView(image2), pane, bi);
 						}
 					});
 				}
@@ -662,15 +665,15 @@ public class Main2 extends Application{
 	
 	private void isGoon_luzhi(ImageView view, Pane root, BufferedImage bi) {
 		if(luzhi_start) {
+			view.setLayoutY(250);
 			//会耗时一点, 先加，后保存，而不是实时保存-----当然可以做到:但不好:帧数
-			imageQu.offer(bi);//不阻塞
-			System.out.println("当前元素个数：" + imageQu.size());
+			imageList.add(bi);//不阻塞
+			System.out.println("当前元素个数：" + imageList.size());
 			if(root.getChildren().size() == 2) {
 				root.getChildren().add(view);//
 			}else if(root.getChildren().size() >= 3){
 				root.getChildren().set(2, view);
 			}
-			
 			
 		}
 	}
@@ -683,7 +686,7 @@ public class Main2 extends Application{
 				p.setFPS((float) (100 / 3.6));//帧频率  每秒钟10帧
 				p.setMWidth(320);
 				p.setMHeight(240);
-				p.setNumberOfFrames(imageQu.size());//帧数，无限
+				p.setNumberOfFrames(imageList.size());//帧数，无限
 				long t1 = System.currentTimeMillis();
 				try {
 					Jim2Mov jm = new Jim2Mov(new ImageProvider() {
@@ -691,7 +694,7 @@ public class Main2 extends Application{
 						public byte[] getImage(int arg0) {
 							System.out.println("生产第" + arg0 + "帧");
 							byte[] d = null;
-							d = ImageUtils.toByteArray(imageQu.poll(), "jpg");//阻塞方式
+							d = ImageUtils.toByteArray(imageList.get(arg0), "jpg");//阻塞方式
 							System.out.println(d.length);
 							return d;
 						}}, p, 
@@ -705,6 +708,7 @@ public class Main2 extends Application{
 					e.printStackTrace();
 				}
 				System.out.println(System.currentTimeMillis() - t1);
+				System.out.println("保存完毕");
 			}
 		}).start();
 	}
