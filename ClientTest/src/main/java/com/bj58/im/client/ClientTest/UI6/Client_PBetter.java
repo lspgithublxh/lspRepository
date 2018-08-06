@@ -156,8 +156,11 @@ public class ReadThread extends Thread{
 			boolean servWriteOk = false;
 				try {
 					boolean isText = true;
+					boolean isLive = false;
+					int imageIndex = 0;
 					String fileName = "";
 					String fileType = "";
+					String username = "";
 					long fileLength = 0;
 					ByteArrayOutputStream out = new ByteArrayOutputStream();
 					while(true) {
@@ -168,6 +171,37 @@ public class ReadThread extends Thread{
 							e.printStackTrace();
 						}
 						String line = null;
+						if(isLive) {
+							int len = 1024;
+							int now_len = 0;
+							boolean read_ok = false;
+							while(true) {//dataIn.readFully(b); 先阻塞方式读
+								if(read_ok) {
+									break;
+								}
+								try {
+									dataIn.readFully(b);
+									now_len += len;
+								}catch (Exception e) {
+									break;
+								}
+								if(now_len - fileLength >= 0) {//肯定超不了1024
+									len = (int) (1024 - (now_len - fileLength));
+									read_ok = true;
+								}
+								for(int i = 900; i < 1024; i++) {
+									System.out.print(b[i] + ",");
+								}
+								System.out.println();
+								out.write(b, 0, len);
+							}
+							ui.cmdHandleCenter(username, 
+									"liveImage_" + ++imageIndex + "_" + fileName, new Object[] {out.toByteArray()});
+							out.reset();
+							
+//							isLive = false;
+							continue;
+						}
 						if(!isText) {
 							File dir = new File("D:\\cache1");
 							if(!dir.exists()) {
@@ -290,8 +324,17 @@ public class ReadThread extends Thread{
 							fileName = dt[1];
 							fileType = dt[2];
 							fileLength = Long.valueOf(dt[3]);
+							
 							System.out.println(line);
 							
+						}else if(line.startsWith("live_image|")){
+							isLive = true;
+							String[] dt = line.split("\\|");
+							username = dt[1];
+							fileName = dt[2];
+							fileType = dt[3];
+							fileLength = Long.valueOf(dt[4]);
+							System.out.println(line);
 						}else {
 							System.out.println("---the client:" + duifangname);
 							if(ui.config.containsKey(duifangname)) {

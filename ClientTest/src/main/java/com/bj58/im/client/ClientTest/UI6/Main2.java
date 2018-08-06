@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -582,12 +583,30 @@ public class Main2 extends Application{
 							
 						}
 					});
-					//发送图片--新线程里：是否等待/同步/异步:异步最好
+					//打开新线程， 发送图片--新线程里：是否等待/同步/异步:异步最好
+					sendLiveImage(bi);
 				}
 			}
+
 		}).start();
 		primaryStage.setScene(scene);
 		primaryStage.show();
+	}
+	
+	private void sendLiveImage(BufferedImage bi) {
+		//先发送指令
+		byte[] data = ImageUtils.toByteArray(bi, "jpg");
+		Map<String, Object> cconfig = config.get(currentUser);
+		Socket socket;
+		try {
+			socket = new Socket((String)cconfig.get("serverIP"), Integer.valueOf((String) cconfig.get("serverPort")));
+			WriteThread wt = this.cp.new WriteThread(socket.getOutputStream());
+			wt.start();
+			sendByteArray(wt, data, "live" + System.currentTimeMillis() + ".jpg", String.format("live_image|%s", headImgMap.get("Self")));//发送自己的ip
+		} catch (NumberFormatException | IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	private void luzhiVideo(Stage primaryStage) {
@@ -962,7 +981,7 @@ public class Main2 extends Application{
 					
 					WriteThread wt = (WriteThread) config.get(userid).get("WriteThread");
 					//发送媒体文件
-					sendByteArray(wt, data, "camera" + System.currentTimeMillis() + ".jpg");
+					sendByteArray(wt, data, "camera" + System.currentTimeMillis() + ".jpg", "trans_file");
 					//保存发送信息
 //					saveMessage(filePath, 2);
 					saveMediaMessage("pic", 1, 2, data, "");//还是定方案为图片依然保存到本地最好！！否则聊天使得内存暴涨
@@ -997,8 +1016,8 @@ public class Main2 extends Application{
 		seletedText.getChildren().add(t);
 	}
 	
-	private void sendByteArray(WriteThread wt, byte[] data, String filename) {
-		String cmd = String.format("trans_file|%s|%s|%s|", filename, "pic", data.length);
+	private void sendByteArray(WriteThread wt, byte[] data, String filename, String type) {
+		String cmd = String.format("%s|%s|%s|%s|", type, filename, "pic", data.length);
 		byte[] front = new byte[1024];//限制1024
 		byte[] content = cmd.getBytes();
 		for(int i = 0; i < content.length; i++) {//都是正数
@@ -1151,6 +1170,7 @@ public class Main2 extends Application{
 	}
 	
 	Client_PBetter cp = null;
+	Map<String, Object[]> liveConfig = new HashMap<>();
 	
 	/**
 	 * 对外提供的第二个接口
@@ -1188,7 +1208,37 @@ public class Main2 extends Application{
 		String[] cmdParam = cmd_param.split("_");
 		if("online".equals(cmdParam[0])) {
 			
-		}else if("transFile".equals(cmdParam[0])){
+		}else if("liveImage".equals(cmdParam[0])){
+			//打开窗口，加进图片
+			if(cmdParam[1].equals("1")) {//首次传图
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						Stage stage_ca = new Stage();
+						stage_ca.setTitle("对方直播");
+						stage_ca.setHeight(500);
+						stage_ca.setWidth(500);
+						Pane p = liveShowReceived(stage, username, entity);
+						liveConfig.put(username, new Object[] {stage_ca, p});
+					}
+				});
+				
+			}else if(liveConfig.containsKey(username)){
+				Pane pane = (Pane)(((Object[])liveConfig.get(username))[0]);
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						ImageView view = new ImageView(new Image(new ByteArrayInputStream((byte[]) entity[0])));
+						if(pane.getChildren().size() > 0) {
+							pane.getChildren().set(0, view);
+						}else {
+							pane.getChildren().add(view);
+						}
+					}
+					
+				});
+			}
+		} if("transFile".equals(cmdParam[0])){
 			boolean changePane = false;
 			if(currentUser != username) {
 				changePane = true;
@@ -1243,6 +1293,29 @@ public class Main2 extends Application{
 //			receivedMessage(username, "上线提醒");
 //			currentUser = username;
 		}
+	}
+
+	private Pane liveShowReceived(Stage stage2, String username, Object[] entity) {
+		Group root = new Group();
+		Pane pane = new Pane();
+		pane.setMaxHeight(300);
+		root.getChildren().add(pane);
+		Scene scene = new Scene(root, 500, 600, Color.rgb(0x11, 0x11, 0x11, 0.1));
+		ByteArrayInputStream ins = new ByteArrayInputStream((byte[]) entity[0]);
+		ImageView view = new ImageView(new Image(ins));
+		if(pane.getChildren().size() > 0) {
+			pane.getChildren().set(0, view);
+		}else {
+			pane.getChildren().add(view);
+		}
+		stage2.setScene(scene);
+		try {
+			stage2.getIcons().add(new Image(new FileInputStream(headImgMap.get(username))));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		stage2.show();
+		return pane;
 	}
 
 	private void offLineOne(HBox hbox) {
