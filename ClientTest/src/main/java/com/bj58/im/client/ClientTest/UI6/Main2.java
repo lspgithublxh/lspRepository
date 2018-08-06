@@ -505,13 +505,60 @@ public class Main2 extends Application{
 	
 	Object lock = new Object();
 	Object lockLuzhi = new Object();
+	Object locklive = new Object();
 	Image cacheImage = null;
 	Boolean stop = false;
 	Boolean luzhi_start = false;
+	Boolean live_start = false;
 //	BlockingQueue<BufferedImage> imageQu = new LinkedBlockingQueue<BufferedImage>(500);
 	List<BufferedImage> imageList = new ArrayList<>();
 	
 	private void live(Stage primaryStage) {
+		Group root = new Group();
+		Pane pane = new Pane();
+		pane.setMaxHeight(300);
+		root.getChildren().add(pane);
+		Scene scene = new Scene(root, 500, 600, Color.rgb(0x11, 0x11, 0x11, 0.1));
+		Webcam came = Webcam.getDefault();//只有一个摄像头System.out.println(Webcam.getWebcams().size());
+		came.open();
+		Button button = new Button("直播");
+		button.setLayoutX(100);
+		button.setLayoutY(200);
+		root.getChildren().addAll(button);
+		button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent arg0) {
+				if(live_start) {
+					button.setDisable(true);
+					button.setText("直播");
+				}else {
+					button.setText("中断直播");
+				}
+				live_start = !live_start;
+				while(true) {
+					if(!live_start) {
+						break;
+					}
+					BufferedImage bi = came.getImage();
+					Image image2 = SwingFXUtils.toFXImage(bi, new WritableImage(100, 100));
+					
+					ImageView view = new ImageView(image2);
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							if(pane.getChildren().size() > 0) {
+								pane.getChildren().set(0, view);
+							}else {
+								pane.getChildren().add(view);
+							}
+							
+						}
+					});
+					//发送图片--新线程里：是否等待/同步/异步:异步最好
+				}
+				button.setDisable(false);
+			}
+		});
 		
 	}
 	
@@ -1163,6 +1210,7 @@ public class Main2 extends Application{
 				}
 			});
 		}else if("accept".equals(cmdParam[0])) {//对方server ip-port此时还不知道
+			System.out.println("new socket in");
 //			addWriteThread(username, entity);
 //			receivedMessage(username, "上线提醒");
 //			currentUser = username;
