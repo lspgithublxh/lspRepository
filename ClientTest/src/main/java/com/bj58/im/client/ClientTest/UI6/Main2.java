@@ -489,7 +489,7 @@ public class Main2 extends Application{
 		Menu menu5 = new Menu("Live");//视频直播
 		MenuItem item5 = new MenuItem("Open");
 		menu5.getItems().addAll(item5);
-		item4.setOnAction(new EventHandler<ActionEvent>() {
+		item5.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				Stage stage = new Stage();
@@ -525,20 +525,48 @@ public class Main2 extends Application{
 		button.setLayoutX(100);
 		button.setLayoutY(200);
 		root.getChildren().addAll(button);
+		//内部不能却不能动态加东西--无线循环
 		button.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent arg0) {
+				System.out.println("click listen");
 				if(live_start) {
 					button.setDisable(true);
 					button.setText("直播");
 				}else {
 					button.setText("中断直播");
 				}
-				live_start = !live_start;
+				synchronized (locklive) {
+					live_start = !live_start;	
+					if(!live_start) {
+						try {
+							locklive.wait();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}else {
+						locklive.notify();
+					}
+					
+				}
+				button.setDisable(false);
+			}
+		});
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
 				while(true) {
 					if(!live_start) {
-						break;
+						synchronized (locklive) {
+							locklive.notify();
+							try {
+								locklive.wait();
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+						}
 					}
+					System.out.println("add image");
 					BufferedImage bi = came.getImage();
 					Image image2 = SwingFXUtils.toFXImage(bi, new WritableImage(100, 100));
 					
@@ -556,10 +584,10 @@ public class Main2 extends Application{
 					});
 					//发送图片--新线程里：是否等待/同步/异步:异步最好
 				}
-				button.setDisable(false);
 			}
-		});
-		
+		}).start();
+		primaryStage.setScene(scene);
+		primaryStage.show();
 	}
 	
 	private void luzhiVideo(Stage primaryStage) {
