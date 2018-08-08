@@ -103,6 +103,7 @@ import javafx.stage.WindowEvent;
  *   ----一般文件传输
  *  8.局域网ip搜索：上线用户
  *  9.视频录制--本地。视频直播---使用老连接|使用新连接----不关心对方各种配置--而只需要打开新的窗口
+ *  10.录音短传输--实时录音传输
  * @ClassName:Main2
  * @Description:
  * @Author lishaoping

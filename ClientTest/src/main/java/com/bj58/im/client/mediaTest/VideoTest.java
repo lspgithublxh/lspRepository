@@ -13,14 +13,17 @@ import javax.sound.sampled.TargetDataLine;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Side;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 /**
@@ -47,6 +50,25 @@ public class VideoTest extends Application{
 		Series<String, Number> se = createSerias2();
 		Scene scene = new Scene(chart, 600, 400);
 		chart.getData().add(se);
+		Stage stage = new Stage();
+		stage.setTitle("统计图");
+		stage.setScene(scene);
+		stage.show();
+	}
+	
+	private static void pieChart() {
+		PieChart pchart = new PieChart();
+		pchart.getData().add(new PieChart.Data("样式1", 230));
+		pchart.getData().add(new PieChart.Data("样式2", 130));
+		pchart.getData().add(new PieChart.Data("样式3", 30));
+		pchart.getData().add(new PieChart.Data("样式4", 330));
+		pchart.autosize();
+		pchart.setLabelLineLength(10);
+		pchart.setLegendSide(Side.LEFT);
+		pchart.setTitle("饼图");
+		pchart.setStartAngle(180);
+		
+		Scene scene = new Scene(pchart, 600, 400);
 		Stage stage = new Stage();
 		stage.setTitle("统计图");
 		stage.setScene(scene);
@@ -188,7 +210,8 @@ public class VideoTest extends Application{
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		justChart();
+//		justChart();
+		pieChart();
 //		barchar2();
 	}
 }

@@ -5,8 +5,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,7 +18,49 @@ import java.util.regex.Pattern;
 public class LogAnalyze {
 
 	public static void main(String[] args) {
-		test();
+//		test();
+		test2();
+	}
+
+	private static void test2() {
+		BufferedReader reader;
+		try {
+			reader = new BufferedReader(new FileReader("D:\\software\\aaa.txt"));
+			String line = null;
+			Map<String, Integer> map = new HashMap<String, Integer>();
+			Pattern p = Pattern.compile("\\s+'(\\S+)?'$", Pattern.CASE_INSENSITIVE);
+			while((line = reader.readLine()) != null) {
+				Matcher m = p.matcher(line);
+				if(m.find()) {
+					String ip = m.group(1);
+					map.put(ip, map.containsKey(ip) ? map.get(ip) + 1 : 1);
+				}
+			}
+			List<Object[]> li = new ArrayList<>();
+			for(String ip : map.keySet()) {
+				li.add(new Object[] {ip, map.get(ip)});
+			}
+			Collections.sort(li, new Comparator<Object[]>() {
+				@Override
+				public int compare(Object[] a, Object[] b) {
+					if(((Integer)a[1]) > ((Integer)b[1])) {
+						return 1;
+					}else if(((Integer)a[1]) < ((Integer)b[1])){
+						return -1;
+					}
+					return 0;
+				}
+			});
+			for(Object[] it : li) {
+				System.out.println(((String)it[0]) + ", " +  ((Integer)it[1]));
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	
 	}
 
 	private static void test() {
