@@ -14,6 +14,8 @@ import javax.sound.sampled.TargetDataLine;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -40,10 +42,22 @@ public class VideoTest extends Application{
 		launch(args);
 	}
 
+	private static void barchar2() {
+		BarChart<String, Number> chart = new BarChart<>(new CategoryAxis(), new NumberAxis());
+		Series<String, Number> se = createSerias2();
+		Scene scene = new Scene(chart, 600, 400);
+		chart.getData().add(se);
+		Stage stage = new Stage();
+		stage.setTitle("统计图");
+		stage.setScene(scene);
+		stage.show();
+	}
+	
 	private static void justChart() {
 		LineChart<Number, Number> chart = new LineChart<>(new NumberAxis(), new NumberAxis());
 		chart.autosize();
-		Series<Number, Number> se = createSerias();
+		chart.setCreateSymbols(false);
+		Series<Number, Number> se = createSerias(chart);
 		Scene scene = new Scene(chart, 600, 400);
 		chart.getData().add(se);
 		Stage stage = new Stage();
@@ -52,9 +66,30 @@ public class VideoTest extends Application{
 		stage.show();
 	}
 
-	private static Series<Number, Number> createSerias() {
+	private static Series<String, Number> createSerias2() {
+		Series<String, Number> se = new XYChart.Series<>();
+		AudioFormat af = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 8000f, 16, 1, 16 / 8 * 1, 8000f, true);
+		DataLine.Info info = new DataLine.Info(TargetDataLine.class, af);
+		TargetDataLine td;
+		try {
+			td = (TargetDataLine) AudioSystem.getLine(info);
+			td.open(af);
+			td.start();
+			byte[] da = new byte[1024];
+			td.read(da, 0, da.length);
+			int index = 0;
+			for(byte d : da) {
+				se.getData().add(new Data<String, Number>(++index + "", d));
+			}
+		} catch (LineUnavailableException e) {
+			e.printStackTrace();
+		}
+		se.setName("统计图");
+		return se;
+	}
+	
+	private static Series<Number, Number> createSerias(LineChart<Number, Number> chart) {
 		Series<Number, Number> se = new XYChart.Series<>();
-		
 		AudioFormat af = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 8000f, 16, 1, 16 / 8 * 1, 8000f, true);
 		DataLine.Info info = new DataLine.Info(TargetDataLine.class, af);
 		TargetDataLine td;
@@ -68,36 +103,34 @@ public class VideoTest extends Application{
 			for(byte d : da) {
 				se.getData().add(new Data<Number, Number>(++index, d));
 			}
-//			new Thread(new Runnable() {
-//				@Override
-//				public void run() {
-//					
-//					Platform.runLater(new Runnable() {
-//						@Override
-//						public void run() {
-//							int index = 0;
-//							byte[] da = new byte[10240];
-//							while(true) {
-//								td.read(da, 0, da.length);
-//								for(byte d : da) {
-//									se.getData().add(new Data<Number, Number>(++index, d));
-//								}
-//								try {
-//									Thread.sleep(1000);
-//									System.out.println("sleep");
-//								} catch (InterruptedException e) {
-//									e.printStackTrace();
-//								}
-//							}
-//						}
-//					});
-//				}}).start();
+			int[] sc = {index};
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					while(true) {
+						try {
+							Thread.sleep(2000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						System.out.println("sleep ok");
+						Series<Number, Number> sex = new XYChart.Series<>();
+						td.read(da, 0, da.length);
+						for(byte d : da) {
+							sex.getData().add(new Data<Number, Number>(++sc[0], d));
+						}
+						Platform.runLater(new Runnable() {
+							@Override
+							public void run() {
+								chart.getData().add(sex);
+							}
+						});
+					}
+				}
+			}).start();
 		} catch (LineUnavailableException e) {
 			e.printStackTrace();
 		}
-		
-		
-		se.getData().add(new Data<Number, Number>(1, -1.1));
 		se.setName("统计图");
 		return se;
 	}
@@ -156,5 +189,6 @@ public class VideoTest extends Application{
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		justChart();
+//		barchar2();
 	}
 }
