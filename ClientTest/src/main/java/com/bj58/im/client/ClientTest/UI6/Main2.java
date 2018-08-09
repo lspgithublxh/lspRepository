@@ -21,6 +21,11 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.TargetDataLine;
 
 import org.jim2mov.core.DefaultMovieInfoProvider;
 import org.jim2mov.core.FrameSavedListener;
@@ -502,6 +507,23 @@ public class Main2 extends Application{
 			}
 		});
 		bar.getMenus().add(menu5);
+		
+		Menu menu6 = new Menu("Audio");
+		MenuItem item6 = new MenuItem("Open");
+		menu6.getItems().addAll(item6);
+		item6.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				Stage stage = new Stage();
+				stage.setTitle("录音");
+				stage.setHeight(500);
+				stage.setWidth(500);
+				audioOperate(stage);
+			}
+
+		});
+		bar.getMenus().add(menu6);
+		
 		return bar;
 	}
 	
@@ -514,6 +536,85 @@ public class Main2 extends Application{
 	Boolean live_start = false;
 //	BlockingQueue<BufferedImage> imageQu = new LinkedBlockingQueue<BufferedImage>(500);
 	List<BufferedImage> imageList = new ArrayList<>();
+	
+	private void audioOperate(Stage stage) {
+		Group root = new Group();
+		Pane pane = new Pane();
+		pane.setMaxHeight(300);
+		root.getChildren().add(pane);
+		Scene scene = new Scene(root, 500, 600, Color.rgb(0x11, 0x11, 0x11, 0.1));
+		Button button = new Button("开始录音");
+		button.setLayoutX(100);
+		button.setLayoutY(200);
+		root.getChildren().addAll(button);
+		button.setBackground(new Background(new BackgroundFill(Color.ALICEBLUE, CornerRadii.EMPTY, new Insets(0))));
+		//录音设置部分
+		AudioFormat af = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 8000f, 16, 1, 16 / 8 * 1, 8000f, true);
+		DataLine.Info info = new DataLine.Info(TargetDataLine.class, af);
+		TargetDataLine td = null;
+		try {
+			td = (TargetDataLine) AudioSystem.getLine(info);
+		} catch (LineUnavailableException e1) {
+			e1.printStackTrace();
+		}
+		
+		TargetDataLine td2 = td;
+		Object readLock = new Object();
+		Boolean[] readGoon = {true};
+		button.setOnMousePressed(new EventHandler<MouseEvent>() {//执行完了，release事件才会执行
+			@Override
+			public void handle(MouseEvent e) {
+				button.setBackground(new Background(new BackgroundFill(Color.SPRINGGREEN, new CornerRadii(1), new Insets(1))));
+				//采集信号，读取,传输
+				System.out.println("录音下一轮");
+				synchronized (readLock) {//此时上一轮  这一步  还没有读完，所以不能继续
+					if(!readGoon[0]) {
+						return;
+					}
+				}
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							td2.open(af);
+							td2.start();
+							ByteArrayOutputStream out = new ByteArrayOutputStream();
+							while(true) {
+								System.out.println("continue");
+								synchronized (readLock) {
+									if(!readGoon[0]) {
+										readGoon[0] = true;
+										break;
+									}
+								}
+								byte[] da = new byte[3072];
+								int len = td2.read(da, 0, da.length);
+								out.write(da, 0, len);
+							}
+							//传输
+							System.out.println(out.size());
+							System.out.println();
+						} catch (LineUnavailableException e1) {
+							e1.printStackTrace();
+						}
+					}
+				}).start();
+			}
+		});
+		button.setOnMouseReleased(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				button.setBackground(new Background(new BackgroundFill(Color.ALICEBLUE, CornerRadii.EMPTY, new Insets(0))));
+				//结束读取，开始传输
+				System.out.println("release");
+				synchronized (readLock) {
+					readGoon[0] = false;
+				}
+			}
+		});
+		stage.setScene(scene);
+		stage.show();
+	}
 	
 	private void live(Stage primaryStage) {
 		Group root = new Group();

@@ -1,8 +1,11 @@
 package com.bj58.im.client.mediaTest;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
+import javax.sound.sampled.AudioFileFormat.Type;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -23,7 +26,6 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 /**
@@ -41,8 +43,8 @@ public class VideoTest extends Application{
 	static byte[] buffer;
 	
 	public static void main(String[] args) {
-//		audioTest();
-		launch(args);
+		audioTest();
+//		launch(args);
 	}
 
 	private static void barchar2() {
@@ -187,6 +189,10 @@ public class VideoTest extends Application{
 							if(len > 0) {
 								sd.write(buffer, 0, len);
 							}
+						//文件保存
+						File f = new File("D:\\cache1\\audio" + System.currentTimeMillis() + ".wav");
+						f.createNewFile();
+						AudioSystem.write(ais, Type.WAVE, new FileOutputStream(f));
 						} catch (LineUnavailableException e) {
 							e.printStackTrace();
 						} catch (IOException e) {
