@@ -120,6 +120,19 @@ import javafx.stage.WindowEvent;
  */
 public class Main2 extends Application{
 
+	static TargetDataLine td = null;
+	static AudioFormat af;
+	static {
+		af = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 8000f, 16, 1, 16 / 8 * 1, 8000f, true);
+		DataLine.Info info = new DataLine.Info(TargetDataLine.class, af);
+		
+		try {
+			td = (TargetDataLine) AudioSystem.getLine(info);
+		} catch (LineUnavailableException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
 	public static void main(String[] args) {
 		launch(args);
 	}
@@ -532,6 +545,7 @@ public class Main2 extends Application{
 	Object lock = new Object();
 	Object lockLuzhi = new Object();
 	Object locklive = new Object();
+	Object lockVideo = new Object();
 	Image cacheImage = null;
 	Boolean stop = false;
 	Boolean luzhi_start = false;
@@ -551,15 +565,8 @@ public class Main2 extends Application{
 		root.getChildren().addAll(button);
 		button.setBackground(new Background(new BackgroundFill(Color.ALICEBLUE, CornerRadii.EMPTY, new Insets(0))));
 		//录音设置部分
-		AudioFormat af = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 8000f, 16, 1, 16 / 8 * 1, 8000f, true);
-		DataLine.Info info = new DataLine.Info(TargetDataLine.class, af);
-		TargetDataLine td = null;
-		try {
-			td = (TargetDataLine) AudioSystem.getLine(info);
-		} catch (LineUnavailableException e1) {
-			e1.printStackTrace();
-		}
 		
+		String currentUser_click = currentUser;
 		TargetDataLine td2 = td;
 		Object readLock = new Object();
 		Boolean[] readGoon = {true};
@@ -578,24 +585,39 @@ public class Main2 extends Application{
 					@Override
 					public void run() {
 						try {
-							td2.open(af);
-							td2.start();
-							ByteArrayOutputStream out = new ByteArrayOutputStream();
-							while(true) {
-								System.out.println("continue");
-								synchronized (readLock) {
-									if(!readGoon[0]) {
-										readGoon[0] = true;
-										break;
-									}
-								}
-								byte[] da = new byte[3072];
-								int len = td2.read(da, 0, da.length);
-								out.write(da, 0, len);
+							if(!td2.isOpen()) {
+								td2.open(af);
 							}
+							ByteArrayOutputStream out = new ByteArrayOutputStream();
+							synchronized (lockVideo) {
+								td2.start();
+								while(true) {
+									System.out.println("continue");
+									synchronized (readLock) {
+										if(!readGoon[0]) {
+											readGoon[0] = true;
+											break;
+										}
+									}
+									byte[] da = new byte[3072];
+									int len = td2.read(da, 0, da.length);
+									out.write(da, 0, len);
+								}
+								td2.stop();
+							}
+							byte[] data = out.toByteArray();
+							Platform.runLater(new Runnable() {
+								@Override
+								public void run() {
+									//本地显示
+									writeVideoPartMessage_Data((Pane)config.get(currentUser_click).get("Pane"), 80, (Double[])config.get(currentUser_click).get("YPoint"), data);
+									//保存消息
+									saveMediaMessage("videoPart", 1, 11, data, null);
+								}
+							});
 							//传输
 							System.out.println(out.size());
-							sendVideoPart(out.toByteArray());
+							sendVideoPart(data);
 						} catch (LineUnavailableException e1) {
 							e1.printStackTrace();
 						}
