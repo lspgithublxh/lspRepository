@@ -22,6 +22,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
@@ -450,7 +451,7 @@ public class Main2 extends Application{
 			public void handle(ActionEvent event) {
 				String filePath = chooseFile(primaryStage);
 				try {
-					writeFileMessage(group, jianPointX, (Double[])config.get(currentUser).get("YPoint"), new FileInputStream("D:\\file.jpg"));
+					writeFileMessage(group, jianPointX, (Double[])config.get(currentUser).get("YPoint"), new FileInputStream("D:\\file12.jpg"));
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 				}
@@ -593,7 +594,7 @@ public class Main2 extends Application{
 							}
 							//传输
 							System.out.println(out.size());
-							System.out.println();
+							sendVideoPart(out.toByteArray());
 						} catch (LineUnavailableException e1) {
 							e1.printStackTrace();
 						}
@@ -693,6 +694,19 @@ public class Main2 extends Application{
 		}).start();
 		primaryStage.setScene(scene);
 		primaryStage.show();
+	}
+	
+	private void sendVideoPart(byte[] video) {
+		Map<String, Object> cconfig = config.get(currentUser);
+		Socket socket;
+		try {
+			socket = new Socket((String)cconfig.get("serverIP"), Integer.valueOf((String) cconfig.get("serverPort")));
+			WriteThread wt = this.cp.new WriteThread(socket.getOutputStream());
+			wt.start();
+			sendByteArray(wt, video, "video" + System.currentTimeMillis() + ".mp3", String.format("video_part|%s", headImgMap.get("Self")));//发送自己的ip
+		} catch (NumberFormatException | IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void sendLiveImage(BufferedImage bi) {
@@ -1260,6 +1274,8 @@ public class Main2 extends Application{
 			mes.params.put("picData", data);
 		}else if(type == 3) {
 			mes.params.put("videoUrl", savePath);
+		}else if(type == 11){
+			mes.params.put("videoPart", data);
 		}else {
 			mes.params.put("picUrl", savePath);
 		}
@@ -1308,8 +1324,16 @@ public class Main2 extends Application{
 	 */
 	public void cmdHandleCenter(String username, String cmd_param, Object[] entity) {
 		String[] cmdParam = cmd_param.split("_");
+		System.out.println("received_message:    " + cmdParam[0]);
 		if("online".equals(cmdParam[0])) {
 			
+		}else if("videoPart".equals(cmdParam[0])){
+			boolean changePane = false;
+			if(!username.equals(currentUser)) {
+				changePane = true;
+			}
+			currentUser = username;
+			receiveVideo(username, changePane, (byte[])entity[0]);
 		}else if("liveImage".equals(cmdParam[0])){
 			//打开窗口，加进图片
 			if(cmdParam[1].equals("1")) {//首次传图
@@ -1340,14 +1364,14 @@ public class Main2 extends Application{
 					
 				});
 			}
-		} if("transFile".equals(cmdParam[0])){
+		}else if("transFile".equals(cmdParam[0])){
 			boolean changePane = false;
 			if(currentUser != username) {
 				changePane = true;
 			}
 			currentUser = username;
 			receivedMediaMessage(username, "pic".equals(cmdParam[1]) ? (byte[])entity[0] : null,  cmdParam[2], cmdParam[1], changePane, (String) entity[1]);
-		} if("closeWindow".equals(cmdParam[0])) {//此时username是server
+		}else if("closeWindow".equals(cmdParam[0])) {//此时username是server
 			//username是服务器， entity是下线的机器-客户端
 			HBox hbox = (HBox) config.get((String)entity[0]).get("Hbox");//此时username是server
 			Platform.runLater(new Runnable() {
@@ -1358,7 +1382,7 @@ public class Main2 extends Application{
 				
 			});
 			config.remove((String)entity[0]);//移除用户动态配置--剩余操作以后
-		} if("offline".equals(cmdParam[0])) {
+		}else if("offline".equals(cmdParam[0])) {
 			
 		}else if("clientToMe".equals(cmdParam[0])) {//第二个ui被动接受连接
 			addWriteThread(username, entity);
@@ -1397,6 +1421,39 @@ public class Main2 extends Application{
 		}
 	}
 
+	private void receiveVideo(String username, boolean changePane, byte[] bs) {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				System.out.println("------changePane:" + changePane);
+				if(changePane) {
+					HBox hbox = (HBox) config.get(username).get("Hbox");
+					if(hbox != null) {
+						if(currHBox != null) {
+							currHBox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.1), CornerRadii.EMPTY, new Insets(0))));
+						}
+						hbox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.5), CornerRadii.EMPTY, new Insets(0))));
+						changePane(hbox, username);
+					}
+				}
+				writeRightMediaMessage(username, null, bs, "videoPart", null);
+				saveMediaMessage(username, 2, 11, bs, null);
+			}
+		});
+	}
+
+	private Pane audioShowReceived(Stage stage2, String username, Object[] entity) {
+		Group root = new Group();
+		Pane pane = new Pane();
+		pane.setMaxHeight(300);
+		root.getChildren().add(pane);
+		Scene scene = new Scene(root, 500, 600, Color.rgb(0x11, 0x11, 0x11, 0.1));
+		ByteArrayInputStream ins = new ByteArrayInputStream((byte[]) entity[0]);
+//		AudioInputStream ais = new AudioInputStream(ins, af, da.length / af.getFrameSize());
+		return null;
+
+	}
+	
 	private Pane liveShowReceived(Stage stage2, String username, Object[] entity) {
 		Group root = new Group();
 		Pane pane = new Pane();
@@ -1541,11 +1598,13 @@ public class Main2 extends Application{
 		double old = jianPointYArr[0];
 		if("pic".equals(type)) {
 			jianPointYArr[0] = drawImageContentRight(group, 600, jianPointYArr[0], content, "---");
+		}else if("videoPart".equals(type)){
+			jianPointYArr[0] = drawVideoPartContentRight(group, 600, jianPointYArr[0], content, null);
 		}else if("ved".equals(type)){
 			jianPointYArr[0] = drawMediaContentRight(group, 600, jianPointYArr[0], "---", savePath);
 		}else {
 			try {
-				jianPointYArr[0] = drawImageContentRight_Path(group, 600, jianPointYArr[0], new FileInputStream("D:\\file.jpg"));
+				jianPointYArr[0] = drawImageContentRight_Path(group, 600, jianPointYArr[0], new FileInputStream("D:\\file12.jpg"));
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -1570,11 +1629,13 @@ public class Main2 extends Application{
 		double old = jianPointYArr[0];
 		if("pic".equals(type)) {
 			jianPointYArr[0] = drawImageContentRight(group, 600, jianPointYArr[0], content, cmd_param);
+		}else if("videoPart".equals(type)){
+			jianPointYArr[0] = drawVideoPartContentRight(group, 600, jianPointYArr[0], content, cmd_param);
 		}else if("ved".equals(type)){
 			jianPointYArr[0] = drawMediaContentRight(group, 600, jianPointYArr[0], cmd_param, savePath);
 		}else {
 			try {
-				jianPointYArr[0] = drawImageContentRight_Path(group, 600, jianPointYArr[0], new FileInputStream("D:\\file.jpg"));
+				jianPointYArr[0] = drawImageContentRight_Path(group, 600, jianPointYArr[0], new FileInputStream("D:\\file12.jpg"));
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -1591,6 +1652,44 @@ public class Main2 extends Application{
 		group.setLayoutY(group.getLayoutY() + old - jianPointYArr[0]);
 	}
 	
+	private Double drawVideoPartContentRight(Pane group, double jianPointX, double jianPointY, byte[] content, String cmd_param) {
+		int height_img = 30;
+		int width_img = 44;
+		
+		double strWitdh = width_img;
+		double strHeight = height_img;
+		Path path = new Path();
+		double width = strWitdh;//纯直线长度
+		double height = strHeight;//纯直线长度
+		double radius = 5;
+		double jianLineWidth = 5;
+		double jianLineHeight = 10;
+		double angle = 90;
+		jianPointY += height;
+		
+		path.getElements().add(new MoveTo(jianPointX, jianPointY));
+		path.getElements().add(new LineTo(jianPointX - jianLineWidth, jianPointY - jianLineHeight));
+		path.getElements().add(new LineTo(jianPointX - jianLineWidth, jianPointY - jianLineHeight - height));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX - jianLineWidth - radius, jianPointY - jianLineHeight - height - radius, false, false));
+		path.getElements().add(new LineTo(jianPointX - jianLineWidth - radius - width, jianPointY - jianLineHeight - height - radius));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX - jianLineWidth - radius - width - radius, jianPointY - jianLineHeight - height, false, false));
+		path.getElements().add(new LineTo(jianPointX - jianLineWidth - radius - width - radius, jianPointY - jianLineHeight));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX - jianLineWidth - radius - width, jianPointY - jianLineHeight + radius, false, false));
+		
+		path.getElements().add(new LineTo(jianPointX - jianLineWidth - radius, jianPointY - jianLineHeight + radius));
+		path.getElements().add(new LineTo(jianPointX, jianPointY));
+		path.setFill(Color.rgb(0x7C, 0xCD, 0x7C));
+		DropShadow shadow = new DropShadow(10, 1, 1, Color.RED);
+		path.setEffect(shadow);
+		Button videoPart = new Button("接听");
+		videoPart.setLayoutX(jianPointX - jianLineWidth - radius - width);
+		videoPart.setLayoutY(jianPointY - jianLineHeight - height);
+		group.getChildren().add(path);
+		group.getChildren().add(videoPart);
+		
+		return jianPointY;
+	}
+
 	/**
 	 * 对外提供的写接口
 	 * @param 
@@ -1638,6 +1737,14 @@ public class Main2 extends Application{
 	public void writeImageMessage_Data(Pane group, double jianPointX, final Double[] jianPointYArr, InputStream data) {
 		double old = jianPointYArr[0];
 		jianPointYArr[0] = drawImageContent_data(group, jianPointX, jianPointYArr[0], data);
+		getHeadImg(group, jianPointX, jianPointYArr[0], false);
+		jianPointYArr[0] += 50;
+		group.setLayoutY(group.getLayoutY() + old - jianPointYArr[0]);
+	}
+	
+	public void writeVideoPartMessage_Data(Pane group, double jianPointX, final Double[] jianPointYArr, byte[] data) {
+		double old = jianPointYArr[0];
+		jianPointYArr[0] = drawVideoPart_data(group, jianPointX, jianPointYArr[0], data);
 		getHeadImg(group, jianPointX, jianPointYArr[0], false);
 		jianPointYArr[0] += 50;
 		group.setLayoutY(group.getLayoutY() + old - jianPointYArr[0]);
@@ -1770,6 +1877,43 @@ public class Main2 extends Application{
 		
 		group.getChildren().add(path);
 		group.getChildren().add(view);
+		
+		return jianPointY;
+	}
+	
+	private double drawVideoPart_data(Pane group, double jianPointX, double jianPointY, byte[] data) {
+		int height_img = 30;
+		int width_img = 44;
+		
+		Path path = new Path();
+		double width = width_img;//纯直线长度
+		double height = height_img;//纯直线长度
+		double radius = 5;
+		double jianLineWidth = 5;
+		double jianLineHeight = 10;
+		double angle = 90;
+		jianPointY += height;
+		
+		path.getElements().add(new MoveTo(jianPointX, jianPointY));
+		path.getElements().add(new LineTo(jianPointX + jianLineWidth, jianPointY - jianLineHeight));
+		path.getElements().add(new LineTo(jianPointX + jianLineWidth, jianPointY - jianLineHeight - height));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX + jianLineWidth + radius, jianPointY - jianLineHeight - height - radius, false, true));
+		path.getElements().add(new LineTo(jianPointX + jianLineWidth + radius + width, jianPointY - jianLineHeight - height - radius));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX + jianLineWidth + radius + width + radius, jianPointY - jianLineHeight - height, false, true));
+		path.getElements().add(new LineTo(jianPointX + jianLineWidth + radius + width + radius, jianPointY - jianLineHeight));
+		path.getElements().add(new ArcTo(radius, radius, angle, jianPointX + jianLineWidth + radius + width, jianPointY - jianLineHeight + radius, false, true));
+		
+		path.getElements().add(new LineTo(jianPointX + jianLineWidth + radius, jianPointY - jianLineHeight + radius));
+		path.getElements().add(new LineTo(jianPointX, jianPointY));
+		path.setFill(Color.rgb(0x7C, 0xCD, 0x7C));
+		DropShadow shadow = new DropShadow(10, 1, 1, Color.RED);
+		path.setEffect(shadow);
+		Button videoPart = new Button("接听");
+		videoPart.setLayoutX(jianPointX + jianLineWidth + radius);
+		videoPart.setLayoutY(jianPointY - jianLineHeight - height);//+ height_img / 4
+		
+		group.getChildren().add(path);
+		group.getChildren().add(videoPart);
 		
 		return jianPointY;
 	}
@@ -2082,9 +2226,11 @@ public class Main2 extends Application{
 					writeImageMessage_Data(pane_, 80, jianPointYArr, new ByteArrayInputStream((byte[])(s.getParams().get("picData"))));
 				}else if(s.getType() == 3) {
 					writeVideoMessage(pane_, 80, jianPointYArr, (String)(s.getParams().get("videoUrl")));
+				}else if(s.getType() == 11){
+					writeVideoPartMessage_Data(pane_, 80, jianPointYArr, (byte[])(s.getParams().get("videoPart")));
 				}else {
 					try {
-						writeImageMessage_Data(pane_, 80, jianPointYArr, new FileInputStream("D:\\file.jpg"));
+						writeImageMessage_Data(pane_, 80, jianPointYArr, new FileInputStream("D:\\file12.jpg"));
 					} catch (FileNotFoundException e) {
 						e.printStackTrace();
 					}
@@ -2104,6 +2250,8 @@ public class Main2 extends Application{
 //					writeRightMediaMessage(username, "", (byte[])s.getParams().get("picData"), "pic", "");
 					writeRightMediaMessage_ChangePane(pane_, jianPointYArr, (byte[])s.getParams().get("picData"),  "pic", "");
 //					writeImageMessage_Data(pane_, 80, jianPointYArr, new ByteArrayInputStream((byte[])(s.getParams().get("picData"))));
+				}else if(s.getType() == 11) {
+					writeRightMediaMessage_ChangePane(pane_, jianPointYArr, (byte[])s.getParams().get("videoPart"),  "videoPart", "");
 				}else if(s.getType() == 3) {
 					writeRightMediaMessage_ChangePane(pane_, jianPointYArr, null,  "ved", (String)(s.getParams().get("videoUrl")));
 //					writeRightMediaMessage(username, "", (byte[])s.getParams().get("picData"), "ved", (String)(s.getParams().get("videoUrl")));
