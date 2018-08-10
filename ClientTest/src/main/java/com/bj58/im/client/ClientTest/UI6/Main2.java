@@ -26,6 +26,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.TargetDataLine;
 
 import org.jim2mov.core.DefaultMovieInfoProvider;
@@ -1682,6 +1683,24 @@ public class Main2 extends Application{
 		DropShadow shadow = new DropShadow(10, 1, 1, Color.RED);
 		path.setEffect(shadow);
 		Button videoPart = new Button("接听");
+		videoPart.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				videoPart.setDisable(true);
+				System.out.println("写入扬声器:" + content.length);
+				AudioFormat af = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 8000f, 16, 1, 16 / 8 * 1, 8000f, true);
+				DataLine.Info info2 = new DataLine.Info(SourceDataLine.class, af);
+				try {
+					SourceDataLine sd = (SourceDataLine) AudioSystem.getLine(info2);
+					sd.open(af);
+					sd.start();
+					sd.write(content, 0, content.length);
+				} catch (LineUnavailableException e1) {
+					e1.printStackTrace();
+				}
+				videoPart.setDisable(false);
+			}
+		});
 		videoPart.setLayoutX(jianPointX - jianLineWidth - radius - width);
 		videoPart.setLayoutY(jianPointY - jianLineHeight - height);
 		group.getChildren().add(path);
@@ -1909,6 +1928,24 @@ public class Main2 extends Application{
 		DropShadow shadow = new DropShadow(10, 1, 1, Color.RED);
 		path.setEffect(shadow);
 		Button videoPart = new Button("接听");
+		videoPart.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				videoPart.setDisable(true);
+				System.out.println("写入扬声器:" + data.length);
+				AudioFormat af = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 8000f, 16, 1, 16 / 8 * 1, 8000f, true);
+				DataLine.Info info2 = new DataLine.Info(SourceDataLine.class, af);
+				try {
+					SourceDataLine sd = (SourceDataLine) AudioSystem.getLine(info2);
+					sd.open(af);
+					sd.start();
+					sd.write(data, 0, data.length);
+				} catch (LineUnavailableException e1) {
+					e1.printStackTrace();
+				}
+				videoPart.setDisable(false);
+			}
+		});
 		videoPart.setLayoutX(jianPointX + jianLineWidth + radius);
 		videoPart.setLayoutY(jianPointY - jianLineHeight - height);//+ height_img / 4
 		
