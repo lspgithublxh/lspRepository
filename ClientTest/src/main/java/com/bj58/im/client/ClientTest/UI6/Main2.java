@@ -610,14 +610,14 @@ public class Main2 extends Application{
 								@Override
 								public void run() {
 									//本地显示
-									writeVideoPartMessage_Data((Pane)config.get(currentUser_click).get("Pane"), 80, (Double[])config.get(currentUser_click).get("YPoint"), data);
+									writeVideoPartMessage_Data((Pane)config.get(currentUser).get("Pane"), 80, (Double[])config.get(currentUser).get("YPoint"), data);
 									//保存消息--同样绑定用户
-									saveVideoPartMessage("videoPart", 1, 11, data, currentUser_click);
+									saveVideoPartMessage("videoPart", 1, 11, data, currentUser);
 								}
 							});
 							//传输
 							System.out.println(out.size());
-							sendVideoPart(data, currentUser_click);//绑定当前用户--一个录音对应一个对方
+							sendVideoPart(data, currentUser);//绑定当前用户--一个录音对应一个对方
 						} catch (LineUnavailableException e1) {
 							e1.printStackTrace();
 						}
