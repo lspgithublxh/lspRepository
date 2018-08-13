@@ -611,13 +611,13 @@ public class Main2 extends Application{
 								public void run() {
 									//本地显示
 									writeVideoPartMessage_Data((Pane)config.get(currentUser_click).get("Pane"), 80, (Double[])config.get(currentUser_click).get("YPoint"), data);
-									//保存消息
-									saveMediaMessage("videoPart", 1, 11, data, null);
+									//保存消息--同样绑定用户
+									saveVideoPartMessage("videoPart", 1, 11, data, currentUser_click);
 								}
 							});
 							//传输
 							System.out.println(out.size());
-							sendVideoPart(data);
+							sendVideoPart(data, currentUser_click);//绑定当前用户--一个录音对应一个对方
 						} catch (LineUnavailableException e1) {
 							e1.printStackTrace();
 						}
@@ -631,7 +631,7 @@ public class Main2 extends Application{
 				button.setBackground(new Background(new BackgroundFill(Color.ALICEBLUE, CornerRadii.EMPTY, new Insets(0))));
 				//结束读取，开始传输
 				System.out.println("release");
-				synchronized (readLock) {
+				synchronized (readLock) {//不能施加lockVideo因为要同步
 					readGoon[0] = false;
 				}
 			}
@@ -719,8 +719,8 @@ public class Main2 extends Application{
 		primaryStage.show();
 	}
 	
-	private void sendVideoPart(byte[] video) {
-		Map<String, Object> cconfig = config.get(currentUser);
+	private void sendVideoPart(byte[] video, String username) {
+		Map<String, Object> cconfig = config.get(username);
 		Socket socket;
 		try {
 			socket = new Socket((String)cconfig.get("serverIP"), Integer.valueOf((String) cconfig.get("serverPort")));
@@ -1290,8 +1290,17 @@ public class Main2 extends Application{
 		getHeadImg(boxleft, 0, 0, isRight);
 	}
 	
+	private void saveVideoPartMessage(String text, int direction, int type, byte[] data, String username) {
+		List<Message> mesList = (List<Message>) config.get(username).get("message");
+		Message mes = new Message(mesList.size() + 1, text, type, direction);
+		if(type == 11){
+			mes.params.put("videoPart", data);
+		}
+		mesList.add(mes);
+	}
+	
 	private void saveMediaMessage(String text, int direction, int type, byte[] data, String savePath) {
-		List<Message> mesList = (List<Message>) config.get(currentUser).get("message");
+		List<Message> mesList = (List<Message>) config.get(currentUser).get("message");//TODO currentUser或许可以用text来替换
 		Message mes = new Message(mesList.size() + 1, text, type, direction);
 		if(type == 2) {
 			mes.params.put("picData", data);
@@ -1355,7 +1364,7 @@ public class Main2 extends Application{
 			if(!username.equals(currentUser)) {
 				changePane = true;
 			}
-			currentUser = username;
+			currentUser = username;//这种设置方式并不好---会导致并发冲突--最好直接用--而不是赋值：因为可能被覆盖  TODO
 			receiveVideo(username, changePane, (byte[])entity[0]);
 		}else if("liveImage".equals(cmdParam[0])){
 			//打开窗口，加进图片
@@ -1460,7 +1469,7 @@ public class Main2 extends Application{
 					}
 				}
 				writeRightMediaMessage(username, null, bs, "videoPart", null);
-				saveMediaMessage(username, 2, 11, bs, null);
+				saveVideoPartMessage(username, 2, 11, bs, username);
 			}
 		});
 	}
