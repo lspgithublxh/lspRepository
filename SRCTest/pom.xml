@@ -16,6 +16,12 @@
             <artifactId>httpclient</artifactId>
             <version>4.5</version>
         </dependency> -->
+        <!-- java to linux -->
+        <dependency>
+		    <groupId>ch.ethz.ganymed</groupId>
+		    <artifactId>ganymed-ssh2</artifactId>
+		    <version>262</version>
+		</dependency>
         <dependency>
 		    <groupId>org.apache.httpcomponents</groupId>
 		    <artifactId>httpmime</artifactId>
