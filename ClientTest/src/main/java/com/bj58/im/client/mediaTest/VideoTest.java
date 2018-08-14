@@ -60,6 +60,8 @@ public class VideoTest extends Application{
 	
 	private static void pieChart() {
 		PieChart pchart = new PieChart();
+		
+		
 		pchart.getData().add(new PieChart.Data("样式1", 230));
 		pchart.getData().add(new PieChart.Data("样式2", 130));
 		pchart.getData().add(new PieChart.Data("样式3", 30));
