@@ -39,13 +39,16 @@ public class CmdToLinux {
 			BufferedReader conre = new BufferedReader(new InputStreamReader(System.in));
 			PrintWriter wr = new PrintWriter(session.getStdin());
 			String temp = "";
+			int count2 = 0;
 			while(!temp.equals("exit")) {
 				System.out.print("[lishaoping@58ganji ~]#");
 				temp = conre.readLine();
 				System.out.println(temp);
-				wr.println(new String(temp.getBytes(Charset.forName("UTF-8")), "GBK"));//UTF-8 ISO-8859-1
+				wr.println(new String(temp.getBytes(Charset.forName("UTF-8")), "UTF-8"));//UTF-8 ISO-8859-1
 				wr.flush();
 				String line = null;
+				int count = 0;
+				
 				while((line = outre.readLine()) != null) {//会卡在这里
 					if("".equals(line)) {
 						System.out.println("continue...");
@@ -53,11 +56,17 @@ public class CmdToLinux {
 					}else {
 						System.out.println(line);
 						if(line.contains("input ip:")) {//请输入想要添加的ip地址
-							break;
+							count++;
+							if(count == 2) {
+								break;
+							}
 						}else if(line.contains("input permsion|select number:")) {//请输入你拥有的权限:
 							break;
 						}else if(line.contains("Password for lishaoping@58OS.ORG:")) {
-							break;
+							count2++;
+							if(count2 == 2) {
+								break;
+							}
 						}
 					}
 				}

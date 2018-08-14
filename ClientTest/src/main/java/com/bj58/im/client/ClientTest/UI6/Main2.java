@@ -537,6 +537,19 @@ public class Main2 extends Application{
 			}
 
 		});
+		MenuItem item7 = new MenuItem("Live");
+		menu6.getItems().addAll(item7);
+		item7.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				Stage stage = new Stage();
+				stage.setTitle("语音直播");
+				stage.setHeight(500);
+				stage.setWidth(500);
+				audioOperate(stage);
+			}
+
+		});
 		bar.getMenus().add(menu6);
 		
 		return bar;
@@ -552,6 +565,80 @@ public class Main2 extends Application{
 	Boolean live_start = false;
 //	BlockingQueue<BufferedImage> imageQu = new LinkedBlockingQueue<BufferedImage>(500);
 	List<BufferedImage> imageList = new ArrayList<>();
+	
+	
+	private void audioLive(Stage stage) {
+		Group root = new Group();
+		Pane pane = new Pane();
+		pane.setMaxHeight(300);
+		root.getChildren().add(pane);
+		Scene scene = new Scene(root, 500, 600, Color.rgb(0x11, 0x11, 0x11, 0.1));
+		Button button = new Button("开始录音");
+		button.setLayoutX(100);
+		button.setLayoutY(200);
+		Button button2 = new Button("停止录音");
+		button2.setLayoutX(150);
+		button2.setLayoutY(200);
+		button2.setDisable(true);
+		root.getChildren().addAll(button, button2);
+		button.setBackground(new Background(new BackgroundFill(Color.ALICEBLUE, CornerRadii.EMPTY, new Insets(0))));
+		Map<String, WriteThread> swt = new HashMap<>();
+		button.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				button.setDisable(true);
+				button2.setDisable(false);
+				//开始传输录音数据
+				if(!td.isOpen()) {
+					try {
+						td.open(af);
+					} catch (LineUnavailableException e) {
+						e.printStackTrace();
+					}
+				}
+				WriteThread luyingwt = null;
+				int times = 1;
+				if(!swt.containsKey(currentUser)) {//缓冲是最好的
+					try {
+						Map<String, Object> cconfig = config.get(currentUser);
+						Socket socket = new Socket((String)cconfig.get("serverIP"), Integer.valueOf((String) cconfig.get("serverPort")));
+						luyingwt = cp.new WriteThread(socket.getOutputStream());
+						luyingwt.start();
+						swt.put(currentUser, luyingwt);
+						times = 0;
+					}catch (Exception e) {
+					}
+				}
+				luyingwt = swt.get(currentUser);//TODO 同步需要
+				synchronized (lockVideo) {
+					td.start();
+					while(true) {
+						System.out.println("continue");
+						if(button2.isDisable()) {
+							break;
+						}
+						byte[] da = new byte[6144];
+						int len = td.read(da, 0, da.length);//发送得少，实时也要发送
+						//直接发送,一帧一帧的传
+						sendVideoLive(da, luyingwt, "video_live", "videoLive" + System.currentTimeMillis() + ".mp3", len, times == 0);
+						times++;
+					}
+					td.stop();
+				}
+			}
+		});
+		button2.setBackground(new Background(new BackgroundFill(Color.ALICEBLUE, CornerRadii.EMPTY, new Insets(0))));
+		button2.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				button2.setDisable(true);
+				button.setDisable(false);
+				//中断传输
+			}
+		});
+		stage.setScene(scene);
+		stage.show();
+	}
 	
 	private void audioOperate(Stage stage) {
 		Group root = new Group();
@@ -717,6 +804,18 @@ public class Main2 extends Application{
 		}).start();
 		primaryStage.setScene(scene);
 		primaryStage.show();
+	}
+	
+	private void sendVideoLive(byte[] video, WriteThread wt, String type, String filename, int length, boolean first) {
+		try {
+			if(first) {
+				sendByteArray(wt, video, filename, String.format("%s|%s",type, headImgMap.get("Self")));//发送自己的ip
+			}else {
+				sendByteArray_pure(wt, video, length);
+			}
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void sendVideoPart(byte[] video, String username) {
@@ -1153,6 +1252,22 @@ public class Main2 extends Application{
 		t.setLayoutY(name.getLayoutY());
 		t.setLayoutX(seletedText.getChildren().size() * 20);//个数增加
 		seletedText.getChildren().add(t);
+	}
+	
+	private void sendByteArray_pure(WriteThread wt, byte[] data, int lenth) {
+		System.out.println("start --- send data---:");
+		for(int i = 0; i < lenth; i+= 1024) {
+			int end = i + 1024;
+			byte[] buf = new byte[1024];
+			if(i + 1024 > data.length) {
+				end = data.length;
+			}
+			for(int j = i; j < end; j++) {
+				buf[j - i] = data[j];
+			}
+			wt.writeByteArray(buf);//
+		}
+		System.out.println("end --- send ");
 	}
 	
 	private void sendByteArray(WriteThread wt, byte[] data, String filename, String type) {

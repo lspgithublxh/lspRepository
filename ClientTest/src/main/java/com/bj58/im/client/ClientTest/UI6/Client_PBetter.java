@@ -158,6 +158,7 @@ public class ReadThread extends Thread{
 					boolean isText = true;
 					boolean isLive = false;
 					boolean isVideoPart = false;
+					boolean isVideoLive = false;
 					int imageIndex = 0;
 					String fileName = "";
 					String fileType = "";
@@ -172,6 +173,13 @@ public class ReadThread extends Thread{
 							e.printStackTrace();
 						}
 						String line = null;
+						if(isVideoLive) {//现在实际没有连续传，有浪费；；最好是直接传输--在这里判断一下/或者另一个线程传状态;;;既然是专门的socket就直接一直用这个socket传输---因为不会是其他数据
+							getDataFromInputStream(dataIn, b, fileLength, out);
+							ui.cmdHandleCenter(username, 
+									"videoPart_" + fileName, new Object[] {out.toByteArray()});
+							out.reset();
+							continue;
+						}
 						if(isVideoPart) {
 							getDataFromInputStream(dataIn, b, fileLength, out);
 							//TODO 8-9 新建方法，提取出一个方法
@@ -324,6 +332,14 @@ public class ReadThread extends Thread{
 							System.out.println(line);
 						}else if(line.startsWith("video_part|")){
 							isVideoPart = true;
+							String[] dt = line.split("\\|");
+							username = dt[1];
+							fileName = dt[2];
+							fileType = dt[3];
+							fileLength = Long.valueOf(dt[4]);
+							System.out.println(line);
+						}else if(line.startsWith("video_live|")){
+							isVideoLive = true;
 							String[] dt = line.split("\\|");
 							username = dt[1];
 							fileName = dt[2];
