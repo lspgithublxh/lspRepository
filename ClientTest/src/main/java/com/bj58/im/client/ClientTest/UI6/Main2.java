@@ -54,6 +54,11 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import javafx.scene.chart.XYChart.Data;
+import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -546,7 +551,7 @@ public class Main2 extends Application{
 				stage.setTitle("语音直播");
 				stage.setHeight(500);
 				stage.setWidth(500);
-				audioOperate(stage);
+				audioLive(stage);
 			}
 
 		});
@@ -620,7 +625,7 @@ public class Main2 extends Application{
 						byte[] da = new byte[6144];
 						int len = td.read(da, 0, da.length);//发送得少，实时也要发送
 						//直接发送,一帧一帧的传
-						sendVideoLive(da, luyingwt, "video_live", "videoLive" + System.currentTimeMillis() + ".mp3", len, times == 0);
+						sendVideoLive(da, luyingwt, "video_live", (times + 1) + "", len, times == 0);//"videoLive" + System.currentTimeMillis() + ".mp3"
 						times++;
 					}
 					td.stop();
@@ -1436,7 +1441,7 @@ public class Main2 extends Application{
 	
 	Client_PBetter cp = null;
 	Map<String, Object[]> liveConfig = new HashMap<>();
-	
+	Map<String, Object[]> videoLiveConfig = new HashMap<>();
 	/**
 	 * 对外提供的第二个接口
 	 * @param  有问题的方法：因为80 和 drawContentRight矛盾
@@ -1474,7 +1479,16 @@ public class Main2 extends Application{
 		System.out.println("received_message:    " + cmdParam[0]);
 		if("online".equals(cmdParam[0])) {
 			
-		}else if("videoPart".equals(cmdParam[0])){
+		}else if("videoLive".equals(cmdParam[0])) {
+			boolean changePane = false;
+			if(!username.equals(currentUser)) {
+				changePane = true;
+			}
+			currentUser = username;//只changePane不生产东西
+			//弹出窗口，展示波形，写入音响
+			receiveVideoLive(username, changePane, (byte[])entity[0],  cmdParam[1]);
+		}
+		else if("videoPart".equals(cmdParam[0])){
 			boolean changePane = false;
 			if(!username.equals(currentUser)) {
 				changePane = true;
@@ -1491,7 +1505,7 @@ public class Main2 extends Application{
 						stage_ca.setTitle("对方直播");
 						stage_ca.setHeight(500);
 						stage_ca.setWidth(500);
-						Pane p = liveShowReceived(stage, username, entity);
+						Pane p = liveShowReceived(stage_ca, username, entity);//TODO 修改 stage 为stage_ca
 						liveConfig.put(username, new Object[] {stage_ca, p});
 					}
 				});
@@ -1568,6 +1582,44 @@ public class Main2 extends Application{
 		}
 	}
 
+	private void receiveVideoLive(String username, boolean changePane, byte[] bs, String times) {
+		//打开窗口，加进图片
+		if(times.equals("1")) {//首次传图
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					Stage stage_ca = new Stage();
+					stage_ca.setTitle("对方直播");
+					stage_ca.setHeight(500);
+					stage_ca.setWidth(500);
+					Pane p = videoLiveShowReceived(stage_ca, username, bs);
+					videoLiveConfig.put(username, new Object[] {stage_ca, p});
+				}
+			});
+		}else if(videoLiveConfig.containsKey(username)){//肯定不是第一次传数据了
+			Pane pane = (Pane)(((Object[])videoLiveConfig.get(username))[0]);
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					LineChart<Number, Number> chart = (LineChart<Number, Number>) pane.getChildren().get(0);
+					chart.getData().clear();//先不累加
+					Series<Number, Number> se = new XYChart.Series<>();
+					int sc = 0;
+					for(byte d : bs) {
+						se.getData().add(new Data<Number, Number>(++sc, d));
+					}
+					chart.getData().add(se);
+					if(pane.getChildren().size() > 0) {
+						pane.getChildren().set(0, chart);
+					}else {
+						pane.getChildren().add(chart);
+					}
+				}
+				
+			});
+		}
+	}
+
 	private void receiveVideo(String username, boolean changePane, byte[] bs) {
 		Platform.runLater(new Runnable() {
 			@Override
@@ -1599,6 +1651,46 @@ public class Main2 extends Application{
 //		AudioInputStream ais = new AudioInputStream(ins, af, da.length / af.getFrameSize());
 		return null;
 
+	}
+	
+	private Pane videoLiveShowReceived(Stage stage2, String username, byte[] data) {
+		Group root = new Group();
+		Pane pane = new Pane();
+		pane.setMaxHeight(300);
+		root.getChildren().add(pane);
+		
+		Scene scene = new Scene(root, 500, 600, Color.rgb(0x11, 0x11, 0x11, 0.1));
+		
+		if(pane.getChildren().size() > 0) {
+			LineChart<Number, Number> chart = (LineChart<Number, Number>) pane.getChildren().get(0);
+			chart.getData().clear();//先不累加
+			Series<Number, Number> se = new XYChart.Series<>();
+			int sc = 0;
+			for(byte d : data) {
+				se.getData().add(new Data<Number, Number>(++sc, d));
+			}
+			chart.getData().add(se);
+			pane.getChildren().set(0, chart);
+		}else {
+			LineChart<Number, Number> chart = new LineChart<>(new NumberAxis(), new NumberAxis());
+			chart.autosize();
+			chart.setCreateSymbols(false);
+			Series<Number, Number> se = new XYChart.Series<>();
+			int sc = 0;
+			for(byte d : data) {
+				se.getData().add(new Data<Number, Number>(++sc, d));
+			}
+			chart.getData().add(se);
+			pane.getChildren().add(chart);
+		}
+		stage2.setScene(scene);
+		try {
+			stage2.getIcons().add(new Image(new FileInputStream(headImgMap.get(username))));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		stage2.show();
+		return pane;
 	}
 	
 	private Pane liveShowReceived(Stage stage2, String username, Object[] entity) {

@@ -176,7 +176,7 @@ public class ReadThread extends Thread{
 						if(isVideoLive) {//现在实际没有连续传，有浪费；；最好是直接传输--在这里判断一下/或者另一个线程传状态;;;既然是专门的socket就直接一直用这个socket传输---因为不会是其他数据
 							getDataFromInputStream(dataIn, b, fileLength, out);
 							ui.cmdHandleCenter(username, 
-									"videoPart_" + fileName, new Object[] {out.toByteArray()});
+									"videoLive_" + fileName, new Object[] {out.toByteArray()});
 							out.reset();
 							continue;
 						}
