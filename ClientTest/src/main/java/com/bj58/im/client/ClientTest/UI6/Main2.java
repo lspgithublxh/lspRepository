@@ -1638,27 +1638,24 @@ public class Main2 extends Application{
 						ObservableList old = chart.getData();
 						int sc = 0;
 						for(byte d : bs) {
-							if(sc > 100) break;//生长曲线更好看
+//							if(sc > 100) break;//生长曲线更好看
+							
+							if(sc % 100 == 0) {
+								chart.getData().clear();
+								Series<Number, Number> ses = new XYChart.Series<>();
+								ses.getData().addAll(se.getData());
+								chart.getData().add(ses);
+								se.getData().clear();
+								sc = 0;
+							}
+							
 							se.getData().add(new Data<Number, Number>(++sc, d));
 						}
-						System.out.println("remove data for chart");
-						chart.getData().removeAll(old);
-						System.out.println("add data for chart");
-						chart.getData().add(se);
-//						try {
-//							Thread.sleep(1000);
-//						} catch (InterruptedException e) {
-//							e.printStackTrace();
-//						}
+//						System.out.println("remove data for chart");
+//						chart.getData().removeAll(old);
+//						System.out.println("add data for chart");
+//						chart.getData().add(se);
 					}
-					
-//					chart.getData().removeAll(old);
-//					if(pane.getChildren().size() > 0) {
-//						pane.getChildren().set(0, chart);
-//					}else {
-//						pane.getChildren().add(chart);
-//					}
-					
 				}
 				
 			});
