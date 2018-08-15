@@ -28,11 +28,10 @@ public class LogAnalyze extends Application{
 	public static void main(String[] args) {
 //		test();
 //		test2();
-		String regex = "";
+		String regex = "ip:(\\S+?),os:(\\S+?),useragent:(.+?),deviceId:(\\S+?),userid:(\\S+?),version:(\\S+?)$";
 		int count = 6;
-		String file = "";
+		String file = "D:\\software\\so.txt";
 		table = tableData(regex, count, file);
-		
 		launch(args);
 	}
 
@@ -70,11 +69,11 @@ public class LogAnalyze extends Application{
 	}
 	
 	private static List<List<String>> tableData(String regex, int count, String file) {
-		Pattern p = Pattern.compile("ip:(\\S+?),os:(\\S+?),useragent:(.+?),deviceId:(\\S+?),userid:(\\S+?),version:(\\S+?)$");
+		Pattern p = Pattern.compile(regex);
 		BufferedReader reader;
 		List<List<String>> table = new ArrayList<>();
 		try {
-			reader = new BufferedReader(new FileReader("D:\\software\\ddd.txt"));
+			reader = new BufferedReader(new FileReader(file));
 			
 			String line = null;
 			while((line = reader.readLine()) != null) {
@@ -178,8 +177,18 @@ public class LogAnalyze extends Application{
 	private void drawImage(String data) {
 		PieChart pchart = new PieChart();
 		String[] d = data.split(";");
+		int totalCount = 0;
+		int i = 0;
 		for(String da : d) {
 			String[] dx = da.split(",");
+			totalCount += Integer.valueOf(dx[1]);
+		}
+		for(String da : d) {
+			String[] dx = da.split(",");
+			dx[0] = String.format("%s_%.1f%%_%s", dx[1], (Integer.valueOf(dx[1]) / (double )totalCount) * 100, dx[0]);
+			if(dx[0].length() > 20) {
+				dx[0] = dx[0].substring(0, 15);
+			}
 			pchart.getData().add(new PieChart.Data(dx[0], Integer.valueOf(dx[1])));
 		}
 //		pchart.getData().add(new PieChart.Data("样式1", 230));
