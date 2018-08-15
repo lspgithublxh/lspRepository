@@ -583,17 +583,19 @@ public class Main2 extends Application{
 		button.setLayoutX(100);
 		button.setLayoutY(200);
 		Button button2 = new Button("停止录音");
-		button2.setLayoutX(150);
+		button2.setLayoutX(200);
 		button2.setLayoutY(200);
 		button2.setDisable(true);
 		root.getChildren().addAll(button, button2);
-		button.setBackground(new Background(new BackgroundFill(Color.ALICEBLUE, CornerRadii.EMPTY, new Insets(0))));
+		button.setBackground(new Background(new BackgroundFill(Color.GREENYELLOW, CornerRadii.EMPTY, new Insets(0))));
 		Map<String, WriteThread> swt = new HashMap<>();
-		button.setOnAction(new EventHandler<ActionEvent>() {
+		button.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
-			public void handle(ActionEvent event) {
+			public void handle(MouseEvent event) {
 				button.setDisable(true);
+				button.setBackground(new Background(new BackgroundFill(Color.ALICEBLUE, CornerRadii.EMPTY, new Insets(0))));
 				button2.setDisable(false);
+				button2.setBackground(new Background(new BackgroundFill(Color.GREENYELLOW, CornerRadii.EMPTY, new Insets(0))));
 				//开始传输录音数据
 				if(!td.isOpen()) {
 					try {
@@ -616,27 +618,37 @@ public class Main2 extends Application{
 					}
 				}
 				luyingwt = swt.get(currentUser);//TODO 同步需要
-				synchronized (lockVideo) {
-					td.start();
-					while(true) {
-						System.out.println("continue");
-						if(button2.isDisable()) {
-							break;
+				final int lastTimes = times;
+				final WriteThread luyingwt_ = luyingwt;
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						int times = lastTimes;
+						synchronized (lockVideo) {
+							td.start();
+							while(true) {
+								System.out.println("continue");
+								if(button2.isDisable()) {
+									break;
+								}
+								byte[] da = new byte[6144];
+								int len = td.read(da, 0, da.length);//发送得少，实时也要发送
+								//直接发送,一帧一帧的传
+								sendVideoLive(da, luyingwt_, "video_live", (times + 1) + "", len, times == 0);//"videoLive" + System.currentTimeMillis() + ".mp3"
+								times++;
+							}
+							td.stop();
 						}
-						byte[] da = new byte[6144];
-						int len = td.read(da, 0, da.length);//发送得少，实时也要发送
-						//直接发送,一帧一帧的传
-						sendVideoLive(da, luyingwt, "video_live", (times + 1) + "", len, times == 0);//"videoLive" + System.currentTimeMillis() + ".mp3"
-						times++;
 					}
-					td.stop();
-				}
+				}).start();
 			}
 		});
 		button2.setBackground(new Background(new BackgroundFill(Color.ALICEBLUE, CornerRadii.EMPTY, new Insets(0))));
-		button2.setOnAction(new EventHandler<ActionEvent>() {
+		button2.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
-			public void handle(ActionEvent event) {
+			public void handle(MouseEvent event) {
+				button.setBackground(new Background(new BackgroundFill(Color.GREENYELLOW, CornerRadii.EMPTY, new Insets(0))));
+				button2.setBackground(new Background(new BackgroundFill(Color.ALICEBLUE, CornerRadii.EMPTY, new Insets(0))));
 				button2.setDisable(true);
 				button.setDisable(false);
 				//中断传输
