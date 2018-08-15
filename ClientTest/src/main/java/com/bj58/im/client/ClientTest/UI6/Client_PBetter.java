@@ -178,6 +178,8 @@ public class ReadThread extends Thread{
 							ui.cmdHandleCenter(username, 
 									"videoLive_" + fileName, new Object[] {out.toByteArray()});
 							out.reset();
+							//第二次开始fileName需要改变
+							fileName = "2";
 							continue;
 						}
 						if(isVideoPart) {

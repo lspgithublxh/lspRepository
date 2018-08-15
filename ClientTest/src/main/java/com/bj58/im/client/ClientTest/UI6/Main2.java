@@ -1260,7 +1260,7 @@ public class Main2 extends Application{
 	}
 	
 	private void sendByteArray_pure(WriteThread wt, byte[] data, int lenth) {
-		System.out.println("start --- send data---:");
+		System.out.println("start --- send data pure---:");
 		for(int i = 0; i < lenth; i+= 1024) {
 			int end = i + 1024;
 			byte[] buf = new byte[1024];
@@ -1272,7 +1272,7 @@ public class Main2 extends Application{
 			}
 			wt.writeByteArray(buf);//
 		}
-		System.out.println("end --- send ");
+		System.out.println("end --- send data pure");
 	}
 	
 	private void sendByteArray(WriteThread wt, byte[] data, String filename, String type) {
@@ -1582,12 +1582,32 @@ public class Main2 extends Application{
 		}
 	}
 
+	Object videoLiveReLock = new Object();
+	SourceDataLine sd;
+	
 	private void receiveVideoLive(String username, boolean changePane, byte[] bs, String times) {
 		//打开窗口，加进图片
+		System.out.println("times:" + times);
 		if(times.equals("1")) {//首次传图
 			Platform.runLater(new Runnable() {
 				@Override
 				public void run() {
+					DataLine.Info info2 = new DataLine.Info(SourceDataLine.class, af);
+					try {
+						sd = (SourceDataLine) AudioSystem.getLine(info2);
+						if(!sd.isOpen()) {
+							sd.open(af);
+						}
+						synchronized (videoLiveReLock) {
+							System.out.println("写入音响");
+							sd.start();
+							sd.write(bs, 0, bs.length);
+							sd.close();
+						}
+					} catch (LineUnavailableException e) {
+						e.printStackTrace();
+					}
+					
 					Stage stage_ca = new Stage();
 					stage_ca.setTitle("对方直播");
 					stage_ca.setHeight(500);
@@ -1597,7 +1617,14 @@ public class Main2 extends Application{
 				}
 			});
 		}else if(videoLiveConfig.containsKey(username)){//肯定不是第一次传数据了
-			Pane pane = (Pane)(((Object[])videoLiveConfig.get(username))[0]);
+			synchronized (videoLiveReLock) {
+				System.out.println("写入音响");
+				sd.start();
+				sd.write(bs, 0, bs.length);
+				sd.close();
+			}
+			//画图耗费
+			Pane pane = (Pane)(((Object[])videoLiveConfig.get(username))[1]);
 			Platform.runLater(new Runnable() {
 				@Override
 				public void run() {
@@ -1654,6 +1681,7 @@ public class Main2 extends Application{
 	}
 	
 	private Pane videoLiveShowReceived(Stage stage2, String username, byte[] data) {
+		//先写入麦克风
 		Group root = new Group();
 		Pane pane = new Pane();
 		pane.setMaxHeight(300);
