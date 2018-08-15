@@ -45,6 +45,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -1583,7 +1584,9 @@ public class Main2 extends Application{
 	}
 
 	Object videoLiveReLock = new Object();
+	Object imageShowLock = new Object();
 	SourceDataLine sd;
+	
 	
 	private void receiveVideoLive(String username, boolean changePane, byte[] bs, String times) {
 		//打开窗口，加进图片
@@ -1623,24 +1626,39 @@ public class Main2 extends Application{
 				sd.write(bs, 0, bs.length);
 				sd.close();
 			}
-			//画图耗费
+			//画图耗费-
 			Pane pane = (Pane)(((Object[])videoLiveConfig.get(username))[1]);
 			Platform.runLater(new Runnable() {
 				@Override
 				public void run() {
-					LineChart<Number, Number> chart = (LineChart<Number, Number>) pane.getChildren().get(0);
-					chart.getData().clear();//先不累加
-					Series<Number, Number> se = new XYChart.Series<>();
-					int sc = 0;
-					for(byte d : bs) {
-						se.getData().add(new Data<Number, Number>(++sc, d));
+					synchronized (imageShowLock) {
+						LineChart<Number, Number> chart = (LineChart<Number, Number>) pane.getChildren().get(0);
+//						chart.getData().clear();//先不累加
+						Series<Number, Number> se = new XYChart.Series<>();
+						ObservableList old = chart.getData();
+						int sc = 0;
+						for(byte d : bs) {
+							if(sc > 100) break;//生长曲线更好看
+							se.getData().add(new Data<Number, Number>(++sc, d));
+						}
+						System.out.println("remove data for chart");
+						chart.getData().removeAll(old);
+						System.out.println("add data for chart");
+						chart.getData().add(se);
+//						try {
+//							Thread.sleep(1000);
+//						} catch (InterruptedException e) {
+//							e.printStackTrace();
+//						}
 					}
-					chart.getData().add(se);
-					if(pane.getChildren().size() > 0) {
-						pane.getChildren().set(0, chart);
-					}else {
-						pane.getChildren().add(chart);
-					}
+					
+//					chart.getData().removeAll(old);
+//					if(pane.getChildren().size() > 0) {
+//						pane.getChildren().set(0, chart);
+//					}else {
+//						pane.getChildren().add(chart);
+//					}
+					
 				}
 				
 			});
