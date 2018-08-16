@@ -30,7 +30,7 @@ public class LogAnalyze extends Application{
 //		test2();
 		String regex = "ip:(\\S+?),os:(\\S+?),useragent:(.+?),deviceId:(\\S+?),userid:(\\S+?),version:(\\S+?)$";
 		int count = 6;
-		String file = "D:\\software\\so.txt";
+		String file = "D:\\software\\sos.txt";
 		table = tableData(regex, count, file);
 		launch(args);
 	}
