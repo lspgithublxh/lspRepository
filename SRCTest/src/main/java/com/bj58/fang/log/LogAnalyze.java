@@ -28,6 +28,34 @@ public class LogAnalyze extends Application{
 	public static void main(String[] args) {
 //		test();
 //		test2();
+//		userAnalize(args);
+		restrictIpAnalize(args);
+	}
+
+	private static void restrictIpAnalize(String[] args) {
+//		String regex = "-\\s+(\\S+?)restrict.+?success\\:(\\S+)$";
+//		int count = 2;
+//		String file = "D:\\software\\error.txt";
+//		table = tableData(regex, count, file);
+//		launch(args);
+		
+		
+		String regex = "-\\s+toofastrestrict.+?success\\:(\\S+)$";
+		int count = 1;
+		String file = "D:\\software\\error.txt";
+		table = tableData(regex, count, file);
+		for(String ip : table.get(0)) {
+			System.out.println(IPLocation.test(ip.split(";")[0]));
+		}
+		launch(args);
+	}
+
+	public static void analizeForOut(String[] args, List<List<String>> tableData) {
+		table = tableData;
+		launch(args);
+	}
+	
+	private static void userAnalize(String[] args) {
 		String regex = "ip:(\\S+?),os:(\\S+?),useragent:(.+?),deviceId:(\\S+?),userid:(\\S+?),version:(\\S+?)$";
 		int count = 6;
 		String file = "D:\\software\\sos.txt";
@@ -65,10 +93,11 @@ public class LogAnalyze extends Application{
 			if(count++ > 100) break;
 			rs += ((String)it[0]) + "," +  ((Integer)it[1]) + ";";
 		}
+		System.out.println(rs);
 		return rs;
 	}
 	
-	private static List<List<String>> tableData(String regex, int count, String file) {
+	public static List<List<String>> tableData(String regex, int count, String file) {
 		Pattern p = Pattern.compile(regex);
 		BufferedReader reader;
 		List<List<String>> table = new ArrayList<>();
@@ -175,6 +204,7 @@ public class LogAnalyze extends Application{
 	}
 
 	private void drawImage(String data) {
+		System.out.println("mapreduce:" + data);
 		PieChart pchart = new PieChart();
 		String[] d = data.split(";");
 		int totalCount = 0;
