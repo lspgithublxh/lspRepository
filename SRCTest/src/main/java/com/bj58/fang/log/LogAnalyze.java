@@ -40,16 +40,46 @@ public class LogAnalyze extends Application{
 //		launch(args);
 		
 		
-		String regex = "-\\s+toofastrestrict.+?success\\:(\\S+)$";
-		int count = 1;
-		String file = "D:\\software\\error.txt";
+		String regex = "-\\s+(.+?)restrict.+?success\\:(\\S+)$";
+		int count = 2;
+		String file = "D:\\software\\error2.txt";
 		table = tableData(regex, count, file);
-		for(String ip : table.get(0)) {
-			System.out.println(IPLocation.test(ip.split(";")[0]));
-		}
+//		for(String ip : table.get(0)) {
+//			System.out.println(IPLocation.test(ip.split(";")[0]));
+//		}
 		launch(args);
 	}
 
+	/**
+	 * 加了系统保护之后：
+	 * protect system catch：江苏省-南京市-鼓楼区-\n,11025;江苏省-徐州市--\n,4028;广东省-广州市-荔湾区-\n,1966;江苏省-泰州市-靖江市-\n,985;
+	 * toofast:江苏省-南京市-鼓楼区-\n,350;江苏省-徐州市--\n,138;广东省-广州市-荔湾区-\n,70;江苏省-泰州市-靖江市-\n,54;北京市-北京市-西城区-\n,1;
+	 * blacklist:江苏省-南京市-鼓楼区-\n,14885;江苏省-徐州市--\n,6447;广东省-广州市-荔湾区-\n,3068;江苏省-泰州市-靖江市-\n,1519;
+	 * 未加系统保护之前：
+	 * blacklist:江苏省-南京市-鼓楼区-\n,23782;江苏省-徐州市--\n,10090;广东省-广州市-荔湾区-\n,4798;江苏省-泰州市-靖江市-\n,2453;
+	 * toofast:江苏省-南京市-鼓楼区-\n,603;江苏省-徐州市--\n,252;广东省-广州市-荔湾区-\n,125;江苏省-泰州市-靖江市-\n,62;
+	 * @param 
+	 * @author lishaoping
+	 * @Date 2018年8月16日
+	 * @Package com.bj58.fang.log
+	 * @return String
+	 */
+	public static String getIps() {
+		String regex = "-\\s+toofastrestrict.+?success\\:(\\S+)$";
+		int count = 1;
+		String file = "D:\\software\\error2.txt";
+		table = tableData(regex, count, file);
+		return mapreduce(table.get(0));
+	}
+	
+	/**
+	 * 
+	 * @param 
+	 * @author lishaoping
+	 * @Date 2018年8月16日
+	 * @Package com.bj58.fang.log
+	 * @return void
+	 */
 	public static void analizeForOut(String[] args, List<List<String>> tableData) {
 		table = tableData;
 		launch(args);
@@ -204,7 +234,6 @@ public class LogAnalyze extends Application{
 	}
 
 	private void drawImage(String data) {
-		System.out.println("mapreduce:" + data);
 		PieChart pchart = new PieChart();
 		String[] d = data.split(";");
 		int totalCount = 0;

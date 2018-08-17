@@ -82,6 +82,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.PerspectiveTransform;
 import javafx.scene.effect.Reflection;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -218,13 +219,80 @@ public class Main extends Application {
 //			camera(primaryStage);
 //			camera_show(primaryStage);
 //			image_test();
-			justChart();//
+//			justChart();//
+			easy3d(primaryStage);
 			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * 使用4个概念来囊括
+	 * 	Box : 3d物体
+	 *  PerspectiveCamera: 摄像机
+	 *  Transform: 平移/旋转
+	 *  subscene: 子场景
+	 *  
+	 */
+	
+	static int count = 0;
+	static int step = -1;
+	
+	private static void easy3d(Stage primaryStage) {
+		Box box = new Box(5, 5, 5);
+		box.setMaterial(new PhongMaterial(Color.RED));
+		box.setDrawMode(DrawMode.FILL);
+		
+		PerspectiveCamera camera = new PerspectiveCamera(true);
+		camera.getTransforms().addAll(new Rotate(-20, Rotate.Y_AXIS),
+				new Rotate(-20, Rotate.X_AXIS),
+				new Translate(0, 0, -20));
+		
+		Group group = new Group();
+		group.getChildren().add(camera);
+		group.getChildren().add(box);
+		
+		SubScene subs = new SubScene(group, 300, 300, true, SceneAntialiasing.BALANCED);
+		subs.setCamera(camera);
+		
+		Group g = new Group();
+		g.getChildren().add(subs);
+		
+		primaryStage.setResizable(false);
+		
+		Scene scene = new Scene(g, 300, 300);
+		
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				
+				while(true) {
+					System.out.println("transform");
+					try {
+						Thread.sleep(20);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							camera.getTransforms().add(new Translate(0, 0, step));//x,y,z方向的移动
+							count++;
+							if(count > 100) {
+								step = -step;
+								count = 0;
+							}
+						}
+					});
+				}
+			}
+		}).start();
+		
+		primaryStage.setScene(scene);
+		primaryStage.show();
+	}
+	
 	private static void justChart() {
 		LineChart<Number, Number> chart = new LineChart<>(new NumberAxis(), new NumberAxis());
 		chart.autosize();
