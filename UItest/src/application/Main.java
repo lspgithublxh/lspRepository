@@ -1707,6 +1707,8 @@ public class Main extends Application {
 		Point2D point5 = new Point2D(250, 10);
 		Point2D[] a = new Point2D[] {point, point1, point2, point3, point4, point5};
 		Path path = new Path();
+		path.setLayoutX(10);
+		path.setLayoutY(10);
 		path.getElements().add(new MoveTo(a[0].getX(), a[0].getY()));
 		for(int i = 0; i < a.length - 1; i++) {
 			double centerX = (a[i].getX() + a[i+1].getX())/2;
