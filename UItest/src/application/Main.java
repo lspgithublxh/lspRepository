@@ -36,6 +36,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
+import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.geometry.Pos;
 import javafx.scene.AmbientLight;
@@ -121,6 +122,7 @@ import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurve;
+import javafx.scene.shape.CubicCurveTo;
 import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.DrawMode;
 import javafx.scene.shape.Ellipse;
@@ -176,6 +178,7 @@ public class Main extends Application {
 //			path(primaryStage);
 //			polygon(primaryStage);//多边形快速画法,顺序给定点
 //			cubicCurve(primaryStage);//三次曲线，控制点两个， 起点终点各一个
+			generalCubicCurve(primaryStage);
 			
 //			textDraw(primaryStage);
 //			gradientRectangle(primaryStage);
@@ -220,7 +223,7 @@ public class Main extends Application {
 //			camera_show(primaryStage);
 //			image_test();
 //			justChart();//
-			easy3d(primaryStage);
+//			easy3d(primaryStage);
 			
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -1693,6 +1696,28 @@ public class Main extends Application {
 		primaryStage.show();
 	}
 
+	private void generalCubicCurve(Stage stage) {
+		Group group = new Group();
+		Scene scene = new Scene(group, 300, 400, Color.rgb(0x11, 0x11, 0x11, 0.1));
+		Point2D point = new Point2D(0, 0);
+		Point2D point1 = new Point2D(50, 100);
+		Point2D point2 = new Point2D(100, 80);
+		Point2D point3 = new Point2D(150, 60);
+		Point2D point4 = new Point2D(200, 100);
+		Point2D point5 = new Point2D(250, 10);
+		Point2D[] a = new Point2D[] {point, point1, point2, point3, point4, point5};
+		Path path = new Path();
+		path.getElements().add(new MoveTo(a[0].getX(), a[0].getY()));
+		for(int i = 0; i < a.length - 1; i++) {
+			double centerX = (a[i].getX() + a[i+1].getX())/2;
+			path.getElements().add(new CubicCurveTo(centerX, a[i].getY(),
+					centerX, a[i+1].getY(), a[i+1].getX(), a[i+1].getY()));
+		}
+		group.getChildren().add(path);
+		stage.setScene(scene);
+		stage.show();
+	}
+	
 	private void cubicCurve(Stage primaryStage) {
 		Group group = new Group();
 		Scene scene = new Scene(group, 300, 400, Color.rgb(0x11, 0x11, 0x11, 0.1));

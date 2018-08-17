@@ -17,6 +17,15 @@ import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamPanel;
 import com.github.sarxos.webcam.WebcamResolution;
 
+/**
+ * 除此之外，物体碰撞检测、3d图像都有---从openimaj里
+ * @ClassName:FaceDectect
+ * @Description:
+ * @Author lishaoping
+ * @Date 2018年8月17日
+ * @Version V1.0
+ * @Package com.bj58.im.client.mediaTest
+ */
 public class FaceDectect extends JFrame implements Runnable, com.github.sarxos.webcam.WebcamPanel.Painter{
 
 	private BufferedImage buf;
