@@ -36,7 +36,8 @@ public class CurveNiheTest extends Application{
 //		Point2D[] a = provideSinPoint();
 //		Point2D[] a = provideThrowThingPoint();
 //		Point2D[] a = provideEPoint();
-		Point2D[] a = provideRoundPoint();
+//		Point2D[] a = provideRoundPoint();
+		Point2D[] a = provideLuoxuanPoint();
 		generalCubicCurve(stage, a);
 	}
 
@@ -49,6 +50,25 @@ public class CurveNiheTest extends Application{
 		Point2D point5 = new Point2D(250, 10);
 		Point2D[] a = new Point2D[] {point, point1, point2, point3, point4, point5};
 		return a;
+	}
+	
+	/**
+	 * 螺旋线
+	 * @param 
+	 * @author lishaoping
+	 * @Date 2018年8月17日
+	 * @Package com.bj58.im.client.mediaTest
+	 * @return Point2D[]
+	 */
+	private Point2D[] provideLuoxuanPoint() {
+		List<Point2D> li = new ArrayList<>();
+		int k = 0;
+		double step = 2 * Math.PI / 360;
+		for(float theta = 0; theta < 2 * Math.PI * 10; theta += step) {//弧度制度
+			li.add(new Point2D(theta * Math.cos(theta)  + 100 , theta * Math.sin(theta) )); 
+		}
+		System.out.println("end");
+		return li.toArray(new Point2D[] {});
 	}
 	
 	private Point2D[] provideRoundPoint() {
