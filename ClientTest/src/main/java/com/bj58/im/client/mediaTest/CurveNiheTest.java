@@ -37,7 +37,10 @@ public class CurveNiheTest extends Application{
 //		Point2D[] a = provideThrowThingPoint();
 //		Point2D[] a = provideEPoint();
 //		Point2D[] a = provideRoundPoint();
-		Point2D[] a = provideLuoxuanPoint();
+//		Point2D[] a = provideLuoxuanPoint();
+//		Point2D[] a = provideRectengeFieldPoint();
+//		Point2D[] a = provideTuoRoundPoint();
+		Point2D[] a = provideTuoRoundXuanzhuanPoint();
 		generalCubicCurve(stage, a);
 	}
 
@@ -50,6 +53,40 @@ public class CurveNiheTest extends Application{
 		Point2D point5 = new Point2D(250, 10);
 		Point2D[] a = new Point2D[] {point, point1, point2, point3, point4, point5};
 		return a;
+	}
+	
+	private Point2D[] provideRectengeFieldPoint() {
+		List<Point2D> li = new ArrayList<>();
+		int k = 0;
+		li.add(new Point2D(0 , 0 )); 
+		for(int i = 0; i < 3; i++) {//弧度制度
+			li.add(new Point2D(i  * 50 + 50 , 0 )); 
+		}
+		for(int i = 0; i < 3; i++) {//弧度制度
+			li.add(new Point2D(150 , i * 50 + 50 )); 
+		}
+		for(int i = 0; i < 3; i++) {//弧度制度
+			li.add(new Point2D(150 - i * 50 - 50 , 150 )); 
+		}
+		for(int i = 0; i < 3; i++) {//弧度制度
+			li.add(new Point2D(0 , 150 - i * 50 - 50 )); 
+		}
+		return li.toArray(new Point2D[] {});
+	}
+	
+	private Point2D[] provideDenggaoPoint() {
+		//0.数据点的生成
+		//1.数据点重排  
+		//2.一圈一圈的拟合
+		//3.曲线不重合----曲线碰撞检测---而重新拟合--直到没有碰撞---不容易---所以剔除这种错误数据点  ： 或者增大间隔
+		List<Point2D> li = new ArrayList<>();
+		int k = 0;
+		double step = 2 * Math.PI / 360;
+		for(float theta = 0; theta < 2 * Math.PI * 10; theta += step) {//弧度制度
+			li.add(new Point2D(theta * Math.cos(theta)  + 100 , theta * Math.sin(theta) )); 
+		}
+		System.out.println("end");
+		return li.toArray(new Point2D[] {});
 	}
 	
 	/**
@@ -68,6 +105,54 @@ public class CurveNiheTest extends Application{
 			li.add(new Point2D(theta * Math.cos(theta)  + 100 , theta * Math.sin(theta) )); 
 		}
 		System.out.println("end");
+		return li.toArray(new Point2D[] {});
+	}
+	
+	/**
+	 * 倾斜的椭圆
+	 * 点的旋转
+	 * @param 
+	 * @author lishaoping
+	 * @Date 2018年8月17日
+	 * @Package com.bj58.im.client.mediaTest
+	 * @return Point2D[]
+	 */
+	private Point2D[] provideTuoRoundXuanzhuanPoint() {
+		Point2D[] a = new Point2D[1000];
+		List<Point2D> li = new ArrayList<>();
+		int k = 0;
+		for(float i = 0; i <= 200; i += 0.2f) {
+			double y = 50 *  Math.sqrt(1 - (i - 100)*(i - 100) / (100 * 100));
+			double r = Math.sqrt(i * i + y * y);
+			double theta = Math.atan2(- y , i);///y,x
+			double theta2 = theta - 30 / 360.0;//绕x轴旋转30度
+			System.out.println(theta + ", " + theta2);
+			double xN = r * Math.cos(theta2);
+			double yN = r * Math.sin(theta2);
+			li.add(new Point2D(xN, yN)); 
+		}
+		for(float i = 200; i >= 0; i -= 0.2f) {
+			double y = 50 *  Math.sqrt(1 - (i - 100)*(i - 100) / (100 * 100));
+			double r = Math.sqrt(i * i + y * y);
+			double theta = Math.atan2(y , i);///y,x
+			double theta2 = theta - 30 / 360.0;
+			double xN = r * Math.cos(theta2);
+			double yN = r * Math.sin(theta2);
+			li.add(new Point2D(xN, yN)); 
+		}
+		return li.toArray(new Point2D[] {});
+	}
+	
+	private Point2D[] provideTuoRoundPoint() {
+		Point2D[] a = new Point2D[1000];
+		List<Point2D> li = new ArrayList<>();
+		int k = 0;
+		for(float i = 0; i <= 200; i += 0.2f) {
+			li.add(new Point2D(i, - 50 *  Math.sqrt(1 - (i - 100)*(i - 100) / (100 * 100) ))); 
+		}
+		for(float i = 200; i >= 0; i -= 0.2f) {
+			li.add(new Point2D(i, 50 *  Math.sqrt(1 - (i - 100)*(i - 100) / (100 * 100) ))); 
+		}
 		return li.toArray(new Point2D[] {});
 	}
 	
