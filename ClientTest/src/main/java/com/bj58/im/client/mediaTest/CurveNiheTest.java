@@ -128,11 +128,11 @@ public class CurveNiheTest extends Application{
 	private List<String> generateScoreList() {
 		List<String> sl = new ArrayList<>();
 		double a = 100;
-		for(int i = 0; i < 5; i++) {
+		for(int i = 0; i < 10; i++) {
 			double b = a / 2;
 			Point2D[] points = provideTuoRoundXuanzhuanPoint2(a, b, 30);
-			generalCubicCurve(points);
-			a = a - (i + 1) * 10;
+//			generalCubicCurve(points);
+			a = 100 - (i + 1) * 10;
 			for(Point2D p : points) {
 				String sc = p.getX() + "," + p.getY() + ";" + i + 10;
 				sl.add(sc);
@@ -233,7 +233,7 @@ public class CurveNiheTest extends Application{
 	private Point2D[] provideTuoRoundXuanzhuanPoint2(double a, double b, double angle) {
 		List<Point2D> li = new ArrayList<>();
 		int k = 0;
-		for(float i = 0; i <= 200; i += 0.2f) {
+		for(float i = -200; i <= 200; i += 0.2f) {
 			double y = b *  Math.sqrt(1 - (i - 100)*(i - 100) / (a * a));
 			double r = Math.sqrt(i * i + y * y);
 			double theta = Math.atan2(- y , i);///y,x
@@ -361,12 +361,12 @@ public class CurveNiheTest extends Application{
 	
 	private void generalMultiCubicCurve(Stage stage, Map<Integer, List<Point2D>> pMap) {
 		Group group = new Group();
-		Scene scene = new Scene(group, 300, 400, Color.rgb(0x11, 0x11, 0x11, 0.1));
+		Scene scene = new Scene(group, 600, 500, Color.rgb(0x11, 0x11, 0x11, 0.1));
 		
 		for(Integer score : pMap.keySet()) {
 			Point2D[] a = pMap.get(score).toArray(new Point2D[] {});
 			Path path = new Path();
-			path.setLayoutX(10);
+			path.setLayoutX(100);
 			path.setLayoutY(120);
 			path.setStroke(Color.rgb(100, 10, score * 10 % 256));
 			path.getElements().add(new MoveTo(a[0].getX(), a[0].getY()));
