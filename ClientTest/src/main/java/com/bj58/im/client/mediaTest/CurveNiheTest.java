@@ -153,27 +153,28 @@ public class CurveNiheTest extends Application{
 		//1.分值 圈
 		Map<Integer, List<Point2D>> map = new HashMap<>();
 		for(String pv : pvlist) {
-			String[] p_v = pv.split(";");
+ 			String[] p_v = pv.split(";");
 			Integer score = Integer.valueOf(p_v[1]);
 			boolean containK = false;
 			for(Integer key : map.keySet()) {
 				if(Math.abs(key - score) <= score_distance) {
 					containK = true;
 					String[] xy = p_v[0].split(",");
-					map.get(key).add(new Point2D(Double.valueOf(xy[0]), Double.valueOf(xy[0])));
+					map.get(key).add(new Point2D(Double.valueOf(xy[0]), Double.valueOf(xy[1])));
 					break;//首次包含就退出
 				}
 			}
 			if(!containK) {
 				List<Point2D> lis = new ArrayList<>();
 				String[] xy = p_v[0].split(",");
-				lis.add(new Point2D(Double.valueOf(xy[0]), Double.valueOf(xy[0])));
+				lis.add(new Point2D(Double.valueOf(xy[0]), Double.valueOf(xy[1])));
 				map.put(score, lis);
 			}
 		}
 		//2.对每圈进行处理
 		for(Integer k : map.keySet()) {
 			List<Point2D> vaList = map.get(k);
+//			generalCubicCurve(vaList.toArray(new Point2D[] {}));//正常
 			Collections.sort(vaList, new Comparator<Point2D>() {
 				@Override
 				public int compare(Point2D arg0, Point2D arg1) {
@@ -367,7 +368,7 @@ public class CurveNiheTest extends Application{
 			Path path = new Path();
 			path.setLayoutX(10);
 			path.setLayoutY(120);
-			path.setFill(Color.rgb(100, 10, score * 10 % 256));
+			path.setStroke(Color.rgb(100, 10, score * 10 % 256));
 			path.getElements().add(new MoveTo(a[0].getX(), a[0].getY()));
 			for(int i = 0; i < a.length - 1; i++) {
 				double centerX = (a[i].getX() + a[i+1].getX())/2;
