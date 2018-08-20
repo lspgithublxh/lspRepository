@@ -127,12 +127,13 @@ public class CurveNiheTest extends Application{
 	 */
 	private List<String> generateScoreList() {
 		List<String> sl = new ArrayList<>();
-		double a = 140;
-		for(int i = 0; i < 10; i++) {
+		double a = 200;
+		double aa = 200;
+		for(int i = 0; i < 20; i++) {
 			double b = a / 2;
 			Point2D[] points = provideTuoRoundXuanzhuanPoint2(a, b, 30);
 //			generalCubicCurve(points);
-			a = 100 - (i + 1) * 10;
+			a = aa - (i + 1) * 10;
 			for(Point2D p : points) {
 				String sc = p.getX() + "," + p.getY() + ";" + i + 10;
 				sl.add(sc);
