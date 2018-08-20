@@ -127,7 +127,7 @@ public class CurveNiheTest extends Application{
 	 */
 	private List<String> generateScoreList() {
 		List<String> sl = new ArrayList<>();
-		double a = 100;
+		double a = 140;
 		for(int i = 0; i < 10; i++) {
 			double b = a / 2;
 			Point2D[] points = provideTuoRoundXuanzhuanPoint2(a, b, 30);
@@ -233,8 +233,11 @@ public class CurveNiheTest extends Application{
 	private Point2D[] provideTuoRoundXuanzhuanPoint2(double a, double b, double angle) {
 		List<Point2D> li = new ArrayList<>();
 		int k = 0;
-		for(float i = -200; i <= 200; i += 0.2f) {
-			double y = b *  Math.sqrt(1 - (i - 100)*(i - 100) / (a * a));
+		int start = -200;
+		int end = 400;
+		int trans = 100;
+		for(float i = start; i <= end; i += 0.2f) {
+			double y = b *  Math.sqrt(1 - (i - trans)*(i - trans) / (a * a));
 			double r = Math.sqrt(i * i + y * y);
 			double theta = Math.atan2(- y , i);///y,x
 			double theta2 = theta - angle / 360.0;//绕x轴旋转30度
@@ -244,8 +247,8 @@ public class CurveNiheTest extends Application{
 			double yN = r * Math.sin(theta2);
 			li.add(new Point2D(xN, yN)); 
 		}
-		for(float i = 200; i >= 0; i -= 0.2f) {
-			double y = b *  Math.sqrt(1 - (i - 100)*(i - 100) / (a * a));
+		for(float i = end; i >= start; i -= 0.2f) {
+			double y = b *  Math.sqrt(1 - (i - trans)*(i - trans) / (a * a));
 			double r = Math.sqrt(i * i + y * y);
 			double theta = Math.atan2(y , i);///y,x
 			double theta2 = theta - angle / 360.0;
