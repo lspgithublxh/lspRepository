@@ -25,16 +25,29 @@ public class SameFieldValTest extends Application{
 	
 	@Override
 	public void start(Stage arg0) throws Exception {
-		Map<Integer, List<Point2D>> pMap = new HashMap<>();
-		for(int i = 0; i < 10; i++) {
-			List<Point2D> po = getFieldPoint(i * 10, 1);
-			pMap.put(i * 10, po);
+		double[] a1A = {0.2,1.2,0.3,1.5};
+		double[] b1B = {0.4,0.5,1.2,1.2};//第一组最完美
+		for(int j = 0; j < 4; j++) {
+			Stage s = new Stage();
+			s.setWidth(600);
+			s.setHeight(600);
+			a1 = a1A[j];
+			b1 = b1B[j];
+			Map<Integer, List<Point2D>> pMap = new HashMap<>();
+			for(int i = 0; i < 10; i++) {
+				List<Point2D> po = getFieldPoint(i * 10, 1);
+				pMap.put(i * 10, po);
+			}
+			for(int i = 0; i < 20; i++) {
+				List<Point2D> po = getFieldPoint(1, i * 10);
+				pMap.put(i * 10 + 220, po);
+			}
+			for(int i = 0; i < 20; i++) {
+				List<Point2D> po = getFieldPoint(i*10, i * 10);
+				pMap.put(i * 10 + 420, po);
+			}
+			generalMultiCubicCurve(s, pMap);
 		}
-		for(int i = 0; i < 20; i++) {
-			List<Point2D> po = getFieldPoint(1, i * 10);
-			pMap.put(i * 10 + 220, po);
-		}
-		generalMultiCubicCurve(arg0, pMap);
 	}
 	
 	private void generalMultiCubicCurve(Stage stage, Map<Integer, List<Point2D>> pMap) {
@@ -63,12 +76,33 @@ public class SameFieldValTest extends Application{
 			group.getChildren().add(path);
 			
 		}
+		//画直线：
+		double[][] line = {{N1, 0, 0, N2/a1},{0,N2, N1/b1,0}};
+		Color[] c = {Color.RED, Color.GREENYELLOW};
+		int i = 0;
+		for(double[] d : line) {
+			Path path = getAPath(c[i++]);
+			path.getElements().add(new MoveTo(d[0],d[1]));
+			path.getElements().add(new LineTo(d[2],d[3]));
+			group.getChildren().add(path);
+		}
+		
 		stage.setScene(scene);
 		stage.show();
+	}
+
+	private Path getAPath(Color color) {
+		Path path = new Path();
+		path.setLayoutX(100);
+		path.setLayoutY(120);
+		path.setStroke(color);
+		return path;
 	}
 	
 	int N1 = 200;
 	int N2 = 200;
+	double a1 = 1.5;
+	double b1 = 0.2;
 	
 	private List<Point2D> getFieldPoint(double startX, double startY){
 		List<Point2D> list = new ArrayList<Point2D>();
@@ -77,8 +111,8 @@ public class SameFieldValTest extends Application{
 		while(true) {
 			Point2D p = new Point2D(startX, startY);
 			list.add(p);
-			double x_k = startX * (1 - startX/N1 - 1.5 * startY/N2);
-			double y_k = startY * (1 - 0.2 * startX/N1 - startY/N2);
+			double x_k = startX * (1 - startX/N1 - a1 * startY/N2);
+			double y_k = startY * (1 - b1 * startX/N1 - startY/N2);
 //			double k = y_k / x_k;//tan theta  表示颜色值：长度
 			double r = Math.sqrt(x_k * x_k + y_k * y_k);//表示颜色值：长度
 			if(r == 0) {
