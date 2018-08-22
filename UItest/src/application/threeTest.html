@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="file:///D:/project/my_project/js/plotjs/threeTest.js"></script>
+</head>
+<body>
+<div id="myDiv"> </div>
+<div id="xx"> </div>
+<script type="text/javascript">
+Plotly.d3.csv('https://raw.githubusercontent.com/plotly/datasets/master/api_docs/mt_bruno_elevation.csv', function(err, rows){
+function unpack(rows, key) {
+  return rows.map(function(row) { return row[key]; });
+}
+
+var z_data=[ ]
+for(i=0;i<2;i++)
+{
+  z_data.push(unpack(rows,i));
+}
+console.log(z_data);//二维数组  这个 二维数组 ：横坐标是x，纵坐标是y,从0,0开始，都是整数取值 共24 * 24 个点 ；值就是分值
+//另外，图像上：x轴-西南   y轴-东南  z轴-正北
+//第三，点之间先 根据y值而 多个 x-z平面拟合出曲线，然后再根据x值而y-z平面你和出曲线  ；；；；之间交叉， 然后自然连接 
+var data = [{
+    z: z_data,
+    type: 'surface'//surface
+ }];
+ 
+var layout = {
+		  title: 'Mt Bruno Elevation',
+		  autosize: false,
+		  width: 500,
+		  height: 500,
+		  margin: {
+		    l: 65,
+		    r: 50,
+		    b: 65,
+		    t: 90,
+		  }
+		};
+Plotly.newPlot('myDiv', data, layout);
+});
+
+var z_da = [];
+var N1 = 100;
+var N2 = 120;
+var min = 10;
+var x_y = "";
+for(var i = 0; i < 200; i++){
+	var row = [];
+	for(var j = 0; j < 200; j++){
+		var x_k = i * (1 - i/N1 - 0.5 * j / N2);//
+		var y_k = j * (1 - 0.3 * i/N1 - j/N2);
+		if(Math.abs(x_k - 0) < 0.5){
+			x_k = 0.5;
+		}
+		
+		var k = Math.abs( y_k / x_k * 100);
+		if(k > 200){
+			k = 200;
+		}
+		if(k < min && k != 0){
+			min = k;
+			x_y = i + ", " + j + " : " + k;
+		}
+		row.push(k);
+	}
+	z_da.push(row);
+}
+console.log(x_y);
+var dt = [{
+    z: z_da,
+    type: 'surface'//surface
+ }];
+var layout = {
+		  title: 'Mt Bruno Elevation',
+		  autosize: false,
+		  width: 500,
+		  height: 500,
+		  margin: {
+		    l: 65,
+		    r: 50,
+		    b: 65,
+		    t: 90,
+		  }
+};
+Plotly.newPlot('xx', dt, layout);
+</script>
+</body>
+</html>

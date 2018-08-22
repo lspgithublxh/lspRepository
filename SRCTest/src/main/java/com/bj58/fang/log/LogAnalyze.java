@@ -42,7 +42,7 @@ public class LogAnalyze extends Application{
 		
 		String regex = "-\\s+(.+?)restrict.+?success\\:(\\S+)$";
 		int count = 2;
-		String file = "D:\\software\\error2.txt";
+		String file = "D:\\software\\ers.txt";
 		table = tableData(regex, count, file);
 //		for(String ip : table.get(0)) {
 //			System.out.println(IPLocation.test(ip.split(";")[0]));

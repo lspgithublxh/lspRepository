@@ -178,7 +178,7 @@ public class Main extends Application {
 //			path(primaryStage);
 //			polygon(primaryStage);//多边形快速画法,顺序给定点
 //			cubicCurve(primaryStage);//三次曲线，控制点两个， 起点终点各一个
-			generalCubicCurve(primaryStage);
+//			generalCubicCurve(primaryStage);
 			
 //			textDraw(primaryStage);
 //			gradientRectangle(primaryStage);
@@ -223,7 +223,7 @@ public class Main extends Application {
 //			camera_show(primaryStage);
 //			image_test();
 //			justChart();//
-//			easy3d(primaryStage);
+			easy3d(primaryStage);
 			
 		} catch(Exception e) {
 			e.printStackTrace();
