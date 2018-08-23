@@ -16,7 +16,16 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.stage.Stage;
 
-public class SameFieldValTest2_bushi extends Application{
+/**
+ * 向量场的旋度场， 标量场的梯度场
+ * @ClassName:SameFieldValTest2_xuandu
+ * @Description:
+ * @Author lishaoping
+ * @Date 2018年8月23日
+ * @Version V1.0
+ * @Package com.bj58.im.client.mediaTest
+ */
+public class SameFieldValTest2_xuandu extends Application{
 
 	
 	public static void main(String[] args) {
@@ -43,7 +52,7 @@ public class SameFieldValTest2_bushi extends Application{
 				pMap.put(i * 10 + 220, po);
 			}
 			for(int i = 0; i < 20; i++) {
-				List<Point2D> po = getFieldPoint(i*10, i * 10 * r * N2/a1 / (d * N1 / b1));
+				List<Point2D> po = getFieldPoint(i*10, i * 10);
 				pMap.put(i * 10 + 420, po);
 			}
 			generalMultiCubicCurve(s, pMap);
