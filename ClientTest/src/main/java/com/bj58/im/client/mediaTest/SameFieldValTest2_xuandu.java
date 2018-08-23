@@ -80,8 +80,7 @@ public class SameFieldValTest2_xuandu extends Application{
 	private List<PointVal> getZvalueOfBoardVectorFieldXuandu(double startX, double startY){
 		List<PointVal> valList = new ArrayList<>();
 		double x = startX;
-		for(;x < 600; x+= 1) {
-			System.out.println(x);
+		for(;x < 600; x+= 1) {//值在递增
 			double y = startY;
 			for(;y < 600; y+= 1) {
 				double z = -a1 / N2 * x + b1/N1 * y;//两个偏导数之和:正好是一个平面：即这个竞争的势场的旋度是个平面
