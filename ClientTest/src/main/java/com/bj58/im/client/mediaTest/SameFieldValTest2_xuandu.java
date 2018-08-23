@@ -42,21 +42,98 @@ public class SameFieldValTest2_xuandu extends Application{
 			s.setHeight(600);
 			a1 = a1A[j];
 			b1 = b1B[j];
-			Map<Integer, List<Point2D>> pMap = new HashMap<>();
-			for(int i = 0; i < 10; i++) {
-				List<Point2D> po = getFieldPoint(i * 10, 1);
-				pMap.put(i * 10, po);
-			}
-			for(int i = 0; i < 20; i++) {
-				List<Point2D> po = getFieldPoint(1, i * 10);
-				pMap.put(i * 10 + 220, po);
-			}
-			for(int i = 0; i < 20; i++) {
-				List<Point2D> po = getFieldPoint(i*10, i * 10);
-				pMap.put(i * 10 + 420, po);
-			}
-			generalMultiCubicCurve(s, pMap);
+			generalDrawJie(arg0, getZvalueOfBoardVectorFieldXuandu(j * 10 + 1, 1), getColorDidu());
+//			Map<Integer, List<Point2D>> pMap = new HashMap<>();
+//			for(int i = 0; i < 10; i++) {
+//				List<Point2D> po = getFieldPoint(i * 10, 1);
+//				pMap.put(i * 10, po);
+//			}
+//			for(int i = 0; i < 20; i++) {
+//				List<Point2D> po = getFieldPoint(1, i * 10);
+//				pMap.put(i * 10 + 220, po);
+//			}
+//			for(int i = 0; i < 20; i++) {
+//				List<Point2D> po = getFieldPoint(i*10, i * 10);
+//				pMap.put(i * 10 + 420, po);
+//			}
+//			generalMultiCubicCurve(s, pMap);
 		}
+	}
+	
+	private List<Color> getColorDidu(){
+		List<Color> colorList = new ArrayList<>();
+		for(int i= 0; i < 256; i++) {
+			Color co = Color.rgb(i, 0, 0);
+			colorList.add(co);
+		}
+		for(int i= 0; i < 256; i++) {
+			Color co = Color.rgb(255, 0, 255);
+			colorList.add(co);
+		}
+		for(int i= 0; i < 256; i++) {
+			Color co = Color.rgb(255, 255, 0);
+			colorList.add(co);
+		}
+		return colorList;
+	}
+	
+	private List<PointVal> getZvalueOfBoardVectorFieldXuandu(double startX, double startY){
+		List<PointVal> valList = new ArrayList<>();
+		double x = startX;
+		for(;x < 600; x+= 1) {
+			System.out.println(x);
+			double y = startY;
+			for(;y < 600; y+= 1) {
+				double z = -a1 / N2 * x + b1/N1 * y;//两个偏导数之和:正好是一个平面：即这个竞争的势场的旋度是个平面
+				PointVal val = new PointVal(x, y, z);
+				valList.add(val);
+			}
+		}
+		return valList;
+		
+	}
+	
+	
+	private void generalDrawJie(Stage stage,List<PointVal> list, List<Color> colorList) {
+		double max = -10000;
+		double min = 10000;
+		for(PointVal p : list) {
+			if(p.getZ() > max) {
+				max = p.getZ();
+			}
+			if(p.getZ() < min) {
+				min = p.getZ();
+			}
+		}
+		double fanwei = max - min;
+		int colorSize = colorList.size() - 1;
+		System.out.println("fanwei:" + fanwei + "; colorSize:" + colorSize);
+		Group group = new Group();
+		Scene scene = new Scene(group, 800, 600, Color.rgb(0x11, 0x11, 0x11, 0.1));
+		double step = 0.2;
+		
+		for(PointVal p : list) {
+			int index = (int) (Math.round((p.getZ() - min) / fanwei * colorSize));
+			Path path = new Path();
+			path.setLayoutX(100);
+			path.setLayoutY(120);
+			path.setStroke(colorList.get(index));
+			System.out.println("x:" + p.getX() + "; y:" + p.getY() + "; z:" + p.getZ() + "color:" + colorList.get(index));
+			double left = p.getX()- step;
+			left = left < 0 ? p.getX() : left;
+			double top = p.getY() - step;
+			top = top < 0 ? p.getY() : top;
+			
+			path.getElements().add(new MoveTo(left, top));
+			path.getElements().add(new LineTo(p.getX() + step, top));
+			path.getElements().add(new LineTo(p.getX() + step, p.getY() + step));
+			path.getElements().add(new LineTo(left, p.getY() + step));
+			path.getElements().add(new LineTo(left, top));
+			group.getChildren().add(path);
+		}
+		
+		stage.setScene(scene);
+		stage.show();
 	}
 	
 	private void generalMultiCubicCurve(Stage stage, Map<Integer, List<Point2D>> pMap) {
