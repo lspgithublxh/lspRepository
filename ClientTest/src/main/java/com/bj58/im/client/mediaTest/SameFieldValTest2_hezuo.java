@@ -16,7 +16,7 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.stage.Stage;
 
-public class SameFieldValTest extends Application{
+public class SameFieldValTest2_hezuo extends Application{
 
 	
 	public static void main(String[] args) {
