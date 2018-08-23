@@ -16,7 +16,7 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.stage.Stage;
 
-public class SameFieldValTest2_hezuo extends Application{
+public class SameFieldValTest2_bushi extends Application{
 
 	
 	public static void main(String[] args) {
@@ -27,9 +27,9 @@ public class SameFieldValTest2_hezuo extends Application{
 	public void start(Stage arg0) throws Exception {
 		double[] a1A = {0.2,1.2,0.3,1.5};
 		double[] b1B = {0.4,0.5,1.2,1.2};//第一组最完美
-		for(int j = 0; j < 4; j++) {
+		for(int j = 3; j < 4; j++) {
 			Stage s = new Stage();
-			s.setWidth(600);
+			s.setWidth(800);
 			s.setHeight(600);
 			a1 = a1A[j];
 			b1 = b1B[j];
@@ -52,7 +52,7 @@ public class SameFieldValTest2_hezuo extends Application{
 	
 	private void generalMultiCubicCurve(Stage stage, Map<Integer, List<Point2D>> pMap) {
 		Group group = new Group();
-		Scene scene = new Scene(group, 600, 500, Color.rgb(0x11, 0x11, 0x11, 0.1));
+		Scene scene = new Scene(group, 800, 600, Color.rgb(0x11, 0x11, 0x11, 0.1));
 		
 		for(Integer score : pMap.keySet()) {
 			Point2D[] a = pMap.get(score).toArray(new Point2D[] {});
@@ -85,7 +85,7 @@ public class SameFieldValTest2_hezuo extends Application{
 			
 		}
 		//画直线：
-		double[][] line = {{N1, 0, 0, N2/a1},{0,N2, N1/b1,0}};
+		double[][] line = {{0, r * N2/a1, d * N1 / b1, r * N2/a1},{d * N1 / b1,0, N1/b1,r * N2/a1}};
 		Color[] c = {Color.RED, Color.GREENYELLOW};
 		int i = 0;
 		for(double[] d : line) {
@@ -111,6 +111,8 @@ public class SameFieldValTest2_hezuo extends Application{
 	int N2 = 200;
 	double a1 = 1.5;
 	double b1 = 0.2;
+	double d = 1;
+	double r = 2;
 	
 	private List<Point2D> getFieldPoint(double startX, double startY){
 		List<Point2D> list = new ArrayList<Point2D>();
@@ -119,8 +121,10 @@ public class SameFieldValTest2_hezuo extends Application{
 		while(true) {
 			Point2D p = new Point2D(startX, startY);
 			list.add(p);
-			double x_k = startX * (1 - startX/N1 + a1 * startY/N2);
-			double y_k = startY * (-1 - b1 * startX/N1 - startY/N2);
+//			double x_k = startX * (1 - startX/N1 - a1 * startY/N2);
+//			double y_k = startY * (-1 + b1 * startX/N1 - startY/N2);
+			double x_k = startX * (r - a1 * startY/N2);//1 - startX/N1
+			double y_k = startY * (-d + b1 * startX/N1);//- startY/N2
 //			double k = y_k / x_k;//tan theta  表示颜色值：长度
 			double r = Math.sqrt(x_k * x_k + y_k * y_k);//表示颜色值：长度
 			if(r == 0) {
@@ -136,7 +140,7 @@ public class SameFieldValTest2_hezuo extends Application{
 			double y_k_danwei = y_k / r;
 			startX = startX + x_k_danwei * step;
 			startY = startY + y_k_danwei * step;
-			if(startX > 400 || startX < 1E-10 || startY > 400 || startY < 1E-10 || count++ > 2000) {//TODO增加额外制约条件--最小值
+			if(startX > 700 || startX < 1E-10 || startY > 400 || startY < 1E-10 || count++ > 10000) {//TODO增加额外制约条件--最小值
 				break;
 			}
 			System.out.println(startX + ", " + startY + "," + x_k_danwei + ", " + x_k_danwei);
