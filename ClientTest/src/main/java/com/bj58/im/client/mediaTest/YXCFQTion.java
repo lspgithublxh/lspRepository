@@ -30,6 +30,42 @@ public class YXCFQTion extends Application{
 	}
 
 	/**
+	 * 阶数越多，逐层向上计算;知道y(t) y(t + deltT) y(t + 2* deltT)....
+	 * 对于2阶方程:知道t处0-1阶的y值，那么从导数定义知道t+deltT处的0阶y值，再根据方程关系可以知道t+deltT处的1阶y值，从而定义知道y+2deltT处的0阶y值，从而关系知道 y+2deltT处的1阶y值.......
+	 * 对于3阶方程：也是如此，知道t处的0-2阶y值就可以了。
+	 * @param 
+	 * @author lishaoping
+	 * @Date 2018年8月25日
+	 * @Package com.bj58.im.client.mediaTest
+	 * @return List<Point2D>
+	 */
+	private static List<Point2D> twoG(List<Item> gx,IComputerable changshux) {
+		List<Point2D> lis = new ArrayList<>();
+		int count = 0;
+		double startX = 0;
+		double y0_0 = gx.get(0).getVal();
+		double y0_1 = gx.get(0).getVal();
+		double step = 0.2;
+		double y1_0 = 0;
+		double y1_1 = 0;
+		while(true) {
+			if(count++ > 2000 || startX > 600 || y0_0 > 600) {
+				break;
+			}
+//			startY = startY + changshux.compute(startY, startX) * step / gx.get(0).getXishu();
+			lis.add(new Point2D(startX, y0_0));
+			System.out.println(startX + ", " + y0_0);
+			y1_0 = y0_1 * step + y0_0;//定义
+			y1_1 = (changshux.compute(y0_0, startX) - gx.get(0).getXishu() * y0_1) * step / gx.get(1).getXishu() + y0_1;
+			y0_0 = y1_0;
+			y0_1 = y1_1;
+			startX = startX + step;//step就是deltaT
+		}
+		return lis;
+		
+	}
+	
+	/**
 	 * 初始值+关系，得出下一个值
 	 * 
 	 * @param 
@@ -97,6 +133,33 @@ public class YXCFQTion extends Application{
 	public void start(Stage arg0) throws Exception {
 		List<Item> itemList = new ArrayList<>();
 		itemList.add(new Item(1, 1, 10, 1));
+		itemList.add(new Item(1, 2, 12, 0.1));
+//		IComputerable comp = getOneJC();
+//		List<Point2D> plist = oneG(itemList, comp);
+		IComputerable comp = getTwoJC();
+		List<Point2D> plist = twoG(itemList, comp);
+		showGuiji(plist, arg0);
+	}
+
+	private IComputerable getTwoJC() {
+		IComputerable comp = new IComputerable() {
+			@Override
+			public double compute(double input) {
+				double out = 1 / input;
+				return out;
+			}
+
+			@Override
+			public double compute(double y, double t) {
+//				double out = 1;
+				double out = Math.sin(t);//自然的是余弦波
+				return out;
+			}
+		};
+		return comp;
+	}
+	
+	private IComputerable getOneJC() {
 		IComputerable comp = new IComputerable() {
 			@Override
 			public double compute(double input) {
@@ -109,7 +172,9 @@ public class YXCFQTion extends Application{
 
 			@Override
 			public double compute(double y, double t) {
-				double out = Math.sin(t);//自然的是余弦波
+//				double out = y* Math.exp(-t);
+				double out = y;
+//				double out = Math.sin(t);//自然的是余弦波
 //				if(t < 0.1) {
 //					t = 1;
 //				}
@@ -118,7 +183,6 @@ public class YXCFQTion extends Application{
 				return out;
 			}
 		};
-		List<Point2D> plist = oneG(itemList, comp);
-		showGuiji(plist, arg0);
+		return comp;
 	}
 }

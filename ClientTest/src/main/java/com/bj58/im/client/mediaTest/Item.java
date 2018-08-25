@@ -4,8 +4,8 @@ public class Item {
 
 	private int cishu;
 	private int jieshu;
-	private int xishu;
-	private int val;
+	private double xishu;
+	private double val;
 	public int getCishu() {
 		return cishu;
 	}
@@ -18,25 +18,27 @@ public class Item {
 	public void setJieshu(int jieshu) {
 		this.jieshu = jieshu;
 	}
-	public int getXishu() {
+	
+	public double getXishu() {
 		return xishu;
 	}
-	public void setXishu(int xishu) {
+	public void setXishu(double xishu) {
 		this.xishu = xishu;
 	}
-	public int getVal() {
+	public double getVal() {
 		return val;
 	}
-	public void setVal(int val) {
+	public void setVal(double val) {
 		this.val = val;
 	}
-	public Item(int cishu, int jieshu, int xishu, int val) {
+	public Item(int cishu, int jieshu, double xishu, double val) {
 		super();
 		this.cishu = cishu;
 		this.jieshu = jieshu;
 		this.xishu = xishu;
 		this.val = val;
 	}
+	
 	
 	
 }
