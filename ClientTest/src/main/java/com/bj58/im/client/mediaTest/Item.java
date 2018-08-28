@@ -6,6 +6,15 @@ public class Item {
 	private int jieshu;
 	private double xishu;
 	private double val;
+	private double iniX = 0;
+	
+	
+	public double getIniX() {
+		return iniX;
+	}
+	public void setIniX(double iniX) {
+		this.iniX = iniX;
+	}
 	public int getCishu() {
 		return cishu;
 	}

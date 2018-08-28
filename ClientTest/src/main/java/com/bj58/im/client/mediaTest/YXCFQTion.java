@@ -28,6 +28,41 @@ public class YXCFQTion extends Application{
 	public static void main(String[] args) {
 		launch(args);
 	}
+	
+	private static List<Point2D> nG(List<Item> gx,IComputerable changshux){
+		List<Point2D> lis = new ArrayList<>();
+		int count = 0;
+		double[] ngVal = new double[gx.size()];
+		double[] nextngVal = new double[gx.size()];
+		double x = 0;
+		double y = gx.get(0).getVal();
+		double step = 0.2;
+		for(int i = 0; i < gx.size(); i++) {//0表示1次项， 1位置 表示2次项 ；；2次方程 只需知道2次的系数--不需要知道初始具体取值
+			ngVal[i] = gx.get(i).getVal();
+		}
+		lis.add(new Point2D(x,y));
+		while(true) {
+			if(count++ > 2000 || x > 600 || y > 600) {
+				break;
+			}
+			System.out.println(x + ", " + y);
+			//1.定义 计算
+			for(int i = 1; i < ngVal.length - 1; i++) {
+				nextngVal[i-1] = ngVal[i] * step + ngVal[i-1];
+			}
+			//约束关系计算最后一个值---直接算最高阶导数 整体值
+			double temp = changshux.compute(y, x);
+			for(int i = 0; i < ngVal.length - 1; i++) {//
+				temp -= ngVal[i] * gx.get(i).getXishu();
+			}
+			nextngVal[nextngVal.length - 2] =  temp * step / gx.get(gx.size() - 1).getXishu() + ngVal[ngVal.length - 2];
+			y += ngVal[0] * step;//新y
+			x += step;//新x
+			lis.add(new Point2D(x,y));	
+			ngVal = nextngVal;//新导数
+		}
+		return lis;
+	}
 
 	/**
 	 * 阶数越多，逐层向上计算;知道y(t) y(t + deltT) y(t + 2* deltT)....
@@ -136,8 +171,13 @@ public class YXCFQTion extends Application{
 		itemList.add(new Item(1, 2, 12, 0.1));
 //		IComputerable comp = getOneJC();
 //		List<Point2D> plist = oneG(itemList, comp);
+		
+//		IComputerable comp = getTwoJC();
+//		List<Point2D> plist = twoG(itemList, comp);
+		
 		IComputerable comp = getTwoJC();
-		List<Point2D> plist = twoG(itemList, comp);
+		List<Point2D> plist = nG(itemList, comp);
+		
 		showGuiji(plist, arg0);
 	}
 
