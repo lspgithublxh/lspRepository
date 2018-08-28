@@ -42,7 +42,8 @@ public class YXCFQTion extends Application{
 		}
 		lis.add(new Point2D(x,y));
 		while(true) {
-			if(count++ > 2000 || x > 600 || y > 600) {
+			if(count++ > 20000 || x > 600 || y > 600) {
+				System.out.println("break" + x + "," + y);
 				break;
 			}
 			System.out.println(x + ", " + y);
@@ -175,12 +176,36 @@ public class YXCFQTion extends Application{
 //		IComputerable comp = getTwoJC();
 //		List<Point2D> plist = twoG(itemList, comp);
 		
-		IComputerable comp = getTwoJC();
+//		IComputerable comp = getTwoJC();
+//		List<Point2D> plist = nG(itemList, comp);
+		
+		IComputerable comp = getNGC();
+		itemList.add(new Item(1, 3, 100, 0.1));
+		itemList.add(new Item(1, 4, 100, 0.1));
+		itemList.add(new Item(1, 5, 200, 0.1));
 		List<Point2D> plist = nG(itemList, comp);
 		
 		showGuiji(plist, arg0);
 	}
 
+	private IComputerable getNGC() {
+		IComputerable comp = new IComputerable() {
+			@Override
+			public double compute(double input) {
+				double out = 1 / input;
+				return out;
+			}
+
+			@Override
+			public double compute(double y, double t) {
+//				double out = 1;
+				double out = Math.sin(t);//自然的是余弦波
+				return out;
+			}
+		};
+		return comp;
+	}
+	
 	private IComputerable getTwoJC() {
 		IComputerable comp = new IComputerable() {
 			@Override
