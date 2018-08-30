@@ -178,9 +178,9 @@ public class YXCFQTion extends Application{
 		
 //		IComputerable comp = getTwoJC();
 //		List<Point2D> plist = nG(itemList, comp);
-		
+		double[][] xishu = {{10,12,200,100,200},{10,12,100,100,200}};//震荡收敛和  发散的情形 ， 系数太小 震荡会很厉害
 		IComputerable comp = getNGC();
-		itemList.add(new Item(1, 3, 100, 0.1));
+		itemList.add(new Item(1, 3, 200, 0.1));
 		itemList.add(new Item(1, 4, 100, 0.1));
 		itemList.add(new Item(1, 5, 200, 0.1));
 		List<Point2D> plist = nG(itemList, comp);
