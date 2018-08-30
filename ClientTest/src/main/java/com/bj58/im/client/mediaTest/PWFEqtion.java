@@ -48,7 +48,7 @@ public class PWFEqtion extends Application{
 //				double z = 0.5 * Math.sin(Math.sqrt(y * y + t * t));
 //				System.out.println("z:" + z);
 //				return z;
-				return 0.1;
+				return 0.05;
 			}
 		};
 		List<PointVal> lis = oneG(gx, gy, z_fx, changshux);

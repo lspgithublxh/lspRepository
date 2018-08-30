@@ -10,17 +10,18 @@ public class ColorDitu {
 	public static List<Color> getColorDidu(){
 		List<Color> colorList = new ArrayList<>();
 		for(int i= 0; i < 256; i++) {
-			Color co = Color.rgb(i, 0, 0);
+			Color co = Color.rgb(i, 255-i, 0);
 			colorList.add(co);
 		}
 		for(int i= 0; i < 256; i++) {
-			Color co = Color.rgb(124, 0, i);
+			Color co = Color.rgb(255, i, 0);
 			colorList.add(co);
 		}
 		for(int i= 0; i < 256; i++) {
-			Color co = Color.rgb(124, i, 124);
+			Color co = Color.rgb(255, 255, i);
 			colorList.add(co);
 		}
+		
 		return colorList;
 	}
 }
