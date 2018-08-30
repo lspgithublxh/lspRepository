@@ -5,6 +5,15 @@ public class PointVal {
 	private double x;
 	private double y;
 	private double z;
+	private double step;
+	
+	
+	public double getStep() {
+		return step;
+	}
+	public void setStep(double step) {
+		this.step = step;
+	}
 	public double getX() {
 		return x;
 	}

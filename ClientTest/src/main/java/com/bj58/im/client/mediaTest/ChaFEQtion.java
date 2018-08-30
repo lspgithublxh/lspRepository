@@ -98,14 +98,14 @@ public class ChaFEQtion extends Application{
 		if(fanwei < 1) {
 			rate = 10;
 		}
-		path.getElements().add(new MoveTo(plist.get(0).getX(), plist.get(0).getY()  / fanwei * rate)); 
+		path.getElements().add(new MoveTo(plist.get(0).getX(), (plist.get(0).getY() - min)  / fanwei * rate)); //y为负值：所以 TODO y-min才对 而不是直接y
 		for(int i = 1; i < plist.size() - 1; i++) {
 			System.out.println(plist.get(i).getX() + ", " + plist.get(i).getY() * rate);
 			double centerX = (plist.get(i-1).getX() + plist.get(i).getX()) /2;
 //			System.out.println(plist.get(i).getX() + "," + plist.get(i).getY() / fanwei * rate);
 //			path.getElements().add(new LineTo(plist.get(i).getX(), plist.get(i).getY()  / fanwei* rate));
-			path.getElements().add(new CubicCurveTo(centerX, plist.get(i-1).getY()/ fanwei* rate,
-						centerX, plist.get(i).getY()/ fanwei* rate, plist.get(i).getX(), plist.get(i).getY()/ fanwei* rate));
+			path.getElements().add(new CubicCurveTo(centerX, (plist.get(i-1).getY() - min)/ fanwei* rate,
+						centerX, (plist.get(i).getY() - min)/ fanwei* rate, plist.get(i).getX(), plist.get(i).getY()/ fanwei* rate));
 		}
 		group.getChildren().add(path);
 		stage.setScene(scene);
