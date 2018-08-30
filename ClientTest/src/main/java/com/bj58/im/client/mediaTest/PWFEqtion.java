@@ -34,7 +34,7 @@ public class PWFEqtion extends Application{
 		List<Item> gx = new ArrayList<>();
 		gx.add(new Item(1, 1, 10, 1));
 		List<Item> gy = new ArrayList<>();
-		gy.add(new Item(1, 1, 10, 1));
+		gy.add(new Item(1, 1, -10, 1));
 		IComputerable z_fx = new IComputerable() {
 			@Override
 			public double compute(double y, double t) {
@@ -45,10 +45,15 @@ public class PWFEqtion extends Application{
 		IComputerable changshux = new IComputerable() {
 			@Override
 			public double compute(double y, double t) {
-//				double z = 0.5 * Math.sin(Math.sqrt(y * y + t * t));
+				
 //				System.out.println("z:" + z);
 //				return z;
-				return 0.05;
+				//1.
+//				return 0.01;
+				//2.
+				double z = 0.05 * Math.sin(Math.sqrt(y * y + t * t));
+				System.out.println("zzzzzz:" + Math.abs(z));
+				return Math.abs(z);
 			}
 		};
 		List<PointVal> lis = oneG(gx, gy, z_fx, changshux);
@@ -95,7 +100,7 @@ public class PWFEqtion extends Application{
 //				System.out.println("break" + x + "," + y);
 				break;
 			}
-			System.out.println(conditionLine.size() + "beforesize");
+//			System.out.println(conditionLine.size() + "beforesize");
 			//第二行开始，都由上一行计算出来
 			for(int i = 0; i < conditionLine.size() - 1; i++) {
 //				System.out.println("y > 0, " + x + "," + y);
@@ -103,10 +108,11 @@ public class PWFEqtion extends Application{
 				double Ez_Ey = (changshux.compute(conditionLine.get(i).getY(), conditionLine.get(i).getX()) - Ez_Ex * gx.get(0).getXishu()) / gy.get(0).getXishu();
 				z = Ez_Ey * step + conditionLine.get(i).getZ();
 				temp.add(new PointVal(x, y, z));
+				System.out.println("value : " + z);
 				x += step;
 			}
 			temp.add(new PointVal(x, y, z));
-			System.out.println(conditionLine.size() + "aftersize");
+//			System.out.println(conditionLine.size() + "aftersize");
 			rs.addAll(temp);
 			conditionLine.clear();
 			conditionLine.addAll(temp);
