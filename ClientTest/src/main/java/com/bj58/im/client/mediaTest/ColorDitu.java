@@ -14,11 +14,11 @@ public class ColorDitu {
 			colorList.add(co);
 		}
 		for(int i= 0; i < 256; i++) {
-			Color co = Color.rgb(255, 0, i);
+			Color co = Color.rgb(124, 0, i);
 			colorList.add(co);
 		}
 		for(int i= 0; i < 256; i++) {
-			Color co = Color.rgb(255, i, 255);
+			Color co = Color.rgb(124, i, 124);
 			colorList.add(co);
 		}
 		return colorList;
