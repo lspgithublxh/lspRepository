@@ -34,7 +34,7 @@ public class PWFWave extends Application{
 		seeTheWave(primaryStage);
 	}
 	
-	double a = 1;
+	double a = 0.1;
 	double b = 1;
 	
 	/**
@@ -99,7 +99,7 @@ public class PWFWave extends Application{
 						path.getElements().add(new LineTo(li.get(i).getX(), li.get(i).getY() / fanwei * rate));
 					}
 					try {
-						Thread.sleep(200);
+						Thread.sleep(100);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
