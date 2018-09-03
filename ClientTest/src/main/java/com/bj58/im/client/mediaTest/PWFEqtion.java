@@ -32,6 +32,7 @@ public class PWFEqtion extends Application{
 	@Override
 	public void start(Stage arg0) throws Exception {
 		List<Item> gx = new ArrayList<>();
+		//关键的系数定义：：：存在着理论在这里
 		gx.add(new Item(1, 1, 10, 1));
 		List<Item> gy = new ArrayList<>();
 		gy.add(new Item(1, 1, -10, 1));
@@ -51,9 +52,16 @@ public class PWFEqtion extends Application{
 				//1.
 //				return 0.01;
 				//2.
-				double z = 0.05 * Math.sin(Math.sqrt(y * y + t * t));
+//				double z = 0.05 * Math.sin(Math.sqrt(y * y + t * t));
+//				System.out.println("zzzzzz:" + Math.abs(z));
+//				return Math.abs(z);
+				//3.
+				double z = -2 * Math.sin(Math.sqrt(y * y + t * t));//+- 2 0.2
 				System.out.println("zzzzzz:" + Math.abs(z));
-				return Math.abs(z);
+				return z;
+//				double z = 2 * Math.sin(Math.exp(Math.sqrt(y * y + t * t)));
+//				System.out.println("zzzzzz:" + Math.abs(z));
+//				return Math.abs(z);
 			}
 		};
 		List<PointVal> lis = oneG(gx, gy, z_fx, changshux);
@@ -65,6 +73,9 @@ public class PWFEqtion extends Application{
 	/**
 	 * 一阶偏微分方程， 一圈一圈往外算，deltX deltY = 固定值的所有点;;;; 根据两个点的类型，而计算第三个点：这种方式在第一象限 只有2种类型
 	 * 只能 取  右边 和 上边  作为 导数值 的计算
+	 * 实际上是 1个因变量，而2个自变量;;场线情形是 2个因变量，而1个自变量
+	 * 麦氏方程组有4个自变量，6个因变量
+	 * 如果看弦振动，2个自变量，1个因变量；；所以可以生成 振动的波形图--运动的波形图；；即可以加上：运动  这个动画这个变化：而不必直接以时间为轴:而还是以真实世界空间变量为轴讨论 空间运动变化--绘制
 	 * @param 
 	 * @author lishaoping
 	 * @Date 2018年8月28日
@@ -165,10 +176,10 @@ public class PWFEqtion extends Application{
 		int size = colors.size() - 1;
 		for(PointVal p : list) {
 			Rectangle rec = new Rectangle(p.getX() + 10, p.getY() + 100, step, step);//step
-			double s = (p.getZ() - min) * size;
+			double s = (p.getZ() - min) / fanwei * size;
 			s = s >= 768 ? 766 : s;
 //			double s = (p.getZ() - min) % size ;
-//			System.out.println("color : " + s);
+			System.out.println("color : " + s);
 			rec.setFill(colors.get((int) Math.floor(s)));
 			group.getChildren().add(rec);
 		}
