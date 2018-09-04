@@ -42,36 +42,40 @@ public class PWFWave extends Application{
 	
 	private void pointMove(Stage stage) {
 		Group group = new Group();
-		Rectangle rect  = new Rectangle(5, 5, Color.YELLOW);
-		rect.setLayoutX(100);
-		rect.setLayoutY(100);
-		group.getChildren().add(rect);
+		for(int i = 0; i < 10; i++) {
+			Rectangle rect  = new Rectangle(5, 5, Color.RED);
+			rect.setLayoutX(100);
+			rect.setLayoutY(100);
+			group.getChildren().add(rect);
+			int[] ia = {i, i};
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					justGetData(rect, ia[0]*8, ia[0]);//会无限运行
+				}
+			}).start();
+		}
 		Scene scene = new Scene(group, 800, 600, Color.rgb(0x11, 0x11, 0x11, 0.1));
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				justGetData(rect);
-			}
-		}).start();
 		stage.setScene(scene);
 		stage.show();
 	}
 	
 	
-	private void justGetData(Rectangle rect) {
+	private void justGetData(Rectangle rect, double x_axis, double t_) {
 		double x = 0;
 		double y = 0;
 		double t = 0;
 		double step = 0.2;
-		double[] s = {0,0,0,0.2};
+		double[] s = {0,0,t_,0.2};
 		while(true) {
 			Platform.runLater(new Runnable() {
 				@Override
 				public void run() {
-					s[1] = Math.sin(s[2] + s[0] * a) * 20;
+					s[1] = Math.sin(s[2] + s[0] * a) * 50;
 					rect.setLayoutY(s[1] + 100);
+					rect.setLayoutX(x_axis + 100);
 					s[2] += step;
-					System.out.println("y:" + (s[1]+ 100 ) + "t:" + s[2]);
+					System.out.println("y:" + (s[1]+ 100 ) + "t:" + s[2] + "axis_:" + s[1]);
 				}
 			});
 			
