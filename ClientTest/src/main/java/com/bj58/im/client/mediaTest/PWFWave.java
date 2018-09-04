@@ -9,6 +9,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
@@ -29,6 +30,7 @@ public class PWFWave extends Application{
 
 	public static void main(String[] args) {
 		launch(args);
+//		System.out.println(Math.sin(Math.PI / 2));
 	}
 	
 	@Override
@@ -55,17 +57,18 @@ public class PWFWave extends Application{
 		p.setStrokeWidth(0.2);
 		group.getChildren().add(p);
 		int count = 30;
-		for(int i = -48; i < 48; i += 3) {
+		for(int i = -48; i < 0; i += 3) {//-48
 			
-			int[] ia = {i, i};
-			double theta = ia[0] / (double)count;
+			double theta = i / (double)count;
 			for(int j = -10; j < 10; j++) {
-				Rectangle rect  = new Rectangle(5, 5, Color.RED);
+//				Rectangle rect  = new Rectangle(5, 5, Color.RED);
+				Circle rect = new Circle(2.5, Color.RED);
+				
 //				rect.setLayoutX(startX);
 //				rect.setLayoutY(startY);
 				group.getChildren().add(rect);
 				
-				ia[1] = j;
+				int[] ia = {i, j};
 				
 				double deltX = 20 * j * Math.cos(theta);
 				double deltY = 20 * j * Math.sin(theta);
@@ -75,7 +78,8 @@ public class PWFWave extends Application{
 				new Thread(new Runnable() {
 					@Override
 					public void run() {//ia[0] * 10 + 100, 100
-						justGetDataMultipleXZW(rect, xy[0], xy[1], ia[0] / (double)count,  ia[1]*0.2);//会无限运行
+						//弧度制
+						justGetDataMultipleXZW(rect, xy[0], xy[1], ia[0] / (double)count,  ia[1]*1);//会无限运行
 					}
 				}).start();
 			}
@@ -175,7 +179,7 @@ public class PWFWave extends Application{
 		stage.show();
 	}
 	
-	private void justGetDataMultipleXZW(Rectangle rect, double x, double y, double theta, double t_) {
+	private void justGetDataMultipleXZW(Circle rect, double x, double y, double theta, double t_) {
 		double t = 0;
 		double step = 0.2;
 		double[] s = {x,y,t_, theta,0.2};
@@ -184,14 +188,14 @@ public class PWFWave extends Application{
 			Platform.runLater(new Runnable() {
 				@Override
 				public void run() {
-					System.out.println(Math.cos(theta) +"   "+ s[2]);
+//					System.out.println(Math.cos(theta) +"   "+ s[2]);
 					double r = Math.sin(s[2]) * 10;
 					double deltaX = r * Math.cos(theta);
 					double deltaY = r * Math.sin(theta);
 					rect.setLayoutX(x + deltaX);
 					rect.setLayoutY(y + deltaY);
 					s[2] += step;
-//					System.out.println("t:" + s[2] + "axis_:" + s[1]);
+					System.out.println("x:" + x + "deltax:" + deltaX);
 				}
 			});
 			
