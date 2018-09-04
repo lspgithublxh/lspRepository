@@ -42,7 +42,7 @@ public class PWFWave extends Application{
 	
 	private void pointMove(Stage stage) {
 		Group group = new Group();
-		for(int i = 0; i < 10; i++) {
+		for(int i = 0; i < 100; i++) {
 			Rectangle rect  = new Rectangle(5, 5, Color.RED);
 			rect.setLayoutX(100);
 			rect.setLayoutY(100);
@@ -51,7 +51,7 @@ public class PWFWave extends Application{
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					justGetData(rect, ia[0]*8, ia[0]);//会无限运行
+					justGetData(rect, ia[0]*8, ia[0]*0.2);//会无限运行
 				}
 			}).start();
 		}
