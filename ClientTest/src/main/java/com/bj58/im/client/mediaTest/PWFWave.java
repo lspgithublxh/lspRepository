@@ -39,11 +39,52 @@ public class PWFWave extends Application{
 //		pointMove(primaryStage);
 //		pointMoveXZongWave(primaryStage);
 //		pointMoveLuoxuan(primaryStage);
-		pointMoveMultipleZongWave(primaryStage);
+//		pointMoveMultipleZongWave(primaryStage);
+		pointLakeWave_2(primaryStage);
 	}
 	
 	double a = 0.1;
 	double b = 1;
+	
+	private void pointLakeWave_2(Stage stage) {
+		Group group = new Group();
+		Path p = new Path();
+		double startX = 300;
+		double startY = 300;
+		p.getElements().add(new MoveTo(startX,0));
+		p.getElements().add(new LineTo(startX,startY));
+		p.getElements().add(new LineTo(0,startY));
+		p.setStroke(Color.rgb(100, 10, 10));
+		p.setStrokeWidth(0.2);
+		group.getChildren().add(p);
+		double t = 0;
+		for(int i = 1; i < 46; i += 3) {//-48
+			t ++;
+//			double theta = i / (double)count;
+			for(int j = 0; j < Math.PI * 2; j++) {
+				Circle rect = new Circle(2.5, Color.RED);
+				group.getChildren().add(rect);
+				
+				double[] ia = {i, j, t};
+				
+				double deltX = - i * Math.cos(j);
+				double deltY = i * Math.sin(j);
+				double x = startX + deltX;//ia[0] * 10 + 
+				double y = startY + deltY;
+				double[] xy = {x, y};
+				new Thread(new Runnable() {
+					@Override
+					public void run() {//ia[0] * 10 + 100, 100
+						//弧度制
+						justGetDataMultipleXZW(rect, xy[0], xy[1], ia[1],  ia[2]*1);//会无限运行  
+					}
+				}).start();
+			}
+		}
+		Scene scene = new Scene(group, 800, 600, Color.rgb(0x11, 0x11, 0x11, 0.1));
+		stage.setScene(scene);
+		stage.show();
+	}
 	
 	private void pointMoveMultipleZongWave(Stage stage) {
 		Group group = new Group();
