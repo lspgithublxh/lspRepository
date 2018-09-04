@@ -34,11 +34,32 @@ public class PWFWave extends Application{
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 //		seeTheWave(primaryStage);
-		pointMove(primaryStage);
+//		pointMove(primaryStage);
+		pointMoveXZongWave(primaryStage);
 	}
 	
 	double a = 0.1;
 	double b = 1;
+	
+	private void pointMoveXZongWave(Stage stage) {
+		Group group = new Group();
+		for(int i = 0; i < 30; i++) {
+			Rectangle rect  = new Rectangle(5, 5, Color.RED);
+			rect.setLayoutX(100);
+			rect.setLayoutY(100);
+			group.getChildren().add(rect);
+			int[] ia = {i, i};
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					justGetDataXZW(rect, ia[0]*20 + 20, ia[0]*0.2);//会无限运行
+				}
+			}).start();
+		}
+		Scene scene = new Scene(group, 800, 600, Color.rgb(0x11, 0x11, 0x11, 0.1));
+		stage.setScene(scene);
+		stage.show();
+	}
 	
 	private void pointMove(Stage stage) {
 		Group group = new Group();
@@ -60,6 +81,32 @@ public class PWFWave extends Application{
 		stage.show();
 	}
 	
+	private void justGetDataXZW(Rectangle rect, double x_axis, double t_) {
+		double x = 0;
+		double y = 0;
+		double t = 0;
+		double step = 0.2;
+		double[] s = {0,0,t_,0.2};
+		rect.setLayoutY(100);
+		while(true) {
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					s[1] = Math.sin(s[2] + s[0] * a) * 10;
+					rect.setLayoutX(x_axis + s[1]);
+					s[2] += step;
+					System.out.println("t:" + s[2] + "axis_:" + s[1]);
+				}
+			});
+			
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+		}
+	}
 	
 	private void justGetData(Rectangle rect, double x_axis, double t_) {
 		double x = 0;
