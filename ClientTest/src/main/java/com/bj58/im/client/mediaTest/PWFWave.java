@@ -58,16 +58,17 @@ public class PWFWave extends Application{
 		p.setStrokeWidth(0.2);
 		group.getChildren().add(p);
 		double t = 0;
-		for(int i = 1; i < 46; i += 3) {//-48
+		double pi2 = Math.PI * 2;
+		for(int i = 1; i < 200; i += 10) {//-48
 			t ++;
 //			double theta = i / (double)count;
-			for(int j = 0; j < Math.PI * 2; j++) {
+			for(int j = 0; j < pi2; j += pi2 / 4) {
 				Circle rect = new Circle(2.5, Color.RED);
 				group.getChildren().add(rect);
 				
 				double[] ia = {i, j, t};
 				
-				double deltX = - i * Math.cos(j);
+				double deltX = i * Math.cos(j);
 				double deltY = i * Math.sin(j);
 				double x = startX + deltX;//ia[0] * 10 + 
 				double y = startY + deltY;
