@@ -57,10 +57,10 @@ public class PWFWave extends Application{
 		p.setStrokeWidth(0.2);
 		group.getChildren().add(p);
 		int count = 30;
-		for(int i = -48; i < 0; i += 3) {//-48
+		for(int i = -46; i < 46; i += 3) {//-48
 			
 			double theta = i / (double)count;
-			for(int j = -10; j < 10; j++) {
+			for(int j = -15; j < 15; j++) {
 //				Rectangle rect  = new Rectangle(5, 5, Color.RED);
 				Circle rect = new Circle(2.5, Color.RED);
 				
