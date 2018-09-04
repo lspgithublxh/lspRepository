@@ -12,10 +12,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 /**
  * 两种形式 的 弦 振动：静态的x-t :z 色彩图   和 动态的 x :z 波形图
+ * ;;步进运动--螺旋运动；点的运动
  * @ClassName:PWFWave
  * @Description:
  * @Author lishaoping
@@ -31,11 +33,56 @@ public class PWFWave extends Application{
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		seeTheWave(primaryStage);
+//		seeTheWave(primaryStage);
+		pointMove(primaryStage);
 	}
 	
 	double a = 0.1;
 	double b = 1;
+	
+	private void pointMove(Stage stage) {
+		Group group = new Group();
+		Rectangle rect  = new Rectangle(5, 5, Color.YELLOW);
+		rect.setLayoutX(100);
+		rect.setLayoutY(100);
+		group.getChildren().add(rect);
+		Scene scene = new Scene(group, 800, 600, Color.rgb(0x11, 0x11, 0x11, 0.1));
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				justGetData(rect);
+			}
+		}).start();
+		stage.setScene(scene);
+		stage.show();
+	}
+	
+	
+	private void justGetData(Rectangle rect) {
+		double x = 0;
+		double y = 0;
+		double t = 0;
+		double step = 0.2;
+		double[] s = {0,0,0,0.2};
+		while(true) {
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					s[1] = Math.sin(s[2] + s[0] * a) * 20;
+					rect.setLayoutY(s[1] + 100);
+					s[2] += step;
+					System.out.println("y:" + (s[1]+ 100 ) + "t:" + s[2]);
+				}
+			});
+			
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+		}
+	}
 	
 	/**
 	 * 利用相位的变化
