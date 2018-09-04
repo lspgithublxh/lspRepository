@@ -36,11 +36,33 @@ public class PWFWave extends Application{
 //		seeTheWave(primaryStage);
 //		pointMove(primaryStage);
 //		pointMoveXZongWave(primaryStage);
-		pointMoveLuoxuan(primaryStage);
+//		pointMoveLuoxuan(primaryStage);
+		pointMoveMultipleZongWave(primaryStage);
 	}
 	
 	double a = 0.1;
 	double b = 1;
+	
+	private void pointMoveMultipleZongWave(Stage stage) {
+		Group group = new Group();
+		int count = 30;
+		for(int i = 0; i < count; i++) {
+			Rectangle rect  = new Rectangle(5, 5, Color.RED);
+			rect.setLayoutX(100);
+			rect.setLayoutY(100);
+			group.getChildren().add(rect);
+			int[] ia = {i, i};
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					justGetDataMultipleXZW(rect, ia[0] * 10 + 100, 100, ia[0] / (double)count,  ia[0]*0.2);//会无限运行
+				}
+			}).start();
+		}
+		Scene scene = new Scene(group, 800, 600, Color.rgb(0x11, 0x11, 0x11, 0.1));
+		stage.setScene(scene);
+		stage.show();
+	}
 	
 	private void pointMoveXZongWave(Stage stage) {
 		Group group = new Group();
@@ -64,7 +86,7 @@ public class PWFWave extends Application{
 	
 	private void pointMoveLuoxuan(Stage stage) {
 		Group group = new Group();
-		for(int i = 0; i < 40; i++) {
+		for(int i = 0; i < 100; i++) {
 			Rectangle rect  = new Rectangle(5, 5, Color.RED);
 			rect.setLayoutX(100);
 			rect.setLayoutY(100);
@@ -131,6 +153,36 @@ public class PWFWave extends Application{
 		stage.setScene(scene);
 		stage.show();
 	}
+	
+	private void justGetDataMultipleXZW(Rectangle rect, double x, double y, double theta, double t_) {
+		double t = 0;
+		double step = 0.2;
+		double[] s = {x,y,t_, theta,0.2};
+		rect.setLayoutY(100);
+		while(true) {
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					System.out.println(Math.cos(theta) +"   "+ s[2]);
+					double r = Math.sin(s[2]) * 10;
+					double deltaX = r * Math.cos(theta);
+					double deltaY = r * Math.sin(theta);
+					rect.setLayoutX(x + deltaX);
+					rect.setLayoutY(y + deltaY);
+					s[2] += step;
+//					System.out.println("t:" + s[2] + "axis_:" + s[1]);
+				}
+			});
+			
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+		}
+	}
+	
 	
 	private void justGetDataXZW(Rectangle rect, double x_axis, double t_) {
 		double x = 0;
