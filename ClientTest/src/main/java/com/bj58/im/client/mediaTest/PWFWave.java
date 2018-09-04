@@ -35,7 +35,8 @@ public class PWFWave extends Application{
 	public void start(Stage primaryStage) throws Exception {
 //		seeTheWave(primaryStage);
 //		pointMove(primaryStage);
-		pointMoveXZongWave(primaryStage);
+//		pointMoveXZongWave(primaryStage);
+		pointMoveLuoxuan(primaryStage);
 	}
 	
 	double a = 0.1;
@@ -59,6 +60,56 @@ public class PWFWave extends Application{
 		Scene scene = new Scene(group, 800, 600, Color.rgb(0x11, 0x11, 0x11, 0.1));
 		stage.setScene(scene);
 		stage.show();
+	}
+	
+	private void pointMoveLuoxuan(Stage stage) {
+		Group group = new Group();
+		for(int i = 0; i < 1; i++) {
+			Rectangle rect  = new Rectangle(5, 5, Color.RED);
+			rect.setLayoutX(100);
+			rect.setLayoutY(100);
+			group.getChildren().add(rect);
+			int[] ia = {i, i};
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					justGetDataLuoxuan(rect, ia[0]*8, ia[0]*0.2);//会无限运行
+				}
+
+			}).start();
+		}
+		Scene scene = new Scene(group, 800, 600, Color.rgb(0x11, 0x11, 0x11, 0.1));
+		stage.setScene(scene);
+		stage.show();
+	}
+	
+	private void justGetDataLuoxuan(Rectangle rect, int x_axis, double t_) {
+		double[] s = {0,0,t_,0.2};
+		double step = 0.2;
+		while(true) {
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					double theta = s[2];
+					double p = theta;
+					s[0] = p * Math.cos(p);
+					s[1] = p * Math.sin(p);
+					rect.setLayoutX(s[0] + 200);
+					rect.setLayoutY(s[1] + 200);
+//					s[1] = Math.sin(s[2] + s[0] * a) * 10;
+//					rect.setLayoutX(x_axis + s[1]);
+					s[2] += step;
+					System.out.println("t:" + s[2] + "axis_:" + s[1]);
+				}
+			});
+			
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+		}
 	}
 	
 	private void pointMove(Stage stage) {
@@ -120,7 +171,8 @@ public class PWFWave extends Application{
 				public void run() {
 					s[1] = Math.sin(s[2] + s[0] * a) * 50;
 					rect.setLayoutY(s[1] + 100);
-					rect.setLayoutX(x_axis + 100);
+					rect.setLayoutX(x_axis + 100);//震动
+//					rect.setLayoutX(x_axis + s[2] * 10 + 100);//平面螺旋运动
 					s[2] += step;
 					System.out.println("y:" + (s[1]+ 100 ) + "t:" + s[2] + "axis_:" + s[1]);
 				}
