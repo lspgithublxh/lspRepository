@@ -45,19 +45,40 @@ public class PWFWave extends Application{
 	
 	private void pointMoveMultipleZongWave(Stage stage) {
 		Group group = new Group();
+		Path p = new Path();
+		double startX = 300;
+		double startY = 300;
+		p.getElements().add(new MoveTo(startX,0));
+		p.getElements().add(new LineTo(startX,startY));
+		p.getElements().add(new LineTo(0,startY));
+		p.setStroke(Color.rgb(100, 10, 10));
+		p.setStrokeWidth(0.2);
+		group.getChildren().add(p);
 		int count = 30;
-		for(int i = 0; i < count; i++) {
-			Rectangle rect  = new Rectangle(5, 5, Color.RED);
-			rect.setLayoutX(100);
-			rect.setLayoutY(100);
-			group.getChildren().add(rect);
+		for(int i = -48; i < 48; i += 3) {
+			
 			int[] ia = {i, i};
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					justGetDataMultipleXZW(rect, ia[0] * 10 + 100, 100, ia[0] / (double)count,  ia[0]*0.2);//会无限运行
-				}
-			}).start();
+			double theta = ia[0] / (double)count;
+			for(int j = -10; j < 10; j++) {
+				Rectangle rect  = new Rectangle(5, 5, Color.RED);
+//				rect.setLayoutX(startX);
+//				rect.setLayoutY(startY);
+				group.getChildren().add(rect);
+				
+				ia[1] = j;
+				
+				double deltX = 20 * j * Math.cos(theta);
+				double deltY = 20 * j * Math.sin(theta);
+				double x = startX + deltX;//ia[0] * 10 + 
+				double y = startY + deltY;
+				double[] xy = {x, y};
+				new Thread(new Runnable() {
+					@Override
+					public void run() {//ia[0] * 10 + 100, 100
+						justGetDataMultipleXZW(rect, xy[0], xy[1], ia[0] / (double)count,  ia[1]*0.2);//会无限运行
+					}
+				}).start();
+			}
 		}
 		Scene scene = new Scene(group, 800, 600, Color.rgb(0x11, 0x11, 0x11, 0.1));
 		stage.setScene(scene);
