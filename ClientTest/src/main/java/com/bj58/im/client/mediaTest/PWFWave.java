@@ -64,7 +64,7 @@ public class PWFWave extends Application{
 	
 	private void pointMoveLuoxuan(Stage stage) {
 		Group group = new Group();
-		for(int i = 0; i < 1; i++) {
+		for(int i = 0; i < 40; i++) {
 			Rectangle rect  = new Rectangle(5, 5, Color.RED);
 			rect.setLayoutX(100);
 			rect.setLayoutY(100);
