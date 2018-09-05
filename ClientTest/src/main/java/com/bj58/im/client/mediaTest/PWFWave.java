@@ -38,9 +38,9 @@ public class PWFWave extends Application{
 //		seeTheWave(primaryStage);
 //		pointMove(primaryStage);
 //		pointMoveXZongWave(primaryStage);
-//		pointMoveLuoxuan(primaryStage);
+		pointMoveLuoxuan(primaryStage);
 //		pointMoveMultipleZongWave(primaryStage);
-		pointLakeWave_2(primaryStage);
+//		pointLakeWave_2(primaryStage);
 	}
 	
 	double a = 0.1;
@@ -62,7 +62,7 @@ public class PWFWave extends Application{
 		for(int i = 1; i < 200; i += 10) {//-48
 			t ++;
 //			double theta = i / (double)count;
-			for(double j = 0; j < pi2; j += pi2/20) {
+			for(double j = 0; j < pi2; j += pi2/30) {
 				System.out.println("start a thread:" + j);
 				Circle rect = new Circle(2.5, Color.RED);
 				group.getChildren().add(rect);
