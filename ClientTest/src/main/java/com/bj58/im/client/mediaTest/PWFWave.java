@@ -62,7 +62,8 @@ public class PWFWave extends Application{
 		for(int i = 1; i < 200; i += 10) {//-48
 			t ++;
 //			double theta = i / (double)count;
-			for(int j = 0; j < pi2; j += pi2/6) {
+			for(double j = 0; j < pi2; j += pi2/20) {
+				System.out.println("start a thread:" + j);
 				Circle rect = new Circle(2.5, Color.RED);
 				group.getChildren().add(rect);
 				
@@ -77,7 +78,7 @@ public class PWFWave extends Application{
 					@Override
 					public void run() {//ia[0] * 10 + 100, 100
 						//弧度制
-						justGetDataMultipleXZW(rect, xy[0], xy[1], ia[1],  -ia[2]*1);//会无限运行  
+						justGetDataMultipleXZW(rect, xy[0], xy[1], ia[1],  -ia[2]*1);//会无限运行  ，越往外，相位越是落后 
 					}
 				}).start();
 			}
