@@ -39,67 +39,54 @@ public class Zifu {
 	}
 
 	private static void generateImg() {
-		int w = 200;//200
-		int h = 233;//233
-		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR);//BufferedImage.TYPE_INT_ARGB
-		Graphics2D gd = image.createGraphics();
-		gd.fill(new Rectangle(w, h));
-		gd.setColor(Color.BLACK);
-		gd.setBackground(Color.WHITE);
-		Font f = new Font(Font.SERIF, Font.PLAIN, 30);
-		gd.setFont(f);
-		gd.drawString("1", 180, 120);
-		File fi = new File("D:\\cache3\\b.txt");
-		FileOutputStream o = null;
-		try {
-			ImageIO.write(image, "png", new File("D:\\cache3\\a.png"));
-			o = new FileOutputStream(fi);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		FileOutputStream o;
+		BufferedImage image = GetImage.getImage(180, 120);
 		byte[] r = ImageUtils.imageToBytes(image);
-		int count = 0;
-		count = writeToFile(o, r);
 		
-		//1.变成2维数组,,边界图;;相当于截图
-		int row = r.length / 200 + (r.length % 200 == 0 ? 0 : 1);
-		byte[][] aa = new byte[row][200];
-		byte[] by = new byte[200];
-		int line = 0;
-		count = 0;
-		int minX = 10000;
-		int maxX = 0;
-		int minY = 10000;
-		int maxY = 0;
-		for(int i = 0; i < r.length; i++) {
-			by[count] = r[i] != -1 ? (byte)1 : (byte)0;
-			if(r[i] != -1) {
-				minX = line < minX ? line : minX;
-				maxX = line >= maxX ? line : maxX;
-				
-				minY = count < minY ? count : minY;
-				maxY = count >= maxY ? count : maxY;
-			}
-			if(++count == 200) {
-				aa[line++] = by;
-				count = 0;
-				by = new byte[200];
-				System.out.println();
-			}
-		}
-		byte[][] jietu = new byte[maxX - minX + 1][maxY - minY + 1];
-		for(int i = minX; i <= maxX; i++) {
-			byte[] c = aa[i];
-			for(int j = minY; j <= maxY; j++) {
-				jietu[i - minX][j - minY] = c[j];
-			}
-		}
-		try {
-			o = new FileOutputStream(new File("D:\\cache3\\c.txt"));
-			writeToFile(o, aa);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+		byte[][] jietu = Jietu.jietuImg(r);
+		
+//		int count = 0;
+//		count = writeToFile(o, r);s
+//		
+//		//1.变成2维数组,,边界图;;相当于截图
+//		int row = r.length / 200 + (r.length % 200 == 0 ? 0 : 1);
+//		byte[][] aa = new byte[row][200];
+//		byte[] by = new byte[200];
+//		int line = 0;
+//		count = 0;
+//		int minX = 10000;
+//		int maxX = 0;
+//		int minY = 10000;
+//		int maxY = 0;
+//		for(int i = 0; i < r.length; i++) {
+//			by[count] = r[i] != -1 ? (byte)1 : (byte)0;
+//			if(r[i] != -1) {
+//				minX = line < minX ? line : minX;
+//				maxX = line >= maxX ? line : maxX;
+//				
+//				minY = count < minY ? count : minY;
+//				maxY = count >= maxY ? count : maxY;
+//			}
+//			if(++count == 200) {
+//				aa[line++] = by;
+//				count = 0;
+//				by = new byte[200];
+//				System.out.println();
+//			}
+//		}
+//		byte[][] jietu = new byte[maxX - minX + 1][maxY - minY + 1];
+//		for(int i = minX; i <= maxX; i++) {
+//			byte[] c = aa[i];
+//			for(int j = minY; j <= maxY; j++) {
+//				jietu[i - minX][j - minY] = c[j];
+//			}
+//		}
+//		try {
+//			o = new FileOutputStream(new File("D:\\cache3\\c.txt"));
+//			writeToFile(o, aa);
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		}
 		System.out.println("start");
 		try {
 			o = new FileOutputStream(new File("D:\\cache3\\d.txt"));
@@ -108,6 +95,8 @@ public class Zifu {
 			e.printStackTrace();
 		}
 	}
+
+	
 
 	private static void writeToFile(FileOutputStream o, byte[][] r) {
 		StringBuffer b = new StringBuffer();
