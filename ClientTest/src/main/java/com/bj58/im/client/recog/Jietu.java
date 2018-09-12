@@ -34,7 +34,6 @@ public class Jietu {
 				aa[line++] = by;
 				count = 0;
 				by = new byte[200];
-				System.out.println();
 			}
 		}
 		byte[][] jietu = new byte[maxX - minX + 1][maxY - minY + 1];
@@ -45,6 +44,23 @@ public class Jietu {
 			}
 		}
 		return jietu;
+	}
+	
+	public static byte[][] yuanImg(byte[] r) {
+		int row = r.length / 200 + (r.length % 200 == 0 ? 0 : 1);
+		byte[][] aa = new byte[row][200];
+		byte[] by = new byte[200];
+		int line = 0;
+		int count = 0;
+		for(int i = 0; i < r.length; i++) {
+			by[count] = r[i] != -1 ? (byte)1 : (byte)0;
+			if(++count == 200) {
+				aa[line++] = by;
+				count = 0;
+				by = new byte[200];
+			}
+		}
+		return aa;
 	}
 }
 	

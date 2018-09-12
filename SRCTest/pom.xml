@@ -11,6 +11,12 @@
 	<spring.version>4.3.13.RELEASE</spring.version>
   </properties>
   <dependencies>
+  		<!-- 连接mysql-->
+  		<dependency>
+		    <groupId>mysql</groupId>
+		    <artifactId>mysql-connector-java</artifactId>
+		    <version>8.0.12</version><!-- 8.0.12 -->
+		</dependency>
 		<!--   		<dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
