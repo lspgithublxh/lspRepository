@@ -20,6 +20,15 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.bj58.fang.log.LogTest;
 
+/**
+ * 推荐就是查询 ， 只是是 根据用户特征  ，搜索记录的查询  ；；而不是用户自己选条件进行查询
+ * @ClassName:RecommendTest
+ * @Description:
+ * @Author lishaoping
+ * @Date 2018年9月13日
+ * @Version V1.0
+ * @Package recommend
+ */
 public class RecommendTest {
 	static Logger logger;
 	
@@ -69,7 +78,6 @@ public class RecommendTest {
 	}
 
 	private static void handdleThree(JSONArray lis) {
-		Connection con = MysqlConnect.getConnection();
 		String insert = "insert into `test`.`tuijian`(id, title, html, comment_text, insert_time, insert_date, insert_timestamp) values";
 		for(int i = 0; i < lis.size(); i++) {
 			JSONObject news = lis.getJSONObject(i);
@@ -101,7 +109,12 @@ public class RecommendTest {
 			return;
 		}
 		insert = insert.substring(0, insert.length() - 1);
+		saveToMysql(insert);
+	}
+
+	public static void saveToMysql(String insert) {
 		try {
+			Connection con = MysqlConnect.getConnection();
 			Statement statement = con.createStatement();
 			boolean rs = statement.execute(insert);
 			if(rs) {
@@ -112,12 +125,12 @@ public class RecommendTest {
 		}
 	}
 
-	private static String formatTime() {
+	protected static String formatTime() {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		return format.format(new Date());
 	}
 	
-	private static String formatDate() {
+	protected static String formatDate() {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		return format.format(new Date());
 	}
