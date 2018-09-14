@@ -29,9 +29,27 @@ public class LogAnalyze extends Application{
 //		test();
 //		test2();
 //		userAnalize(args);
-		restrictIpAnalize(args);
+		restrictIpAnalize2(args);
 	}
 
+	private static void restrictIpAnalize2(String[] args) {
+//		String regex = "-\\s+(\\S+?)restrict.+?success\\:(\\S+)$";
+//		int count = 2;
+//		String file = "D:\\software\\error.txt";
+//		table = tableData(regex, count, file);
+//		launch(args);
+		
+		
+		String regex = "stat_ip.+?ver\\:(.+)?,";
+		int count = 1;
+		String file = "D:\\software\\ss.txt";
+		table = tableData(regex, count, file);
+//		for(String ip : table.get(0)) {
+//			System.out.println(IPLocation.test(ip.split(";")[0]));
+//		}
+		launch(args);
+	}
+	
 	private static void restrictIpAnalize(String[] args) {
 //		String regex = "-\\s+(\\S+?)restrict.+?success\\:(\\S+)$";
 //		int count = 2;
