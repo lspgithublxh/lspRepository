@@ -25,19 +25,25 @@ public class QyzSjVgDf {
 		Double[][] s3 = chengfa(s2, s);
 		printMatrix(s3);
 		Double hls = hanglieshi(s);
-		System.out.println(hls);
-		Double hls2 = hanglieshi(s2);
-		System.out.println(hls2);
-		Double hls3 = hanglieshi(s3);
-		System.out.println(hls3);
+//		System.out.println(hls);
+//		Double hls2 = hanglieshi(s2);
+//		System.out.println(hls2);
+//		Double hls3 = hanglieshi(s3);
+//		System.out.println(hls3);
 		//对角化 专门测试
 //		duijiaohua(s);
 //		printMatrix(s);
 //		duijiaohuaQiang(s);
 		printMatrix(s);
-		
 		//计算特征值 和 特征向量
-		bijinHanglishi(s);
+		try {
+			bijinHanglishi(s);
+			printMatrix(s3);
+			bijinHanglishi(s3);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	private static void printMatrix(Double[][] s) {
@@ -131,17 +137,35 @@ public class QyzSjVgDf {
 		}
 	}
 	
+	/**
+	 * 强交换 用来计算 特征向量用处不大
+	 * @param 
+	 * @author lishaoping
+	 * @Date 2018年9月18日
+	 * @Package com.bj58.im.client.matrix
+	 * @return void
+	 */
 	private static void duijiaohuaQiang(Double[][] matrix) {
 		for(int i = 0; i < matrix.length; i++) {
 			jiaohuanij(matrix, i, i);
-			if(matrix[i][i] == 0) {//为0的一行
+			if(Math.abs(matrix[i][i]) <= 0.001) {//为0的一行
 				//往上走：如果有非0的，那么交换;第一次为0就交换
 				boolean hasLou = false;
 				for(int k = i - 1; k >= 0; k--) {
-					if(matrix[k][i] != 0) {
-						jiaohuanijPure(matrix, i, k);
-						hasLou = true;
-						break;
+					if(Math.abs(matrix[i][i]) > 0.001) {//缺条件----前面都是0 这一列不为0
+						//qie
+						boolean keyi = true;
+						for(int cc = 0; cc < i; cc++){//列
+							if(Math.abs(matrix[k][cc]) > 0.001) {
+								keyi = false;
+								break;
+							}
+						}
+						if(keyi) {
+							jiaohuanijPure(matrix, i, k);
+							hasLou = true;
+							break;
+						}
 					}
 				}
 //				if(!hasLou) continue;//其实没必要再动，因为肯定都是0了
@@ -163,6 +187,14 @@ public class QyzSjVgDf {
 		return hanglieshi(matrix);
 	}
 	
+	private static Double[] copy2(Double[] matrix) {
+		Double[] cc = new Double[matrix.length];
+		for(int i = 0; i < matrix.length; i++) {
+			cc[i] = matrix[i];
+		}
+		return cc;
+	}
+	
 	private static Double[][] copy(Double[][] matrix) {
 		Double[][] cc = new Double[matrix.length][matrix[0].length];
 		for(int i = 0; i < matrix.length; i++) {
@@ -182,12 +214,17 @@ public class QyzSjVgDf {
 		Double kuan = 100d;
 		Double currIndex = startLeft;
 		boolean left = true;
+		double bujin = 0.1;
 		while(true) {
-			for(Double index = 0d; index <= kuan; index += 0.1) {
+			for(Double index = 0d; index <= kuan; index += bujin) {
 				currIndex += index;
 				Double hls = daicanHanglishi(copy(matrix), index);
-				if(Math.abs(hls) < 0.001) {//认为行列式备选 的特征值
+//				System.out.println("hls:" + hls);//非常耗时--绝大部分时间
+				if(Math.abs(hls) < 0.01) {//认为行列式备选 的特征值
 					rs.add(instance.new Entity(Math.abs(hls),index));
+				}
+				if(Math.abs(hls) < 1) {
+					bujin = 0.0001;
 				}
 			}
 			if(rs.size() >= matrix.length) {
@@ -216,6 +253,20 @@ public class QyzSjVgDf {
 				return 0;
 			}
 		});
+		List<Entity> guolv = new ArrayList<>();
+		for(Entity old : rs) {
+			boolean has = false;
+			for(Entity guo : guolv) {
+				if(Math.abs(guo.lamda - old.lamda) < 0.1) {//相隔太近  认为是一个lamda
+					has = true;
+					break;
+				}
+			}
+			if(!has) {
+				guolv.add(old);
+			}
+		}
+		rs = guolv;
 		System.out.println(rs);
 		//根据行列式 求出 特征值：组合的方式--正交的方式 
 		//假定  rs中的都是 特征值
@@ -228,20 +279,127 @@ public class QyzSjVgDf {
 				tis[i][i] -= lamda;
 			}
 			//对角化
+			printMatrix(tis);
 			duijiaohuaQiang(tis);
 			//求出每个对角阵对应的n-r个特征向量
 			//直接可以算出来！！
-			
-			for(int in  = 0; in < tis.length; in++ ) {
-				if(Math.abs(tis[in][in]) < 0.001) {
-					double[] tzVector = new double[tis[0].length];
-					tzVector[in] = 1d;
-					zhengjiaojuzhen.add(instance.new Body(tzVector, lamda));
-				}
-			}
+			getTzxl2(zhengjiaojuzhen, lamda, tis);
+//			getTzxl1(zhengjiaojuzhen, lamda, tis);
 		}
 		System.out.println(zhengjiaojuzhen);
 		return null;
+	}
+
+	private static void getTzxl3(List<Body> zhengjiaojuzhen, Double lamda, Double[][] tis) {
+		//某一行：
+		//从右到左 的  所有非0 下标-元素值
+		//去除已经定的 下标 
+		//对剩余下标  个数 2  > 2判断，  来从已有向量 完善位置的值  、 或者  在已有 基础上  生成 新的向量    
+		//已定下标 map  增加  定 的下标
+		//下一行
+		List<Integer> yidingxiabiao = new ArrayList<>();
+		List<Integer> currFeilingxiabiao = new ArrayList<>();
+		List<Double[]> rs = new ArrayList<>();
+		for(int i = tis.length - 1 ; i >= 0; i--) {
+			currFeilingxiabiao.clear();
+			for(int j = i; j < tis.length - 1; j++) {
+				if(Math.abs(tis[i][j]) > 0.001) {
+					currFeilingxiabiao.add(j);
+				}
+			}
+			List<Integer> rest = new ArrayList<Integer>(currFeilingxiabiao);
+			currFeilingxiabiao.removeAll(yidingxiabiao);
+			rest.removeAll(currFeilingxiabiao);
+			Double restVal = 0d;
+			for(Integer xia : rest) {
+				restVal += tis[i][xia];
+			}
+			if(currFeilingxiabiao.size() == 2) {
+				for(Double[] x : rs) {
+					int xiab = currFeilingxiabiao.get(currFeilingxiabiao.size() - 1);
+					x[xiab] = 1d;
+					x[currFeilingxiabiao.get(0)] = -(tis[i][xiab] * x[xiab] + restVal) / tis[i][currFeilingxiabiao.get(0)];
+				}
+				
+			}
+			if(currFeilingxiabiao.size() == 1) {
+				for(Double[] x : rs) {
+					x[currFeilingxiabiao.get(0)] = -restVal / tis[i][currFeilingxiabiao.get(0)];
+				}
+			}
+			if(currFeilingxiabiao.size() > 2) {
+				int size = currFeilingxiabiao.size();
+				List<Double[]> rs2 = new ArrayList<>();
+				for(Double[] x : rs) {
+					for(int ind = 1; ind < size; ind++) {
+						Double[] xcopy = copy2(x);
+						xcopy[currFeilingxiabiao.get(ind)] = 1d;
+						for(int dex = 0; dex < currFeilingxiabiao.size(); dex++) {
+							if(dex != ind) {
+								xcopy[currFeilingxiabiao.get(dex)] = 0d;
+							}
+						}
+						xcopy[currFeilingxiabiao.get(0)] = -(tis[i][currFeilingxiabiao.get(ind)] * xcopy[currFeilingxiabiao.get(ind)] + restVal) / tis[i][currFeilingxiabiao.get(0)];
+						rs2.add(xcopy);
+					}
+				}
+				rs = rs2;
+			}
+			yidingxiabiao.addAll(currFeilingxiabiao);
+		}
+	}
+	
+	private static void getTzxl2(List<Body> zhengjiaojuzhen, Double lamda, Double[][] tis) {
+		//已经有的定值
+		List<Integer> lingzhi = new ArrayList<>();
+		//已经有的任意值---计算当前任意值用
+		List<Integer> renyizhi = new ArrayList<>();//未使用的
+		List<Double[]> rs = new ArrayList<>();
+		for(int i = tis.length - 1 ; i >= 0; i--) {
+			if(i == tis.length - 1) {
+				if(Math.abs(tis[i][i]) < 0.001) {
+					renyizhi.add(i);
+				}else {
+					Double[] one = new Double[tis.length];
+					one[i] = 0d;
+					rs.add(one);
+					lingzhi.add(i);
+				}
+			}else {
+				int zongbianliang = tis[0].length - i;
+				int lingzhigeshu = lingzhi.size();//0值
+				int renyizhigeshu = renyizhi.size();
+				if(lingzhigeshu == zongbianliang - 1) {
+					lingzhi.add(i);
+					continue;
+				}
+//				if(Math.abs(tis[i][i]) < 0.001) {
+//					renyizhi.add(i);
+//					continue;
+//				}
+				//当前行 任意变量 个数
+				List<Integer> currRenyi = new ArrayList<>();
+				for(int j = i; j < tis[0].length; j++) {
+					if(Math.abs(tis[i][j]) < 0.001) {
+						if(renyizhi.contains(j)) {
+							currRenyi.add(j);
+						}
+					}
+				}
+				
+				//计算ii 位置的变量值
+			}
+		}
+	}
+
+	private static void getTzxl1(List<Body> zhengjiaojuzhen, Double lamda, Double[][] tis) {
+		for(int in  = 0; in < tis.length; in++ ) {
+			if(Math.abs(tis[in][in]) < 0.001) {
+				double[] tzVector = new double[tis[0].length];
+				tzVector[in] = 1d;
+				zhengjiaojuzhen.add(instance.new Body(tzVector, lamda));
+			}
+		}
 	}
 	
 	class Entity{
