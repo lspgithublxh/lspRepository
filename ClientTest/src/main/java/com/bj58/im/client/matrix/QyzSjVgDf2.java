@@ -17,7 +17,7 @@ import java.util.Set;
  * @Version V1.0
  * @Package com.bj58.im.client.matrix
  */
-public class QyzSjVgDf {
+public class QyzSjVgDf2 {
 
 	public static void main(String[] args) {
 //		Double[][] s = {{2d,3d},{2d,4d}};
@@ -43,11 +43,11 @@ public class QyzSjVgDf {
 //			bijinHanglishi(s);
 //			printMatrix(s3);
 //			bijinHanglishi(s3);
-			System.out.println("------------------");
-			Double[][] sx = {{1d,2d},{3d,4d}};
-			qysvdSee(sx);
-			Double[][] sx2 = {{14d,2d},{3d,4d}};
-			qysvdSee(sx2);
+//			System.out.println("------------------");
+//			Double[][] sx = {{1d,2d},{3d,4d}};
+//			qysvdSee(sx);
+//			Double[][] sx2 = {{14d,2d},{3d,4d}};
+//			qysvdSee(sx2);
 			Double[][] sx3 = {{10d,2d},{3d,4d}};
 			qysvdSee(sx3);
 		}catch (Exception e) {
@@ -289,7 +289,7 @@ public class QyzSjVgDf {
 		return cc;
 	}
 
-	static QyzSjVgDf instance = new QyzSjVgDf();
+	static QyzSjVgDf2 instance = new QyzSjVgDf2();
 	
 	/**
 	 * 特征值 和特征向量
@@ -303,24 +303,16 @@ public class QyzSjVgDf {
 		List<Entity> rs = new ArrayList<>();
 		Double startLeft = -100d;
 		Double startRight = 0d;
-		Double kuan = 100d;
+		
 		Double currIndex = startLeft;
 		boolean left = true;
-		double bujin = 0.1;
+		Double kuan = 100d;
+		Double step = 0.1d;
+		double yueshu = 0.01d;
 		while(true) {
-			for(Double index = 0d; index <= kuan; index += bujin) {
-				currIndex += index;
-				Double hls = daicanHanglishi(copy(matrix), index);
-//				System.out.println("hls:" + hls);//非常耗时--绝大部分时间
-				if(Math.abs(hls) < 0.01) {//认为行列式备选 的特征值
-					rs.add(instance.new Entity(Math.abs(hls),index));
-				}
-				if(Math.abs(hls) < 5) {
-					bujin = 0.0001;
-				}
-			}
+ 			searchThers(matrix, currIndex, rs,step, yueshu);
 			if(rs.size() >= matrix.length) {
-				break;
+				break; 
 			}
 			if(left) {
 				currIndex = startRight;
@@ -330,8 +322,17 @@ public class QyzSjVgDf {
 				currIndex = startLeft;
 			}
 			left = !left;
+			
 			if(startRight > 3000 || startLeft < -3000) {
-				break;
+				if(rs.size() < matrix.length) {
+					yueshu += yueshu;
+					startLeft = -100d;
+					startRight = 0d;
+					currIndex = startLeft;
+					System.out.println("yueshu:" + yueshu);
+				}else {
+					break;
+				}
 			}
 		}
 		Collections.sort(rs, new Comparator<Entity>() {
@@ -372,10 +373,23 @@ public class QyzSjVgDf {
 			}
 			//对角化
 //			printMatrix(tis);
-			duijiaohuaQiang(tis);
+			int count = 0;
+			double f = 0.001;
+//			duijiaohuaQiang(tis);
+			duijiaohua(tis);
+			while(true) {
+				int addC = getTzxl3(zhengjiaojuzhen, lamda, tis, f);
+				if(count++ == 1000 || addC > 0) {
+					break;
+				}else {
+					f += f;
+					System.out.println("f:" + f);
+				}
+			}
+			
 			//求出每个对角阵对应的n-r个特征向量
 			//直接可以算出来！！
-			getTzxl3(zhengjiaojuzhen, lamda, tis);
+			
 //			getTzxl2(zhengjiaojuzhen, lamda, tis);
 //			getTzxl1(zhengjiaojuzhen, lamda, tis);
 		}
@@ -383,7 +397,52 @@ public class QyzSjVgDf {
 		return zhengjiaojuzhen;
 	}
 
-	private static void getTzxl3(List<Body> zhengjiaojuzhen, Double lamda, Double[][] tis) {
+	private static void searchThers(Double[][] matrix,double start, List<Entity> rs, double bujin, double yueshu) {
+		int searchCount = 100000;
+		int lessEnough = 0;
+		int zengzhang = 0;
+		Double oldhls = 1000d;
+		for(Double index = 0d; index <= 100d; index += bujin) {
+			Double hls = daicanHanglishi(copy(matrix), index + start);
+//				System.out.println("hls:" + hls);//非常耗时--绝大部分时间
+			if(Math.abs(hls) < yueshu) {//认为行列式备选 的特征值
+				rs.add(instance.new Entity(Math.abs(hls),index + start));
+			}
+			if(searchCount-- == 0) {
+				break;
+			}
+			if(Math.abs(hls) < 0.05) {
+				bujin = 0.00001;//即便很小，抖动也很大;此时也可以当作是特征值了--左右进行有必要
+				if(lessEnough++ > 10) {
+					rs.add(instance.new Entity(Math.abs(hls),index + start));
+					bujin = 0.1;
+				}
+				zengzhang = 0;
+			}else if(Math.abs(hls) < 0.1) {
+				bujin = 0.00001;zengzhang = 0;
+//					System.out.println("hls1:" + hls);
+			}else if(Math.abs(hls) < 1) {	
+				bujin = 0.0001;zengzhang = 0;
+//					System.out.println("hls2:" + hls);
+			}else if(Math.abs(hls) < 5) {
+				bujin = 0.0001;
+				if(Math.abs(hls) > oldhls && Math.abs(hls) - oldhls < 0.5) {
+					if(zengzhang++ > 10) {
+						rs.add(instance.new Entity(Math.abs(hls),index + start));
+						bujin = 0.1;
+						zengzhang = 0;
+					}
+				}
+//					System.out.println("hls3:" + hls);
+			}else {
+				zengzhang = 0;
+			}
+			
+			oldhls = Math.abs(hls);
+		}
+	}
+
+	private static int getTzxl3(List<Body> zhengjiaojuzhen, Double lamda, Double[][] tis, double yueshu) {
 		//先对角化--强或者弱都可以
 		//某一行：
 		//从右到左 的  所有非0 下标-元素值
@@ -398,7 +457,7 @@ public class QyzSjVgDf {
 		for(int i = tis.length - 1 ; i >= 0; i--) {
 			currFeilingxiabiao.clear();
 			for(int j = i; j <= tis.length - 1; j++) {
-				if(Math.abs(tis[i][j]) > 0.001) {
+				if(Math.abs(tis[i][j]) > yueshu) {
 					currFeilingxiabiao.add(j);
 					ziyouxiabiao.remove((Integer)j);//本行开始，不再自由
 				}else {
@@ -412,16 +471,18 @@ public class QyzSjVgDf {
 			rest.removeAll(currFeilingxiabiao);
 			Double restVal = null;
 //			if(rest.size() > 0) {
-			restVal = 0d;
-			for(Integer xia : rest) {//用定值来算的 rest 就是yidingxiabiao
-				restVal += tis[i][xia];
-			}
+			
+			
 //			}
 			if(rs.size() == 0 && currFeilingxiabiao.size() > 0) {//为空的清醒
 				rs = geneNull(currFeilingxiabiao.size() == 1 ? 1 : currFeilingxiabiao.size() - 1, tis[0].length);
 			}
 			if(currFeilingxiabiao.size() == 2) {
 				for(Double[] x : rs) {
+					restVal = 0d;
+					for(Integer xia : rest) {//用定值来算的 rest 就是yidingxiabiao
+						restVal += tis[i][xia] * x[xia];//放在里面，因为 需要值-不仅系数
+					}
 					int xiab = currFeilingxiabiao.get(currFeilingxiabiao.size() - 1);
 					x[xiab] = 1d;
 					x[currFeilingxiabiao.get(0)] = -(tis[i][xiab] * x[xiab] + restVal) / tis[i][currFeilingxiabiao.get(0)];
@@ -430,6 +491,10 @@ public class QyzSjVgDf {
 			}
 			if(currFeilingxiabiao.size() == 1) {
 				for(Double[] x : rs) {
+					restVal = 0d;
+					for(Integer xia : rest) {//用定值来算的 rest 就是yidingxiabiao
+						restVal += tis[i][xia] * x[xia];//放在里面，因为 需要值-不仅系数
+					}
 					x[currFeilingxiabiao.get(0)] = -restVal / tis[i][currFeilingxiabiao.get(0)];
 				}
 			}
@@ -445,6 +510,10 @@ public class QyzSjVgDf {
 							if(dex != ind) {
 								xcopy[currFeilingxiabiao.get(dex)] = 0d;
 							}
+						}
+						restVal = 0d;
+						for(Integer xia : rest) {//用定值来算的 rest 就是yidingxiabiao
+							restVal += tis[i][xia] * xcopy[xia];//放在里面，因为 需要值-不仅系数
 						}
 						xcopy[currFeilingxiabiao.get(0)] = -(tis[i][currFeilingxiabiao.get(ind)] * xcopy[currFeilingxiabiao.get(ind)] + restVal) / tis[i][currFeilingxiabiao.get(0)];
 						rs2.add(xcopy);
@@ -479,11 +548,25 @@ public class QyzSjVgDf {
 			}
 			rs = ls;
 		}
+		int cc = 0;
 		for(Double[] x : rs) {
+			if(lingxiangl(x)) continue;
+			cc++;
 			zhengjiaojuzhen.add(instance.new Body(x, lamda));
 		}
+		return cc;
 	}
 	
+	private static boolean lingxiangl(Double[] x) {
+		boolean is = true;
+		for(Double y : x) {
+			if(Math.abs(y) > 0.0001) {//认为非0向量
+				is = false;
+			}
+		}
+		return is;
+	}
+
 	private static List<Double[]> geneNull(int line, int col) {
 		List<Double[]> s = new ArrayList<>();
 		for(int i = 0 ; i < line; i++) {
