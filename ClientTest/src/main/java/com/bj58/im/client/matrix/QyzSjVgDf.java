@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 行列式的计算：具体矩阵 用初等变换；；含有lamda用  从内到外增长的方式进行 逼近 计算
@@ -23,8 +25,8 @@ public class QyzSjVgDf {
 		Double[][] s2 = zhuanzhi(s);
 		printMatrix(s2);
 		Double[][] s3 = chengfa(s2, s);
-		printMatrix(s3);
-		Double hls = hanglieshi(s);
+//		printMatrix(s3);
+//		Double hls = hanglieshi(s);
 //		System.out.println(hls);
 //		Double hls2 = hanglieshi(s2);
 //		System.out.println(hls2);
@@ -34,9 +36,10 @@ public class QyzSjVgDf {
 //		duijiaohua(s);
 //		printMatrix(s);
 //		duijiaohuaQiang(s);
-		printMatrix(s);
+//		printMatrix(s);
 		//计算特征值 和 特征向量
 		try {
+			printMatrix(s);
 			bijinHanglishi(s);
 			printMatrix(s3);
 			bijinHanglishi(s3);
@@ -102,7 +105,7 @@ public class QyzSjVgDf {
 	private static boolean jiaohuanij(Double[][] matrix, int i, int j) {
 		boolean changed = false;
 		for(int c = i; c < matrix.length; c++) {
-			if(matrix[c][j] != 0) {
+			if(Math.abs(matrix[c][j]) > 0.001) {
 				Double[] temp = matrix[i];
 				matrix[i] = matrix[c];
 				matrix[c] = temp;
@@ -171,11 +174,13 @@ public class QyzSjVgDf {
 //				if(!hasLou) continue;//其实没必要再动，因为肯定都是0了
 			}
 			for(int j = i + 1; j < matrix.length; j++) {
-				chengkaddto(matrix, i, j, - matrix[j][i] / matrix[i][i] );
+				Double k = Math.abs(matrix[i][i]) < 0.001 ? 0 : - matrix[j][i] / matrix[i][i];
+				chengkaddto(matrix, i, j, k);
 			}
 			
 			for(int j = i - 1; j >= 0; j--) {
-				chengkaddto(matrix, i, j, - matrix[j][i] / matrix[i][i] );
+				Double k = Math.abs(matrix[i][i]) < 0.001 ? 0 : - matrix[j][i] / matrix[i][i];
+				chengkaddto(matrix, i, j, k );
 			}
 		}
 	}
@@ -267,7 +272,7 @@ public class QyzSjVgDf {
 			}
 		}
 		rs = guolv;
-		System.out.println(rs);
+//		System.out.println(rs);
 		//根据行列式 求出 特征值：组合的方式--正交的方式 
 		//假定  rs中的都是 特征值
 		List<Body> zhengjiaojuzhen = new ArrayList<>();
@@ -279,11 +284,12 @@ public class QyzSjVgDf {
 				tis[i][i] -= lamda;
 			}
 			//对角化
-			printMatrix(tis);
+//			printMatrix(tis);
 			duijiaohuaQiang(tis);
 			//求出每个对角阵对应的n-r个特征向量
 			//直接可以算出来！！
-			getTzxl2(zhengjiaojuzhen, lamda, tis);
+			getTzxl3(zhengjiaojuzhen, lamda, tis);
+//			getTzxl2(zhengjiaojuzhen, lamda, tis);
 //			getTzxl1(zhengjiaojuzhen, lamda, tis);
 		}
 		System.out.println(zhengjiaojuzhen);
@@ -291,6 +297,7 @@ public class QyzSjVgDf {
 	}
 
 	private static void getTzxl3(List<Body> zhengjiaojuzhen, Double lamda, Double[][] tis) {
+		//先对角化--强或者弱都可以
 		//某一行：
 		//从右到左 的  所有非0 下标-元素值
 		//去除已经定的 下标 
@@ -299,20 +306,32 @@ public class QyzSjVgDf {
 		//下一行
 		List<Integer> yidingxiabiao = new ArrayList<>();
 		List<Integer> currFeilingxiabiao = new ArrayList<>();
+		List<Integer> ziyouxiabiao = new ArrayList<>();
 		List<Double[]> rs = new ArrayList<>();
 		for(int i = tis.length - 1 ; i >= 0; i--) {
 			currFeilingxiabiao.clear();
-			for(int j = i; j < tis.length - 1; j++) {
+			for(int j = i; j <= tis.length - 1; j++) {
 				if(Math.abs(tis[i][j]) > 0.001) {
 					currFeilingxiabiao.add(j);
+					ziyouxiabiao.remove((Integer)j);//本行开始，不再自由
+				}else {
+					if(!ziyouxiabiao.contains(j) && !yidingxiabiao.contains(j)) {
+						ziyouxiabiao.add(j);//自由
+					}
 				}
 			}
 			List<Integer> rest = new ArrayList<Integer>(currFeilingxiabiao);
 			currFeilingxiabiao.removeAll(yidingxiabiao);
 			rest.removeAll(currFeilingxiabiao);
-			Double restVal = 0d;
-			for(Integer xia : rest) {
+			Double restVal = null;
+//			if(rest.size() > 0) {
+			restVal = 0d;
+			for(Integer xia : rest) {//用定值来算的 rest 就是yidingxiabiao
 				restVal += tis[i][xia];
+			}
+//			}
+			if(rs.size() == 0 && currFeilingxiabiao.size() > 0) {//为空的清醒
+				rs = geneNull(currFeilingxiabiao.size() == 1 ? 1 : currFeilingxiabiao.size() - 1, tis[0].length);
 			}
 			if(currFeilingxiabiao.size() == 2) {
 				for(Double[] x : rs) {
@@ -327,6 +346,7 @@ public class QyzSjVgDf {
 					x[currFeilingxiabiao.get(0)] = -restVal / tis[i][currFeilingxiabiao.get(0)];
 				}
 			}
+			
 			if(currFeilingxiabiao.size() > 2) {
 				int size = currFeilingxiabiao.size();
 				List<Double[]> rs2 = new ArrayList<>();
@@ -347,6 +367,52 @@ public class QyzSjVgDf {
 			}
 			yidingxiabiao.addAll(currFeilingxiabiao);
 		}
+		//如果访问完了，还是一个已定下标 也 没有，说明是全0矩阵---开始加正交向量
+		if(yidingxiabiao.size() == 0) {
+			for(int i = 0; i < tis[0].length; i++) {
+				double[] col = new double[tis.length];
+				col[i] = 1d;
+				rs.add(doubleToDouble(col));
+			}
+		}
+		//还存在自由变量的 -----应该都是同列号，可能不止一列 需要再次扩张
+		if(ziyouxiabiao.size() > 0) {
+			List<Double[]> ls = new ArrayList<>();
+			for(Double[] x : rs) {
+				for(int i = 0; i < ziyouxiabiao.size(); i++) {
+					Double[] cx = copy2(x);
+					cx[ziyouxiabiao.get(i)] = 1d;
+					for(int j = 0; j < ziyouxiabiao.size(); j++) {
+						if(j != i) {
+							cx[ziyouxiabiao.get(j)] = 0d;
+						}
+					}
+					ls.add(cx);
+				}
+			}
+			rs = ls;
+		}
+		for(Double[] x : rs) {
+			zhengjiaojuzhen.add(instance.new Body(x, lamda));
+		}
+	}
+	
+	private static List<Double[]> geneNull(int line, int col) {
+		List<Double[]> s = new ArrayList<>();
+		for(int i = 0 ; i < line; i++) {
+			Double[] c1 = new Double[col];
+			s.add(c1);
+		}
+		return s;
+	}
+	
+	private static Double[] doubleToDouble(double[] col) {
+		Double[] s = new Double[col.length];
+		int i = 0;
+		for(double d : col) {
+			s[i++] = d;
+		}
+		return s;
 	}
 	
 	private static void getTzxl2(List<Body> zhengjiaojuzhen, Double lamda, Double[][] tis) {
@@ -425,6 +491,17 @@ public class QyzSjVgDf {
 			this.tzVetor = tzVector;
 			this.tzz = tzz;
 		}
+		
+		public Body(Double[] tzVector, Double tzz) {
+			super();
+			double[] s = new double[tzVector.length];
+			for(int i = 0; i < tzVector.length; i++) {
+				s[i] = tzVector[i];
+			}
+			this.tzVetor = s;
+			this.tzz = tzz;
+		}
+		
 		@Override
 		public String toString() {
 			return "[tzVetor=" + Arrays.toString(tzVetor) + ", tzz=" + tzz + "]";
