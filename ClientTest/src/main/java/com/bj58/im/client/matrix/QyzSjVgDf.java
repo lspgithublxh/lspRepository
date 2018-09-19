@@ -20,11 +20,11 @@ import java.util.Set;
 public class QyzSjVgDf {
 
 	public static void main(String[] args) {
-		Double[][] s = {{2d,3d},{2d,4d}};
-		printMatrix(s);
-		Double[][] s2 = zhuanzhi(s);
-		printMatrix(s2);
-		Double[][] s3 = chengfa(s2, s);
+//		Double[][] s = {{2d,3d},{2d,4d}};
+//		printMatrix(s);
+//		Double[][] s2 = zhuanzhi(s);
+//		printMatrix(s2);
+//		Double[][] s3 = chengfa(s2, s);
 //		printMatrix(s3);
 //		Double hls = hanglieshi(s);
 //		System.out.println(hls);
@@ -39,14 +39,61 @@ public class QyzSjVgDf {
 //		printMatrix(s);
 		//计算特征值 和 特征向量
 		try {
-			printMatrix(s);
-			bijinHanglishi(s);
-			printMatrix(s3);
-			bijinHanglishi(s3);
+//			printMatrix(s);
+//			bijinHanglishi(s);
+//			printMatrix(s3);
+//			bijinHanglishi(s3);
+			System.out.println("------------------");
+			Double[][] sx = {{1d,2d},{3d,4d}};
+			qysvdSee(sx);
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
 		
+	}
+
+	private static void qysvdSee(Double[][] A) {
+		Double[][] ATA = chengfa(zhuanzhi(A), A);
+		List<Body> tzlist = bijinHanglishi(ATA);
+		Double[][] V = new Double[A[0].length][A[0].length];
+		int i = 0;
+		Double[][] U = new Double[A.length][A.length];
+		Double[][] XGM = new Double[A.length][A[0].length];
+		for(Body bo : tzlist) {
+			Double[] vi = doubleToDouble(bo.tzVetor);
+			danweihua(vi);
+			V[i++] = vi;//转置
+			Double[][] xv = new Double[1][];
+			xv[0] = vi;
+			Double[][] ui = chengfa(A, zhuanzhiRight(xv));
+			ui = zhuanzhiRight(ui);
+			Double[] ui_ = ui[0];
+			Double xgm = danweihua(ui_);
+			Double[] xa = new Double[A[0].length];
+			xa[i - 1] = xgm;
+			XGM[i - 1] = xa;
+			U[i - 1] = ui_;//
+		}
+		//计算U
+		System.out.println("U:");
+		printMatrix(U);
+		System.out.println("XGM:");
+		printMatrix(XGM);
+		System.out.println("V:");
+		printMatrix(V);
+	}
+	
+	
+	private static Double danweihua(Double[] vi) {
+		Double r = 0d;
+		for(Double s : vi) {
+			r += s * s;
+		}
+		r = Math.sqrt(r);
+		for(int i = 0; i < vi.length; i++) {
+			vi[i] /= r; 
+		}
+		return r;
 	}
 
 	private static void printMatrix(Double[][] s) {
@@ -64,6 +111,25 @@ public class QyzSjVgDf {
 		System.out.println(out);
 	}
 	
+//	private static Double[] zhuanzhi(Double[] matrix) {
+//		Double[] rs = new Double[matrix.length];
+//		for(int j = 0; j < matrix.length; j++) {
+//			rs[j] = matrix[j];
+//		}
+//		return rs;
+//	}
+	
+	private static Double[][] zhuanzhiRight(Double[][] matrix) {
+		Double[][] rs = new Double[matrix[0].length][matrix.length];
+		for(int i = 0; i < matrix.length; i++) {
+			Double[] line = matrix[i];
+			for(int j = 0; j < line.length; j++) {
+				rs[j][i] = line[j];
+			}
+		}
+		return rs;
+	}
+	
 	private static Double[][] zhuanzhi(Double[][] matrix) {
 		Double[][] rs = new Double[matrix.length][matrix[0].length];
 		for(int i = 0; i < rs.length; i++) {
@@ -79,7 +145,7 @@ public class QyzSjVgDf {
 		Double[][] rs = new Double[matrix.length][matrix2[0].length];
 		for(int i = 0; i < matrix.length; i++) {
 			Double[] line = matrix[i];
-			for(int k = 0; k < matrix2.length; k++) {
+			for(int k = 0; k < matrix2[0].length; k++) {
 				Double count = 0d;
 				for(int j = 0; j < line.length; j++) {
 					count += line[j] * matrix2[j][k];
@@ -212,7 +278,15 @@ public class QyzSjVgDf {
 
 	static QyzSjVgDf instance = new QyzSjVgDf();
 	
-	private static Double bijinHanglishi(Double[][] matrix) {
+	/**
+	 * 特征值 和特征向量
+	 * @param 
+	 * @author lishaoping
+	 * @Date 2018年9月19日
+	 * @Package com.bj58.im.client.matrix
+	 * @return Double
+	 */
+	private static List<Body> bijinHanglishi(Double[][] matrix) {
 		List<Entity> rs = new ArrayList<>();
 		Double startLeft = -100d;
 		Double startRight = 0d;
@@ -228,7 +302,7 @@ public class QyzSjVgDf {
 				if(Math.abs(hls) < 0.01) {//认为行列式备选 的特征值
 					rs.add(instance.new Entity(Math.abs(hls),index));
 				}
-				if(Math.abs(hls) < 1) {
+				if(Math.abs(hls) < 1.5) {
 					bujin = 0.0001;
 				}
 			}
@@ -293,7 +367,7 @@ public class QyzSjVgDf {
 //			getTzxl1(zhengjiaojuzhen, lamda, tis);
 		}
 		System.out.println(zhengjiaojuzhen);
-		return null;
+		return zhengjiaojuzhen;
 	}
 
 	private static void getTzxl3(List<Body> zhengjiaojuzhen, Double lamda, Double[][] tis) {
