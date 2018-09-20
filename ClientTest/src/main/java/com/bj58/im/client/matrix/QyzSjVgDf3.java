@@ -10,6 +10,7 @@ import java.util.Set;
 
 /**
  * 行列式的计算：具体矩阵 用初等变换；；含有lamda用  从内到外增长的方式进行 逼近 计算
+ * 非方阵的逼近向量
  * @ClassName:QyzSjVgDf
  * @Description:
  * @Author lishaoping
@@ -17,7 +18,7 @@ import java.util.Set;
  * @Version V1.0
  * @Package com.bj58.im.client.matrix
  */
-public class QyzSjVgDf2 {
+public class QyzSjVgDf3 {
 
 	public static void main(String[] args) {
 //		Double[][] s = {{2d,3d},{2d,4d}};
@@ -52,7 +53,13 @@ public class QyzSjVgDf2 {
 			//ok
 //			Double[][] sx3 = {{10d,2d},{3d,4d}};
 //			qysvdSee(sx3);
-			
+			Double[][] s4 = {{2d,3d},{4d,5d},{3d,6d}};
+			qysvdSee(s4);
+			//ok
+//			Double[][] s5 = {{2d,3d,5d},{3d,6d,8d}};
+//			printMatrix(zjszjz(s5));
+//			Double[][] s4 = {{2d,3d},{4d,5d},{3d,6d}};
+//			printMatrix(zjszjz(s4));
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -60,16 +67,27 @@ public class QyzSjVgDf2 {
 	}
 
 	private static void qysvdSee(Double[][] A) {
-		Double[][] ATA = chengfa(zhuanzhi(A), A);
+		Double[][] ATA = chengfa(zhuanzhiRight(A), A);
 		List<Body> tzlist = bijinHanglishi(ATA);
 		Double[][] V = new Double[A[0].length][A[0].length];
 		int i = 0;
 		Double[][] U = new Double[A.length][A.length];
 		Double[][] XGM = new Double[A.length][A[0].length];
+		Double[][] UV_rest = null;
+		boolean v = true;
+		if(A[0].length > A.length) {
+			UV_rest = new Double[tzlist.size()][A[0].length];
+		}else {
+			UV_rest = new Double[tzlist.size()][A.length];
+			v = false;
+		}
 		for(Body bo : tzlist) {
 			Double[] vi = doubleToDouble(bo.tzVetor);
 			danweihua(vi);
 			V[i++] = vi;//转置
+			if(v) {
+				UV_rest[i - 1] = vi;
+			}
 			Double[][] xv = new Double[1][];
 			xv[0] = vi;
 			Double[][] ui = chengfa(A, zhuanzhiRight(xv));
@@ -81,14 +99,42 @@ public class QyzSjVgDf2 {
 			replaceNullLing(xa);
 			XGM[i - 1] = xa;
 			U[i - 1] = ui_;//
+			if(!v) {
+				UV_rest[i - 1] = ui_;
+			}
 		}
-		//计算U
+		//补充一个正交向量::
+		Double[][] UV_res = zjszjz(UV_rest);
+		int ccc = 0;
+		if(v) {//放到v上
+			for(int ind = A.length; ind < A[0].length; ind++) {
+				V[ind] = UV_res[ccc++];
+			}
+		}else {
+			for(int ind = A[0].length; ind < A.length; ind++) {
+				U[ind] = UV_res[ccc++];
+			}
+		}
+		//XGM补充0
+		if(A.length > A[0].length) {
+			for(int ind = A[0].length; ind < A.length; ind++) {
+				for(int jj = 0; jj < A[0].length; jj++) {
+					XGM[ind][jj] = 0d;
+				}
+			}
+		}else {
+			
+		}
 		System.out.println("U:");
 		printMatrix(U);
 		System.out.println("XGM:");
 		printMatrix(XGM);
 		System.out.println("V:");
 		printMatrix(V);
+		System.out.println("U*XGM*V:");
+		printMatrix(chengfa(chengfa(U, XGM), V));
+		System.out.println("U*XGM*V:");
+		printMatrix(chengfa(chengfa(zhuanzhi(U), XGM), V));
 	}
 	
 	
@@ -147,7 +193,7 @@ public class QyzSjVgDf2 {
 	}
 	
 	private static Double[][] zhuanzhi(Double[][] matrix) {
-		Double[][] rs = new Double[matrix.length][matrix[0].length];
+		Double[][] rs = new Double[matrix[0].length][matrix.length];
 		for(int i = 0; i < rs.length; i++) {
 			Double[] line = matrix[i];
 			for(int j = 0; j < line.length; j++) {
@@ -211,7 +257,7 @@ public class QyzSjVgDf2 {
 	}
 
 	private static void duijiaohua(Double[][] matrix) {
-		for(int i = 0; i < matrix.length; i++) {
+		for(int i = 0; i < matrix.length && i < matrix[0].length; i++) {
 			jiaohuanij(matrix, i, i);//会改变行列式符号
 			if(matrix[i][i] == 0) {//为0的一行
 				continue;
@@ -285,14 +331,45 @@ public class QyzSjVgDf2 {
 	private static Double[][] copy(Double[][] matrix) {
 		Double[][] cc = new Double[matrix.length][matrix[0].length];
 		for(int i = 0; i < matrix.length; i++) {
-			for(int j = 0; j < matrix.length; j++) {
+			for(int j = 0; j < matrix[0].length; j++) {
 				cc[i][j] = matrix[i][j];
 			}
 		}
 		return cc;
 	}
 
-	static QyzSjVgDf2 instance = new QyzSjVgDf2();
+	static QyzSjVgDf3 instance = new QyzSjVgDf3();
+	
+	/**
+	 * 本质上是解线性方程组
+	 * @param 
+	 * @author lishaoping
+	 * @Date 2018年9月20日
+	 * @Package com.bj58.im.client.matrix
+	 * @return Double[][]
+	 */
+	private static Double[][] zjszjz(Double[][] matrix){
+		Double[][] tis = copy(matrix);
+		int count = 0;
+		double f = 0.001;
+		duijiaohua(tis);
+		List<Body> zhengjiaojuzhen = new ArrayList<>();
+		while(true) {
+			int addC = getTzxl3(zhengjiaojuzhen, 0d, tis, f);
+			if(count++ == 1000 || addC > 0) {
+				break;
+			}else {
+				f += f;
+				System.out.println("f:" + f);
+			}
+		}
+		Double[][] rs = new Double[zhengjiaojuzhen.size()][];
+		int c = 0;
+		for(Body x : zhengjiaojuzhen) {
+			rs[c++] = doubleToDouble(x.tzVetor);
+		}
+		return rs;
+	}
 	
 	/**
 	 * 特征值 和特征向量
@@ -459,7 +536,7 @@ public class QyzSjVgDf2 {
 		List<Double[]> rs = new ArrayList<>();
 		for(int i = tis.length - 1 ; i >= 0; i--) {
 			currFeilingxiabiao.clear();
-			for(int j = i; j <= tis.length - 1; j++) {
+			for(int j = i; j <= tis[0].length - 1; j++) {//9-20
 				if(Math.abs(tis[i][j]) > yueshu) {
 					currFeilingxiabiao.add(j);
 					ziyouxiabiao.remove((Integer)j);//本行开始，不再自由
@@ -529,7 +606,7 @@ public class QyzSjVgDf2 {
 		//如果访问完了，还是一个已定下标 也 没有，说明是全0矩阵---开始加正交向量
 		if(yidingxiabiao.size() == 0) {
 			for(int i = 0; i < tis[0].length; i++) {
-				double[] col = new double[tis.length];
+				double[] col = new double[tis[0].length];
 				col[i] = 1d;
 				rs.add(doubleToDouble(col));
 			}
