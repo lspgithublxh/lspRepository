@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -53,13 +54,16 @@ public class QyzSjVgDf3 {
 			//ok
 //			Double[][] sx3 = {{10d,2d},{3d,4d}};
 //			qysvdSee(sx3);
-			Double[][] s4 = {{2d,3d},{4d,5d},{3d,6d}};
-			qysvdSee(s4);
+			//ok
+//			Double[][] s4 = {{2d,3d},{4d,5d},{3d,6d}};
+//			qysvdSee(s4);
 			//ok
 //			Double[][] s5 = {{2d,3d,5d},{3d,6d,8d}};
 //			printMatrix(zjszjz(s5));
 //			Double[][] s4 = {{2d,3d},{4d,5d},{3d,6d}};
 //			printMatrix(zjszjz(s4));
+			Double[][] s7 = {{2d,3d,5d},{3d,6d, 7d}};
+			qysvdSee(s7);
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -67,7 +71,7 @@ public class QyzSjVgDf3 {
 	}
 
 	private static void qysvdSee(Double[][] A) {
-		Double[][] ATA = chengfa(zhuanzhiRight(A), A);
+		Double[][] ATA = chengfa(zhuanzhiRight(A), A);//转制的矩阵行列式为少1
 		List<Body> tzlist = bijinHanglishi(ATA);
 		Double[][] V = new Double[A[0].length][A[0].length];
 		int i = 0;
@@ -90,17 +94,19 @@ public class QyzSjVgDf3 {
 			}
 			Double[][] xv = new Double[1][];
 			xv[0] = vi;
-			Double[][] ui = chengfa(A, zhuanzhiRight(xv));
-			ui = zhuanzhiRight(ui);
-			Double[] ui_ = ui[0];
-			Double xgm = danweihua(ui_);
-			Double[] xa = new Double[A[0].length];
-			xa[i - 1] = xgm;
-			replaceNullLing(xa);
-			XGM[i - 1] = xa;
-			U[i - 1] = ui_;//
-			if(!v) {
-				UV_rest[i - 1] = ui_;
+			if(i - 1 < A.length) {
+				Double[][] ui = chengfa(A, zhuanzhiRight(xv));
+				ui = zhuanzhiRight(ui);
+				Double[] ui_ = ui[0];
+				Double xgm = danweihua(ui_);
+				Double[] xa = new Double[A[0].length];
+				xa[i - 1] = xgm;
+				replaceNullLing(xa);
+				XGM[i - 1] = xa;
+				U[i - 1] = ui_;//
+				if(!v) {
+					UV_rest[i - 1] = ui_;
+				}
 			}
 		}
 		//补充一个正交向量::
@@ -391,9 +397,10 @@ public class QyzSjVgDf3 {
 		double yueshu = 0.01d;
 		while(true) {
  			searchThers(matrix, currIndex, rs,step, yueshu);
-			if(rs.size() >= matrix.length) {
-				break; 
-			}
+// 			rs = removeTzzSmall(rs);
+//			if(rs.size() >= matrix.length) {//先去重，去特征值太小的
+//				break; 
+//			}
 			if(left) {
 				currIndex = startRight;
 				startRight += kuan;
@@ -404,6 +411,8 @@ public class QyzSjVgDf3 {
 			left = !left;
 			
 			if(startRight > 3000 || startLeft < -3000) {
+				//去相隔很近的
+				rs = removeSame(rs);
 				if(rs.size() < matrix.length) {
 					yueshu += yueshu;
 					startLeft = -100d;
@@ -418,9 +427,9 @@ public class QyzSjVgDf3 {
 		Collections.sort(rs, new Comparator<Entity>() {
 			@Override
 			public int compare(Entity o1, Entity o2) {
-				if(o1.hls > o2.hls) {
+				if(Math.abs(o1.hls) > Math.abs(o2.hls)) {
 					return 1;
-				}else if(o1.hls < o2.hls) {
+				}else if(Math.abs(o1.hls) < Math.abs(o2.hls)) {
 					return -1;
 				}
 				return 0;
@@ -439,7 +448,7 @@ public class QyzSjVgDf3 {
 				guolv.add(old);
 			}
 		}
-		rs = guolv;
+		rs = guolv.subList(0, matrix.length);
 //		System.out.println(rs);
 		//根据行列式 求出 特征值：组合的方式--正交的方式 
 		//假定  rs中的都是 特征值
@@ -477,14 +486,62 @@ public class QyzSjVgDf3 {
 		return zhengjiaojuzhen;
 	}
 
+	private static List<Entity> removeSame(List<Entity> rs) {
+		List<Entity> li = new ArrayList<>();
+		List<Double> lida = new ArrayList<>();
+		for(Entity e : rs) {
+			boolean no = false;
+			for(Double d : lida) {
+				if(Math.abs(e.lamda - d) < 0.1) {
+					no = true;
+					break;
+				}
+			}
+			if(!no) {
+				li.add(e);
+				lida.add(e.lamda);
+			}
+		}
+		return li;
+	}
+	
+	private static List<Entity> removeTzzSmall(List<Entity> rs) {
+		List<Entity> li = new ArrayList<>();
+		List<Double> lida = new ArrayList<>();
+		for(Entity e : rs) {
+			if(Math.abs(e.lamda) > 0.001) {
+				boolean no = false;
+				for(Double d : lida) {
+					if(Math.abs(e.lamda - d) < 0.001) {
+						no = true;
+					}
+				}
+				if(!no) {
+					li.add(e);
+					lida.add(e.lamda);
+				}
+			}
+		}
+		return li;
+//		Iterator<Entity> i = rs.iterator();
+//		while(i.hasNext()) {
+//			Entity e = i.next();
+//			if(Math.abs(e.lamda) < 0.0001) {
+//				rs.remove(e);
+//			}
+//		}
+	}
+
 	private static void searchThers(Double[][] matrix,double start, List<Entity> rs, double bujin, double yueshu) {
-		int searchCount = 100000;
+		int searchCount = 1000000;
 		int lessEnough = 0;
-		int zengzhang = 0;
+		int[] zengzhang = {0,0,0,0};
 		Double oldhls = 1000d;
 		for(Double index = 0d; index <= 100d; index += bujin) {
-			Double hls = daicanHanglishi(copy(matrix), index + start);
-//				System.out.println("hls:" + hls);//非常耗时--绝大部分时间
+			if(index + start > 131) {
+				System.out.println("x");
+			}
+			Double hls = daicanHanglishi(copy(matrix), index + start);//非常耗时--绝大部分时间
 			if(Math.abs(hls) < yueshu) {//认为行列式备选 的特征值
 				rs.add(instance.new Entity(Math.abs(hls),index + start));
 			}
@@ -493,29 +550,59 @@ public class QyzSjVgDf3 {
 			}
 			if(Math.abs(hls) < 0.05) {
 				bujin = 0.00001;//即便很小，抖动也很大;此时也可以当作是特征值了--左右进行有必要
-				if(lessEnough++ > 10) {
-					rs.add(instance.new Entity(Math.abs(hls),index + start));
-					bujin = 0.1;
-				}
-				zengzhang = 0;
+//				if(lessEnough++ > 10) {
+//					rs.add(instance.new Entity(Math.abs(hls),index + start));
+//					bujin = 0.1;
+//				}
+				zengzhang[2] = 0;
+				zengzhang[3] = 0;
+				zengzhang[1] = 0;
 			}else if(Math.abs(hls) < 0.1) {
-				bujin = 0.00001;zengzhang = 0;
-//					System.out.println("hls1:" + hls);
+				bujin = 0.00001;
+				zengzhang[2] = 0;
+				zengzhang[3] = 0;
+//				System.out.println("hls1:" + hls);
+//				if(Math.abs(hls) > oldhls && Math.abs(hls) - oldhls < 0.5) {
+//					if(zengzhang[1]++ > 10) {
+//						rs.add(instance.new Entity(Math.abs(hls),index + start));
+//						bujin = 0.1;
+//						zengzhang[1] = 0;
+//					}
+//				}
 			}else if(Math.abs(hls) < 1) {	
-				bujin = 0.0001;zengzhang = 0;
-//					System.out.println("hls2:" + hls);
-			}else if(Math.abs(hls) < 5) {
 				bujin = 0.0001;
+				zengzhang[3] = 0;
+				zengzhang[1] = 0;
+				System.out.println("hls2:" + hls);
 				if(Math.abs(hls) > oldhls && Math.abs(hls) - oldhls < 0.5) {
-					if(zengzhang++ > 10) {
+					if(zengzhang[2]++ > 2) {
 						rs.add(instance.new Entity(Math.abs(hls),index + start));
 						bujin = 0.1;
-						zengzhang = 0;
+						zengzhang[2] = 0;
 					}
 				}
+			}else if(Math.abs(hls) < 5) {
+				bujin = 0.0001;
+				zengzhang[2] = 0;
+				zengzhang[1] = 0;
+//				if(Math.abs(hls) > oldhls && Math.abs(hls) - oldhls < 0.5) {
+//					if(zengzhang[3]++ > 10) {
+//						rs.add(instance.new Entity(Math.abs(hls),index + start));
+//						bujin = 0.1;
+//						zengzhang[3] = 0;
+//					}
+//				}
 //					System.out.println("hls3:" + hls);
+			}else if(Math.abs(hls) < 10){
+				bujin = 0.00001;
+			}else if(Math.abs(hls) < 500){//错过拐点：就不行----看导数的零点很重要
+				bujin = 0.0001;
+			}else if(Math.abs(hls) < 30000){
+				bujin = 0.01;
 			}else {
-				zengzhang = 0;
+				zengzhang[3] = 0;
+				zengzhang[2] = 0;
+				zengzhang[1] = 0;
 			}
 			
 			oldhls = Math.abs(hls);
