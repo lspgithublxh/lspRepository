@@ -10,8 +10,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 行列式的计算：具体矩阵 用初等变换；；含有lamda用  从内到外增长的方式进行 逼近 计算
+ * 行列式的计算：具体矩阵 用初等变换；；含有lamda用  从内到外增长的方式进行 逼近 计算...LU分解是最好的
  * 非方阵的逼近向量
+ * 公司不适合做数学计算程序，做出来也不深刻
  * @ClassName:QyzSjVgDf
  * @Description:
  * @Author lishaoping
@@ -19,7 +20,7 @@ import java.util.Set;
  * @Version V1.0
  * @Package com.bj58.im.client.matrix
  */
-public class QyzSjVgDf3 {
+public class QyzSjVgDf4 {
 
 	public static void main(String[] args) {
 //		Double[][] s = {{2d,3d},{2d,4d}};
@@ -252,8 +253,11 @@ public class QyzSjVgDf3 {
 	
 	
 	private static Double hanglieshi(Double[][] matrix) {
-//		duijiaohua(matrix);
-		duijiaohuaQiang(matrix);
+		int h = duijiaohuaForHls(matrix);
+		if(h == 0) {
+			return 0.0;
+		}
+//		duijiaohuaQiang(matrix);
 		//计算对角线元素的乘积
 		Double hls = 1d;
 		for(int i = 0; i < matrix.length; i++) {
@@ -262,10 +266,31 @@ public class QyzSjVgDf3 {
 		return hls;
 	}
 
+	private static int duijiaohuaForHls(Double[][] matrix) {
+		for(int i = 0; i < matrix.length && i < matrix[0].length; i++) {
+			jiaohuanij(matrix, i, i);//会改变行列式符号
+			if(matrix[i][i] == 0) {//为0的一行， 已经表明行列式为0---肯定的结果
+				return 0;
+			}
+			for(int j = i + 1; j < matrix.length; j++) {
+				chengkaddto(matrix, i, j, - matrix[j][i] / matrix[i][i] );
+			}
+		}
+		return 1;
+	}
+	
+	/**
+	 * 交换一次等于乘以一个交换矩阵，而交换矩阵的行列式是-1
+	 * @param 
+	 * @author lishaoping
+	 * @Date 2018年9月25日
+	 * @Package com.bj58.im.client.matrix
+	 * @return void
+	 */
 	private static void duijiaohua(Double[][] matrix) {
 		for(int i = 0; i < matrix.length && i < matrix[0].length; i++) {
 			jiaohuanij(matrix, i, i);//会改变行列式符号
-			if(matrix[i][i] == 0) {//为0的一行
+			if(matrix[i][i] == 0) {//为0的一行， 已经表明行列式为0---肯定的结果
 				continue;
 			}
 			for(int j = i + 1; j < matrix.length; j++) {
@@ -344,7 +369,7 @@ public class QyzSjVgDf3 {
 		return cc;
 	}
 
-	static QyzSjVgDf3 instance = new QyzSjVgDf3();
+	static QyzSjVgDf4 instance = new QyzSjVgDf4();
 	
 	/**
 	 * 本质上是解线性方程组
