@@ -1,15 +1,15 @@
 package com.bj58.im.client.algri;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class JingsaituCount {
 
 	public static void main(String[] args) {
-//		start(5);
-		start2(1);
+//		start2(8);
+		for(int i = 1; i < 13; i++) {
+			start2(i);
+		}
 	}
 	
 	private static void start2(int num) {
@@ -17,7 +17,7 @@ public class JingsaituCount {
 		ar[0] = num;
 		List<int[]> lis = new ArrayList<int[]>();
 		getZuhe2(ar, lis, num, 0);
-		System.out.println("-----------------------");
+//		System.out.println("-----------------------");
 		List<String> set = new ArrayList<>();
 		for(int[] item : lis) {
 			String r = printArr(item);
@@ -25,10 +25,10 @@ public class JingsaituCount {
 				set.add(r);
 			}
 		}
-		System.out.println("-----------------------");
-		for(String k : set) {
-			System.out.println(k);
-		}
+//		System.out.println("-----------------------");
+//		for(String k : set) {
+//			System.out.println(k);
+//		}
 		System.out.println("set's length:" + set.size());
 	}
 
@@ -54,10 +54,10 @@ public class JingsaituCount {
 	private static String printArr(int[] item) {
 		String s = "";
 		for(int i : item) {
-			System.out.print(i + ",");
+//			System.out.print(i + ",");
 			s += i + ",";
 		}
-		System.out.println();
+//		System.out.println();
 		return s;
 	}
 
@@ -100,7 +100,7 @@ public class JingsaituCount {
 	}
 	
 	private static void getZuhe2(int[] current, List<int[]> result, int n, int zuigao) {
-		printArr(current);
+//		printArr(current);
 //		System.out.println("zuigao:" + zuigao);
 		int count = 0;
 		int[] next = new int[current.length];
