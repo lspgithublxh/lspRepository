@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 最简单的实现开始：
@@ -22,9 +24,9 @@ import java.util.Map;
  * @Version V1.0
  * @Package com.bj58.im.client.algri
  */
-public class Wfivezpointq {
+public class Wfisveszposisntq {
 
-	static Wfivezpointq ins = new Wfivezpointq();
+	static Wfisveszposisntq ins = new Wfisveszposisntq();
 	public static void main(String[] args) {
 		start();
 	}
@@ -42,32 +44,62 @@ public class Wfivezpointq {
 	 * 		有纯2连：则构成纯3连
 	 *  	有纯3连：则构成纯4连
 	 *  	有纯4连：则构成5连
+	 *  
+	 *  ------------一句话：
+	 *  找出布局和关系  ：  (强4连，弱4连，强3连，弱3连，强2连，强1连) (弱3连和弱3连， 强2连合强2连， 强2连和弱3连)
+	 *  判断最佳落子位置：原则：(向上向右、更强更多)
 	 * @param 
 	 * @author lishaoping
 	 * @Date 2018年10月3日
 	 * @Package com.bj58.im.client.algri
 	 * @return Map<String,List<List<Point>>>
 	 */
-	private static Map<String, List<List<Point>>> kan(Integer[][] zi, int color) {
+	private static Map<String, List<BJ>> kan(int[][] zi, int color) {
 		//i == 0 表示自己：白子  1表示黑子
-		Map<String, List<List<Point>>> map = new HashMap<>();
-		List<List<Point>> silian = new ArrayList<>();
-		for(Integer[] line : zi) {
-			int count4 = 0;
-			int count3 = 0;
-			for(int i = 0; i < line.length; i++) {
-				if(line[i] == 0) {
-					count4++;
-					if(count4 == 4) {
-						
+		Map<String, List<BJ>> map = new HashMap<>();
+		List<BJ> silian = new ArrayList<>();
+		List<BJ> rsilian = new ArrayList<>();
+		map.put("q_si_l", silian);
+		map.put("r_si_l", rsilian);
+		//1.横竖撇捺  先看自己
+		for(int i = 0; i < zi.length; i++) {
+			//tostring
+			String str = arrToString(zi[i]);
+			Matcher m = p4.matcher(str);
+			if(m.find()) {
+				int wei = m.start();//多次匹配，以后处理
+				silian.add(new BJ(new int[] {i,wei}, new int[] {i, wei+3}, new int[][] {{i,wei-1},{i,wei+4}}));
+			}
+			//
+			for(int j = 0; j < zi[0].length; j++) {
+				if(j + 4 < zi[0].length) {
+					int count = zi[i][j] + zi[i][j+1] + zi[i][j+2] + zi[i][j+3] + zi[i][j+4];
+					if(count == 4) {//是为弱4连
+						int wei = -1;
+						for(int k = 0; k < 5; k++) {
+							if(zi[i][j+k] == 0) {
+								wei = j+k;
+								break;
+							}
+						}
+						rsilian.add(new BJ(new int[] {i,j}, new int[] {i, j+4}, new int[][] {{i,wei}}));
 					}
-				}else {
-					count4 = 0;
 				}
 			}
 		}
+		
 		return null;
 	}
+	
+	private static String arrToString(int[] is) {
+		String rs = "";
+		for(int i : is) {
+			rs += i;
+		}
+		return rs;
+	}
+
+	static Pattern p4 = Pattern.compile("01{4,}0");
 	
 	/**
 	 * 只判断 连3 或者连4； 不判断前后 是否是null；这个作为进一步判断的根据
