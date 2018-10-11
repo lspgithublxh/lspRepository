@@ -4,7 +4,7 @@ public class BJ {
 
 	public int[] s;
 	public int[] w;
-	public int[][] k;
+	public int[][] k;//空格点
 	public BJ(int[] s, int[] w, int[][] k) {
 		super();
 		this.s = s;
