@@ -37,6 +37,14 @@ public class Wfisveszposisntq {
 		Map<String, List<List<Point>>> list = shibiesilian(zi, 0);
 	}
 
+	
+	List<BJ> silian = new ArrayList<>();
+	List<BJ> rsilian = new ArrayList<>();
+	List<BJ> sanlian = new ArrayList<>();
+	List<BJ> rsanlian = new ArrayList<>();
+	List<BJ> erlian = new ArrayList<>();
+	List<BJ> rerlian = new ArrayList<>();
+	List<BJ> yilian = new ArrayList<>();
 	/**
 	 * 分成：纯4连 纯3连， 带一个null的牵制(马上成5连，成纯4连、半4连)
 	 * 纯2连，纯2连之间的关系：交点空或者非空；；
@@ -54,16 +62,10 @@ public class Wfisveszposisntq {
 	 * @Package com.bj58.im.client.algri
 	 * @return Map<String,List<List<Point>>>
 	 */
-	private static Map<String, List<BJ>> kan(int[][] zi, int color) {
+	private Map<String, List<BJ>> kan(int[][] zi, int color) {
 		//i == 0 表示自己：白子  1表示黑子
 		Map<String, List<BJ>> map = new HashMap<>();
-		List<BJ> silian = new ArrayList<>();
-		List<BJ> rsilian = new ArrayList<>();
-		List<BJ> sanlian = new ArrayList<>();
-		List<BJ> rsanlian = new ArrayList<>();
-		List<BJ> erlian = new ArrayList<>();
-		List<BJ> rerlian = new ArrayList<>();
-		List<BJ> yilian = new ArrayList<>();
+		
 		map.put("q_si_l", silian);
 		map.put("r_si_l", rsilian);
 		map.put("q_san_l", sanlian);
@@ -177,10 +179,197 @@ public class Wfisveszposisntq {
 			}
 			
 		}
+		//2.竖
 		
+		for(int j = 0; j < zi[0].length; j++) {
+			int[] lie = new int[zi.length];
+			for(int i = 0; i < zi.length; i++) {
+				lie[i] = zi[i][j];
+			}
+			//
+			String str = arrToString(lie);
+			addQiang(str, j, 2);//2
+			addRuo(lie, j, 2);
+		}
+		//3.撇
+		for(int j = zi[0].length - 4; j >= 0 ; j--) {
+			int[] lie = new int[zi[0].length - j];
+			for(int k = 0; j + k < zi[0].length; k++) {
+				lie[k] = zi[k][j + k];
+			}
+			//
+			String str = arrToString(lie);
+			addQiang(str, 0, 3);//2
+			addRuo(lie, 0, 3);
+		}
+		for(int i = 1; i < zi.length-3; i++) {
+			int[] lie = new int[zi[0].length - i];
+			for(int k = 0; i + k < zi[0].length; k++) {
+				lie[k] = zi[i + k][k];
+			}
+			//
+			String str = arrToString(lie);
+			addQiang(str, 0, 3);//2
+			addRuo(lie, 0, 3);
+		}
+		//4.娜
+		for(int j = 0; j < zi[0].length; j++) {
+			int[] lie = new int[zi.length];
+			for(int i = 0; i < zi.length; i++) {
+				lie[i] = zi[i][j];
+			}
+			//
+			String str = arrToString(lie);
+			addQiang(str, j, 2);//2
+			addRuo(lie, j, 2);
+		}
 		return null;
 	}
 	
+	private void addRuo(int[] arr, int i, int direct) {
+		for(int j = 0; j < arr.length; j++) {
+			//强2连的专门识别方法---其实也可以正则匹配---一个或者多个的方法
+			if(j + 5 < arr.length) {
+				int count = arr[j] + arr[j+1] + arr[j+2] + arr[j+3] + arr[j+4] + arr[j+5];
+				if(count == 2) {
+					int wei[] = new int[2];
+					int c = 0;
+					int kong[] = new int[4];
+					int kc = 0;
+					for(int k = 0; k < 6; k++) {
+						if(arr[j+k] == 1) {
+							wei[c++] = j+k;
+							break;
+						}else {
+							kong[kc++] = j+k;
+						}
+					}
+					if((wei[1] - wei[0] == 1) && (wei[0] > j) && (wei[1] < j+5)) {//是强2连，否则是也若2连-----会被后面的程序所识别出来
+						//j+1 到j+4中选择
+						erlian.add(new BJ(new int[] {i,j}, new int[] {i, j+5}, new int[][] {{i,kong[0]},{i,kong[1]},{i,kong[2]},{i,kong[3]}})
+																.zhuanzhi(direct, new int[] {5, kong[0] - j, kong[1] - j, kong[2] - j, kong[3] - j}));
+					}
+				}
+			}
+			if(j + 4 < arr.length) {
+				int count = arr[j] + arr[j+1] + arr[j+2] + arr[j+3] + arr[j+4];
+				if(count == 4) {//是为弱4连
+					int wei = -1;
+					for(int k = 0; k < 5; k++) {
+						if(arr[j+k] == 0) {
+							wei = j+k;
+							break;
+						}
+					}
+					rsilian.add(new BJ(new int[] {i,j}, new int[] {i, j+4}, new int[][] {{i,wei}}).zhuanzhi(direct, new int[] {4, wei - j}));
+				}else if(count == 3) {//连续5个，和为3
+					int wei[] = new int[2];
+					int c = 0;
+					for(int k = 0; k < 5; k++) {
+						if(arr[j+k] == 0) {
+							wei[c++] = j+k;
+							break;
+						}
+					}
+					rsanlian.add(new BJ(new int[] {i,j}, new int[] {i, j+4}, new int[][] {{i,wei[0]},{i,wei[1]}}).zhuanzhi(direct, new int[] {4, wei[0] - j, wei[1] - j}));
+				}else if(count == 2) {
+					int wei[] = new int[3];
+					int c = 0;
+					for(int k = 0; k < 5; k++) {
+						if(arr[j+k] == 0) {
+							wei[c++] = j+k;
+							break;
+						}
+					}
+					rerlian.add(new BJ(new int[] {i,j}, new int[] {i, j+4}, new int[][] {{i,wei[0]},{i,wei[1]},{i,wei[2]}}).zhuanzhi(direct, new int[] {4, wei[0] - j,wei[1] - j,wei[2] - j}));
+				}
+			}
+		}
+	}
+
+	private int[] zuobiao(int[] arr, int step, int direct) {
+		if(direct == 1) {
+		}else if(direct == 2) {
+			int temp = arr[0];
+			arr[0] = arr[1];
+			arr[1] = temp;
+		}else if(direct == 3) {//捺
+			arr[0] += step;
+		}else if(direct == 4) {//撇\\
+			arr[0] -= step;
+		}
+		return arr;
+	}
+	
+	private int[][] zuobiao(int[][] arrs, int step, int direct) {
+		for(int[] arr : arrs) {
+			if(direct == 1) {
+			}else if(direct == 2) {
+				int temp = arr[0];
+				arr[0] = arr[1];
+				arr[1] = temp;
+			}else if(direct == 3) {//捺
+				arr[0] += step;
+			}else if(direct == 4) {//撇\\
+				arr[0] -= step;
+			}
+		}
+		return arrs;
+	}
+	
+	private void addQiang(String str, int i , int direct) {
+		Matcher m = p4.matcher(str);
+		while(m.find()) {
+			int wei = m.start();//多次匹配，以后处理
+			BJ bj = new BJ(new int[] {i,wei}, new int[] {i, wei+3}, new int[][] {{i,wei-1},{i,wei+4}});
+			bj.zhuanzhi(direct, new int[] {3, -1, 4});
+			silian.add(bj);
+		}
+		Matcher m3 = p3.matcher(str);
+		Matcher m32 = p32.matcher(str);
+		Matcher m33 = p33.matcher(str);
+		boolean f1 = false;
+		boolean f2 = false;
+		while(m3.find()) {
+			f1 = true;
+			int wei = m.start();//多次匹配，以后处理
+			BJ bj = new BJ(new int[] {i,wei}, new int[] {i, wei+2}, new int[][] {{i,wei-1},{i,wei+3}});
+			bj.zhuanzhi(direct, new int[] {2, -1, 3});
+			sanlian.add(bj);//因为必胜，所以可以定 一定是哪些点，而不是还要再判断
+		}
+		if(!f1) {
+			while(m32.find()) {
+				f2 = true;
+				int wei = m.start();//多次匹配，以后处理
+				BJ bj = new BJ(new int[] {i,wei}, new int[] {i, wei+2}, new int[][] {{i,wei-1}});
+				bj.zhuanzhi(direct, new int[] {2, -1});
+				sanlian.add(bj);
+			}
+		}
+		if(!f1 && !f2) {
+			while(m33.find()) {
+				int wei = m.start();//多次匹配，以后处理
+				BJ bj = new BJ(new int[] {i,wei}, new int[] {i, wei+2}, new int[][] {{i,wei+3}});
+				bj.zhuanzhi(direct, new int[] {2, 3});
+				sanlian.add(bj);
+			}
+		}
+		Matcher m1 = p1.matcher(str);
+		while(m1.find()) {//while的方式好点---因为可以发现很多组
+			int wei = m1.start();
+			int c0 = m1.group(1).length();
+			int c1 = m1.group(2).length();
+			if(c0 + c1 == 5) {
+				int luo = c0 == 1 ? wei+1 : c0 == 4 ? wei+4 : wei;
+				if(luo == wei) {
+					yilian.add(new BJ(new int[] {i,wei}, new int[] {i, wei}, new int[][] {{i,wei-1},{i,wei+1}}).zhuanzhi(direct,  new int[] {0, -1, 1}));
+				}else {
+					yilian.add(new BJ(new int[] {i,wei}, new int[] {i, wei}, new int[][] {{i,luo}}).zhuanzhi(direct,  new int[] {0, luo - wei}));
+				}
+			}
+		}
+	}
+
 	private static String arrToString(int[] is) {
 		String rs = "";
 		for(int i : is) {
