@@ -212,18 +212,28 @@ public class Wfisveszposisntq {
 			addQiang(str, 0, 3);//2
 			addRuo(lie, 0, 3);
 		}
-		//4.娜
-		for(int j = 0; j < zi[0].length; j++) {
-			int[] lie = new int[zi.length];
-			for(int i = 0; i < zi.length; i++) {
-				lie[i] = zi[i][j];
+		//4.捺
+		for(int i = 3; i < zi[0].length; i++) {
+			int[] lie = new int[i + 1];
+			for(int j = 0; i - j >= 0; j++) {
+				lie[j] = zi[i - j][j];
 			}
 			//
 			String str = arrToString(lie);
-			addQiang(str, j, 2);//2
-			addRuo(lie, j, 2);
+			addQiang(str, i, 4);//2
+			addRuo(lie, i, 4);
 		}
-		return null;
+		for(int j = zi[0].length - 4; j >= 0 ; j--) {
+			int[] lie = new int[zi[0].length - j];
+			for(int k = 0; j + k < zi[0].length; k++) {
+				lie[k] = zi[zi.length - k - 1][j + k];
+			}
+			//
+			String str = arrToString(lie);
+			addQiang(str, zi.length - 1, 4);//2
+			addRuo(lie, zi.length - 1, 4);
+		}
+		return map;
 	}
 	
 	private void addRuo(int[] arr, int i, int direct) {
