@@ -15,6 +15,24 @@ print platform.python_revision()
 print platform.python_version()
 
 socket.setdefaulttimeout(3)
+
+def socket_connect_only(ip, port):
+    # soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # rs = soc.connect((ip, port))
+    # rsx = soc.send('{"sessionId":1 ,"serviceName":"unitycmc" ,"scfKey":"ONzGoMsGPSDb2hj0xMubIK1kIXCXyxEa" ,"configTime":0 }')
+    # xx = soc.recv()
+    # print rs
+    # print rsx
+    # print xx
+    socket.setdefaulttimeout(10000)
+    s = socket.socket()  # 创建 socket 对象
+
+    s.connect((ip, port))
+    s.sendall('{"sessionId":1 ,"serviceName":"unitycmc" ,"scfKey":"ONzGoMsGPSDb2hj0xMubIK1kIXCXyxEa" ,"configTime":0 }')
+    print s.recv(1024)
+    s.close()
+
+
 def socket_connect(ip, port):
     soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     result = soc.connect_ex((ip, port))
@@ -45,3 +63,5 @@ if __name__ == '__main__':
     ip = raw_input('input ip that you want to scan:')
     lock = thread.allocate_lock()
     ip_scan(ip)
+
+    # socket_connect_only('controler1.srvmgr.service.58dns.org', int(27080))
