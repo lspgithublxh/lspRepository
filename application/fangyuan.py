@@ -1,6 +1,9 @@
 import sys
 import requests
+from lxml import etree
 
+html = etree.HTML('')
+html.xpath('')
 def getContent(url):
     try:
         content = requests.get(url, timeout=30)
