@@ -2,8 +2,11 @@
 import sys
 from bs4 import BeautifulSoup
 from fangyuanSel import getContent
+from fangyuanSel import bro,webdriver
 from lxml import etree
 import json
+import time
+
 
 def testEtree():
     page = getContent('https://bj.ke.com/ershoufang/101103481530.html?fb_expo_id=107125315451027482')
@@ -13,7 +16,7 @@ def testEtree():
     #attrib find findall
 
 
-def parseDetail(url):
+def parseDetail(url, bro_):
     xxx = getContent(url)  # 'https://bj.ke.com/'
     page = xxx['page']
     bs = BeautifulSoup(page, 'html.parser')
@@ -283,6 +286,26 @@ def parseDetail(url):
 
     try:
         #gundong dao dibu
+        # bro.execute_script("window.scrollTo(0, document.body.scrollHeight)")
+
+        # bro.execute_script("window.scrollBy(0, 700)")
+        # bro.execute_script("window.scrollBy(0, 800)")
+        # bro.execute_script("window.scrollBy(0, 900)")
+        # bro.execute_script("window.scrollBy(0, 1000)")
+        # bro.execute_script("window.scrollBy(0, 1200)")
+        # bro.execute_script("window.scrollBy(0, 1300)")
+        # bro.execute_script("window.scrollBy(0, 1400)")
+
+        # bro.execute_script("window.scrollBy(0, 1500)")
+        # bro.execute_script("window.scrollBy(0, 1600)")
+        # bro.execute_script("window.scrollBy(0, 1700)")
+        # bro.implicitly_wait(10)
+        # page = bro.page_source
+        # bs = BeautifulSoup(page, 'html.parser')
+        # body = bs.body
+        # bro.find_element_by_xpath("//*[@id='resblockCardContainer']").send_keys(Keys.DOWN)
+        webdriver.ActionChains.move_to_element(bro.find_element_by_id('resblockCardContainer')).perform()
+        time.sleep(0.1)
         xiaoqu = body.find('div', {'id': 'resblockCardContainer'})
         xq_card = xiaoqu.find('div', {'class': 'xiaoquCard'})
         xq_content = xq_card.find('div', {'class': 'xiaoqu_content'})
@@ -349,5 +372,5 @@ if __name__ == '__main__':
     reload(sys)
     sys.setdefaultencoding('UTF-8')
     # testEtree()
-    rs = parseDetail('https://bj.ke.com/ershoufang/101103481530.html?fb_expo_id=107125315451027482')
+    rs = parseDetail('https://bj.ke.com/ershoufang/101103481530.html?fb_expo_id=107125315451027482',bro)
     print json.dumps(rs,ensure_ascii=False)

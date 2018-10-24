@@ -6,6 +6,7 @@ import uuid
 import re
 from bs4 import BeautifulSoup
 from selenium import  webdriver
+
 bro = webdriver.Chrome(executable_path="C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe")
 
 conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='lsp', db='test', charset='utf8')
@@ -15,6 +16,14 @@ def getContent(url):
    rs = {'ulr':None,'page':None}
    try:
        bro.get(url)
+       # bro.execute_script("window.scrollBy(0, 700)")
+       # bro.execute_script("window.scrollBy(0, 800)")
+       # bro.execute_script("window.scrollBy(0, 900)")
+       # bro.execute_script("window.scrollBy(0, 1000)")
+       # bro.execute_script("window.scrollBy(0, 1200)")
+       # bro.execute_script("window.scrollBy(0, 1300)")
+       # bro.execute_script("window.scrollBy(0, 1400)")
+       # bro.implicitly_wait(10)
        print bro.current_url
        rs['url'] = bro.current_url
        rs['page'] = bro.page_source
