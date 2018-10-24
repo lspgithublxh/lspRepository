@@ -2,11 +2,18 @@
 import sys
 from bs4 import BeautifulSoup
 from fangyuanSel import getContent
-from fangyuanSel import bro,webdriver
+from fangyuanSel import bro,webdriver,cursor
 from lxml import etree
+from pymongo import MongoClient
 import json
 import time
 
+client = MongoClient('10.252.62.125', 27017)
+col = client['lsp_test']['detail']
+
+def testsql():
+    cur = cursor.execute('select id from fangyuan3')
+    print cur
 
 def testEtree():
     page = getContent('https://bj.ke.com/ershoufang/101103481530.html?fb_expo_id=107125315451027482')
@@ -37,14 +44,14 @@ def parseDetail(url, bro_):
         pass
 
 
-    img = {}
+    img = []
     thumbnail = body.find('div',{'class':'thumbnail'})
     try:
         img_ul = thumbnail.find('ul',{'class':'smallpic'})
-        img_lis = img_ul.find('li')
+        img_lis = img_ul.find_all('li')
         for img_li in img_lis:
-            url = img_li.attrs['src']#data-
-            img['url'] = url
+            url = img_li.attrs['data-src']#data-
+            img.append(url)
         rs['img'] = img
     except:
         print 'img'
@@ -56,7 +63,7 @@ def parseDetail(url, bro_):
         price_div = overview.find('div',{'class':'price'})
         total = price_div.find('span',{'class':'total'})
         unit = price_div.find('span',{'class':'unit'})
-        uprice = price_div.find('div',{'class':'unitPrice'}).text
+        uprice = price_div.find('div',{'class':'unitPrice'})
         price_ = {}
         price_['total'] = total.text
         price_['unit'] = unit.text
@@ -225,26 +232,29 @@ def parseDetail(url, bro_):
         hxfj_z = {}
         hxfj_z['nameurl'] = hxfj_nweihu
         hxfj_z['name'] = hxfj_rname.text
-        hxfj_z['card'] = hxfj_cardurl.text
+        hxfj_z['card'] = hxfj_cardurl
         hxfj_z['phone'] = hxfj_p.text
         hxfj_z['hxtu'] = hxfj_imgurl
         hxfj_z['desc'] = hxfj_rowarr
         rs['hxfj'] = hxfj_z
-    except:pass
+    except:
+        print 'hxfj'
 
     try:
         housepic = body.find('div', {'class': 'housePic'})
         hpiclist = housepic.find('div', {'class': 'list'})
         hpicdivs = hpiclist.find_all('div')
-        hpicmap = {}
+        hpicarr = []
         for picdiv in hpicdivs:
             if picdiv.attrs.has_key('class') and picdiv.attrs['class'] == 'left_fix':continue
             picdivimg = picdiv.find('img')
             if picdivimg is not None:
                 picurl = picdivimg.attrs['src']
+                hpicmap = {}
                 hpicmap['picurl'] = picurl
                 hpicmap['text'] = picdiv.text
-        rs['pics'] = hpicmap
+                hpicarr.append(hpicmap)
+        rs['pics'] = hpicarr
 
         fy_record = body.find('div', {'id': 'record'})
         fy_list = fy_record.find('div', {'class': 'list'})
@@ -303,9 +313,16 @@ def parseDetail(url, bro_):
         # page = bro.page_source
         # bs = BeautifulSoup(page, 'html.parser')
         # body = bs.body
-        # bro.find_element_by_xpath("//*[@id='resblockCardContainer']").send_keys(Keys.DOWN)
-        webdriver.ActionChains.move_to_element(bro.find_element_by_id('resblockCardContainer')).perform()
-        time.sleep(0.1)
+        # time.sleep(3)
+        # target = bro.find_element_by_xpath("//div[@id='resblockCardContainer']")#.send_keys('\ue015')
+        # target = bro.find_element_by_id('resblockCardContainer')#.send_keys('\ue015')#.click()
+        # webdriver.ActionChains(webdriver).move_to_element(target).perform()#key_down()#send_keys('\ue015')
+        #http://chromedriver.storage.googleapis.com/index.html
+        #https://npm.taobao.org/mirrors/chromedriver/2.42/
+
+        #小区完整路径：https://bj.ke.com/xiaoqu/1111027376686/
+
+        # time.sleep(0.1)
         xiaoqu = body.find('div', {'id': 'resblockCardContainer'})
         xq_card = xiaoqu.find('div', {'class': 'xiaoquCard'})
         xq_content = xq_card.find('div', {'class': 'xiaoqu_content'})
@@ -325,7 +342,9 @@ def parseDetail(url, bro_):
         xq_ = {}
         xq_['data'] = xq_data
         rs['xq_info'] = xq_
-    except:pass
+    except Exception as e:
+        print 'xq_info'
+        print e
 
     try:
         xq_cj = body.find('div', {'id': 'dealPrice'})
@@ -359,7 +378,8 @@ def parseDetail(url, bro_):
             cj_body['from'] = cj_from.text
             xq_cjarr.append(cj_body)
         rs['xq_cjrecord'] = xq_cjarr
-    except:pass
+    except:
+        print 'cjrecord'
     return rs
 
 
@@ -372,5 +392,6 @@ if __name__ == '__main__':
     reload(sys)
     sys.setdefaultencoding('UTF-8')
     # testEtree()
-    rs = parseDetail('https://bj.ke.com/ershoufang/101103481530.html?fb_expo_id=107125315451027482',bro)
-    print json.dumps(rs,ensure_ascii=False)
+    # rs = parseDetail('https://bj.ke.com/ershoufang/101103481530.html?fb_expo_id=107125315451027482',bro)
+    # print json.dumps(rs,ensure_ascii=False)
+    
