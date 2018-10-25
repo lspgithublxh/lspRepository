@@ -1,61 +1,54 @@
 #coding=utf-8
-import sys
-from bs4 import BeautifulSoup
-from fangyuanSel import getContent
-from fangyuanSel import bro,webdriver,cursor
-from lxml import etree
+from selenium import  webdriver
+from selenium.webdriver.chrome.options import Options
+
+import redis
 from pymongo import MongoClient
-import json
-import time
-import logging
-logging.basicConfig(level=logging.INFO, format='%(message)s',
-                    datefmt='', filename='d:/logs/fydetail.log', filemode='a')
+from bs4 import BeautifulSoup
+import threading
 
 client = MongoClient('localhost', 27017)#10.252.62.125
 col = client['detail']['detail']
 
-def otherm(ids1):
+chrome_options = Options()
+chrome_options.add_argument('--no-sandbox')#解决DevToolsActivePort文件不存在的报错
+
+chrome_options.add_argument('window-size=1920x3000') #指定浏览器分辨率
+chrome_options.add_argument('--disable-gpu') #谷歌文档提到需要加上这个属性来规避bug
+chrome_options.add_argument('--hide-scrollbars') #隐藏滚动条, 应对一些特殊页面
+chrome_options.add_argument('blink-settings=imagesEnabled=false') #不加载图片, 提升速度
+chrome_options.add_argument('--headless') #浏览器不提供可视化页面. linux下如果系统不支持可视化不加
+def redisHandle():
+    i = 0
+    while i < 5:
+        one = threading.Thread(target=threadHandle, args=())
+        one.start()
+        i += 1
+    pass
+
+def threadHandle():
+    bro = webdriver.Chrome(executable_path="C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe",
+                           chrome_options=chrome_options)
+    pool = redis.ConnectionPool(host='localhost', port=6379, decode_responses=True)
+    r = redis.Redis(connection_pool=pool)
     url = 'https://bj.ke.com/ershoufang/{}.html'
-    for id in ids1:
-        rs = parseDetail(url.format(id))
+    while True:
+        print 'get id start:'
+        id = r.rpop('detail')
+        print 'get id:', id
+        rs = parseDetail(url.format(id), bro)
         if rs == -1: continue
         rs['id'] = id
-        reset = json.dumps(rs, ensure_ascii=False)
-        # logging.info(reset)
         col.insert(rs)
 
-
-
-def testsql():
-    cur = cursor.execute('select id from fangyuan3')
-    print cur
-    rs = cursor.fetchall()
-    # url = 'https://bj.ke.com/ershoufang/101103481530.html?fb_expo_id=107125315451027482'
-    url = 'https://bj.ke.com/ershoufang/{}.html'
-    for it in rs:
-        id = it[0]
-        print 'id:', id
-        rs = parseDetail(url.format(id))
-        if rs == -1:continue
-        rs['id'] = id
-        reset = json.dumps(rs, ensure_ascii=False)
-        # logging.info(reset)
-        col.insert(rs)
-
-
-def testEtree():
-    page = getContent('https://bj.ke.com/ershoufang/101103481530.html?fb_expo_id=107125315451027482')
-    html_ = etree.HTML(page)
-    element = html_.xpath("//div[@id='daikanContainer']//div[@class='daikan_list']")
-    element.xpath('')
-    #attrib find findall
-
-
-def parseDetail(url):
-    xxx = getContent(url)  # 'https://bj.ke.com/'
-    page = xxx['page']
+def parseDetail(url, bro):
+    # xxx = getContent(url)  # 'https://bj.ke.com/'
+    # page = xxx['page']
+    page = None
     bs = None
     try:
+        bro.get(url)
+        page = bro.page_source
         bs = BeautifulSoup(page, 'html.parser')
     except:
         return -1
@@ -414,17 +407,6 @@ def parseDetail(url):
         print 'cjrecord'
     return rs
 
-
-
-
-
-
-
 if __name__ == '__main__':
-    reload(sys)
-    sys.setdefaultencoding('UTF-8')
-    # testEtree()
-    # rs = parseDetail('https://bj.ke.com/ershoufang/101103481530.html?fb_expo_id=107125315451027482')
-    # print json.dumps(rs,ensure_ascii=False)
-    # testsql()
-    otherm()
+    redisHandle()
+    pass

@@ -4,6 +4,7 @@ import json
 import pymysql
 import uuid
 import re
+import threading
 from bs4 import BeautifulSoup
 from selenium import  webdriver
 
@@ -293,8 +294,22 @@ def buchong():
         c += 1
 
 
+
+
 if __name__ == '__main__':
     reload(sys)
     sys.setdefaultencoding('UTF-8')
     # buchong()
-    mainMethod()
+    # mainMethod()
+    bro.get('https://bj.ke.com/ershoufang')
+    page1 = bro.page_source
+    print bro.title, bro.current_url
+    old = bro.window_handles
+    bro.execute_script('window.open("https://www.baidu.com")')
+    page2 = bro.page_source
+    new = bro.window_handles
+    for a in new:
+        bro.switch_to_window(a)
+        print bro.title
+
+    print bro.title, bro.current_url
