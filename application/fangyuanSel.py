@@ -323,60 +323,75 @@ def mainMethod2():
             page = xxx['page']
             subs = getByPage(page)
             subcitys.extend(subs)
-        print subcitys
-        for sub in subcitys:
-            visurl = ''
-            if sub is not None and sub.__contains__('ke.com'):
-                visurl = sub + 'pg{}/'
-            else:
-                visurl = firsturl + sub + 'pg{}/'
-            print visurl
-            boxget = False
-            i = 100
-            c = 1  # 已经all ready1364
-            while c < i:
-                factUrl = visurl.format(c)
-                print factUrl
-                xxx = getContent(factUrl)
-                page = xxx['page']
-                currUrl = xxx['url']
-                if currUrl is None:
-                    break
-                if currUrl is not None and currUrl.endswith('ershoufang/'):
-                    break
-                tocount = findCount(page)
-                if tocount == 0:
-                    break
-                # if boxget == False:
-                #     i = getPageBox(page)
-                #     print 'page:',i
-                #     boxget = True
-                #     if i == -1:break
+        print subcitys.__len__()
+        # fenpeiUrl(city, firsturl, p, subcitys)
+        lenx = subcitys.__len__()
+        part = subcitys.__len__() / 5
+        start = 0
+        while start < lenx:
+            cys = subcitys[start:part]
+            th = threading.Thread(target=fenpeiUrl, args=(city, firsturl, p,cys))
+            th.start()
+            start += part
 
-                rs = parseContent(page)
-                if rs.__len__() == 0:break
-                sql = '''insert into fangyuan7(id,priceInfo,followInfo,flood,address,title,detail,img,city) values'''
-                for item in rs:
-                    # print json.dumps(item, ensure_ascii=False)
-                    if item.has_key('priceInfo'):  # print item['priceInfo']
-                        id = item['detail']
-                        om = p.match(id)
-                        id = om.group(1)
-                        sql += '''('{}','{}','{}','{}','{}','{}','{}','{}','{}'),'''.format(id, item['priceInfo'],
-                                                                                       item['followInfo'],
-                                                                                       item['flood'], item['address'],
-                                                                                       item['title'], item['detail'],
-                                                                                       item['img'], city)  # uuid.uuid1()
-                if sql.endswith(','):
-                    sql = sql[0:-1]
-                    print sql
-                    try:
-                        exers = cursor.execute(sql)
-                        conn.commit()
-                    except Exception as e:
-                        conn.rollback()
-                        print e
-                c += 1
+def fenpeiUrl(city, firsturl, p, subcitys):
+    for sub in subcitys:
+        visurl = ''
+        if sub is not None and sub.__contains__('ke.com'):
+            visurl = sub + 'pg{}/'
+        else:
+            visurl = firsturl + sub + 'pg{}/'
+        print visurl
+        boxget = False
+        getAndSave(city, p, visurl)
+
+
+def getAndSave(city, p, visurl):
+    i = 100
+    c = 1  # 已经all ready1364
+    while c < i:
+        factUrl = visurl.format(c)
+        print factUrl
+        xxx = getContent(factUrl)
+        page = xxx['page']
+        currUrl = xxx['url']
+        if currUrl is None:
+            break
+        if currUrl is not None and currUrl.endswith('ershoufang/'):
+            break
+        tocount = findCount(page)
+        if tocount == 0:
+            break
+        # if boxget == False:
+        #     i = getPageBox(page)
+        #     print 'page:',i
+        #     boxget = True
+        #     if i == -1:break
+
+        rs = parseContent(page)
+        if rs.__len__() == 0: break
+        sql = '''insert into fangyuan7(id,priceInfo,followInfo,flood,address,title,detail,img,city) values'''
+        for item in rs:
+            # print json.dumps(item, ensure_ascii=False)
+            if item.has_key('priceInfo'):  # print item['priceInfo']
+                id = item['detail']
+                om = p.match(id)
+                id = om.group(1)
+                sql += '''('{}','{}','{}','{}','{}','{}','{}','{}','{}'),'''.format(id, item['priceInfo'],
+                                                                                    item['followInfo'],
+                                                                                    item['flood'], item['address'],
+                                                                                    item['title'], item['detail'],
+                                                                                    item['img'], city)  # uuid.uuid1()
+        if sql.endswith(','):
+            sql = sql[0:-1]
+            print sql
+            try:
+                exers = cursor.execute(sql)
+                conn.commit()
+            except Exception as e:
+                conn.rollback()
+                print e
+        c += 1
 
 
 if __name__ == '__main__':
