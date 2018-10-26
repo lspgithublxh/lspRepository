@@ -2,6 +2,9 @@
 #https://github.com/ServiceStack/redis-windows/blob/master/downloads/redis64-3.0.501.zip
 #http://download.redis.io/releases/
 #https://github.com/MicrosoftArchive/redis/releases
+# selenium linux:  https://www.cnblogs.com/coffy/p/5416987.html
+# selenium no head: https://www.cnblogs.com/z-x-y/p/9026226.html
+
 import sys
 import redis
 

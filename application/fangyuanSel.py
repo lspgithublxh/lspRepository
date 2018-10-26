@@ -7,8 +7,19 @@ import re
 import threading
 from bs4 import BeautifulSoup
 from selenium import  webdriver
+from selenium.webdriver.chrome.options import Options
 
-bro = webdriver.Chrome(executable_path="C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe")
+chrome_options = Options()
+chrome_options.add_argument('--no-sandbox')#解决DevToolsActivePort文件不存在的报错
+
+chrome_options.add_argument('window-size=1920x3000') #指定浏览器分辨率
+chrome_options.add_argument('--disable-gpu') #谷歌文档提到需要加上这个属性来规避bug
+chrome_options.add_argument('--hide-scrollbars') #隐藏滚动条, 应对一些特殊页面
+chrome_options.add_argument('blink-settings=imagesEnabled=false') #不加载图片, 提升速度
+chrome_options.add_argument('--headless') #浏览器不提供可视化页面. linux下如果系统不支持可视化不加
+
+bro = webdriver.Chrome(executable_path="C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe",
+                       chrome_options=chrome_options)
 
 conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='lsp', db='test', charset='utf8')
 cursor = conn.cursor()
@@ -294,22 +305,94 @@ def buchong():
         c += 1
 
 
+def mainMethod2():
+    p = re.compile('.*?/(\d*)\.html')
+    #u'hf',u'wuhu', u'bf', u'huainan', u'mas', u'huaibei', u'tl', u'aq', u'tc', u'huangshan', u'mingguang', u'fy', u'suzhou', u'la', u'hq', u'bozhou', u'chizhou', u'xuancheng', u'cz', u'ng', u'tianchang', u'bj',
+    #u'cq', u'fz'
+    # citys = [ u'xm', u'pt', u'sm', u'yongan', u'quanzhou', u'shishi', u'na', u'longhai', u'np', u'nd', u'ly', u'zhangzhou', u'jo', u'shaowu', u'fa', u'fd', u'fuqing', u'lianj', u'gz', u'shaoguan', u'sz', u'zh', u'st', u'fs', u'sd', u'jiangmen', u'taishan', u'ep', u'zhanjiang', u'lianjiang', u'leizhou', u'wuchuan', u'mm', u'gaozhou', u'huazhou', u'zq', u'hui', u'meizhou', u'xingning', u'sw', u'heyuan', u'yangjiang', u'yangchun', u'yingde', u'lianzhou', u'dg', u'zs', u'chaozhou', u'jieyang', u'pn', u'qy', u'lechang', u'lufeng', u'luoding', u'kp', u'sjz', u'zhaoxian', u'xl', u'ts', u'zhunhua', u'qa', u'hd', u'wa', u'xt', u'baoding', u'dingzhou', u'cangzhou', u'rq', u'lf', u'bazhou', u'sanhe', u'hs', u'chengde', u'qhd', u'zjk', u'xan', u'ag', u'botou', u'huanghua', u'hj', u'gbd', u'jizhou', u'nangong', u'wj', u'shenzhou', u'zhuozhou', u'cc', u'yushu', u'dehui', u'jl', u'cy', u'huadian', u'sp', u'gzl', u'liaoyuan', u'tonghua', u'bs', u'songyuan', u'bc', u'yb', u'hunchun', u'jiaohe', u'longjing', u'linjiang', u'yj', u'dunhua', u'sy', u'xinmin', u'dl', u'pld', u'wfd', u'zhuanghe', u'as', u'haicheng', u'fushun', u'bx', u'dd', u'jinzhou', u'yk', u'gaizhou', u'dsq', u'liaoyang', u'pj', u'tieling', u'kaiyuan', u'chaoyang', u'hld', u'bp', u'dengta', u'lingyuan', u'xingcheng', u'donggang', u'fch', u'hhht', u'baotou', u'wuhai', u'cf', u'tongliao', u'eeds', u'hlbr', u'wlcb', u'xlht', u'alsm', u'mzl', u'xlglm', u'xining', u'haidong', u'haixi', u'dlh', u'grm', u'ty', u'qx', u'gujiao', u'dt', u'yq', u'changzhi', u'jc', u'yuncheng', u'lin', u'xinzhou', u'linfen', u'lvliang', u'jz', u'fenyang', u'houma', u'huozhou', u'lucheng', u'yongji', u'tj', u'lasa', u'rkz', u'changdu', u'nq', u'km', u'an', u'qj', u'yx', u'baoshan', u'zt', u'lj', u'pr', u'lincang', u'chuxiong', u'ky', u'honghe', u'ws', u'xsbn', u'jinghong', u'dali', u'dh', u'rl', u'nujiang', u'diqing', u'gejiu', u'xw', u'hz', u'nb', u'wz', u'ra', u'jx', u'huzhou', u'sx', u'jh', u'lanxi', u'yw', u'dongyang', u'yongkang', u'quzhou', u'zhoushan', u'taizhou', u'wl', u'lh', u'lishui', u'lq', u'shengzhou', u'cixi', u'haining', u'jd', u'jiashan', u'ph', u'tongxiang', u'yr', u'zhuji'];
+    # citys = [u'hf',u'wuhu', u'bf', u'huainan', u'mas', u'huaibei', u'tl', u'aq', u'tc', u'huangshan', u'mingguang', u'fy', u'suzhou', u'la', u'hq', u'bozhou', u'chizhou', u'xuancheng', u'cz', u'ng', u'tianchang']
+    citys = [u'bj']
+    from totalPage import getByPage
+    for city in citys:
+        firsturl = 'https://{}.ke.com'.format(city)
+        quyu = parseGetSubCity(firsturl + '/ershoufang')
+        print quyu
+        subcitys = []
+        for cc in quyu:
+            xxx = getContent(firsturl + cc)
+            page = xxx['page']
+            subs = getByPage(page)
+            subcitys.extend(subs)
+        print subcitys
+        for sub in subcitys:
+            visurl = ''
+            if sub is not None and sub.__contains__('ke.com'):
+                visurl = sub + 'pg{}/'
+            else:
+                visurl = firsturl + sub + 'pg{}/'
+            print visurl
+            boxget = False
+            i = 100
+            c = 1  # 已经all ready1364
+            while c < i:
+                factUrl = visurl.format(c)
+                print factUrl
+                xxx = getContent(factUrl)
+                page = xxx['page']
+                currUrl = xxx['url']
+                if currUrl is None:
+                    break
+                if currUrl is not None and currUrl.endswith('ershoufang/'):
+                    break
+                tocount = findCount(page)
+                if tocount == 0:
+                    break
+                # if boxget == False:
+                #     i = getPageBox(page)
+                #     print 'page:',i
+                #     boxget = True
+                #     if i == -1:break
+
+                rs = parseContent(page)
+                if rs.__len__() == 0:break
+                sql = '''insert into fangyuan7(id,priceInfo,followInfo,flood,address,title,detail,img,city) values'''
+                for item in rs:
+                    # print json.dumps(item, ensure_ascii=False)
+                    if item.has_key('priceInfo'):  # print item['priceInfo']
+                        id = item['detail']
+                        om = p.match(id)
+                        id = om.group(1)
+                        sql += '''('{}','{}','{}','{}','{}','{}','{}','{}','{}'),'''.format(id, item['priceInfo'],
+                                                                                       item['followInfo'],
+                                                                                       item['flood'], item['address'],
+                                                                                       item['title'], item['detail'],
+                                                                                       item['img'], city)  # uuid.uuid1()
+                if sql.endswith(','):
+                    sql = sql[0:-1]
+                    print sql
+                    try:
+                        exers = cursor.execute(sql)
+                        conn.commit()
+                    except Exception as e:
+                        conn.rollback()
+                        print e
+                c += 1
 
 
 if __name__ == '__main__':
     reload(sys)
     sys.setdefaultencoding('UTF-8')
     # buchong()
-    # mainMethod()
-    bro.get('https://bj.ke.com/ershoufang')
-    page1 = bro.page_source
-    print bro.title, bro.current_url
-    old = bro.window_handles
-    bro.execute_script('window.open("https://www.baidu.com")')
-    page2 = bro.page_source
-    new = bro.window_handles
-    for a in new:
-        bro.switch_to_window(a)
-        print bro.title
-
-    print bro.title, bro.current_url
+    mainMethod2()
+    # bro.get('https://bj.ke.com/ershoufang')
+    # page1 = bro.page_source
+    # print bro.title, bro.current_url
+    # old = bro.window_handles
+    # bro.execute_script('window.open("https://www.baidu.com")')
+    # page2 = bro.page_source
+    # new = bro.window_handles
+    # for a in new:
+    #     bro.switch_to_window(a)
+    #     print bro.title
+    #
+    # print bro.title, bro.current_url

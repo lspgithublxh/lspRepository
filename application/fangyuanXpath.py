@@ -3,6 +3,7 @@ import sys
 from bs4 import BeautifulSoup
 from fangyuanSel import getContent
 
+
 def parseGetCity():
     page = getContent('https://www.ke.com/city/')
     bs = BeautifulSoup(page, 'html.parser')
