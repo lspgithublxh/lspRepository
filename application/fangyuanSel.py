@@ -18,25 +18,24 @@ chrome_options.add_argument('--hide-scrollbars') #隐藏滚动条, 应对一些�
 chrome_options.add_argument('blink-settings=imagesEnabled=false') #不加载图片, 提升速度
 chrome_options.add_argument('--headless') #浏览器不提供可视化页面. linux下如果系统不支持可视化不加
 
-bro = webdriver.Chrome(executable_path="C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe",
-                       chrome_options=chrome_options)
+
 
 conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='lsp', db='test', charset='utf8')
 cursor = conn.cursor()
 
-def getContent(url):
+def getContent(bro, url):
    rs = {'ulr':None,'page':None}
    try:
        bro.get(url)
-       # bro.execute_script("window.scrollBy(0, 700)")
+       bro.execute_script("window.scrollBy(0, 700)")
        # bro.execute_script("window.scrollBy(0, 800)")
        # bro.execute_script("window.scrollBy(0, 900)")
        # bro.execute_script("window.scrollBy(0, 1000)")
        # bro.execute_script("window.scrollBy(0, 1200)")
        # bro.execute_script("window.scrollBy(0, 1300)")
        # bro.execute_script("window.scrollBy(0, 1400)")
-       # bro.implicitly_wait(10)
-       print bro.current_url
+       bro.implicitly_wait(10)
+       # print bro.current_url
        rs['url'] = bro.current_url
        rs['page'] = bro.page_source
        # driver.close()
@@ -49,7 +48,7 @@ def parseContent(content):
     bs = BeautifulSoup(content, 'html.parser')
     body = bs.body
     if body is None: return -1
-    ul = body.find('ul', {'class': 'sellListContent'})
+    ul = body.find('ul', {'class': 'sellListContent', 'log-mod':'list'})
     if ul is None:
         return []
     lis = ul.find_all('li')
@@ -146,6 +145,22 @@ def parseGetCity():
                 rs.append(href)
     return rs
 
+def parseGetSubCity2(page):
+    bs = BeautifulSoup(page, 'html.parser')
+    body = bs.body
+    rs = []
+    if body is None: return -1
+    top = body.find('div',{'class':'position'})
+    if top is None:return rs
+    divs = top.find('div', {'data-role': 'ershoufang'})
+    aa = divs.find_all('a')
+
+    for a in aa:
+        src = a.attrs['href']
+        rs.append(src)
+    return rs
+
+
 def parseGetSubCity(url):
     xxx = getContent(url)#'https://bj.ke.com/'
     page = xxx['page']
@@ -223,6 +238,7 @@ def mainMethod():
                     break
                 tocount = findCount(page)
                 if tocount == 0:
+                    print 'no fangyuan' , currUrl
                     break
                 # if boxget == False:
                 #     i = getPageBox(page)
@@ -306,6 +322,8 @@ def buchong():
 
 
 def mainMethod2():
+    bro = webdriver.Chrome(executable_path="C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe",
+                           chrome_options=chrome_options)
     p = re.compile('.*?/(\d*)\.html')
     #u'hf',u'wuhu', u'bf', u'huainan', u'mas', u'huaibei', u'tl', u'aq', u'tc', u'huangshan', u'mingguang', u'fy', u'suzhou', u'la', u'hq', u'bozhou', u'chizhou', u'xuancheng', u'cz', u'ng', u'tianchang', u'bj',
     #u'cq', u'fz'
@@ -315,53 +333,70 @@ def mainMethod2():
     from totalPage import getByPage
     for city in citys:
         firsturl = 'https://{}.ke.com'.format(city)
-        quyu = parseGetSubCity(firsturl + '/ershoufang')
-        print quyu
+        # xxx = getContent(bro, firsturl + '/ershoufang')  # 'https://bj.ke.com/'
+        # page = xxx['page']
+        # quyu = parseGetSubCity2(page)
+        # print 'quyu:' , quyu
         subcitys = []
-        for cc in quyu:
-            xxx = getContent(firsturl + cc)
-            page = xxx['page']
-            subs = getByPage(page)
-            subcitys.extend(subs)
-        print subcitys.__len__()
-        # fenpeiUrl(city, firsturl, p, subcitys)
+        # for cc in quyu:
+        #     subsuburl = ''
+        #     if cc.__contains__('.ke.com'):
+        #         subsuburl = cc
+        #     else:
+        #         subsuburl = firsturl + cc
+        #     xxx = getContent(bro, subsuburl)
+        #     page = xxx['page']
+        #     tocount = findCount(page)
+        #     if tocount / 30 > 100:
+        #         subs = getByPage(page)
+        #         subcitys.extend(subs)
+        #     else:
+        #         print 'total:' , tocount
+        #         subcitys.append(cc)
+        subcitys = ['/ershoufang/dongcheng/', '/ershoufang/xicheng/', '/ershoufang/andingmen/', '/ershoufang/anzhen1/', '/ershoufang/aolinpikegongyuan11/', '/ershoufang/beiyuan2/', '/ershoufang/beigongda/', '/ershoufang/baiziwan/', '/ershoufang/chengshousi1/', '/ershoufang/changying/', '/ershoufang/chaoyangmenwai1/', '/ershoufang/cbd/', '/ershoufang/chaoqing/', '/ershoufang/chaoyanggongyuan/', '/ershoufang/dongzhimen/', '/ershoufang/dongba/', '/ershoufang/dawanglu/', '/ershoufang/dongdaqiao/', '/ershoufang/dashanzi/', '/ershoufang/dougezhuang/', '/ershoufang/dingfuzhuang/', '/ershoufang/fangzhuang1/', '/ershoufang/fatou/', '/ershoufang/guangqumen/', '/ershoufang/gongti/', '/ershoufang/gaobeidian/', '/ershoufang/guozhan1/', '/ershoufang/ganluyuan/', '/ershoufang/guanzhuang/', '/ershoufang/hepingli/', '/ershoufang/huanlegu/', '/ershoufang/huixinxijie/', '/ershoufang/hongmiao/', '/ershoufang/huaweiqiao/', '/ershoufang/jianxiangqiao1/', '/ershoufang/jiuxianqiao/', '/ershoufang/jinsong/', '/ershoufang/jianguomenwai/', '/ershoufang/lishuiqiao1/', '/ershoufang/madian1/', '/ershoufang/nongzhanguan/', '/ershoufang/nanshatan1/', '/ershoufang/panjiayuan1/', '/ershoufang/sanyuanqiao/', '/ershoufang/shaoyaoju/', '/ershoufang/shifoying/', '/ershoufang/shilibao/', '/ershoufang/shoudoujichang1/', '/ershoufang/shuangjing/', '/ershoufang/shilihe/', '/ershoufang/shibalidian1/', '/ershoufang/shuangqiao/', '/ershoufang/sanlitun/', '/ershoufang/sihui/', '/ershoufang/tongzhoubeiyuan/', '/ershoufang/tuanjiehu/', '/ershoufang/taiyanggong/', '/ershoufang/tianshuiyuan/', '/ershoufang/wangjing/', '/ershoufang/xibahe/', '/ershoufang/yayuncun/', '/ershoufang/yayuncunxiaoying/', '/ershoufang/yansha1/', '/ershoufang/zhongyangbieshuqu1/', '/ershoufang/zhaoyangqita/', '/ershoufang/aolinpikegongyuan11/', '/ershoufang/anningzhuang1/', '/ershoufang/baishiqiao1/', '/ershoufang/beitaipingzhuang/', '/ershoufang/changpingqita1/', '/ershoufang/changwa/', '/ershoufang/dinghuisi/', '/ershoufang/erlizhuang/', '/ershoufang/gongzhufen/', '/ershoufang/ganjiakou/', '/ershoufang/haidianqita1/', '/ershoufang/haidianbeibuxinqu1/', '/ershoufang/junbo1/', '/ershoufang/liuliqiao1/', '/ershoufang/mudanyuan/', '/ershoufang/madian1/', '/ershoufang/malianwa/', '/ershoufang/qinghe11/', '/ershoufang/suzhouqiao/', '/ershoufang/shangdi1/', '/ershoufang/shijicheng/', '/ershoufang/sijiqing/', '/ershoufang/shuangyushu/', '/ershoufang/tiancun1/', '/ershoufang/wudaokou/', '/ershoufang/weigongcun/', '/ershoufang/wukesong1/', '/ershoufang/wanliu/', '/ershoufang/wanshoulu1/', '/ershoufang/xishan21/', '/ershoufang/xisanqi1/', '/ershoufang/xibeiwang/', '/ershoufang/xueyuanlu1/', '/ershoufang/xiaoxitian1/', '/ershoufang/xizhimen1/', '/ershoufang/xinjiekou2/', '/ershoufang/xierqi1/', '/ershoufang/yangzhuang1/', '/ershoufang/yuquanlu11/', '/ershoufang/yuanmingyuan/', '/ershoufang/yiheyuan/', '/ershoufang/zhichunlu/', '/ershoufang/zaojunmiao/', '/ershoufang/zhongguancun/', '/ershoufang/zizhuqiao/', '/ershoufang/beidadi/', '/ershoufang/beijingnanzhan1/', '/ershoufang/chengshousi1/', '/ershoufang/caoqiao/', '/ershoufang/caihuying/', '/ershoufang/dahongmen/', '/ershoufang/fengtaiqita1/', '/ershoufang/fangzhuang1/', '/ershoufang/guanganmen/', '/ershoufang/heyi/', '/ershoufang/huaxiang/', '/ershoufang/jiugong1/', '/ershoufang/jiaomen/', '/ershoufang/kejiyuanqu/', '/ershoufang/kandanqiao/', '/ershoufang/lize/', '/ershoufang/liujiayao/', '/ershoufang/lugouqiao1/', '/ershoufang/liuliqiao1/', '/ershoufang/muxiyuan1/', '/ershoufang/majiabao/', '/ershoufang/maliandao1/', '/ershoufang/puhuangyu/', '/ershoufang/qingta1/', '/ershoufang/qilizhuang/', '/ershoufang/songjiazhuang/', '/ershoufang/shilihe/', '/ershoufang/taipingqiao1/', '/ershoufang/wulidian/', '/ershoufang/xihongmen/', '/ershoufang/xiluoyuan/', '/ershoufang/xingong/', '/ershoufang/yuegezhuang/', '/ershoufang/yuquanying/', '/ershoufang/youanmenwai/', '/ershoufang/yongdingmen/', '/ershoufang/yangqiao1/', '/ershoufang/zhaogongkou/', u'/ershoufang/shijingshan/', u'/ershoufang/tongzhou/', '/ershoufang/aolinpikegongyuan11/', '/ershoufang/anningzhuang1/', '/ershoufang/baishanzhen/', '/ershoufang/beiqijia/', '/ershoufang/changpingqita1/', '/ershoufang/dongguan/', '/ershoufang/guloudajie/', '/ershoufang/huilongguan2/', '/ershoufang/huoying/', '/ershoufang/lishuiqiao1/', '/ershoufang/nanshao/', '/ershoufang/nankou/', '/ershoufang/shahe2/', '/ershoufang/tiantongyuan1/', '/ershoufang/xiguanhuandao/', '/ershoufang/xisanqi1/', '/ershoufang/xiaotangshan1/', '/ershoufang/daxingqita11/', '/ershoufang/daxingkaifaqu/', '/ershoufang/guanyinsi/', '/ershoufang/gaomidiannan/', '/ershoufang/huangcunhuochezhan/', '/ershoufang/huangcunbei/', '/ershoufang/huangcunzhong/', '/ershoufang/heyi/', '/ershoufang/jiugong1/', '/ershoufang/kejiyuanqu/', '/ershoufang/tiangongyuan/', '/ershoufang/xihongmen/', '/ershoufang/yinghai/', '/ershoufang/yizhuang1/', '/ershoufang/yuhuayuan/', '/ershoufang/yizhuangkaifaquqita1/', '/ershoufang/zaoyuan/', u'/ershoufang/yizhuangkaifaqu/', u'/ershoufang/shunyi/', u'/ershoufang/fangshan/', u'/ershoufang/mentougou/', u'/ershoufang/pinggu/', u'/ershoufang/huairou/', u'/ershoufang/miyun/', u'/ershoufang/yanqing/', u'https://lf.ke.com/ershoufang/yanjiao/', u'https://lf.ke.com/ershoufang/xianghe/']
+        print subcitys
         lenx = subcitys.__len__()
-        part = subcitys.__len__() / 5
+        part = subcitys.__len__()
         start = 0
         while start < lenx:
-            cys = subcitys[start:part]
+            cys = subcitys[start:start+part]
             th = threading.Thread(target=fenpeiUrl, args=(city, firsturl, p,cys))
             th.start()
             start += part
 
 def fenpeiUrl(city, firsturl, p, subcitys):
+    bro = webdriver.Chrome(executable_path="C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe")
     for sub in subcitys:
         visurl = ''
         if sub is not None and sub.__contains__('ke.com'):
             visurl = sub + 'pg{}/'
         else:
             visurl = firsturl + sub + 'pg{}/'
-        print visurl
+        # print visurl
         boxget = False
-        getAndSave(city, p, visurl)
+        subcc = sub[sub.index('ershoufang') + 11:-1]
+        getAndSave(city, p, visurl, subcc, bro)
 
 
-def getAndSave(city, p, visurl):
+def getAndSave(city, p, visurl, sub, bro):
     i = 100
     c = 1  # 已经all ready1364
     while c < i:
         factUrl = visurl.format(c)
         print factUrl
-        xxx = getContent(factUrl)
+        xxx = getContent(bro,factUrl)
         page = xxx['page']
         currUrl = xxx['url']
         if currUrl is None:
+            print 'error currUrl'
             break
         if currUrl is not None and currUrl.endswith('ershoufang/'):
+            print 'chongfu fangyuan'
             break
         tocount = findCount(page)
         if tocount == 0:
-            break
+            print 'no fangyuan'
+        #     break
         # if boxget == False:
         #     i = getPageBox(page)
         #     print 'page:',i
@@ -370,18 +405,18 @@ def getAndSave(city, p, visurl):
 
         rs = parseContent(page)
         if rs.__len__() == 0: break
-        sql = '''insert into fangyuan7(id,priceInfo,followInfo,flood,address,title,detail,img,city) values'''
+        sql = '''insert into beijing(id,priceInfo,followInfo,flood,address,title,detail,img,city,area) values'''
         for item in rs:
             # print json.dumps(item, ensure_ascii=False)
             if item.has_key('priceInfo'):  # print item['priceInfo']
                 id = item['detail']
                 om = p.match(id)
                 id = om.group(1)
-                sql += '''('{}','{}','{}','{}','{}','{}','{}','{}','{}'),'''.format(id, item['priceInfo'],
+                sql += '''('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}'),'''.format(id, item['priceInfo'],
                                                                                     item['followInfo'],
                                                                                     item['flood'], item['address'],
                                                                                     item['title'], item['detail'],
-                                                                                    item['img'], city)  # uuid.uuid1()
+                                                                                    item['img'], city, sub)  # uuid.uuid1()
         if sql.endswith(','):
             sql = sql[0:-1]
             print sql
@@ -389,6 +424,7 @@ def getAndSave(city, p, visurl):
                 exers = cursor.execute(sql)
                 conn.commit()
             except Exception as e:
+                print e
                 conn.rollback()
                 print e
         c += 1

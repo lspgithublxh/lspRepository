@@ -35,7 +35,10 @@ def threadHandle():
     while True:
         print 'get id start:'
         id = r.rpop('detail')
-        print 'get id:', id
+        print 'get id:', id #or wait is ok , can't None
+        if id is None:
+            print 'get end, id is None'
+            break
         rs = parseDetail(url.format(id), bro)
         if rs == -1: continue
         rs['id'] = id
