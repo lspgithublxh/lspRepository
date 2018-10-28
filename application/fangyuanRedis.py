@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 import threading
 
 client = MongoClient('localhost', 27017)#10.252.62.125
-col = client['detail']['detail']
+col = client['detail']['beijing']
 
 chrome_options = Options()
 chrome_options.add_argument('--no-sandbox')#解决DevToolsActivePort文件不存在的报错

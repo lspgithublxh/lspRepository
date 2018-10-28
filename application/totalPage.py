@@ -52,12 +52,23 @@ def putRedis():
         r.lpush('detail', id)
         print id
 
+def putTest():
+    try:
+        pool = redis.ConnectionPool(host='localhost', port=6379, decode_responses=True)
+        r = redis.Redis(connection_pool=pool)  # host='localhost',port=6379, db=0
+    except Exception as e:
+        print e
+    r.lpush('xxx', 2222222)
+    print r.rpop('xxx')
+    print r.rpop('xxx') is None
+
 if __name__ == '__main__':
     # getByXpath('https://bj.ke.com/ershoufang/haidian/')
-    # arr = ['ss']
-    # b = ['xx']
-    # arr.extend(b)
-    # print arr
+    arr = ['ss']
+    b = ['xx']
+    arr.extend(b)
+    print arr
     # arx = ['ss','ss','x','3']
     # print arx[1:2], arx[2:3]
-    putRedis()
+    # putRedis()
+    putTest()

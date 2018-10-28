@@ -322,50 +322,52 @@ def buchong():
 
 
 def mainMethod2():
-    bro = webdriver.Chrome(executable_path="C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe",
-                           chrome_options=chrome_options)
+    bro = webdriver.Chrome(executable_path="C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe")
     p = re.compile('.*?/(\d*)\.html')
     #u'hf',u'wuhu', u'bf', u'huainan', u'mas', u'huaibei', u'tl', u'aq', u'tc', u'huangshan', u'mingguang', u'fy', u'suzhou', u'la', u'hq', u'bozhou', u'chizhou', u'xuancheng', u'cz', u'ng', u'tianchang', u'bj',
     #u'cq', u'fz'
-    # citys = [ u'xm', u'pt', u'sm', u'yongan', u'quanzhou', u'shishi', u'na', u'longhai', u'np', u'nd', u'ly', u'zhangzhou', u'jo', u'shaowu', u'fa', u'fd', u'fuqing', u'lianj', u'gz', u'shaoguan', u'sz', u'zh', u'st', u'fs', u'sd', u'jiangmen', u'taishan', u'ep', u'zhanjiang', u'lianjiang', u'leizhou', u'wuchuan', u'mm', u'gaozhou', u'huazhou', u'zq', u'hui', u'meizhou', u'xingning', u'sw', u'heyuan', u'yangjiang', u'yangchun', u'yingde', u'lianzhou', u'dg', u'zs', u'chaozhou', u'jieyang', u'pn', u'qy', u'lechang', u'lufeng', u'luoding', u'kp', u'sjz', u'zhaoxian', u'xl', u'ts', u'zhunhua', u'qa', u'hd', u'wa', u'xt', u'baoding', u'dingzhou', u'cangzhou', u'rq', u'lf', u'bazhou', u'sanhe', u'hs', u'chengde', u'qhd', u'zjk', u'xan', u'ag', u'botou', u'huanghua', u'hj', u'gbd', u'jizhou', u'nangong', u'wj', u'shenzhou', u'zhuozhou', u'cc', u'yushu', u'dehui', u'jl', u'cy', u'huadian', u'sp', u'gzl', u'liaoyuan', u'tonghua', u'bs', u'songyuan', u'bc', u'yb', u'hunchun', u'jiaohe', u'longjing', u'linjiang', u'yj', u'dunhua', u'sy', u'xinmin', u'dl', u'pld', u'wfd', u'zhuanghe', u'as', u'haicheng', u'fushun', u'bx', u'dd', u'jinzhou', u'yk', u'gaizhou', u'dsq', u'liaoyang', u'pj', u'tieling', u'kaiyuan', u'chaoyang', u'hld', u'bp', u'dengta', u'lingyuan', u'xingcheng', u'donggang', u'fch', u'hhht', u'baotou', u'wuhai', u'cf', u'tongliao', u'eeds', u'hlbr', u'wlcb', u'xlht', u'alsm', u'mzl', u'xlglm', u'xining', u'haidong', u'haixi', u'dlh', u'grm', u'ty', u'qx', u'gujiao', u'dt', u'yq', u'changzhi', u'jc', u'yuncheng', u'lin', u'xinzhou', u'linfen', u'lvliang', u'jz', u'fenyang', u'houma', u'huozhou', u'lucheng', u'yongji', u'tj', u'lasa', u'rkz', u'changdu', u'nq', u'km', u'an', u'qj', u'yx', u'baoshan', u'zt', u'lj', u'pr', u'lincang', u'chuxiong', u'ky', u'honghe', u'ws', u'xsbn', u'jinghong', u'dali', u'dh', u'rl', u'nujiang', u'diqing', u'gejiu', u'xw', u'hz', u'nb', u'wz', u'ra', u'jx', u'huzhou', u'sx', u'jh', u'lanxi', u'yw', u'dongyang', u'yongkang', u'quzhou', u'zhoushan', u'taizhou', u'wl', u'lh', u'lishui', u'lq', u'shengzhou', u'cixi', u'haining', u'jd', u'jiashan', u'ph', u'tongxiang', u'yr', u'zhuji'];
-    # citys = [u'hf',u'wuhu', u'bf', u'huainan', u'mas', u'huaibei', u'tl', u'aq', u'tc', u'huangshan', u'mingguang', u'fy', u'suzhou', u'la', u'hq', u'bozhou', u'chizhou', u'xuancheng', u'cz', u'ng', u'tianchang']
-    citys = [u'bj']
+    citys = [ u'xm', u'pt', u'sm', u'yongan', u'quanzhou', u'shishi', u'na', u'longhai', u'np', u'nd', u'ly', u'zhangzhou', u'jo', u'shaowu', u'fa', u'fd', u'fuqing', u'lianj', u'gz', u'shaoguan', u'sz', u'zh', u'st', u'fs', u'sd', u'jiangmen', u'taishan', u'ep', u'zhanjiang', u'lianjiang', u'leizhou', u'wuchuan', u'mm', u'gaozhou', u'huazhou', u'zq', u'hui', u'meizhou', u'xingning', u'sw', u'heyuan', u'yangjiang', u'yangchun', u'yingde', u'lianzhou', u'dg', u'zs', u'chaozhou', u'jieyang', u'pn', u'qy', u'lechang', u'lufeng', u'luoding', u'kp', u'sjz', u'zhaoxian', u'xl', u'ts', u'zhunhua', u'qa', u'hd', u'wa', u'xt', u'baoding', u'dingzhou', u'cangzhou', u'rq', u'lf', u'bazhou', u'sanhe', u'hs', u'chengde', u'qhd', u'zjk', u'xan', u'ag', u'botou', u'huanghua', u'hj', u'gbd', u'jizhou', u'nangong', u'wj', u'shenzhou', u'zhuozhou', u'cc', u'yushu', u'dehui', u'jl', u'cy', u'huadian', u'sp', u'gzl', u'liaoyuan', u'tonghua', u'bs', u'songyuan', u'bc', u'yb', u'hunchun', u'jiaohe', u'longjing', u'linjiang', u'yj', u'dunhua', u'sy', u'xinmin', u'dl', u'pld', u'wfd', u'zhuanghe', u'as', u'haicheng', u'fushun', u'bx', u'dd', u'jinzhou', u'yk', u'gaizhou', u'dsq', u'liaoyang', u'pj', u'tieling', u'kaiyuan', u'chaoyang', u'hld', u'bp', u'dengta', u'lingyuan', u'xingcheng', u'donggang', u'fch', u'hhht', u'baotou', u'wuhai', u'cf', u'tongliao', u'eeds', u'hlbr', u'wlcb', u'xlht', u'alsm', u'mzl', u'xlglm', u'xining', u'haidong', u'haixi', u'dlh', u'grm', u'ty', u'qx', u'gujiao', u'dt', u'yq', u'changzhi', u'jc', u'yuncheng', u'lin', u'xinzhou', u'linfen', u'lvliang', u'jz', u'fenyang', u'houma', u'huozhou', u'lucheng', u'yongji', u'tj', u'lasa', u'rkz', u'changdu', u'nq', u'km', u'an', u'qj', u'yx', u'baoshan', u'zt', u'lj', u'pr', u'lincang', u'chuxiong', u'ky', u'honghe', u'ws', u'xsbn', u'jinghong', u'dali', u'dh', u'rl', u'nujiang', u'diqing', u'gejiu', u'xw', u'hz', u'nb', u'wz', u'ra', u'jx', u'huzhou', u'sx', u'jh', u'lanxi', u'yw', u'dongyang', u'yongkang', u'quzhou', u'zhoushan', u'taizhou', u'wl', u'lh', u'lishui', u'lq', u'shengzhou', u'cixi', u'haining', u'jd', u'jiashan', u'ph', u'tongxiang', u'yr', u'zhuji'];
+    cy2 = [u'hf',u'wuhu', u'bf', u'huainan', u'mas', u'huaibei', u'tl', u'aq', u'tc', u'huangshan', u'mingguang', u'fy', u'suzhou', u'la', u'hq', u'bozhou', u'chizhou', u'xuancheng', u'cz', u'ng', u'tianchang']
+    citys.extend(cy2)
+    # citys = [u'bj']
     from totalPage import getByPage
     for city in citys:
         firsturl = 'https://{}.ke.com'.format(city)
-        # xxx = getContent(bro, firsturl + '/ershoufang')  # 'https://bj.ke.com/'
-        # page = xxx['page']
-        # quyu = parseGetSubCity2(page)
-        # print 'quyu:' , quyu
+        xxx = getContent(bro, firsturl + '/ershoufang')  # 'https://bj.ke.com/'
+        page = xxx['page']
+        quyu = parseGetSubCity2(page)
+        print xxx['url']
+        print 'quyu:' , quyu
         subcitys = []
-        # for cc in quyu:
-        #     subsuburl = ''
-        #     if cc.__contains__('.ke.com'):
-        #         subsuburl = cc
-        #     else:
-        #         subsuburl = firsturl + cc
-        #     xxx = getContent(bro, subsuburl)
-        #     page = xxx['page']
-        #     tocount = findCount(page)
-        #     if tocount / 30 > 100:
-        #         subs = getByPage(page)
-        #         subcitys.extend(subs)
-        #     else:
-        #         print 'total:' , tocount
-        #         subcitys.append(cc)
-        subcitys = ['/ershoufang/dongcheng/', '/ershoufang/xicheng/', '/ershoufang/andingmen/', '/ershoufang/anzhen1/', '/ershoufang/aolinpikegongyuan11/', '/ershoufang/beiyuan2/', '/ershoufang/beigongda/', '/ershoufang/baiziwan/', '/ershoufang/chengshousi1/', '/ershoufang/changying/', '/ershoufang/chaoyangmenwai1/', '/ershoufang/cbd/', '/ershoufang/chaoqing/', '/ershoufang/chaoyanggongyuan/', '/ershoufang/dongzhimen/', '/ershoufang/dongba/', '/ershoufang/dawanglu/', '/ershoufang/dongdaqiao/', '/ershoufang/dashanzi/', '/ershoufang/dougezhuang/', '/ershoufang/dingfuzhuang/', '/ershoufang/fangzhuang1/', '/ershoufang/fatou/', '/ershoufang/guangqumen/', '/ershoufang/gongti/', '/ershoufang/gaobeidian/', '/ershoufang/guozhan1/', '/ershoufang/ganluyuan/', '/ershoufang/guanzhuang/', '/ershoufang/hepingli/', '/ershoufang/huanlegu/', '/ershoufang/huixinxijie/', '/ershoufang/hongmiao/', '/ershoufang/huaweiqiao/', '/ershoufang/jianxiangqiao1/', '/ershoufang/jiuxianqiao/', '/ershoufang/jinsong/', '/ershoufang/jianguomenwai/', '/ershoufang/lishuiqiao1/', '/ershoufang/madian1/', '/ershoufang/nongzhanguan/', '/ershoufang/nanshatan1/', '/ershoufang/panjiayuan1/', '/ershoufang/sanyuanqiao/', '/ershoufang/shaoyaoju/', '/ershoufang/shifoying/', '/ershoufang/shilibao/', '/ershoufang/shoudoujichang1/', '/ershoufang/shuangjing/', '/ershoufang/shilihe/', '/ershoufang/shibalidian1/', '/ershoufang/shuangqiao/', '/ershoufang/sanlitun/', '/ershoufang/sihui/', '/ershoufang/tongzhoubeiyuan/', '/ershoufang/tuanjiehu/', '/ershoufang/taiyanggong/', '/ershoufang/tianshuiyuan/', '/ershoufang/wangjing/', '/ershoufang/xibahe/', '/ershoufang/yayuncun/', '/ershoufang/yayuncunxiaoying/', '/ershoufang/yansha1/', '/ershoufang/zhongyangbieshuqu1/', '/ershoufang/zhaoyangqita/', '/ershoufang/aolinpikegongyuan11/', '/ershoufang/anningzhuang1/', '/ershoufang/baishiqiao1/', '/ershoufang/beitaipingzhuang/', '/ershoufang/changpingqita1/', '/ershoufang/changwa/', '/ershoufang/dinghuisi/', '/ershoufang/erlizhuang/', '/ershoufang/gongzhufen/', '/ershoufang/ganjiakou/', '/ershoufang/haidianqita1/', '/ershoufang/haidianbeibuxinqu1/', '/ershoufang/junbo1/', '/ershoufang/liuliqiao1/', '/ershoufang/mudanyuan/', '/ershoufang/madian1/', '/ershoufang/malianwa/', '/ershoufang/qinghe11/', '/ershoufang/suzhouqiao/', '/ershoufang/shangdi1/', '/ershoufang/shijicheng/', '/ershoufang/sijiqing/', '/ershoufang/shuangyushu/', '/ershoufang/tiancun1/', '/ershoufang/wudaokou/', '/ershoufang/weigongcun/', '/ershoufang/wukesong1/', '/ershoufang/wanliu/', '/ershoufang/wanshoulu1/', '/ershoufang/xishan21/', '/ershoufang/xisanqi1/', '/ershoufang/xibeiwang/', '/ershoufang/xueyuanlu1/', '/ershoufang/xiaoxitian1/', '/ershoufang/xizhimen1/', '/ershoufang/xinjiekou2/', '/ershoufang/xierqi1/', '/ershoufang/yangzhuang1/', '/ershoufang/yuquanlu11/', '/ershoufang/yuanmingyuan/', '/ershoufang/yiheyuan/', '/ershoufang/zhichunlu/', '/ershoufang/zaojunmiao/', '/ershoufang/zhongguancun/', '/ershoufang/zizhuqiao/', '/ershoufang/beidadi/', '/ershoufang/beijingnanzhan1/', '/ershoufang/chengshousi1/', '/ershoufang/caoqiao/', '/ershoufang/caihuying/', '/ershoufang/dahongmen/', '/ershoufang/fengtaiqita1/', '/ershoufang/fangzhuang1/', '/ershoufang/guanganmen/', '/ershoufang/heyi/', '/ershoufang/huaxiang/', '/ershoufang/jiugong1/', '/ershoufang/jiaomen/', '/ershoufang/kejiyuanqu/', '/ershoufang/kandanqiao/', '/ershoufang/lize/', '/ershoufang/liujiayao/', '/ershoufang/lugouqiao1/', '/ershoufang/liuliqiao1/', '/ershoufang/muxiyuan1/', '/ershoufang/majiabao/', '/ershoufang/maliandao1/', '/ershoufang/puhuangyu/', '/ershoufang/qingta1/', '/ershoufang/qilizhuang/', '/ershoufang/songjiazhuang/', '/ershoufang/shilihe/', '/ershoufang/taipingqiao1/', '/ershoufang/wulidian/', '/ershoufang/xihongmen/', '/ershoufang/xiluoyuan/', '/ershoufang/xingong/', '/ershoufang/yuegezhuang/', '/ershoufang/yuquanying/', '/ershoufang/youanmenwai/', '/ershoufang/yongdingmen/', '/ershoufang/yangqiao1/', '/ershoufang/zhaogongkou/', u'/ershoufang/shijingshan/', u'/ershoufang/tongzhou/', '/ershoufang/aolinpikegongyuan11/', '/ershoufang/anningzhuang1/', '/ershoufang/baishanzhen/', '/ershoufang/beiqijia/', '/ershoufang/changpingqita1/', '/ershoufang/dongguan/', '/ershoufang/guloudajie/', '/ershoufang/huilongguan2/', '/ershoufang/huoying/', '/ershoufang/lishuiqiao1/', '/ershoufang/nanshao/', '/ershoufang/nankou/', '/ershoufang/shahe2/', '/ershoufang/tiantongyuan1/', '/ershoufang/xiguanhuandao/', '/ershoufang/xisanqi1/', '/ershoufang/xiaotangshan1/', '/ershoufang/daxingqita11/', '/ershoufang/daxingkaifaqu/', '/ershoufang/guanyinsi/', '/ershoufang/gaomidiannan/', '/ershoufang/huangcunhuochezhan/', '/ershoufang/huangcunbei/', '/ershoufang/huangcunzhong/', '/ershoufang/heyi/', '/ershoufang/jiugong1/', '/ershoufang/kejiyuanqu/', '/ershoufang/tiangongyuan/', '/ershoufang/xihongmen/', '/ershoufang/yinghai/', '/ershoufang/yizhuang1/', '/ershoufang/yuhuayuan/', '/ershoufang/yizhuangkaifaquqita1/', '/ershoufang/zaoyuan/', u'/ershoufang/yizhuangkaifaqu/', u'/ershoufang/shunyi/', u'/ershoufang/fangshan/', u'/ershoufang/mentougou/', u'/ershoufang/pinggu/', u'/ershoufang/huairou/', u'/ershoufang/miyun/', u'/ershoufang/yanqing/', u'https://lf.ke.com/ershoufang/yanjiao/', u'https://lf.ke.com/ershoufang/xianghe/']
+        for cc in quyu:
+            subsuburl = ''
+            if cc.__contains__('.ke.com'):
+                subsuburl = cc
+            else:
+                subsuburl = firsturl + cc
+            xxx = getContent(bro, subsuburl)
+            page = xxx['page']
+            tocount = findCount(page)
+            if tocount / 30 > 100:
+                subs = getByPage(page)
+                subcitys.extend(subs)
+            else:
+                print 'total:' , tocount
+                subcitys.append(cc)
+        # subcitys = ['/ershoufang/dongcheng/', '/ershoufang/xicheng/', '/ershoufang/andingmen/', '/ershoufang/anzhen1/', '/ershoufang/aolinpikegongyuan11/', '/ershoufang/beiyuan2/', '/ershoufang/beigongda/', '/ershoufang/baiziwan/', '/ershoufang/chengshousi1/', '/ershoufang/changying/', '/ershoufang/chaoyangmenwai1/', '/ershoufang/cbd/', '/ershoufang/chaoqing/', '/ershoufang/chaoyanggongyuan/', '/ershoufang/dongzhimen/', '/ershoufang/dongba/', '/ershoufang/dawanglu/', '/ershoufang/dongdaqiao/', '/ershoufang/dashanzi/', '/ershoufang/dougezhuang/', '/ershoufang/dingfuzhuang/', '/ershoufang/fangzhuang1/', '/ershoufang/fatou/', '/ershoufang/guangqumen/', '/ershoufang/gongti/', '/ershoufang/gaobeidian/', '/ershoufang/guozhan1/', '/ershoufang/ganluyuan/', '/ershoufang/guanzhuang/', '/ershoufang/hepingli/', '/ershoufang/huanlegu/', '/ershoufang/huixinxijie/', '/ershoufang/hongmiao/', '/ershoufang/huaweiqiao/', '/ershoufang/jianxiangqiao1/', '/ershoufang/jiuxianqiao/', '/ershoufang/jinsong/', '/ershoufang/jianguomenwai/', '/ershoufang/lishuiqiao1/', '/ershoufang/madian1/', '/ershoufang/nongzhanguan/', '/ershoufang/nanshatan1/', '/ershoufang/panjiayuan1/', '/ershoufang/sanyuanqiao/', '/ershoufang/shaoyaoju/', '/ershoufang/shifoying/', '/ershoufang/shilibao/', '/ershoufang/shoudoujichang1/', '/ershoufang/shuangjing/', '/ershoufang/shilihe/', '/ershoufang/shibalidian1/', '/ershoufang/shuangqiao/', '/ershoufang/sanlitun/', '/ershoufang/sihui/', '/ershoufang/tongzhoubeiyuan/', '/ershoufang/tuanjiehu/', '/ershoufang/taiyanggong/', '/ershoufang/tianshuiyuan/', '/ershoufang/wangjing/', '/ershoufang/xibahe/', '/ershoufang/yayuncun/', '/ershoufang/yayuncunxiaoying/', '/ershoufang/yansha1/', '/ershoufang/zhongyangbieshuqu1/', '/ershoufang/zhaoyangqita/', '/ershoufang/aolinpikegongyuan11/', '/ershoufang/anningzhuang1/', '/ershoufang/baishiqiao1/', '/ershoufang/beitaipingzhuang/', '/ershoufang/changpingqita1/', '/ershoufang/changwa/', '/ershoufang/dinghuisi/', '/ershoufang/erlizhuang/', '/ershoufang/gongzhufen/', '/ershoufang/ganjiakou/', '/ershoufang/haidianqita1/', '/ershoufang/haidianbeibuxinqu1/', '/ershoufang/junbo1/', '/ershoufang/liuliqiao1/', '/ershoufang/mudanyuan/', '/ershoufang/madian1/', '/ershoufang/malianwa/', '/ershoufang/qinghe11/', '/ershoufang/suzhouqiao/', '/ershoufang/shangdi1/', '/ershoufang/shijicheng/', '/ershoufang/sijiqing/', '/ershoufang/shuangyushu/', '/ershoufang/tiancun1/', '/ershoufang/wudaokou/', '/ershoufang/weigongcun/', '/ershoufang/wukesong1/', '/ershoufang/wanliu/', '/ershoufang/wanshoulu1/', '/ershoufang/xishan21/', '/ershoufang/xisanqi1/', '/ershoufang/xibeiwang/', '/ershoufang/xueyuanlu1/', '/ershoufang/xiaoxitian1/', '/ershoufang/xizhimen1/', '/ershoufang/xinjiekou2/', '/ershoufang/xierqi1/', '/ershoufang/yangzhuang1/', '/ershoufang/yuquanlu11/', '/ershoufang/yuanmingyuan/', '/ershoufang/yiheyuan/', '/ershoufang/zhichunlu/', '/ershoufang/zaojunmiao/', '/ershoufang/zhongguancun/', '/ershoufang/zizhuqiao/', '/ershoufang/beidadi/', '/ershoufang/beijingnanzhan1/', '/ershoufang/chengshousi1/', '/ershoufang/caoqiao/', '/ershoufang/caihuying/', '/ershoufang/dahongmen/', '/ershoufang/fengtaiqita1/', '/ershoufang/fangzhuang1/', '/ershoufang/guanganmen/', '/ershoufang/heyi/', '/ershoufang/huaxiang/', '/ershoufang/jiugong1/', '/ershoufang/jiaomen/', '/ershoufang/kejiyuanqu/', '/ershoufang/kandanqiao/', '/ershoufang/lize/', '/ershoufang/liujiayao/', '/ershoufang/lugouqiao1/', '/ershoufang/liuliqiao1/', '/ershoufang/muxiyuan1/', '/ershoufang/majiabao/', '/ershoufang/maliandao1/', '/ershoufang/puhuangyu/', '/ershoufang/qingta1/', '/ershoufang/qilizhuang/', '/ershoufang/songjiazhuang/', '/ershoufang/shilihe/', '/ershoufang/taipingqiao1/', '/ershoufang/wulidian/', '/ershoufang/xihongmen/', '/ershoufang/xiluoyuan/', '/ershoufang/xingong/', '/ershoufang/yuegezhuang/', '/ershoufang/yuquanying/', '/ershoufang/youanmenwai/', '/ershoufang/yongdingmen/', '/ershoufang/yangqiao1/', '/ershoufang/zhaogongkou/', u'/ershoufang/shijingshan/', u'/ershoufang/tongzhou/', '/ershoufang/aolinpikegongyuan11/', '/ershoufang/anningzhuang1/', '/ershoufang/baishanzhen/', '/ershoufang/beiqijia/', '/ershoufang/changpingqita1/', '/ershoufang/dongguan/', '/ershoufang/guloudajie/', '/ershoufang/huilongguan2/', '/ershoufang/huoying/', '/ershoufang/lishuiqiao1/', '/ershoufang/nanshao/', '/ershoufang/nankou/', '/ershoufang/shahe2/', '/ershoufang/tiantongyuan1/', '/ershoufang/xiguanhuandao/', '/ershoufang/xisanqi1/', '/ershoufang/xiaotangshan1/', '/ershoufang/daxingqita11/', '/ershoufang/daxingkaifaqu/', '/ershoufang/guanyinsi/', '/ershoufang/gaomidiannan/', '/ershoufang/huangcunhuochezhan/', '/ershoufang/huangcunbei/', '/ershoufang/huangcunzhong/', '/ershoufang/heyi/', '/ershoufang/jiugong1/', '/ershoufang/kejiyuanqu/', '/ershoufang/tiangongyuan/', '/ershoufang/xihongmen/', '/ershoufang/yinghai/', '/ershoufang/yizhuang1/', '/ershoufang/yuhuayuan/', '/ershoufang/yizhuangkaifaquqita1/', '/ershoufang/zaoyuan/', u'/ershoufang/yizhuangkaifaqu/', u'/ershoufang/shunyi/', u'/ershoufang/fangshan/', u'/ershoufang/mentougou/', u'/ershoufang/pinggu/', u'/ershoufang/huairou/', u'/ershoufang/miyun/', u'/ershoufang/yanqing/', u'https://lf.ke.com/ershoufang/yanjiao/', u'https://lf.ke.com/ershoufang/xianghe/']
         print subcitys
         lenx = subcitys.__len__()
         part = subcitys.__len__()
         start = 0
         while start < lenx:
             cys = subcitys[start:start+part]
-            th = threading.Thread(target=fenpeiUrl, args=(city, firsturl, p,cys))
-            th.start()
+            # th = threading.Thread(target=fenpeiUrl, args=(city, firsturl, p,cys))
+            # th.start()
+            fenpeiUrl(city, firsturl, p,cys, bro)
             start += part
 
-def fenpeiUrl(city, firsturl, p, subcitys):
-    bro = webdriver.Chrome(executable_path="C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe")
+def fenpeiUrl(city, firsturl, p, subcitys, bro):
+    # bro = webdriver.Chrome(executable_path="C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe")
     for sub in subcitys:
         visurl = ''
         if sub is not None and sub.__contains__('ke.com'):
@@ -376,7 +378,6 @@ def fenpeiUrl(city, firsturl, p, subcitys):
         boxget = False
         subcc = sub[sub.index('ershoufang') + 11:-1]
         getAndSave(city, p, visurl, subcc, bro)
-
 
 def getAndSave(city, p, visurl, sub, bro):
     i = 100
@@ -405,7 +406,7 @@ def getAndSave(city, p, visurl, sub, bro):
 
         rs = parseContent(page)
         if rs.__len__() == 0: break
-        sql = '''insert into beijing(id,priceInfo,followInfo,flood,address,title,detail,img,city,area) values'''
+        sql = '''insert into quanguo(id,priceInfo,followInfo,flood,address,title,detail,img,city,area) values'''
         for item in rs:
             # print json.dumps(item, ensure_ascii=False)
             if item.has_key('priceInfo'):  # print item['priceInfo']
