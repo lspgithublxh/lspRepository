@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+	<memcached keyPrefix="Info-">
+		<configserver address="config.access.cache.58dns.org" port="11210" />
+		<cluster_id>hbg_fangdaleiweb</cluster_id>
+		<socketPool readTimeOut="1000" />
+	</memcached>
+</configuration> 
+				
+				

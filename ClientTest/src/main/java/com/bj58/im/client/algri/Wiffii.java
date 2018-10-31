@@ -24,9 +24,9 @@ import java.util.regex.Pattern;
  * @Version V1.0
  * @Package com.bj58.im.client.algri
  */
-public class Wfisveszposisntq {
+public class Wiffii {
 
-	static Wfisveszposisntq ins = new Wfisveszposisntq();
+	static Wiffii ins = new Wiffii();
 	public static void main(String[] args) {
 //		start();
 //		Matcher m = hp32.matcher("00999000009990");
@@ -86,7 +86,20 @@ public class Wfisveszposisntq {
 //			}
 			else if(bai.containsKey("q_er_l")) {//强2连 综合判断
 				List<BJ> qsi = bai.get("q_er_l");
-				//
+				//是否2个， 2个是否相交为0, 2个是否平行;3点或者可以构成4点平行
+				
+				if(qsi.size() > 1) {
+					//组合序
+					Map<String, int[]> luoMap = new HashMap<>();
+					for(int i = 0; i < qsi.size() - 1; i++) {
+						BJ one = qsi.get(i);
+						for(int j = i+1; j < qsi.size(); j++) {
+							BJ two = qsi.get(j);
+							relatation(one, two, start, luoMap);
+							
+						}
+					}
+				}
 				int[] chu = qsi.get(0).k[0];
 				start[chu[0]][chu[1]] = 1;
 			}
@@ -94,7 +107,135 @@ public class Wfisveszposisntq {
 			//等待输入出动
 		}
 	}
-	
+
+	private int relatation(BJ one, BJ two, int[][] start, Map<String, int[]> luoMap) {
+		//相交为0  测定距离 --直接放子；太远则先待定
+		//相交为1--为白-为共同一子；则放在使得3点的共同交线，没有 则直接放在其中一条线上
+		//不相交而平行--则看两线之外是否有一点 和两线上一点形成强2连，能 则放在这个位置上， 否则直接放在其中一条线上
+		//相交太远或者平行太远则直接当作不好而放在其中一条线上
+		
+		//相交/不相交 判断方法：点横纵坐标之间--即斜率;  相交点计算方法：4种斜率下：等价为求两个二元一次方程-即计算一个方程组 或者说计算一个矩阵--对角化
+		int oneK = computeK(one);
+		int twoK = computeK(two);
+		if(oneK - twoK == 0) {//平行
+			
+		}else {
+			int[] jd = computeJiaoD(one, two, oneK, twoK);
+			int color = start[jd[0]][jd[1]];
+			if(color == 1) {//我方的棋子
+				//线内落子，线外不考虑
+				boolean same = samePoint(jd, one.s);
+				int[] endPoint1 = same ? jd : one.w;
+				boolean same2 = samePoint(jd, two.s);
+				int[] endPoint2 = same2 ? jd : two.w;
+				int deltx = endPoint1[0] - jd[0] > 0 ? 1 : endPoint1[0] - jd[0] == 0 ? 0 : -1;
+				int delty = endPoint1[1] - jd[1] > 0 ? 1 : endPoint1[1] - jd[1] == 0 ? 0 : -1;
+				int startX = jd[0];
+				int startY = jd[1];
+				
+				while(startX != endPoint1[0] || startY != endPoint1[1]) {
+					int currX = startX + deltx;
+					int currY = startY + delty;
+					if(endPoint2[0] - currX == 0) {//可以
+						boolean ok = isOk(start, currX, currY, endPoint2[0], endPoint2[1]);
+						luoMap.put("3", new int[] {currX, currY});
+					}
+					double currK = (endPoint2[1] - currY + 0d) / (endPoint2[0] - currX);
+					if(currK == 1 || currK == -1 || currK == 0) {//可以
+						boolean ok = isOk(start, currX, currY, endPoint2[0], endPoint2[1]);
+						luoMap.put("4", new int[] {currX, currY});
+					}
+				}
+				
+			}else if(color == 0){//无子,从过程看一定相邻的
+				luoMap.put("1", jd);
+				return 1;
+			}else {
+				System.out.println("error occurence");
+			}
+		}
+		return -1;
+	}
+
+	private boolean isOk(int[][] start, int currX, int currY, int endX, int endY) {
+		int delX = endX - currX;
+		int delY = endY - currY;
+		if(delX == 0) {
+			int step = delY > 0 ? 1 : -1;
+			if(delY >= 4 || delY == 0) {
+				return false;
+			}
+			for(int i = currY; i < endY;) {
+				int ccc = start[currX][i];
+				if(ccc != 0 && ccc != 1) {
+					return false;
+				}
+				i += step;
+			}
+			return true;
+		}else if(delY == 0) {
+			int step = delX > 0 ? 1 : -1;
+			if(delX >= 4) {
+				return false;
+			}
+			for(int i = currX; i < endX;) {
+				int ccc = start[i][currY];
+				if(ccc != 0 && ccc != 1) {
+					return false;
+				}
+				i += step;
+			}
+			return true;
+		}else {
+			int stepX = delX > 0 ? 1 : -1;
+			int stepY = delY > 0 ? 1 : -1;
+			if(delX >= 4 || delY >= 4) {
+				return false;
+			}
+			for(int i = currX, j = currY; i < endX && j < endY;) {
+				int ccc = start[i][j];
+				if(ccc != 0 && ccc != 1) {
+					return false;
+				}
+				i += stepX;
+				j += stepY;
+			}
+			return true;
+		}
+	}
+
+	private boolean samePoint(int[] jd, int[] s) {
+		return jd[0] == s[0] && jd[1] == s[1];
+	}
+
+	private int[] computeJiaoD(BJ one, BJ two, int oneK, int twoK) {
+		int[] jd;
+		if(oneK == 100) {
+			int y = (one.s[0] - two.s[0]) * twoK + two.s[1];
+			jd = new int[] {one.s[0], y};
+		}else if(twoK == 100) {
+			int y = (two.s[0] - one.s[0]) * oneK + one.s[1];
+			jd = new int[] {two.s[0], y};
+		}else {
+			int x = (one.s[1] + oneK * one.s[0] - two.s[1] - twoK * two.s[0]) / (oneK - twoK);
+			int y = (oneK * (x - one.s[0]) + twoK * (x - two.s[0]) + one.s[1] + two.s[1]) / 2;
+			jd = new int[] {x, y};
+		}
+		return jd;
+	}
+
+	private int computeK(BJ one) {
+		int[] s = one.s;
+		int[] w = one.w;
+		int k = 100;
+		int deltX = w[0] - s[0];
+		if(deltX == 0) {
+			return k;
+		}
+		k = (w[1] - s[1]) / deltX;
+		return k;
+	}
+
 	private Map<String, List<BJ>> kanhei(int[][] zi) {
 		//i == 0 表示自己：白子  1表示黑子
 		Map<String, List<BJ>> map = new HashMap<>();

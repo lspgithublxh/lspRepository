@@ -542,3 +542,6 @@ if __name__ == '__main__':
     print om.group(1),'xxxx', om.group(2)
     # print 'size1',{}.keys().count()
     print 'size2', len({})
+    p = re.compile('/(.*)\.html')
+    om = p.match('dfsfsfdsf/44545454.html')
+    print om.group(1)
