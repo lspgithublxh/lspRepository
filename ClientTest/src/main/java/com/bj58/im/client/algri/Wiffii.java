@@ -58,7 +58,7 @@ public class Wiffii {
 				List<BJ> qsi = bai.get("r_si_l");
 				int[] chu = qsi.get(0).k[0];
 				start[chu[0]][chu[1]] = 1;
-			}else if(hei.containsKey("q_si_l")) {
+			}else if(hei.containsKey("q_si_l")) {//双强3连的处理没？
 				List<BJ> qsi = hei.get("q_si_l");
 				int[] chu = qsi.get(0).k[0];
 				start[chu[0]][chu[1]] = 1;
@@ -118,7 +118,10 @@ public class Wiffii {
 		int oneK = computeK(one);
 		int twoK = computeK(two);
 		if(oneK - twoK == 0) {//平行
-			
+			//复制一份局势
+			int[][] bsbz = findPointAndNextPoint(start, one, two);
+			//形成的新的强2连，该点不在另一条线上，且新强2连的范围内有一空点再另一条线上
+			//下一步，下几步都定了
 		}else {
 			int[] jd = computeJiaoD(one, two, oneK, twoK);
 			int color = start[jd[0]][jd[1]];
@@ -155,6 +158,141 @@ public class Wiffii {
 			}
 		}
 		return -1;
+	}
+
+	private int[][] findPointAndNextPoint(int[][] start, BJ one, BJ two) {
+		int delX = one.s[0] - one.w[0];
+		int delY = one.s[1] - one.w[1];
+		int stepX = delX > 0 ? 1 : delX == 0 ? 0 : -1;
+		int stepY = delY > 0 ? 1 : delY == 0 ? 0 : -1;
+		int fstepX = stepX == 0 ? 0 : (-delX);
+		int fstepY = stepY == 0 ? 0 : (-delY);
+		int currX = one.s[0];
+		int currY = one.s[1];
+		int[][] target = getToSanlian(start, one);
+		while(currX != one.w[0] || currY != one.w[1]) {
+			currX += delX;
+			currY += delY;
+			if(start[currX][currY] == 0) {//可以看
+				int[][] startcp = copyArr(start);
+				startcp[currX][currY] = 1;
+				//看强2连里有没有currY
+				Map<String, List<BJ>> bai = new Wiffii().kanbai(startcp);
+				List<BJ> qsi = bai.get("q_er_l");
+				for(BJ x : qsi) {
+					boolean same = samePoint(x.s, new int[] {currX, currY});
+					boolean same2 = samePoint(x.w, new int[] {currX, currY});
+					if(same || same2) {//看本强2连x  和 原强2连 one的交点；
+						int oneK = computeK(one);
+						int twoK = computeK(x);
+						int[] jd = computeJiaoD(one, x, oneK, twoK);
+						//jd在two上,且和two构成强3连，且和x构成强3连 ; 则这个点是下一步的点
+						boolean ok = isQiang3lian(startcp, jd, two.s, two.w);//3个点
+						boolean ok2 = isQiang3lian(startcp, jd, x.s, x.w);//3个点
+						if(ok && ok2) {
+							int[][] rs = new int[][] {{currX, currY}, jd};
+							return rs;
+						}
+					}
+					
+				}
+			}
+			
+		}
+		return null;
+	}
+
+	private int[][] getToSanlian(int[][] start, BJ one) {//one是强2连
+		int delX = one.s[0] - one.w[0];
+		int delY = one.s[1] - one.w[1];
+		int stepX = delX > 0 ? 1 : delX == 0 ? 0 : -1;
+		int stepY = delY > 0 ? 1 : delY == 0 ? 0 : -1;
+		int[] l1 = null;
+		int[] l2 = null;
+		int[] l3 = null;
+		l1 = new int[]{one.s[0] - stepX, one.s[1] - stepY};
+		l3 = new int[] {one.w[0] + stepY, one.w[1] + stepY};
+		if((Math.abs(delX) == 1 && Math.abs(delY) == 1) ||
+				(Math.abs(delX) == 1 && delY == 0) ||
+				(Math.abs(delY) == 1 && delX == 0)) {
+		}else {//还有空格点
+			l2 = new int[] {one.s[0] + stepX, one.s[1] + stepY};
+		}
+		return l2 == null ? new int[][] {l1, l3} : new int[][] {l1,l2,l3};
+	}
+
+	private boolean isQiang3lian(int[][] startcp, int[] jd, int[] s, int[] w) {
+		//斜率相等，连续或者相隔1 两端有空
+		int k = computeK(new BJ(jd, s, null));
+		int k2 = computeK(new BJ(jd, w, null));
+		if(k == k2) {//共线
+			int[] max = jd;
+			int[] min = jd;
+			if(jd[0] == s[0]) {//x轴平行 直接比较y
+				if(jd[1] - s[1] < 0) {
+					max = s;
+				}else {
+					min = s;
+				}
+				if(w[1] - max[1] > 0) {
+					max = w;
+				}
+				if(w[1] - min[1] < 0) {
+					min = w;
+				}
+			}else {//直接比较x的大小，
+				if(jd[0] - s[0] < 0) {
+					max = s;
+				}else {
+					min = s;
+				}
+				if(w[0] - max[0] > 0) {
+					max = w;
+				}
+				if(w[0] - min[0] < 0) {
+					min = w;
+				}
+			}
+			//开始看
+			int stepX = max[0] - min[0] > 0 ? 1 : max[0] - min[0] == 0 ? 0 : -1;
+			int stepY = max[1] - min[1] > 0 ? 1 : max[1] - min[1] == 0 ? 0 : -1;
+			int[] curr = min;
+			while(!samePoint(curr, max)) {
+				curr[0] += stepX;
+				curr[1] += stepY;
+				if(startcp[curr[0]][curr[1]] == 0) {//有空格
+					int[] less = new int[] {min[0] - stepX, min[1] - stepY};
+					int[] bigger = new int[] {max[0] + stepX, max[1] + stepY};
+					if(startcp[less[0]][less[1]] == 0 && startcp[bigger[0]][bigger[1]] == 0) {
+						//是强3连
+						return true;
+					}
+				}else {//无空格
+					int[] less = new int[] {min[0] - stepX, min[1] - stepY};
+					int[] bigger = new int[] {max[0] + stepX, max[1] + stepY};
+					int[] less2 = new int[] {less[0] - stepX, less[1] - stepY};
+					int[] bigger2 = new int[] {bigger[0] + stepX, bigger[1] + stepY};
+					if(startcp[less[0]][less[1]] == 0 && startcp[bigger[0]][bigger[1]] == 0) {
+						if(startcp[less2[0]][less2[1]] == 0 || startcp[bigger2[0]][bigger2[1]] == 0) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	private int[][] copyArr(int[][] start) {
+		int[][] cp = new int[start.length][start[0].length];
+		for(int i = 0; i < start.length; i++) {
+			int[] s = new int[start[i].length];
+			cp[i] = s;
+			for(int j = 0; j < s.length; j++) {
+				cp[i][j] = start[i][j];
+			}
+		}
+		return cp;
 	}
 
 	private boolean isOk(int[][] start, int currX, int currY, int endX, int endY) {
