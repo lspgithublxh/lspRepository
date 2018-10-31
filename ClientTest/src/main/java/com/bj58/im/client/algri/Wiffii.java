@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,6 +46,8 @@ public class Wiffii {
 		int[][] start = new int[99][99];//白出1 ， 黑出9
 		//白先
 		start[49][49] = 1;
+		Map<String, int[]> cacheMap = new HashMap<>();
+		Scanner scanner = new Scanner(System.in);
 		while(true) {
 			Map<String, List<BJ>> bai = kanbai(start);
 			Map<String, List<BJ>> hei = kanhei(start);
@@ -70,6 +73,10 @@ public class Wiffii {
 				List<BJ> qsi = bai.get("q_san_l");
 				int[] chu = qsi.get(0).k[0];
 				start[chu[0]][chu[1]] = 1;
+			}else if(cacheMap.containsKey("next1")) {//2招
+				int[] chu = cacheMap.get("next1");
+				start[chu[0]][chu[1]] = 1;
+				cacheMap.remove("next1");
 			}else if(bai.containsKey("r_san_l")) {//2招
 				List<BJ> qsi = bai.get("r_san_l");
 				int[] chu = qsi.get(0).k[0];
@@ -95,16 +102,48 @@ public class Wiffii {
 						BJ one = qsi.get(i);
 						for(int j = i+1; j < qsi.size(); j++) {
 							BJ two = qsi.get(j);
-							relatation(one, two, start, luoMap);
-							
+							int pan = relatation(one, two, start, luoMap);
+							if(luoMap.containsKey("two_step1")) {//必胜
+								luoMap.put("next1", luoMap.get("two_step2"));
+								int[] luo = luoMap.get("two_step1");
+								start[luo[0]][luo[1]] = 1;
+								break;
+							}else if(luoMap.containsKey("1")) {//也好
+								int[] luo = luoMap.get("1");
+								start[luo[0]][luo[1]] = 1;
+								break;
+							}else if(luoMap.containsKey("3")) {//也好
+								int[] luo = luoMap.get("3");
+								start[luo[0]][luo[1]] = 1;
+								break;
+							}else if(luoMap.containsKey("4")) {//也好
+								int[] luo = luoMap.get("4");
+								start[luo[0]][luo[1]] = 1;
+								break;
+							}
 						}
 					}
-				}
+				}//直接出子
 				int[] chu = qsi.get(0).k[0];
 				start[chu[0]][chu[1]] = 1;
+			}else if(bai.containsKey("q_yi_l")) {
+				List<BJ> qsi = bai.get("q_yi_l");
+				int[] chu = qsi.get(0).k[0];
+				start[chu[0]][chu[1]] = 1;
+			}else if(bai.containsKey("r_er_l")) {
+				List<BJ> qsi = bai.get("r_er_l");
+				int[] chu = qsi.get(0).k[0];
+				start[chu[0]][chu[1]] = 1;
+			}else {
+				System.out.println("not know how to luo zi");
 			}
-			
 			//等待输入出动
+			String line = scanner.nextLine();
+			System.out.println("get point:" + line);
+			String[] point = line.split(",");
+			int[] p = new int[] {Integer.valueOf(point[0]), Integer.valueOf(point[1])};
+			start[p[0]][p[1]] = 9;
+			//展示start的图案
 		}
 	}
 
@@ -120,6 +159,13 @@ public class Wiffii {
 		if(oneK - twoK == 0) {//平行
 			//复制一份局势
 			int[][] bsbz = findPointAndNextPoint(start, one, two);
+			if(bsbz != null) {
+				luoMap.put("two_step1", bsbz[0]);
+				luoMap.put("two_step2", bsbz[1]);
+				return 1;
+			}else {
+				System.out.println("error compute");
+			}
 			//形成的新的强2连，该点不在另一条线上，且新强2连的范围内有一空点再另一条线上
 			//下一步，下几步都定了
 		}else {
@@ -149,7 +195,7 @@ public class Wiffii {
 						luoMap.put("4", new int[] {currX, currY});
 					}
 				}
-				
+				return 1;
 			}else if(color == 0){//无子,从过程看一定相邻的
 				luoMap.put("1", jd);
 				return 1;
@@ -167,12 +213,22 @@ public class Wiffii {
 		int stepY = delY > 0 ? 1 : delY == 0 ? 0 : -1;
 		int fstepX = stepX == 0 ? 0 : (-delX);
 		int fstepY = stepY == 0 ? 0 : (-delY);
-		int currX = one.s[0];
-		int currY = one.s[1];
+		
 		int[][] target = getToSanlian(start, one);
-		while(currX != one.w[0] || currY != one.w[1]) {
-			currX += delX;
-			currY += delY;
+		int[][] target2 = getToSanlian(start, two);
+		int[][] tt = getTargetTwoPoint(start, one, two, target);
+		if(tt == null) {
+			tt = getTargetTwoPoint(start, two, one, target2);
+		}
+		return tt;
+	}
+
+	private int[][] getTargetTwoPoint(int[][] start, BJ one, BJ two, int[][] target) {
+		int currX = 0;
+		int currY = 0;
+		for(int[] curr : target) {
+			currX = curr[0];
+			currY = curr[1];
 			if(start[currX][currY] == 0) {//可以看
 				int[][] startcp = copyArr(start);
 				startcp[currX][currY] = 1;
