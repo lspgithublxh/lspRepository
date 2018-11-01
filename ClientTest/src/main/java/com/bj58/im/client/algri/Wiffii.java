@@ -34,18 +34,22 @@ public class Wiffii {
 //		while(m.find()) {
 //			System.out.println(m.start());
 //		}
+//		ins.drawQJ(new int[100][100]);
+//		ins.drawQJ(new Integer[100][100]);
+		ins.duan();
+//		System.out.println("45".split("")[1]);
 	}
 
-	private static void start() {
-		Integer[][] zi = new Integer[100][100];
-		//遍历n行n列，和斜对角线，识别连续的点
-		Map<String, List<List<Point>>> list = shibiesilian(zi, 0);
-	}
+//	private static void start() {
+//		Integer[][] zi = new Integer[100][100];
+//		//遍历n行n列，和斜对角线，识别连续的点
+//		Map<String, List<List<Point>>> list = shibiesilian(zi, 0);
+//	}
 
 	private void duan() {
 		int[][] start = new int[99][99];//白出1 ， 黑出9
-		//白先
-		start[49][49] = 1;
+		
+		boolean shi = true;
 		Map<String, int[]> cacheMap = new HashMap<>();
 		Scanner scanner = new Scanner(System.in);
 		while(true) {
@@ -53,35 +57,35 @@ public class Wiffii {
 			Map<String, List<BJ>> hei = kanhei(start);
 			//自己是白方
 			//1.先看己方一步胜利，再看对方一步胜利，在看己方2步胜利，.....
-			if(bai.containsKey("q_si_l")) {
+			if(bai.containsKey("q_si_l") && bai.get("q_si_l").size() > 0) {
 				List<BJ> qsi = bai.get("q_si_l");
 				int[] chu = qsi.get(0).k[0];
 				start[chu[0]][chu[1]] = 1;
-			}else if(bai.containsKey("r_si_l")) {
+			}else if(bai.containsKey("r_si_l") && bai.get("r_si_l").size() > 0) {
 				List<BJ> qsi = bai.get("r_si_l");
 				int[] chu = qsi.get(0).k[0];
 				start[chu[0]][chu[1]] = 1;
-			}else if(hei.containsKey("q_si_l")) {//双强3连的处理没？
+			}else if(hei.containsKey("q_si_l") && bai.get("q_si_l").size() > 0) {//双强3连的处理没？
 				List<BJ> qsi = hei.get("q_si_l");
 				int[] chu = qsi.get(0).k[0];
 				start[chu[0]][chu[1]] = 1;
-			}else if(hei.containsKey("r_si_l")) {
+			}else if(hei.containsKey("r_si_l") && bai.get("r_si_l").size() > 0) {
 				List<BJ> qsi = hei.get("r_si_l");
 				int[] chu = qsi.get(0).k[0];
 				start[chu[0]][chu[1]] = 1;
-			}else if(bai.containsKey("q_san_l")) {//2招
+			}else if(bai.containsKey("q_san_l") && bai.get("q_san_l").size() > 0) {//2招
 				List<BJ> qsi = bai.get("q_san_l");
 				int[] chu = qsi.get(0).k[0];
 				start[chu[0]][chu[1]] = 1;
-			}else if(cacheMap.containsKey("next1")) {//2招
+			}else if(cacheMap.containsKey("next1") && bai.get("next1").size() > 0) {//2招
 				int[] chu = cacheMap.get("next1");
 				start[chu[0]][chu[1]] = 1;
 				cacheMap.remove("next1");
-			}else if(bai.containsKey("r_san_l")) {//2招
+			}else if(bai.containsKey("r_san_l") && bai.get("r_san_l").size() > 0) {//2招
 				List<BJ> qsi = bai.get("r_san_l");
 				int[] chu = qsi.get(0).k[0];
 				start[chu[0]][chu[1]] = 1;
-			}else if(hei.containsKey("q_san_l")) {//2招
+			}else if(hei.containsKey("q_san_l") && bai.get("q_san_l").size() > 0) {//2招
 				List<BJ> qsi = hei.get("q_san_l");
 				int[] chu = qsi.get(0).k[0];
 				start[chu[0]][chu[1]] = 1;
@@ -91,7 +95,7 @@ public class Wiffii {
 //				int[] chu = qsi.get(0).k[0];
 //				start[chu[0]][chu[1]] = 1;
 //			}
-			else if(bai.containsKey("q_er_l")) {//强2连 综合判断
+			else if(bai.containsKey("q_er_l") && bai.get("q_er_l").size() > 0) {//强2连 综合判断
 				List<BJ> qsi = bai.get("q_er_l");
 				//是否2个， 2个是否相交为0, 2个是否平行;3点或者可以构成4点平行
 				
@@ -125,28 +129,98 @@ public class Wiffii {
 					}
 				}//直接出子
 				int[] chu = qsi.get(0).k[0];
+				if(start[chu[0]][chu[1]] == 1) {
+					System.out.println("error-----compute");
+					break;
+				}
 				start[chu[0]][chu[1]] = 1;
-			}else if(bai.containsKey("q_yi_l")) {
+			}else if(bai.containsKey("q_yi_l") && bai.get("q_yi_l").size() > 0) {
 				List<BJ> qsi = bai.get("q_yi_l");
 				int[] chu = qsi.get(0).k[0];
 				start[chu[0]][chu[1]] = 1;
-			}else if(bai.containsKey("r_er_l")) {
+			}else if(bai.containsKey("r_er_l") && bai.get("r_er_l").size() > 0) {
 				List<BJ> qsi = bai.get("r_er_l");
 				int[] chu = qsi.get(0).k[0];
 				start[chu[0]][chu[1]] = 1;
+			}else if(shi){
+				shi = false;
+				//白先
+				start[49][49] = 1;
 			}else {
 				System.out.println("not know how to luo zi");
 			}
+			ins.drawQJ(start);
 			//等待输入出动
 			String line = scanner.nextLine();
 			System.out.println("get point:" + line);
 			String[] point = line.split(",");
+			while(point.length != 2) {
+				System.out.println("input again");
+				line = scanner.nextLine();
+				point = line.split(",");
+			}
 			int[] p = new int[] {Integer.valueOf(point[0]), Integer.valueOf(point[1])};
 			start[p[0]][p[1]] = 9;
 			//展示start的图案
+			ins.drawQJ(start);
+			//clear
+			for(List<BJ> ls : bai.values()) {
+				ls.clear();
+			}
+			for(List<BJ> ls : hei.values()) {
+				ls.clear();
+			}
 		}
 	}
 
+	private void drawQJ(Integer[][] qz) {
+		for(int i = 0; i <= 100; i++) {
+			String qian = i < 10 ? "0" + i : i + "";
+			System.out.print(qian + " ");
+		}
+		System.out.println();
+		for(int i = 0; i < qz.length; i++) {
+			for(int j = 0; j < qz[i].length; j++) {
+				System.out.print(" " + qz[i][j] + " ");
+			}
+			System.out.println();
+		}
+		System.out.println("-----------------next--------------");
+	}
+	
+	private void drawQJ(int[][] qz) {
+		String[] lix = new String[103];
+		String[] lix2 = new String[103];
+		lix[0] = "-";
+		lix2[0] = "-";
+		lix[1] = "-";
+		lix2[1] = "-";
+		lix[2] = "-";
+		lix2[2] = "-";
+		for(int i = 0; i < 100; i++) {
+			String qian = i < 10 ? "0" + i : i + "";
+			String[] shuzi = qian.split("");
+			lix[i+3] = shuzi[0];
+			lix2[i+3] = shuzi[1];
+		}
+		for(String i : lix) {
+			System.out.print(i);
+		}
+		System.out.println();
+		for(String i : lix2) {
+			System.out.print(i);
+		}
+		System.out.println();
+		for(int i = 0; i < qz.length; i++) {
+			System.out.print(i < 10 ? "0"+i+" " : i+" ");
+			for(int j = 0; j < qz[i].length; j++) {
+				System.out.print(qz[i][j]);
+			}
+			System.out.println();
+		}
+		System.out.println("-----------------next--------------");
+	}
+	
 	private int relatation(BJ one, BJ two, int[][] start, Map<String, int[]> luoMap) {
 		//相交为0  测定距离 --直接放子；太远则先待定
 		//相交为1--为白-为共同一子；则放在使得3点的共同交线，没有 则直接放在其中一条线上
@@ -478,12 +552,12 @@ public class Wiffii {
 				int wei = m1.start();
 				int c0 = m1.group(1).length();
 				int c1 = m1.group(2).length();
-				if(c0 + c1 == 5) {
-					int luo = c0 == 1 ? wei+1 : c0 == 4 ? wei+4 : wei;
+				if(c0 + c1 >= 5) {
+					int luo = c0 == 1 ? wei+c0+1 : c0 == 4 ? wei+c0-1 : wei+c0+1;
 					if(luo == wei) {
 						hyilian.add(new BJ(new int[] {i,wei}, new int[] {i, wei}, new int[][] {{i,wei-1},{i,wei+1}}));
 					}else {
-						hyilian.add(new BJ(new int[] {i,wei}, new int[] {i, wei}, new int[][] {{i,luo}}));
+						hyilian.add(new BJ(new int[] {i,wei+c0}, new int[] {i, wei+c0}, new int[][] {{i,luo}}));
 					}
 				}
 			}
@@ -498,7 +572,7 @@ public class Wiffii {
 						int kong[] = new int[4];
 						int kc = 0;
 						for(int k = 0; k < 6; k++) {
-							if(zi[i][j+k] == 1) {
+							if(zi[i][j+k] == 9) {
 								wei[c++] = j+k;
 								break;
 							}else {
@@ -651,6 +725,7 @@ public class Wiffii {
 		for(int i = 0; i < zi.length; i++) {
 			//tostring
 			String str = arrToString(zi[i]);
+			
 			Matcher m = p4.matcher(str);
 			while(m.find()) {
 				int wei = m.start();//多次匹配，以后处理
@@ -684,12 +759,13 @@ public class Wiffii {
 				int wei = m1.start();
 				int c0 = m1.group(1).length();
 				int c1 = m1.group(2).length();
-				if(c0 + c1 == 5) {
-					int luo = c0 == 1 ? wei+1 : c0 == 4 ? wei+4 : wei;
+				if(c0 + c1 >= 5) {
+//					int luo = c0 == 1 ? wei+1 : c0 == 4 ? wei+4 : wei;
+					int luo = c0 == 1 ? wei + c0 + 1 : c0 == 4 ? wei + c0 - 1 : wei + c0 + 1;
 					if(luo == wei) {
-						yilian.add(new BJ(new int[] {i,wei}, new int[] {i, wei}, new int[][] {{i,wei-1},{i,wei+1}}));
+						yilian.add(new BJ(new int[] {i,wei + c0}, new int[] {i, wei + c0}, new int[][] {{i,wei-1},{i,wei+1}}));
 					}else {
-						yilian.add(new BJ(new int[] {i,wei}, new int[] {i, wei}, new int[][] {{i,luo}}));
+						yilian.add(new BJ(new int[] {i,wei + c0}, new int[] {i, wei + c0}, new int[][] {{i,luo}}));
 					}
 				}
 			}
@@ -762,6 +838,9 @@ public class Wiffii {
 			}
 			//
 			String str = arrToString(lie);
+			if(str.contains("1")) {
+				System.out.println(str);
+			}
 			addQiang(str, j, 2);//2
 			addRuo(lie, j, 2);
 		}
@@ -977,7 +1056,7 @@ public class Wiffii {
 		boolean f2 = false;
 		while(m3.find()) {
 			f1 = true;
-			int wei = m.start();//多次匹配，以后处理
+			int wei = m3.start();//多次匹配，以后处理
 			BJ bj = new BJ(new int[] {i,wei}, new int[] {i, wei+2}, new int[][] {{i,wei-1},{i,wei+3}});
 			bj.zhuanzhi(direct, new int[] {2, -1, 3});
 			hsanlian.add(bj);//因为必胜，所以可以定 一定是哪些点，而不是还要再判断
@@ -985,7 +1064,7 @@ public class Wiffii {
 		if(!f1) {
 			while(m32.find()) {
 				f2 = true;
-				int wei = m.start();//多次匹配，以后处理
+				int wei = m32.start();//多次匹配，以后处理
 				BJ bj = new BJ(new int[] {i,wei}, new int[] {i, wei+2}, new int[][] {{i,wei-1}});
 				bj.zhuanzhi(direct, new int[] {2, -1});
 				hsanlian.add(bj);
@@ -993,10 +1072,25 @@ public class Wiffii {
 		}
 		if(!f1 && !f2) {
 			while(m33.find()) {
-				int wei = m.start();//多次匹配，以后处理
+				int wei = m33.start();//多次匹配，以后处理
 				BJ bj = new BJ(new int[] {i,wei}, new int[] {i, wei+2}, new int[][] {{i,wei+3}});
 				bj.zhuanzhi(direct, new int[] {2, 3});
 				hsanlian.add(bj);
+			}
+		}
+		//强2连
+		Matcher m2 = hp2.matcher(str);
+		while(m2.find()) {
+			int wei = m2.start();//多次匹配，以后处理
+			int c0 = m2.group(1).length();
+			int c1 = m2.group(2).length();
+			if(c0 + c1 >= 4) {
+				int luo = c0 == 1 ? wei+ c0 +2 : c0 == 3 ? wei+c0-1 : wei+c0+2;
+				if(luo == wei) {
+					herlian.add(new BJ(new int[] {i,wei}, new int[] {i, wei}, new int[][] {{i,wei-1},{i,wei+1}}).zhuanzhi(direct,  new int[] {0, -1, 1}));
+				}else {
+					herlian.add(new BJ(new int[] {i,wei+c0}, new int[] {i, wei+c0+1}, new int[][] {{i,luo}}).zhuanzhi(direct,  new int[] {0, luo - wei}));
+				}
 			}
 		}
 		Matcher m1 = hp1.matcher(str);
@@ -1004,12 +1098,12 @@ public class Wiffii {
 			int wei = m1.start();
 			int c0 = m1.group(1).length();
 			int c1 = m1.group(2).length();
-			if(c0 + c1 == 5) {
-				int luo = c0 == 1 ? wei+1 : c0 == 4 ? wei+4 : wei;
+			if(c0 + c1 >= 5) {
+				int luo = c0 == 1 ? wei+c0+1 : c0 == 4 ? wei+c0-1 : wei+c0+1;
 				if(luo == wei) {
 					hyilian.add(new BJ(new int[] {i,wei}, new int[] {i, wei}, new int[][] {{i,wei-1},{i,wei+1}}).zhuanzhi(direct,  new int[] {0, -1, 1}));
 				}else {
-					hyilian.add(new BJ(new int[] {i,wei}, new int[] {i, wei}, new int[][] {{i,luo}}).zhuanzhi(direct,  new int[] {0, luo - wei}));
+					hyilian.add(new BJ(new int[] {i,wei+c0}, new int[] {i, wei+c0}, new int[][] {{i,luo}}).zhuanzhi(direct,  new int[] {0, luo - wei}));
 				}
 			}
 		}
@@ -1030,7 +1124,7 @@ public class Wiffii {
 		boolean f2 = false;
 		while(m3.find()) {
 			f1 = true;
-			int wei = m.start();//多次匹配，以后处理
+			int wei = m3.start();//多次匹配，以后处理
 			BJ bj = new BJ(new int[] {i,wei}, new int[] {i, wei+2}, new int[][] {{i,wei-1},{i,wei+3}});
 			bj.zhuanzhi(direct, new int[] {2, -1, 3});
 			sanlian.add(bj);//因为必胜，所以可以定 一定是哪些点，而不是还要再判断
@@ -1038,7 +1132,7 @@ public class Wiffii {
 		if(!f1) {
 			while(m32.find()) {
 				f2 = true;
-				int wei = m.start();//多次匹配，以后处理
+				int wei = m32.start();//多次匹配，以后处理
 				BJ bj = new BJ(new int[] {i,wei}, new int[] {i, wei+2}, new int[][] {{i,wei-1}});
 				bj.zhuanzhi(direct, new int[] {2, -1});
 				sanlian.add(bj);
@@ -1046,23 +1140,39 @@ public class Wiffii {
 		}
 		if(!f1 && !f2) {
 			while(m33.find()) {
-				int wei = m.start();//多次匹配，以后处理
+				int wei = m33.start();//多次匹配，以后处理
 				BJ bj = new BJ(new int[] {i,wei}, new int[] {i, wei+2}, new int[][] {{i,wei+3}});
 				bj.zhuanzhi(direct, new int[] {2, 3});
 				sanlian.add(bj);
 			}
 		}
+		//强2连
+		Matcher m2 = p2.matcher(str);
+		while(m2.find()) {
+			int wei = m2.start();//多次匹配，以后处理
+			int c0 = m2.group(1).length();
+			int c1 = m2.group(2).length();
+			if(c0 + c1 >= 4) {
+				int luo = c0 == 1 ? wei+ c0 +2 : c0 == 3 ? wei+c0-1 : wei+c0+2;
+				if(luo == wei) {
+					erlian.add(new BJ(new int[] {i,wei}, new int[] {i, wei}, new int[][] {{i,wei-1},{i,wei+1}}).zhuanzhi(direct,  new int[] {0, -1, 1}));
+				}else {
+					erlian.add(new BJ(new int[] {i,wei+c0}, new int[] {i, wei+c0+1}, new int[][] {{i,luo}}).zhuanzhi(direct,  new int[] {0, luo - wei}));
+				}
+			}
+		}
+		//
 		Matcher m1 = p1.matcher(str);
 		while(m1.find()) {//while的方式好点---因为可以发现很多组
 			int wei = m1.start();
 			int c0 = m1.group(1).length();
 			int c1 = m1.group(2).length();
-			if(c0 + c1 == 5) {
-				int luo = c0 == 1 ? wei+1 : c0 == 4 ? wei+4 : wei;
+			if(c0 + c1 >= 5) {
+				int luo = c0 == 1 ? wei+ c0 +1 : c0 == 4 ? wei+c0-1 : wei+c0+1;
 				if(luo == wei) {
 					yilian.add(new BJ(new int[] {i,wei}, new int[] {i, wei}, new int[][] {{i,wei-1},{i,wei+1}}).zhuanzhi(direct,  new int[] {0, -1, 1}));
 				}else {
-					yilian.add(new BJ(new int[] {i,wei}, new int[] {i, wei}, new int[][] {{i,luo}}).zhuanzhi(direct,  new int[] {0, luo - wei}));
+					yilian.add(new BJ(new int[] {i,wei+c0}, new int[] {i, wei+c0}, new int[][] {{i,luo}}).zhuanzhi(direct,  new int[] {0, luo - wei}));
 				}
 			}
 		}
@@ -1080,12 +1190,14 @@ public class Wiffii {
 	static Pattern hp3 = Pattern.compile("009{3}00");
 	static Pattern hp32 = Pattern.compile("009{3}0");
 	static Pattern hp33 = Pattern.compile("09{3}00");
+	static Pattern hp2 = Pattern.compile("(0{1,})99(0{1,})");
 	static Pattern hp1 = Pattern.compile("(0{1,})9(0{1,})");
 	
 	static Pattern p4 = Pattern.compile("01{4,}0");
 	static Pattern p3 = Pattern.compile("001{3}00");
 	static Pattern p32 = Pattern.compile("001{3}0");
 	static Pattern p33 = Pattern.compile("01{3}00");
+	static Pattern p2 = Pattern.compile("(0{1,})11(0{1,})");
 	static Pattern p1 = Pattern.compile("(0{1,})1(0{1,})");
 	/**
 	 * 只判断 连3 或者连4； 不判断前后 是否是null；这个作为进一步判断的根据
