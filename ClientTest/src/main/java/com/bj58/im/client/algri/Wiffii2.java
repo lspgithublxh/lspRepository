@@ -89,14 +89,14 @@ public class Wiffii2 extends Application{
 			public void handle(MouseEvent event) {
 				double y = event.getSceneX();
 				double x = event.getSceneY();
-				System.out.println(Math.round(x/10));
-				System.out.println(Math.round(y/10));
+//				System.out.println(Math.round(x/10));
+//				System.out.println(Math.round(y/10));
 				if(start[(int) Math.round(x/10)][(int) Math.round(y/10)] != 0) {
 					System.out.println("has qizi");
 					return;
 				}
 				start[(int) Math.round(x/10)][(int) Math.round(y/10)] = 9;
-				System.out.println("hei:" + (int)Math.round(y/10) + "," + (int)Math.round(x/10));
+				System.out.println("hei:" + (int)Math.round(x/10) + "," + (int)Math.round(y/10));
 				Rectangle rect  = new Rectangle(10, 10, Color.RED);
 				rect.setLayoutX(Math.round(y/10) * 10 - 5);
 				rect.setLayoutY(Math.round(x/10) * 10 - 5);
