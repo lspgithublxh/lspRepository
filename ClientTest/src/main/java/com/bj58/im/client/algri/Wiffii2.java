@@ -782,7 +782,7 @@ public class Wiffii2 extends Application{
 			}
 			//
 			String str = arrToString(lie);
-			addQiangh(str, j, 2);//2
+			addQiangh2(str, 0, 2, j);//2
 			addRuoh(lie, j, 2);
 		}
 		//3.撇
@@ -793,7 +793,7 @@ public class Wiffii2 extends Application{
 			}
 			//
 			String str = arrToString(lie);
-			addQiangh(str, 0, 3);//2
+			addQiangh2(str, 0, 3, j);//2
 			addRuoh(lie, 0, 3);
 		}
 		for(int i = 1; i < zi.length-3; i++) {
@@ -803,7 +803,7 @@ public class Wiffii2 extends Application{
 			}
 			//
 			String str = arrToString(lie);
-			addQiangh(str, 0, 3);//2
+			addQiangh2(str, i, 3, 0);//2
 			addRuoh(lie, 0, 3);
 		}
 		//4.捺
@@ -814,7 +814,7 @@ public class Wiffii2 extends Application{
 			}
 			//
 			String str = arrToString(lie);
-			addQiangh(str, i, 4);//2
+			addQiangh2(str, i, 4, 0);//2
 			addRuoh(lie, i, 4);
 		}
 		for(int j = zi[0].length - 4; j >= 0 ; j--) {
@@ -824,7 +824,7 @@ public class Wiffii2 extends Application{
 			}
 			//
 			String str = arrToString(lie);
-			addQiangh(str, zi.length - 1, 4);//2
+			addQiangh2(str, zi.length - 1, 4, j);//2
 			addRuoh(lie, zi.length - 1, 4);
 		}
 		return map;
@@ -1010,10 +1010,10 @@ public class Wiffii2 extends Application{
 			if(str.contains("1")) {
 				System.out.println(str);
 			}
-			addQiang(str, j, 2);//2
+			addQiang2(str, j, 2, 0);//2
 			addRuo(lie, j, 2);
 		}
-		//3.撇
+		//3.撇 东南-西北
 		for(int j = zi[0].length - 4; j >= 0 ; j--) {
 			int[] lie = new int[zi[0].length - j];
 			for(int k = 0; j + k < zi[0].length; k++) {
@@ -1021,7 +1021,7 @@ public class Wiffii2 extends Application{
 			}
 			//
 			String str = arrToString(lie);
-			addQiang(str, 0, 3);//2
+			addQiang2(str, 0, 3, j);//2
 			addRuo(lie, 0, 3);
 		}
 		for(int i = 1; i < zi.length-3; i++) {
@@ -1031,7 +1031,7 @@ public class Wiffii2 extends Application{
 			}
 			//
 			String str = arrToString(lie);
-			addQiang(str, 0, 3);//2
+			addQiang2(str, 0, 3, i);//2
 			addRuo(lie, 0, 3);
 		}
 		//4.捺
@@ -1042,7 +1042,7 @@ public class Wiffii2 extends Application{
 			}
 			//
 			String str = arrToString(lie);
-			addQiang(str, i, 4);//2
+			addQiang2(str, i, 4, i);//2
 			addRuo(lie, i, 4);
 		}
 		for(int j = zi[0].length - 4; j >= 0 ; j--) {
@@ -1052,7 +1052,7 @@ public class Wiffii2 extends Application{
 			}
 			//
 			String str = arrToString(lie);
-			addQiang(str, zi.length - 1, 4);//2
+			addQiang2(str, zi.length - 1, 4, j);//2
 			addRuo(lie, zi.length - 1, 4);
 		}
 		return map;
@@ -1303,7 +1303,102 @@ public class Wiffii2 extends Application{
 		}
 	}
 	
-	private void addQiang(String str, int i , int direct) throws Exception {
+	private void addQiangh2(String str, int i , int direct, int j) throws Exception {
+		Matcher m5 = hp5.matcher(str);
+		if(m5.find()) {
+			throw new Exception("hei win");
+		}
+		Matcher m = hp4.matcher(str);
+		while(m.find()) {
+			int wei = m.start();//多次匹配，以后处理
+			BJ bj = new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei, wei+3}, new int[] {wei, wei+5});//new BJ(new int[] {i,wei}, new int[] {i, wei+3}, new int[][] {{i,wei},{i,wei+5}});
+//			bj.zhuanzhi(direct, new int[] {3, 0, 5});
+			hsilian.add(bj);
+		}
+		Matcher m3 = hp3.matcher(str);
+		Matcher m32 = hp32.matcher(str);
+		Matcher m33 = hp33.matcher(str);
+		Matcher m34 = hp34.matcher(str);
+		Matcher m35 = hp35.matcher(str);
+		boolean f1 = false;
+		boolean f2 = false;
+		while(m3.find()) {
+			f1 = true;
+			int wei = m3.start();//多次匹配，以后处理
+			BJ bj = new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei, wei+6}, new int[] {wei+1, wei+5});
+//			BJ bj = new BJ(new int[] {i,wei}, new int[] {i, wei+6}, new int[][] {{i,wei+1},{i,wei+5}});
+//			bj.zhuanzhi(direct, new int[] {6, 1, 5});
+			hsanlian.add(bj);//因为必胜，所以可以定 一定是哪些点，而不是还要再判断
+		}
+		if(!f1) {
+			while(m32.find()) {
+				f2 = true;
+				int wei = m32.start();//多次匹配，以后处理
+				BJ bj = new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei, wei+5}, new int[] {wei+1});
+//				BJ bj = new BJ(new int[] {i,wei}, new int[] {i, wei+5}, new int[][] {{i,wei+1}});
+//				bj.zhuanzhi(direct, new int[] {2, 1});
+				hsanlian.add(bj);
+			}
+		}
+		if(!f1 && !f2) {
+			while(m33.find()) {
+				int wei = m33.start();//多次匹配，以后处理
+				BJ bj = new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei, wei+2}, new int[] {wei+4});
+//				BJ bj = new BJ(new int[] {i,wei}, new int[] {i, wei+2}, new int[][] {{i,wei+4}});
+//				bj.zhuanzhi(direct, new int[] {2, 4});
+				hsanlian.add(bj);
+			}
+		}
+		if(m34.find()) {
+			int wei = m34.start();
+			sanlian.add(new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei, wei+2}, new int[] {wei+3})
+//					new BJ(new int[] {i,wei}, new int[] {i, wei+2}, new int[][] {{i,wei+3}})
+					);
+		}
+		if(m35.find()) {
+			int wei = m35.start();
+			sanlian.add(new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei, wei+2}, new int[] {wei+2})
+//					new BJ(new int[] {i,wei}, new int[] {i, wei+2}, new int[][] {{i,wei+2}})
+					);
+		}
+		//强2连
+		Matcher m2 = hp2.matcher(str);
+		while(m2.find()) {
+			int wei = m2.start();//多次匹配，以后处理
+			int c0 = m2.group(1).length();
+			int c1 = m2.group(2).length();
+			if(c0 + c1 >= 4) {
+				int luo = c0 == 1 ? wei+ c0 +2 : c0 == 3 ? wei+c0-1 : wei+c0+2;
+				if(luo == wei) {
+					herlian.add(new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei, wei}, new int[] {wei-1,wei+1})
+//							new BJ(new int[] {i,wei}, new int[] {i, wei}, new int[][] {{i,wei-1},{i,wei+1}}).zhuanzhi(direct,  new int[] {0, -1, 1})
+							);
+				}else {
+					herlian.add(new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei+c0, wei+c0+1}, new int[] {luo})
+//							new BJ(new int[] {i,wei+c0}, new int[] {i, wei+c0+1}, new int[][] {{i,luo}}).zhuanzhi(direct,  new int[] {0, luo - wei})
+							);
+				}
+			}
+		}
+		Matcher m1 = hp1.matcher(str);
+		while(m1.find()) {//while的方式好点---因为可以发现很多组
+			int wei = m1.start();
+			int c0 = m1.group(1).length();
+			int c1 = m1.group(2).length();
+			if(c0 + c1 >= 5) {
+				int luo = c0 == 1 ? wei+c0+1 : c0 == 4 ? wei+c0-1 : wei+c0+1;
+				if(luo == wei) {
+					hyilian.add(new BJ(new int[] {i,wei}, new int[] {i, wei}, new int[][] {{i,wei-1},{i,wei+1}}).zhuanzhi(direct,  new int[] {0, -1, 1}));
+				}else {
+					hyilian.add(new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei+c0, wei+c0}, new int[] {luo})
+//							new BJ(new int[] {i,wei+c0}, new int[] {i, wei+c0}, new int[][] {{i,luo}}).zhuanzhi(direct,  new int[] {0, luo - wei})
+							);
+				}
+			}
+		}
+	}
+	
+	private void addQiang(String str, int i , int direct, int j) throws Exception {
 		Matcher m5 = p5.matcher(str);
 		if(m5.find()) {
 			wulian.add(new BJ(null,null,null));
@@ -1387,6 +1482,95 @@ public class Wiffii2 extends Application{
 		}
 	}
 
+	private void addQiang2(String str, int i , int direct, int j) throws Exception {
+		Matcher m5 = p5.matcher(str);
+		if(m5.find()) {
+			wulian.add(new BJ());
+			throw new Exception("bai win");
+		}
+		Matcher m = p4.matcher(str);
+		while(m.find()) {
+			int wei = m.start();//多次匹配，以后处理
+			BJ bj = new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei, wei+3}, new int[] {0,5});//(new int[] {i,wei}, new int[] {i, wei+3}, new int[][] {{i,wei},{i,wei+5}});
+//			bj.zhuanzhi(direct, new int[] {3, 0, 5});
+			silian.add(bj);
+		}
+		Matcher m3 = p3.matcher(str);
+		Matcher m32 = p32.matcher(str);
+		Matcher m33 = p33.matcher(str);
+		Matcher m34 = p34.matcher(str);
+		Matcher m35 = p35.matcher(str);
+		boolean f1 = false;
+		boolean f2 = false;
+		while(m3.find()) {
+			f1 = true;
+			int wei = m3.start();//多次匹配，以后处理
+			BJ bj = new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei, wei+2}, new int[] {1,5});//(new int[] {i,wei}, new int[] {i, wei+2}, new int[][] {{i,wei+1},{i,wei+5}});
+//			bj.zhuanzhi(direct, new int[] {2, 1, 5});
+			sanlian.add(bj);//因为必胜，所以可以定 一定是哪些点，而不是还要再判断
+		}
+		if(!f1) {
+			while(m32.find()) {
+				f2 = true;
+				int wei = m32.start();//多次匹配，以后处理
+				BJ bj = new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei, wei+2}, new int[] {1});//new BJ(new int[] {i,wei}, new int[] {i, wei+2}, new int[][] {{i,wei+1}});
+//				bj.zhuanzhi(direct, new int[] {2, 1});
+				sanlian.add(bj);
+			}
+		}
+		if(!f1 && !f2) {
+			while(m33.find()) {
+				int wei = m33.start();//多次匹配，以后处理
+				BJ bj = new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei, wei+2}, new int[] {4});//new BJ(new int[] {i,wei}, new int[] {i, wei+2}, new int[][] {{i,wei+4}});
+//				bj.zhuanzhi(direct, new int[] {2, 4});
+				sanlian.add(bj);
+			}
+		}
+		if(m34.find()) {
+			int wei = m34.start();
+			sanlian.add(new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei, wei+2}, new int[] {3}));
+		}
+		if(m35.find()) {
+			int wei = m35.start();
+			sanlian.add(new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei, wei+2}, new int[] {2}));
+		}
+		//强2连
+		Matcher m2 = p2.matcher(str);
+		while(m2.find()) {
+			int wei = m2.start();//多次匹配，以后处理
+			int c0 = m2.group(1).length();
+			int c1 = m2.group(2).length();
+			if(c0 + c1 >= 4) {
+				int luo = c0 == 1 ? wei+ c0 +2 : c0 == 3 ? wei+c0-1 : wei+c0+2;
+				if(luo == wei) {
+					erlian.add(new BJ(new int[] {i,wei}, new int[] {i, wei}, new int[][] {{i,wei-1},{i,wei+1}}).zhuanzhi(direct,  new int[] {0, -1, 1}));
+				}else {
+					//+c0
+					erlian.add(new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei+c0, wei+1+c0}, new int[] {luo}));
+				}
+			}
+		}
+		//
+		Matcher m1 = p1.matcher(str);
+		while(m1.find()) {//while的方式好点---因为可以发现很多组
+			int wei = m1.start();
+			int c0 = m1.group(1).length();
+			int c1 = m1.group(2).length();
+			if(c0 + c1 >= 5) {
+				int luo = c0 == 1 ? wei+ c0 +1 : c0 == 4 ? wei+c0-1 : wei+c0+1;
+				if(luo == wei) {
+					yilian.add(new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei, wei}, new int[] {wei-1, wei+1})
+//							new BJ(new int[] {i,wei}, new int[] {i, wei}, new int[][] {{i,wei-1},{i,wei+1}}).zhuanzhi(direct,  new int[] {0, -1, 1})
+							);
+				}else {
+					yilian.add(new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei+c0, wei+c0}, new int[] {luo})
+//							new BJ(new int[] {i,wei+c0}, new int[] {i, wei+c0}, new int[][] {{i,luo}}).zhuanzhi(direct,  new int[] {0, luo - wei})
+							);
+				}
+			}
+		}
+	}
+	
 	private static String arrToString(int[] is) {
 		String rs = "";
 		for(int i : is) {
