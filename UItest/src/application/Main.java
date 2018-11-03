@@ -170,7 +170,7 @@ public class Main extends Application {
 //			baseMethod(primaryStage);
 //			flowPane(primaryStage);
 //			lineGene(primaryStage);
-//			lineDynamic(primaryStage);//画任意图形  , 可以动态生成，从而作为聊天的外层壳包装
+			lineDynamic(primaryStage);//画任意图形  , 可以动态生成，从而作为聊天的外层壳包装
 //			cicleDynamic(primaryStage);
 //			shadowShow(primaryStage);
 //			rectenge(primaryStage);
@@ -223,7 +223,7 @@ public class Main extends Application {
 //			camera_show(primaryStage);
 //			image_test();
 //			justChart();//
-			easy3d(primaryStage);
+//			easy3d(primaryStage);
 			
 		} catch(Exception e) {
 			e.printStackTrace();

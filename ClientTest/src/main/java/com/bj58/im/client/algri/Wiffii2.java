@@ -8,6 +8,21 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.stage.Stage;
+
 /**
  * 最简单的实现开始：
  * 1.四连识别，构造和化解
@@ -25,10 +40,11 @@ import java.util.regex.Pattern;
  * @Version V1.0
  * @Package com.bj58.im.client.algri
  */
-public class Wiffii {
+public class Wiffii2 extends Application{
 
-	static Wiffii ins = new Wiffii();
+	static Wiffii2 ins = new Wiffii2();
 	public static void main(String[] args) {
+		launch(args);
 //		start();
 //		Matcher m = hp32.matcher("00999000009990");
 //		while(m.find()) {
@@ -36,12 +52,12 @@ public class Wiffii {
 //		}
 //		ins.drawQJ(new int[100][100]);
 //		ins.drawQJ(new Integer[100][100]);
-		try {
-			ins.duan();
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println(e.getMessage());
-		}
+//		try {
+//			ins.duan();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			System.out.println(e.getMessage());
+//		}
 //		System.out.println("45".split("")[1]);
 	}
 
@@ -50,148 +66,242 @@ public class Wiffii {
 //		//遍历n行n列，和斜对角线，识别连续的点
 //		Map<String, List<List<Point>>> list = shibiesilian(zi, 0);
 //	}
+	boolean shi = true;
+	int[][] start = new int[99][99];//白出1 ， 黑出9
+	Group group = new Group();
+	Object outerLock = new Object();
+	boolean quan = true;
 
-	private void duan() throws Exception {
-		int[][] start = new int[99][99];//白出1 ， 黑出9
-		
-		boolean shi = true;
-		Map<String, int[]> cacheMap = new HashMap<>();
-		Scanner scanner = new Scanner(System.in);
-		while(true) {
-			Map<String, List<BJ>> bai = kanbai(start);
-			Map<String, List<BJ>> hei = kanhei(start);
-			//自己是白方
-			//1.先看己方一步胜利，再看对方一步胜利，在看己方2步胜利，.....
-			if(bai.containsKey("q_si_l") && bai.get("q_si_l").size() > 0) {
-				List<BJ> qsi = bai.get("q_si_l");
-				int[] chu = qsi.get(0).k[0];
-				start[chu[0]][chu[1]] = 1;
-				System.out.println("chu: q_si_l");
-			}else if(bai.containsKey("r_si_l") && bai.get("r_si_l").size() > 0) {
-				List<BJ> qsi = bai.get("r_si_l");
-				int[] chu = qsi.get(0).k[0];
-				start[chu[0]][chu[1]] = 1;
-				System.out.println("chu: r_si_l");
-			}else if(hei.containsKey("q_si_l") && hei.get("q_si_l").size() > 0) {//双强3连的处理没？
-				List<BJ> qsi = hei.get("q_si_l");
-				int[] chu = qsi.get(0).k[0];
-				start[chu[0]][chu[1]] = 1;
-				System.out.println("chu: hq_si_l");
-			}else if(hei.containsKey("r_si_l") && hei.get("r_si_l").size() > 0) {
-				List<BJ> qsi = hei.get("r_si_l");
-				int[] chu = qsi.get(0).k[0];
-				start[chu[0]][chu[1]] = 1;
-				System.out.println("chu: hr_si_l");
-			}else if(bai.containsKey("q_san_l") && bai.get("q_san_l").size() > 0) {//2招
-				List<BJ> qsi = bai.get("q_san_l");
-				int[] chu = qsi.get(0).k[0];
-				start[chu[0]][chu[1]] = 1;
-				System.out.println("chu: q_san_l");
-			}else if(cacheMap.containsKey("next1") && bai.get("next1").size() > 0) {//2招
-				int[] chu = cacheMap.get("next1");
-				start[chu[0]][chu[1]] = 1;
-				cacheMap.remove("next1");
-				System.out.println("chu: next1");
-			}else if(bai.containsKey("r_san_l") && bai.get("r_san_l").size() > 0) {//2招
-				List<BJ> qsi = bai.get("r_san_l");
-				int[] chu = qsi.get(0).k[0];
-				start[chu[0]][chu[1]] = 1;
-				System.out.println("chu: r_san_l");
-			}else if(hei.containsKey("q_san_l") && hei.get("q_san_l").size() > 0) {//2招
-				List<BJ> qsi = hei.get("q_san_l");
-				int[] chu = qsi.get(0).k[0];
-				start[chu[0]][chu[1]] = 1;
-				System.out.println("chu: hq_san_l");
+	private void duan(Stage primaryStage) throws Exception {
+		Scene scene = new Scene(group, 400, 400, Color.rgb(0x11, 0x11, 0x11, 0.1));
+		Path path = new Path();
+		path.setStrokeWidth(0.5);
+		for(int i = 10; i < 410; i+=10) {
+			path.getElements().add(new MoveTo(i, 0));
+			path.getElements().add(new LineTo(i, 400));
+		}
+		for(int i = 10; i < 410; i+=10) {
+			path.getElements().add(new MoveTo(0,i));
+			path.getElements().add(new LineTo(400, i));
+		}
+		group.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				double y = event.getSceneX();
+				double x = event.getSceneY();
+				System.out.println(Math.round(x/10));
+				System.out.println(Math.round(y/10));
+				if(start[(int) Math.round(x/10)][(int) Math.round(y/10)] != 0) {
+					System.out.println("has qizi");
+					return;
+				}
+				start[(int) Math.round(x/10)][(int) Math.round(y/10)] = 9;
+				System.out.println("hei:" + (int)Math.round(y/10) + "," + (int)Math.round(x/10));
+				Rectangle rect  = new Rectangle(10, 10, Color.RED);
+				rect.setLayoutX(Math.round(y/10) * 10 - 5);
+				rect.setLayoutY(Math.round(x/10) * 10 - 5);
+				group.getChildren().add(rect);
+				synchronized (outerLock) {
+					quan = true;
+					outerLock.notify();
+				}
 			}
-//			else if(hei.containsKey("r_san_l")) {//2招 先不阻止
-//				List<BJ> qsi = bai.get("r_san_l");
-//				int[] chu = qsi.get(0).k[0];
-//				start[chu[0]][chu[1]] = 1;
-//			}
-			else if(bai.containsKey("q_er_l") && bai.get("q_er_l").size() > 0) {//强2连 综合判断
-				List<BJ> qsi = bai.get("q_er_l");
-				//是否2个， 2个是否相交为0, 2个是否平行;3点或者可以构成4点平行
-				
-				if(qsi.size() > 1) {
-					//组合序
-					Map<String, int[]> luoMap = new HashMap<>();
-					for(int i = 0; i < qsi.size() - 1; i++) {
-						BJ one = qsi.get(i);
-						for(int j = i+1; j < qsi.size(); j++) {
-							BJ two = qsi.get(j);
-							int pan = relatation(one, two, start, luoMap);
-							if(luoMap.containsKey("two_step1")) {//必胜
-								luoMap.put("next1", luoMap.get("two_step2"));
-								int[] luo = luoMap.get("two_step1");
-								start[luo[0]][luo[1]] = 1;
-								break;
-							}else if(luoMap.containsKey("1")) {//也好
-								int[] luo = luoMap.get("1");
-								start[luo[0]][luo[1]] = 1;
-								break;
-							}else if(luoMap.containsKey("3")) {//也好
-								int[] luo = luoMap.get("3");
-								start[luo[0]][luo[1]] = 1;
-								break;
-							}else if(luoMap.containsKey("4")) {//也好
-								int[] luo = luoMap.get("4");
-								start[luo[0]][luo[1]] = 1;
-								break;
+		});
+		group.getChildren().add(path);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+		
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+			try {
+				Map<String, int[]> cacheMap = new HashMap<>();
+				Scanner scanner = new Scanner(System.in);
+				while(true) {
+						Map<String, List<BJ>> bai = kanbai(start);
+						Map<String, List<BJ>> hei = kanhei(start);
+						int[] currPoint = null;
+						//自己是白方
+						//1.先看己方一步胜利，再看对方一步胜利，在看己方2步胜利，.....
+						if (bai.containsKey("q_si_l") && bai.get("q_si_l").size() > 0) {
+							List<BJ> qsi = bai.get("q_si_l");
+							int[] chu = qsi.get(0).k[0];
+							start[chu[0]][chu[1]] = 1;
+							System.out.println("chu: q_si_l");
+							currPoint = chu;
+						} else if (bai.containsKey("r_si_l") && bai.get("r_si_l").size() > 0) {
+							List<BJ> qsi = bai.get("r_si_l");
+							int[] chu = qsi.get(0).k[0];
+							start[chu[0]][chu[1]] = 1;
+							System.out.println("chu: r_si_l");
+							currPoint = chu;
+						} else if (hei.containsKey("q_si_l") && hei.get("q_si_l").size() > 0) {//双强3连的处理没？
+							List<BJ> qsi = hei.get("q_si_l");
+							int[] chu = qsi.get(0).k[0];
+							start[chu[0]][chu[1]] = 1;
+							System.out.println("chu: hq_si_l");
+							currPoint = chu;
+						} else if (hei.containsKey("r_si_l") && hei.get("r_si_l").size() > 0) {
+							List<BJ> qsi = hei.get("r_si_l");
+							int[] chu = qsi.get(0).k[0];
+							start[chu[0]][chu[1]] = 1;
+							System.out.println("chu: hr_si_l");
+							currPoint = chu;
+						} else if (bai.containsKey("q_san_l") && bai.get("q_san_l").size() > 0) {//2招
+							List<BJ> qsi = bai.get("q_san_l");
+							int[] chu = qsi.get(0).k[0];
+							start[chu[0]][chu[1]] = 1;
+							System.out.println("chu: q_san_l");
+							currPoint = chu;
+						} else if (cacheMap.containsKey("next1") && bai.get("next1").size() > 0) {//2招
+							int[] chu = cacheMap.get("next1");
+							start[chu[0]][chu[1]] = 1;
+							cacheMap.remove("next1");
+							System.out.println("chu: next1");
+						} else if (bai.containsKey("r_san_l") && bai.get("r_san_l").size() > 0) {//2招
+							List<BJ> qsi = bai.get("r_san_l");
+							int[] chu = qsi.get(0).k[0];
+							start[chu[0]][chu[1]] = 1;
+							System.out.println("chu: r_san_l");
+							currPoint = chu;
+						} else if (hei.containsKey("q_san_l") && hei.get("q_san_l").size() > 0) {//2招
+							List<BJ> qsi = hei.get("q_san_l");
+							int[] chu = qsi.get(0).k[0];
+							start[chu[0]][chu[1]] = 1;
+							System.out.println("chu: hq_san_l");
+							currPoint = chu;
+						}
+						//								else if(hei.containsKey("r_san_l")) {//2招 先不阻止
+						//									List<BJ> qsi = bai.get("r_san_l");
+						//									int[] chu = qsi.get(0).k[0];
+						//									start[chu[0]][chu[1]] = 1;
+						//								}
+						else if (bai.containsKey("q_er_l") && bai.get("q_er_l").size() > 0) {//强2连 综合判断
+							List<BJ> qsi = bai.get("q_er_l");
+							//是否2个， 2个是否相交为0, 2个是否平行;3点或者可以构成4点平行
+
+							if (qsi.size() > 1) {
+								//组合序
+								Map<String, int[]> luoMap = new HashMap<>();
+								for (int i = 0; i < qsi.size() - 1; i++) {
+									BJ one = qsi.get(i);
+									for (int j = i + 1; j < qsi.size(); j++) {
+										BJ two = qsi.get(j);
+										int pan = relatation(one, two, start, luoMap);
+										if (luoMap.containsKey("two_step1")) {//必胜
+											luoMap.put("next1", luoMap.get("two_step2"));
+											int[] luo = luoMap.get("two_step1");
+											start[luo[0]][luo[1]] = 1;
+											currPoint = luo;
+											break;
+										} else if (luoMap.containsKey("1")) {//也好
+											int[] luo = luoMap.get("1");
+											start[luo[0]][luo[1]] = 1;
+											currPoint = luo;
+											break;
+										} else if (luoMap.containsKey("3")) {//也好
+											int[] luo = luoMap.get("3");
+											start[luo[0]][luo[1]] = 1;
+											currPoint = luo;
+											break;
+										} else if (luoMap.containsKey("4")) {//也好
+											int[] luo = luoMap.get("4");
+											start[luo[0]][luo[1]] = 1;
+											currPoint = luo;
+											break;
+										}
+									}
+								}
+							} //直接出子
+							int[] chu = qsi.get(0).k[0];
+							if (start[chu[0]][chu[1]] == 1) {
+								System.out.println("error-----compute");
+								return;
+							}
+							start[chu[0]][chu[1]] = 1;
+							currPoint = chu;
+							System.out.println("chu: q_er_l");
+						} else if (bai.containsKey("q_yi_l") && bai.get("q_yi_l").size() > 0) {
+							List<BJ> qsi = bai.get("q_yi_l");
+							int[] chu = qsi.get(0).k[0];
+							start[chu[0]][chu[1]] = 1;
+							System.out.println("chu: q_yi_l");
+							currPoint = chu;
+						} else if (bai.containsKey("r_er_l") && bai.get("r_er_l").size() > 0) {
+							List<BJ> qsi = bai.get("r_er_l");
+							int[] chu = qsi.get(0).k[0];
+							start[chu[0]][chu[1]] = 1;
+							System.out.println("chu: r_er_l");
+							currPoint = chu;
+						} else if (shi) {
+							shi = false;
+							//白先
+							start[25][25] = 1;
+							System.out.println("chu: start");
+							currPoint = new int[] {25,25};
+						} else {
+							System.out.println("not know how to luo zi");
+						}
+						final int[] draw = currPoint;
+						final Object lock = new Object();
+						final boolean[] x = new boolean[] {false};
+						Platform.runLater(new Runnable() {
+							@Override
+							public void run() {
+								System.out.println("bai:" + draw[0] + "," + draw[1]);
+								ins.drawQJ2(draw);
+								synchronized (lock) {
+									x[0] = true;
+									lock.notify();
+								}
+						}});
+						synchronized (lock) {
+							if(x[0] == false) {
+								lock.wait();
 							}
 						}
-					}
-				}//直接出子
-				int[] chu = qsi.get(0).k[0];
-				if(start[chu[0]][chu[1]] == 1) {
-					System.out.println("error-----compute");
-					break;
+						synchronized (outerLock) {
+							if(quan) {
+								outerLock.wait();
+							}
+							
+						}
+						//等待输入出动
+//						String line = scanner.nextLine();
+//						System.out.println("get point:" + line);
+//						String[] point = line.split(",");
+//						while (point.length != 2) {
+//							System.out.println("input again");
+//							line = scanner.nextLine();
+//							point = line.split(",");
+//							if (start[Integer.valueOf(point[0])][Integer.valueOf(point[1])] != 0) {
+//								point = new String[] { "" };
+//							}
+//						}
+//						int[] p = new int[] { Integer.valueOf(point[0]), Integer.valueOf(point[1]) };
+//						start[p[0]][p[1]] = 9;
+						//展示start的图案
+//						Platform.runLater(new Runnable() {
+//							@Override
+//							public void run() {
+//								ins.drawQJ2(draw);
+//						}});
+						//clear
+						for (List<BJ> ls : bai.values()) {
+							ls.clear();
+						}
+						for (List<BJ> ls : hei.values()) {
+							ls.clear();
+						} 
 				}
-				start[chu[0]][chu[1]] = 1;
-				System.out.println("chu: q_er_l");
-			}else if(bai.containsKey("q_yi_l") && bai.get("q_yi_l").size() > 0) {
-				List<BJ> qsi = bai.get("q_yi_l");
-				int[] chu = qsi.get(0).k[0];
-				start[chu[0]][chu[1]] = 1;
-				System.out.println("chu: q_yi_l");
-			}else if(bai.containsKey("r_er_l") && bai.get("r_er_l").size() > 0) {
-				List<BJ> qsi = bai.get("r_er_l");
-				int[] chu = qsi.get(0).k[0];
-				start[chu[0]][chu[1]] = 1;
-				System.out.println("chu: r_er_l");
-			}else if(shi){
-				shi = false;
-				//白先
-				start[49][49] = 1;
-				System.out.println("chu: start");
-			}else {
-				System.out.println("not know how to luo zi");
-			}
-			ins.drawQJ(start);
-			//等待输入出动
-			String line = scanner.nextLine();
-			System.out.println("get point:" + line);
-			String[] point = line.split(",");
-			while(point.length != 2) {
-				System.out.println("input again");
-				line = scanner.nextLine();
-				point = line.split(",");
-				if(start[Integer.valueOf(point[0])][Integer.valueOf(point[1])] != 0) {
-					point = new String[] {""};
-				}
-			}
-			int[] p = new int[] {Integer.valueOf(point[0]), Integer.valueOf(point[1])};
-			start[p[0]][p[1]] = 9;
-			//展示start的图案
-			ins.drawQJ(start);
-			//clear
-			for(List<BJ> ls : bai.values()) {
-				ls.clear();
-			}
-			for(List<BJ> ls : hei.values()) {
-				ls.clear();
+			}catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
+				}).start();
 	}
+		
 
 	private void drawQJ(Integer[][] qz) {
 		for(int i = 0; i <= 100; i++) {
@@ -206,6 +316,14 @@ public class Wiffii {
 			System.out.println();
 		}
 		System.out.println("-----------------next--------------");
+	}
+	
+	private void drawQJ2(int[] curr) {
+		Rectangle rect  = new Rectangle(10, 10, Color.BLACK);
+		rect.setLayoutX(curr[1] * 10 - 5);
+		rect.setLayoutY(curr[0] * 10 - 5);
+		group.getChildren().add(rect);
+		System.out.println("bai---------------ok");
 	}
 	
 	private void drawQJ(int[][] qz) {
@@ -327,7 +445,7 @@ public class Wiffii {
 				int[][] startcp = copyArr(start);
 				startcp[currX][currY] = 1;
 				//看强2连里有没有currY
-				Map<String, List<BJ>> bai = new Wiffii().kanbai(startcp);
+				Map<String, List<BJ>> bai = new Wiffii2().kanbai(startcp);
 				List<BJ> qsi = bai.get("q_er_l");
 				for(BJ x : qsi) {
 					boolean same = samePoint(x.s, new int[] {currX, currY});
@@ -1366,5 +1484,15 @@ public class Wiffii {
 			this.y = y;
 		}
 		
+	}
+
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		try {
+			ins.duan(primaryStage);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println(e.getMessage());
+		}
 	}
 }

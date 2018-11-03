@@ -1,5 +1,8 @@
 package com.bj58.im.client.algri;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class BJ {
 
 	public int[] s;
@@ -43,5 +46,14 @@ public class BJ {
 			}
 		}
 		return this;
+	}
+	
+	public static void main(String[] args) {
+		String s = "0000000000000000009990000000";
+		Pattern hp3 = Pattern.compile("009{3}00");
+		Matcher m = hp3.matcher(s);
+		if(m.find()) {
+			System.out.println(m.start());
+		}
 	}
 }
