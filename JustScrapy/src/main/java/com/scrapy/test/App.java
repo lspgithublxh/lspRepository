@@ -12,7 +12,13 @@ public class App
 {
     public static void main( String[] args )
     {
-        System.setProperty("webdriver.chrome.driver","C:\\Program Files (x86)\\Google\\Chrome\\Application\\chromedriver.exe");//chromedriver服务地址
+        oneTest();
+//        driver.quit();
+//        driver.close();
+    }
+
+	private static void oneTest() {
+		System.setProperty("webdriver.chrome.driver","C:\\Program Files (x86)\\Google\\Chrome\\Application\\chromedriver.exe");//chromedriver服务地址
         ChromeOptions options = new ChromeOptions();
         options.addArguments(Arrays.asList(new String[] {"--no-sandbox","window-size=1920x3000", "--disable-gpu", "--hide-scrollbars", "blink-settings=imagesEnabled=false", "--headless"}));
         WebDriver driver = new ChromeDriver(options); //新建一个WebDriver 的对象，但是new 的是FirefoxDriver的驱动
@@ -32,7 +38,5 @@ public class App
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        driver.quit();
-//        driver.close();
-    }
+	}
 }
