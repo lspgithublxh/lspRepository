@@ -783,7 +783,7 @@ public class Wiffii2 extends Application{
 			//
 			String str = arrToString(lie);
 			addQiangh2(str, 0, 2, j);//2
-			addRuoh(lie, j, 2);
+			addRuoh(lie, 0, 2, j);
 		}
 		//3.撇
 		for(int j = zi[0].length - 4; j >= 0 ; j--) {
@@ -794,7 +794,7 @@ public class Wiffii2 extends Application{
 			//
 			String str = arrToString(lie);
 			addQiangh2(str, 0, 3, j);//2
-			addRuoh(lie, 0, 3);
+			addRuoh(lie, 0, 3, j);
 		}
 		for(int i = 1; i < zi.length-3; i++) {
 			int[] lie = new int[zi[0].length - i];
@@ -804,7 +804,7 @@ public class Wiffii2 extends Application{
 			//
 			String str = arrToString(lie);
 			addQiangh2(str, i, 3, 0);//2
-			addRuoh(lie, 0, 3);
+			addRuoh(lie, i, 3, 0);
 		}
 		//4.捺
 		for(int i = 3; i < zi[0].length; i++) {
@@ -815,7 +815,7 @@ public class Wiffii2 extends Application{
 			//
 			String str = arrToString(lie);
 			addQiangh2(str, i, 4, 0);//2
-			addRuoh(lie, i, 4);
+			addRuoh(lie, i, 4, 0);
 		}
 		for(int j = zi[0].length - 4; j >= 0 ; j--) {
 			int[] lie = new int[zi[0].length - j];
@@ -825,7 +825,7 @@ public class Wiffii2 extends Application{
 			//
 			String str = arrToString(lie);
 			addQiangh2(str, zi.length - 1, 4, j);//2
-			addRuoh(lie, zi.length - 1, 4);
+			addRuoh(lie, zi.length - 1, 4, j);
 		}
 		return map;
 	}
@@ -1010,8 +1010,8 @@ public class Wiffii2 extends Application{
 			if(str.contains("1")) {
 				System.out.println(str);
 			}
-			addQiang2(str, j, 2, 0);//2
-			addRuo(lie, j, 2);
+			addQiang2(str, 0, 2, j);//2
+			addRuo(lie, 0, 2, j);
 		}
 		//3.撇 东南-西北
 		for(int j = zi[0].length - 4; j >= 0 ; j--) {
@@ -1022,7 +1022,7 @@ public class Wiffii2 extends Application{
 			//
 			String str = arrToString(lie);
 			addQiang2(str, 0, 3, j);//2
-			addRuo(lie, 0, 3);
+			addRuo(lie, 0, 3, j);
 		}
 		for(int i = 1; i < zi.length-3; i++) {
 			int[] lie = new int[zi[0].length - i];
@@ -1031,19 +1031,19 @@ public class Wiffii2 extends Application{
 			}
 			//
 			String str = arrToString(lie);
-			addQiang2(str, 0, 3, i);//2
-			addRuo(lie, 0, 3);
+			addQiang2(str, i, 3, 0);//2
+			addRuo(lie, i, 3, 0);
 		}
 		//4.捺
-		for(int i = 3; i < zi[0].length; i++) {
+		for(int i = 3; i < zi.length; i++) {
 			int[] lie = new int[i + 1];
 			for(int j = 0; i - j >= 0; j++) {
 				lie[j] = zi[i - j][j];
 			}
 			//
 			String str = arrToString(lie);
-			addQiang2(str, i, 4, i);//2
-			addRuo(lie, i, 4);
+			addQiang2(str, i, 4, 0);//2
+			addRuo(lie, i, 4, 0);
 		}
 		for(int j = zi[0].length - 4; j >= 0 ; j--) {
 			int[] lie = new int[zi[0].length - j];
@@ -1053,12 +1053,12 @@ public class Wiffii2 extends Application{
 			//
 			String str = arrToString(lie);
 			addQiang2(str, zi.length - 1, 4, j);//2
-			addRuo(lie, zi.length - 1, 4);
+			addRuo(lie, zi.length - 1, 4, j);
 		}
 		return map;
 	}
 	
-	private void addRuoh(int[] arr, int i, int direct) {
+	private void addRuoh(int[] arr, int i, int direct, int jj) {
 		for(int j = 0; j < arr.length; j++) {
 			//强2连的专门识别方法---其实也可以正则匹配---一个或者多个的方法
 			if(j + 5 < arr.length) {
@@ -1076,10 +1076,12 @@ public class Wiffii2 extends Application{
 							kong[kc++] = j+k;
 						}
 					}
-					if((wei[1] - wei[0] == 9) && (wei[0] > j) && (wei[1] < j+5)) {//是强2连，否则是也若2连-----会被后面的程序所识别出来
+					if((wei[1] - wei[0] == 1) && (wei[0] > j) && (wei[1] < j+5)) {//是强2连，否则是也若2连-----会被后面的程序所识别出来
 						//j+1 到j+4中选择
-						herlian.add(new BJ(new int[] {i,j}, new int[] {i, j+5}, new int[][] {{i,kong[0]},{i,kong[1]},{i,kong[2]},{i,kong[3]}})
-																.zhuanzhi(direct, new int[] {5, kong[0] - j, kong[1] - j, kong[2] - j, kong[3] - j}));
+						herlian.add(new BJ().ijpipeiwei(direct, new int[] {i,jj} , new int[] {wei[0],wei[1]}, new int[] {kong[0], kong[1], kong[2], kong[3]})
+//								new BJ(new int[] {i,j}, new int[] {i, j+5}, new int[][] {{i,kong[0]},{i,kong[1]},{i,kong[2]},{i,kong[3]}})
+//																.zhuanzhi(direct, new int[] {5, kong[0] - j, kong[1] - j, kong[2] - j, kong[3] - j})
+																);
 					}
 				}
 			}
@@ -1093,7 +1095,9 @@ public class Wiffii2 extends Application{
 							break;
 						}
 					}
-					hrsilian.add(new BJ(new int[] {i,j}, new int[] {i, j+4}, new int[][] {{i,wei}}).zhuanzhi(direct, new int[] {4, wei - j}));
+					hrsilian.add(new BJ().ijpipeiwei(direct, new int[] {i,jj} , new int[] {0,4}, new int[] {wei})
+//							new BJ(new int[] {i,j}, new int[] {i, j+4}, new int[][] {{i,wei}}).zhuanzhi(direct, new int[] {4, wei - j})
+							);
 				}else if(count == 3 * 9) {//连续5个，和为3
 					int wei[] = new int[2];
 					int c = 0;
@@ -1103,7 +1107,9 @@ public class Wiffii2 extends Application{
 							break;
 						}
 					}
-					hrsanlian.add(new BJ(new int[] {i,j}, new int[] {i, j+4}, new int[][] {{i,wei[0]},{i,wei[1]}}).zhuanzhi(direct, new int[] {4, wei[0] - j, wei[1] - j}));
+					hrsanlian.add(new BJ().ijpipeiwei(direct, new int[] {i,jj} , new int[] {0,4}, new int[] {wei[0], wei[1]})
+//							new BJ(new int[] {i,j}, new int[] {i, j+4}, new int[][] {{i,wei[0]},{i,wei[1]}}).zhuanzhi(direct, new int[] {4, wei[0] - j, wei[1] - j})
+							);
 				}else if(count == 2 * 9) {
 					int wei[] = new int[3];
 					int c = 0;
@@ -1113,13 +1119,15 @@ public class Wiffii2 extends Application{
 							break;
 						}
 					}
-					hrerlian.add(new BJ(new int[] {i,j}, new int[] {i, j+4}, new int[][] {{i,wei[0]},{i,wei[1]},{i,wei[2]}}).zhuanzhi(direct, new int[] {4, wei[0] - j,wei[1] - j,wei[2] - j}));
+					hrerlian.add(new BJ().ijpipeiwei(direct, new int[] {i,jj} , new int[] {0,4}, new int[] {wei[0], wei[1],wei[2]})
+//							new BJ(new int[] {i,j}, new int[] {i, j+4}, new int[][] {{i,wei[0]},{i,wei[1]},{i,wei[2]}}).zhuanzhi(direct, new int[] {4, wei[0] - j,wei[1] - j,wei[2] - j})
+							);
 				}
 			}
 		}
 	}
 	
-	private void addRuo(int[] arr, int i, int direct) {
+	private void addRuo(int[] arr, int i, int direct, int jj) {
 		for(int j = 0; j < arr.length; j++) {
 			//强2连的专门识别方法---其实也可以正则匹配---一个或者多个的方法
 			if(j + 5 < arr.length) {
@@ -1139,8 +1147,10 @@ public class Wiffii2 extends Application{
 					}
 					if((wei[1] - wei[0] == 1) && (wei[0] > j) && (wei[1] < j+5)) {//是强2连，否则是也若2连-----会被后面的程序所识别出来
 						//j+1 到j+4中选择
-						erlian.add(new BJ(new int[] {i,j}, new int[] {i, j+5}, new int[][] {{i,kong[0]},{i,kong[1]},{i,kong[2]},{i,kong[3]}})
-																.zhuanzhi(direct, new int[] {5, kong[0] - j, kong[1] - j, kong[2] - j, kong[3] - j}));
+						erlian.add(new BJ().ijpipeiwei(direct, new int[] {i,jj} , new int[] {wei[0],wei[1]}, new int[] {kong[0],kong[1],kong[2],kong[3]})
+//								new BJ(new int[] {i,j}, new int[] {i, j+5}, new int[][] {{i,kong[0]},{i,kong[1]},{i,kong[2]},{i,kong[3]}})
+//																.zhuanzhi(direct, new int[] {5, kong[0] - j, kong[1] - j, kong[2] - j, kong[3] - j})
+																);
 					}
 				}
 			}
@@ -1154,7 +1164,9 @@ public class Wiffii2 extends Application{
 							break;
 						}
 					}
-					rsilian.add(new BJ(new int[] {i,j}, new int[] {i, j+4}, new int[][] {{i,wei}}).zhuanzhi(direct, new int[] {4, wei - j}));
+					rsilian.add(new BJ().ijpipeiwei(direct, new int[] {i,jj} , new int[] {0,4}, new int[] {wei})
+//							new BJ(new int[] {i,j}, new int[] {i, j+4}, new int[][] {{i,wei}}).zhuanzhi(direct, new int[] {4, wei - j})
+							);
 				}else if(count == 3) {//连续5个，和为3
 					int wei[] = new int[2];
 					int c = 0;
@@ -1169,7 +1181,9 @@ public class Wiffii2 extends Application{
 						//交换
 						jiaohuanXY(wei);
 					}
-					rsanlian.add(new BJ(new int[] {i,j}, new int[] {i, j+4}, new int[][] {{i,wei[0]},{i,wei[1]}}).zhuanzhi(direct, new int[] {4, wei[0] - j, wei[1] - j}));
+					rsanlian.add(new BJ().ijpipeiwei(direct, new int[] {i,jj} , new int[] {0,4}, new int[] {wei[0], wei[1]})
+//							new BJ(new int[] {i,j}, new int[] {i, j+4}, new int[][] {{i,wei[0]},{i,wei[1]}}).zhuanzhi(direct, new int[] {4, wei[0] - j, wei[1] - j})
+							);
 				}else if(count == 2) {
 					int wei[] = new int[3];
 					int c = 0;
@@ -1179,7 +1193,9 @@ public class Wiffii2 extends Application{
 							break;
 						}
 					}
-					rerlian.add(new BJ(new int[] {i,j}, new int[] {i, j+4}, new int[][] {{i,wei[0]},{i,wei[1]},{i,wei[2]}}).zhuanzhi(direct, new int[] {4, wei[0] - j,wei[1] - j,wei[2] - j}));
+					rerlian.add(new BJ().ijpipeiwei(direct, new int[] {i,jj} , new int[] {0,4}, new int[] {wei[0], wei[1], wei[2]})
+//							new BJ(new int[] {i,j}, new int[] {i, j+4}, new int[][] {{i,wei[0]},{i,wei[1]},{i,wei[2]}}).zhuanzhi(direct, new int[] {4, wei[0] - j,wei[1] - j,wei[2] - j})
+							);
 				}
 			}
 		}
