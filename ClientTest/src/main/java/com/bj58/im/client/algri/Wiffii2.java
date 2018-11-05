@@ -1095,7 +1095,7 @@ public class Wiffii2 extends Application{
 							break;
 						}
 					}
-					hrsilian.add(new BJ().ijpipeiwei(direct, new int[] {i,jj} , new int[] {0,4}, new int[] {wei})
+					hrsilian.add(new BJ().ijpipeiwei(direct, new int[] {i,jj} , new int[] {j+0,j+4}, new int[] {wei})
 //							new BJ(new int[] {i,j}, new int[] {i, j+4}, new int[][] {{i,wei}}).zhuanzhi(direct, new int[] {4, wei - j})
 							);
 				}else if(count == 3 * 9) {//连续5个，和为3
@@ -1107,7 +1107,7 @@ public class Wiffii2 extends Application{
 							break;
 						}
 					}
-					hrsanlian.add(new BJ().ijpipeiwei(direct, new int[] {i,jj} , new int[] {0,4}, new int[] {wei[0], wei[1]})
+					hrsanlian.add(new BJ().ijpipeiwei(direct, new int[] {i,jj} , new int[] {j+0,j+4}, new int[] {wei[0], wei[1]})
 //							new BJ(new int[] {i,j}, new int[] {i, j+4}, new int[][] {{i,wei[0]},{i,wei[1]}}).zhuanzhi(direct, new int[] {4, wei[0] - j, wei[1] - j})
 							);
 				}else if(count == 2 * 9) {
@@ -1119,7 +1119,7 @@ public class Wiffii2 extends Application{
 							break;
 						}
 					}
-					hrerlian.add(new BJ().ijpipeiwei(direct, new int[] {i,jj} , new int[] {0,4}, new int[] {wei[0], wei[1],wei[2]})
+					hrerlian.add(new BJ().ijpipeiwei(direct, new int[] {i,jj} , new int[] {j+0,j+4}, new int[] {wei[0], wei[1],wei[2]})
 //							new BJ(new int[] {i,j}, new int[] {i, j+4}, new int[][] {{i,wei[0]},{i,wei[1]},{i,wei[2]}}).zhuanzhi(direct, new int[] {4, wei[0] - j,wei[1] - j,wei[2] - j})
 							);
 				}
@@ -1164,7 +1164,7 @@ public class Wiffii2 extends Application{
 							break;
 						}
 					}
-					rsilian.add(new BJ().ijpipeiwei(direct, new int[] {i,jj} , new int[] {0,4}, new int[] {wei})
+					rsilian.add(new BJ().ijpipeiwei(direct, new int[] {i,jj} , new int[] {j+0,j+4}, new int[] {wei})
 //							new BJ(new int[] {i,j}, new int[] {i, j+4}, new int[][] {{i,wei}}).zhuanzhi(direct, new int[] {4, wei - j})
 							);
 				}else if(count == 3) {//连续5个，和为3
@@ -1181,7 +1181,7 @@ public class Wiffii2 extends Application{
 						//交换
 						jiaohuanXY(wei);
 					}
-					rsanlian.add(new BJ().ijpipeiwei(direct, new int[] {i,jj} , new int[] {0,4}, new int[] {wei[0], wei[1]})
+					rsanlian.add(new BJ().ijpipeiwei(direct, new int[] {i,jj} , new int[] {j+0,j+4}, new int[] {wei[0], wei[1]})
 //							new BJ(new int[] {i,j}, new int[] {i, j+4}, new int[][] {{i,wei[0]},{i,wei[1]}}).zhuanzhi(direct, new int[] {4, wei[0] - j, wei[1] - j})
 							);
 				}else if(count == 2) {
@@ -1193,7 +1193,7 @@ public class Wiffii2 extends Application{
 							break;
 						}
 					}
-					rerlian.add(new BJ().ijpipeiwei(direct, new int[] {i,jj} , new int[] {0,4}, new int[] {wei[0], wei[1], wei[2]})
+					rerlian.add(new BJ().ijpipeiwei(direct, new int[] {i,jj} , new int[] {j+0,j+4}, new int[] {wei[0], wei[1], wei[2]})
 //							new BJ(new int[] {i,j}, new int[] {i, j+4}, new int[][] {{i,wei[0]},{i,wei[1]},{i,wei[2]}}).zhuanzhi(direct, new int[] {4, wei[0] - j,wei[1] - j,wei[2] - j})
 							);
 				}
@@ -1341,7 +1341,7 @@ public class Wiffii2 extends Application{
 		while(m3.find()) {
 			f1 = true;
 			int wei = m3.start();//多次匹配，以后处理
-			BJ bj = new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei, wei+6}, new int[] {wei+1, wei+5});
+			BJ bj = new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei+2, wei+4}, new int[] {wei+1, wei+5});
 //			BJ bj = new BJ(new int[] {i,wei}, new int[] {i, wei+6}, new int[][] {{i,wei+1},{i,wei+5}});
 //			bj.zhuanzhi(direct, new int[] {6, 1, 5});
 			hsanlian.add(bj);//因为必胜，所以可以定 一定是哪些点，而不是还要再判断
@@ -1350,7 +1350,7 @@ public class Wiffii2 extends Application{
 			while(m32.find()) {
 				f2 = true;
 				int wei = m32.start();//多次匹配，以后处理
-				BJ bj = new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei, wei+5}, new int[] {wei+1});
+				BJ bj = new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei+2, wei+4}, new int[] {wei+1});
 //				BJ bj = new BJ(new int[] {i,wei}, new int[] {i, wei+5}, new int[][] {{i,wei+1}});
 //				bj.zhuanzhi(direct, new int[] {2, 1});
 				hsanlian.add(bj);
@@ -1359,7 +1359,7 @@ public class Wiffii2 extends Application{
 		if(!f1 && !f2) {
 			while(m33.find()) {
 				int wei = m33.start();//多次匹配，以后处理
-				BJ bj = new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei, wei+2}, new int[] {wei+4});
+				BJ bj = new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei+1, wei+3}, new int[] {wei+4});
 //				BJ bj = new BJ(new int[] {i,wei}, new int[] {i, wei+2}, new int[][] {{i,wei+4}});
 //				bj.zhuanzhi(direct, new int[] {2, 4});
 				hsanlian.add(bj);
@@ -1367,13 +1367,13 @@ public class Wiffii2 extends Application{
 		}
 		if(m34.find()) {
 			int wei = m34.start();
-			sanlian.add(new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei, wei+2}, new int[] {wei+3})
+			hsanlian.add(new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei+1, wei+4}, new int[] {wei+3})
 //					new BJ(new int[] {i,wei}, new int[] {i, wei+2}, new int[][] {{i,wei+3}})
 					);
 		}
 		if(m35.find()) {
 			int wei = m35.start();
-			sanlian.add(new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei, wei+2}, new int[] {wei+2})
+			hsanlian.add(new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei+1, wei+4}, new int[] {wei+2})
 //					new BJ(new int[] {i,wei}, new int[] {i, wei+2}, new int[][] {{i,wei+2}})
 					);
 		}
@@ -1507,7 +1507,7 @@ public class Wiffii2 extends Application{
 		Matcher m = p4.matcher(str);
 		while(m.find()) {
 			int wei = m.start();//多次匹配，以后处理
-			BJ bj = new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei, wei+3}, new int[] {0,5});//(new int[] {i,wei}, new int[] {i, wei+3}, new int[][] {{i,wei},{i,wei+5}});
+			BJ bj = new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei+1, wei+4}, new int[] {wei,wei+5});//(new int[] {i,wei}, new int[] {i, wei+3}, new int[][] {{i,wei},{i,wei+5}});
 //			bj.zhuanzhi(direct, new int[] {3, 0, 5});
 			silian.add(bj);
 		}
@@ -1521,7 +1521,7 @@ public class Wiffii2 extends Application{
 		while(m3.find()) {
 			f1 = true;
 			int wei = m3.start();//多次匹配，以后处理
-			BJ bj = new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei, wei+2}, new int[] {1,5});//(new int[] {i,wei}, new int[] {i, wei+2}, new int[][] {{i,wei+1},{i,wei+5}});
+			BJ bj = new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei+2, wei+4}, new int[] {wei+1,wei+5});//(new int[] {i,wei}, new int[] {i, wei+2}, new int[][] {{i,wei+1},{i,wei+5}});
 //			bj.zhuanzhi(direct, new int[] {2, 1, 5});
 			sanlian.add(bj);//因为必胜，所以可以定 一定是哪些点，而不是还要再判断
 		}
@@ -1529,7 +1529,7 @@ public class Wiffii2 extends Application{
 			while(m32.find()) {
 				f2 = true;
 				int wei = m32.start();//多次匹配，以后处理
-				BJ bj = new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei, wei+2}, new int[] {1});//new BJ(new int[] {i,wei}, new int[] {i, wei+2}, new int[][] {{i,wei+1}});
+				BJ bj = new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei+2, wei+4}, new int[] {wei+1});//new BJ(new int[] {i,wei}, new int[] {i, wei+2}, new int[][] {{i,wei+1}});
 //				bj.zhuanzhi(direct, new int[] {2, 1});
 				sanlian.add(bj);
 			}
@@ -1537,18 +1537,18 @@ public class Wiffii2 extends Application{
 		if(!f1 && !f2) {
 			while(m33.find()) {
 				int wei = m33.start();//多次匹配，以后处理
-				BJ bj = new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei, wei+2}, new int[] {4});//new BJ(new int[] {i,wei}, new int[] {i, wei+2}, new int[][] {{i,wei+4}});
+				BJ bj = new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei+1, wei+3}, new int[] {wei+4});//new BJ(new int[] {i,wei}, new int[] {i, wei+2}, new int[][] {{i,wei+4}});
 //				bj.zhuanzhi(direct, new int[] {2, 4});
 				sanlian.add(bj);
 			}
 		}
 		if(m34.find()) {
 			int wei = m34.start();
-			sanlian.add(new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei, wei+2}, new int[] {3}));
+			sanlian.add(new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei+1, wei+4}, new int[] {wei+3}));
 		}
 		if(m35.find()) {
 			int wei = m35.start();
-			sanlian.add(new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei, wei+2}, new int[] {2}));
+			sanlian.add(new BJ().ijpipeiwei(direct, new int[] {i,j},new int[] {wei+1, wei+4}, new int[] {wei+2}));
 		}
 		//强2连
 		Matcher m2 = p2.matcher(str);
@@ -1595,7 +1595,7 @@ public class Wiffii2 extends Application{
 		return rs;
 	}
 
-	static Pattern hp5 = Pattern.compile("1{5,}");
+	static Pattern hp5 = Pattern.compile("9{5,}");
 	static Pattern hp4 = Pattern.compile("09{4,}0");
 	static Pattern hp3 = Pattern.compile("009{3}00");
 	static Pattern hp32 = Pattern.compile("009{3}0");
