@@ -3,6 +3,8 @@ package com.scrapy.test;
 import java.io.IOException;
 import java.io.StringBufferInputStream;
 import java.io.StringReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -19,6 +21,8 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
+import org.jsoup.Jsoup;
+import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -41,7 +45,7 @@ public class App
 
 	private static void xpathTest() {
 		WebDriver driver = getOneDriver();
-		driver.get("https://bj.ke.com/ershoufang/101103599958.html?fb_expo_id=111874061422358528");
+		driver.get("https://bj.ke.com/ershoufang/101103599958.html");
         driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS); 
         WebElement element = driver.findElement(By.className("sellDetailHeader"));
         System.out.println(element.getTagName());
@@ -49,6 +53,27 @@ public class App
         WebElement el = element.findElement(By.tagName("div").className("title").tagName("h1"));
         System.out.println("-----------");
         System.out.println(el.getAttribute("title"));
+        //强化测试
+//        List<WebElement> lis = driver.findElements(By.tagName("div").className("thumbnail").tagName("ul").className("smallpic").tagName("li"));
+//        System.out.println(lis.size());
+//        for(WebElement e : lis) {
+//        	System.out.println(e.getText());
+//        }
+//      org.jsoup.nodes.Document du = Jsoup.parse(new URL("https://bj.ke.com/ershoufang/101103599958.html"), 3000);
+//      System.out.println(du.outerHtml());
+    	org.jsoup.nodes.Document du = Jsoup.parse(driver.getPageSource());
+    	Elements elements = du.getElementsByAttributeValue("class", "sellDetailHeader");
+    	Elements ele = elements.get(0).getElementsByAttributeValue("class", "title");
+        System.out.println(ele.get(0).getElementsByTag("h1").get(0).attr("title"));
+        String title = du.select("div.sellDetailHeader").get(0).select("div.title").get(0).select("h1").attr("title");
+        System.out.println("------------:" + title);
+        Elements lis = du.select("div.thumbnail").get(0).select("ul.smallpic").get(0).select("li");
+        for(int i = 0 ; i < lis.size(); i++) {
+        	System.out.println(lis.get(i).attr("data-src"));
+        }
+//      Elements ele = elements.select("div.title").select("h1");
+		//第二重测试
+        
 //        WebElement elemeent = driver.findElement(By.xpath("//div[@class='sellDetailHeader']"));
 //        System.out.println(elemeent.getText());
 //		xpath(driver.getPageSource());
