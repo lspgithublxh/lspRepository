@@ -118,6 +118,8 @@ public class Wiffii2 extends Application{
 			try {
 				Map<String, int[]> cacheMap = new HashMap<>();
 				Scanner scanner = new Scanner(System.in);
+				boolean baiWin = false;
+				boolean heiWin = false;
 				while(true) {
 						Map<String, List<BJ>> bai = kanbai(start);
 						Map<String, List<BJ>> hei = kanhei(start);
@@ -130,12 +132,14 @@ public class Wiffii2 extends Application{
 							start[chu[0]][chu[1]] = 1;
 							System.out.println("chu: q_si_l");
 							currPoint = chu;
+							baiWin = true;
 						} else if (bai.containsKey("r_si_l") && bai.get("r_si_l").size() > 0) {
 							List<BJ> qsi = bai.get("r_si_l");
 							int[] chu = qsi.get(0).k[0];
 							start[chu[0]][chu[1]] = 1;
-							System.out.println("chu: r_si_l");
+							System.out.println("chu: r_si_l");//已经胜利
 							currPoint = chu;
+							baiWin = true;
 						} else if (hei.containsKey("q_si_l") && hei.get("q_si_l").size() > 0) {//双强3连的处理没？
 							List<BJ> qsi = hei.get("q_si_l");
 							int[] chu = qsi.get(0).k[0];
@@ -243,6 +247,7 @@ public class Wiffii2 extends Application{
 						} else {
 							System.out.println("not know how to luo zi");
 						}
+						
 						final int[] draw = currPoint;
 						final Object lock = new Object();
 						final boolean[] x = new boolean[] {false};
@@ -260,6 +265,10 @@ public class Wiffii2 extends Application{
 							if(x[0] == false) {
 								lock.wait();
 							}
+						}
+						//先断定一下：否则晚了
+						if(baiWin) {
+							throw new Exception("bai win");
 						}
 						synchronized (outerLock) {
 							if(quan) {
