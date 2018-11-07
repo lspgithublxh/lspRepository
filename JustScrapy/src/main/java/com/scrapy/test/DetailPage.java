@@ -61,21 +61,33 @@ public class DetailPage {
 	
 	public static void main(String[] args) {
 		String count_ = args.length == 0 ? "0" : args[0];
+		final String config = args.length < 2 ? "config" : args[1];
 		int count = Integer.valueOf(count_);
-		count = count == 0 ? 10 : count;
+		count = count == 0 ? 1 : count;
 		ExecutorService exe = Executors.newCachedThreadPool();
 		for(int i = 0 ; i < count; i++) {
 			exe.execute(new Runnable() {
 				public void run() {
-					worker();
+					WebDriver driver = getOneDriver();
+					while(true) {
+						try {
+							worker(config, driver);
+						} catch (Exception e) {
+							e.printStackTrace();
+							driver.quit();
+							break;
+						}
+					}
+					
 				}
 			});
 		}
 	}
 
-	private static void worker() {
-		WebDriver driver = getOneDriver();
-		driver.get("https://bj.ke.com/ershoufang/101103599958.html");
+	private static void worker(String redis, WebDriver driver) {
+		String config = RedisTest.getJedis().rpop(redis);
+		String[] idCitys = config.split(",");
+		driver.get(String.format("https://%s.ke.com/ershoufang/%s.html", idCitys[1], idCitys[0]));
         driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS); 
         
         //开始
@@ -161,8 +173,16 @@ public class DetailPage {
 			brokerMap.put("head", headHref);
 			brokerMap.put("brokerName", broker.get(0).select("span.name.LOGCLICK").get(0).text());
 			brokerMap.put("brand", broker.get(0).select("span.brand_tag").get(0).text());
-			brokerMap.put("xinxika", broker.get(0).select("span.jjr_infocard").get(0).attr("data-pop-img"));
-			brokerMap.put("zhengka", broker.get(0).select("span.jjr_license").get(0).attr("data-pop-img"));
+			try {
+				brokerMap.put("xinxika", broker.get(0).select("span.jjr_infocard").get(0).attr("data-pop-img"));
+			} catch (Exception e) {
+//				e.printStackTrace();
+			}
+			try {
+				brokerMap.put("zhengka", broker.get(0).select("span.jjr_license").get(0).attr("data-pop-img"));
+			} catch (Exception e) {
+//				e.printStackTrace();
+			}
 			brokerMap.put("phone",
 					binfo.get(0).select("div.phone")
 					.get(0).select("div.phone400")
@@ -185,7 +205,7 @@ public class DetailPage {
 				//        	introArr[i] = m;
 				introArr.add(m);
 			}
-			System.out.println(detail);
+//			System.out.println(detail);
 			Elements transclis = introContent.select("div.transaction").get(0).select("ul").get(0).select("li");
 			//        Map[] tranarr = new Map[transclis.size()];
 			JSONArray tranarr = new JSONArray();
@@ -254,7 +274,11 @@ public class DetailPage {
 			Map<String, String> daiKanMap = new HashMap<String, String>();
 			daiKanMap.put("name", itemAgentName.get(0).text());
 			daiKanMap.put("brand", brand_tag.get(0).text());
-			daiKanMap.put("card", jjr_infocard.get(0).attr("data-pop-img"));
+			try {
+				daiKanMap.put("card", jjr_infocard.get(0).attr("data-pop-img"));
+			} catch (Exception e) {
+//				e.printStackTrace();
+			}
 			daiKanMap.put("phone", phone.get(0).text());
 			daiKanMap.put("desc", desc.get(0).text());
 			daiKanMap.put("record", recordDaikan.get(0).text());
@@ -283,7 +307,11 @@ public class DetailPage {
 			Map<String, Object> hxfjMap = new HashMap<String, Object>();
 			hxfjMap.put("nameurl", agentTips.get(0).select("div.fl").get(0).select("img").attr("src"));
 			hxfjMap.put("name", agentFr.get(0).select("div.text").get(0).select("span").text());
-			hxfjMap.put("card", agentFr.get(0).select("div.jjr_infocard").get(0).attr("data-pop-img"));
+			try {
+				hxfjMap.put("card", agentFr.get(0).select("div.jjr_infocard").get(0).attr("data-pop-img"));
+			} catch (Exception e) {
+//				e.printStackTrace();
+			}
 			hxfjMap.put("phone", agentFr.get(0).select("p").get(0).text());
 			hxfjMap.put("hxtu", imgDiv.get(0).attr("data-img"));
 			hxfjMap.put("desc", descArr);
@@ -379,7 +407,7 @@ public class DetailPage {
 			xqInfoMap.put("data", xqInfoArr);
 			detail.put("xq_info", xqInfoMap);
 		} catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 		try {
 			Elements xq_cjrecord = du.select("div#dealPrice").get(0).select("div#bizcircleDeal").get(0)
@@ -419,7 +447,7 @@ public class DetailPage {
 			e.printStackTrace();
 		}
 		logger.info(detail);
-		driver.quit();//关闭后台进程
+//		driver.quit();//关闭后台进程
 	}
 	
 	private static WebDriver getOneDriver() {

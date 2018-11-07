@@ -16,12 +16,7 @@ public class RedisTest {
 	static ShardedJedisPool shardedJedisPool;
 	static Jedis jedis;
 	static ShardedJedis sharedJedis;
-	
-	public static void main(String[] args) {
-		test();
-	}
-
-	private static void test() {
+	static {
 		JedisPoolConfig config = new JedisPoolConfig();
 		config.setMaxTotal(20);
 		config.setMaxWaitMillis(1000 * 3);
@@ -31,6 +26,17 @@ public class RedisTest {
 		initialShardedPool();
 		jedis = pool.getResource();
 		sharedJedis = shardedJedisPool.getResource();
+	}
+	
+	public static Jedis getJedis() {
+		return jedis;
+	}
+
+	public static void main(String[] args) {
+		test();
+	}
+
+	private static void test() {
 		baseTest();	
 	}
 	
