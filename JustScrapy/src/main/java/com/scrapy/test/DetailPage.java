@@ -9,6 +9,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -28,13 +29,15 @@ public class DetailPage {
 		driver.get("https://bj.ke.com/ershoufang/101103599958.html");
         driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS); 
         //开始
+        Map<String, Object> detail = new HashMap<String, Object>();
+        
         Document du = Jsoup.parse(driver.getPageSource());
     	Elements elements = du.getElementsByAttributeValue("class", "sellDetailHeader");
     	Elements ele = elements.get(0).getElementsByAttributeValue("class", "title");
         Map<String, String> titlMap = new HashMap<String, String>();
         titlMap.put("main", ele.get(0).select("h1").get(0).attr("title"));
         titlMap.put("sub", ele.get(0).select("div.sub").get(0).text());
-       
+        detail.put("title", titlMap);
 //        String title = du.select("div.sellDetailHeader").get(0).select("div.title").get(0).select("h1").attr("title");
 //        System.out.println("------------:" + title);
         
@@ -43,6 +46,7 @@ public class DetailPage {
         for(int i = 0 ; i < lis.size(); i++) {
         	imgs[i] = lis.get(i).attr("data-src");
         }
+        detail.put("img", imgs);
         
         Elements duu = du.select("div.overview");
         Elements price = duu.get(0).select("div.content").get(0).select("div.price");
@@ -50,7 +54,7 @@ public class DetailPage {
         priceMap.put("total", price.get(0).select("span.total").get(0).text());
         priceMap.put("unit", price.get(0).select("span.unit").get(0).text());
         priceMap.put("unitPrice", price.get(0).select("div.unitPrice").get(0).text());
-        System.out.println(priceMap);
+        detail.put("price", priceMap);
         
         Map<String, String> houseMap = new HashMap<String, String>();
         Elements houseInfo = duu.get(0).select("div.houseInfo");
@@ -63,6 +67,7 @@ public class DetailPage {
         houseMap.put("loutype", type.get(0).select("div.subInfo").get(0).text());
         houseMap.put("mianji", area.get(0).select("div.mainInfo").get(0).text());
         houseMap.put("buildtime", area.get(0).select("div.subInfo").get(0).text());
+        detail.put("house", houseMap);
         
         Elements around = duu.get(0).select("div.aroundInfo");
         Element xiaoqu = around.get(0).select("div.communityName").get(0).select("a.info").get(0);
@@ -76,6 +81,7 @@ public class DetailPage {
         aroundMap.put("xiaoquId", xiaoquId);
         aroundMap.put("area", areaName.get(0).select("span.info").get(0).text());
         aroundMap.put("ditie", areaName.get(0).select("a.supplement").get(0).text());
+        detail.put("quyu", aroundMap);
         
         Elements brokerInfo = duu.get(0).select("div.brokerInfo").get(0).select("div.agentInfo");
         Elements headPhoto = brokerInfo.get(0).select("img.head_photo");
@@ -88,6 +94,7 @@ public class DetailPage {
         brokerMap.put("xinxika", broker.get(0).select("span.jjr_infocard").get(0).attr("data-pop-img"));
         brokerMap.put("zhengka", broker.get(0).select("span.jjr_license").get(0).attr("data-pop-img"));
         brokerMap.put("phone", brokerInfo.get(0).select("div.phone").get(0).select("div.phone400").get(0).text());
+        detail.put("agentInfo", brokerMap);
         
         Elements introContent = du.select("div#introduction").get(0).select("div.introContent");
         Elements intro_lis = introContent.get(0).select("div.base").get(0).select("ul").get(0).select("li");
@@ -113,6 +120,7 @@ public class DetailPage {
         Map<String, Map[]> basetransbody = new HashMap<String, Map[]>();
         basetransbody.put("baseinfolist", introArr);
         basetransbody.put("transaction", tranarr);
+        detail.put("baseinfodetail", basetransbody);
         
         Elements tese = du.select("div.introContent showbasemore");
         Elements tags = tese.get(0).select("div.tags clear");
@@ -121,21 +129,22 @@ public class DetailPage {
         for(int i = 0; i < tagsA.size(); i++) {
         	tagNames += tagsA.get(i).text() + ",";
         }
-        Map[] tagNameMap = new Map[transclis.size()];
+        Elements baseattrOther = tese.get(0).select("div.baseattribute clear");
+        Map[] tagNameMap = new Map[baseattrOther.size() + 1];
         Map mt = new HashMap<String, String>();
         mt.put("name", tags.get(0).select("div.name").get(0).text());
         mt.put("content", tagNames);
         tagNameMap[0] = mt;
-        Elements baseattrOther = tese.get(0).select("div.baseattribute clear");
-        Map[] baseArr = new Map[baseattrOther.size()];
+//        Map[] baseArr = new Map[baseattrOther.size()];
         for(int i = 0; i < baseattrOther.size(); i++) {
         	Map m = new HashMap<String, String>();
         	String name = baseattrOther.get(i).select("div.name").get(0).text();
         	m.put("name", name);
         	String introText = baseattrOther.get(i).select("div.content").get(0).text();
         	m.put("content", introText);
-        	baseArr[i] = m;
+        	tagNameMap[i+1] = m;
         }
+        detail.put("tese", tagNameMap);
         
         Elements daikan = du.select("div#daikanContainer").get(0).select("div.daikan_list").get(0).select("div.item clear");
         Elements imgDaiKan = daikan.get(0).select("span.img");
@@ -155,13 +164,10 @@ public class DetailPage {
         daiKanMap.put("desc", desc.get(0).text());
         daiKanMap.put("record", recordDaikan.get(0).text());
         daiKanMap.put("imgurl", imgDaiKan.get(0).attr("src"));
+        detail.put("daikan", daiKanMap);
         
         Elements agentTips = du.select("div.agent-tips");
-        ;
         Elements agentFr = agentTips.get(0).select("div.fr");
-        
-       
-        
         Elements hxfj_content = du.select("div.layout-wrapper").get(0).select("div.content");
         Elements imgDiv = hxfj_content.get(0).select("div.imgdiv");
         Elements hxfjDes = hxfj_content.get(0).select("div.des").get(0).select("div#infoList").get(0).select("div.row");
@@ -181,9 +187,10 @@ public class DetailPage {
         hxfjMap.put("phone", agentFr.get(0).select("p").get(0).text());
         hxfjMap.put("hxtu", imgDiv.get(0).attr("data-img"));
         hxfjMap.put("desc", descArr);
+        detail.put("hxfj", hxfjMap);
         
         Elements housepic = du.select("div.housePic").get(0).select("div.list").get(0).select("div");
-        Map[] houseArr = new Map[baseattrOther.size()];
+        Map[] houseArr = new Map[housepic.size()];
         for(int i = 0; i < housepic.size(); i++) {
         	String dx = housepic.get(i).attr("class");
         	if(dx != null && "left_fix".equals(dx)) {
@@ -199,9 +206,11 @@ public class DetailPage {
         	m.put("picurl", src);
         	houseArr[i] = m;
         }
+        detail.put("pics", houseArr);
+        
         Elements fyrecord = du.select("div#record");
         Elements fy_rows = fyrecord.get(0).select("div.list").get(0).select("content").get(0).select("div.row");
-        Map[] fyrecordArr = new Map[baseattrOther.size()];
+        Map[] fyrecordArr = new Map[fy_rows.size()];
         for(int i = 0; i < fy_rows.size(); i++) {
         	Elements mytime = fy_rows.get(i).select("div.item mytime");
         	Elements agentName = fy_rows.get(i).select("div.agentName");
@@ -209,17 +218,17 @@ public class DetailPage {
         			agentName == null || agentName.size() == 0) {
         		continue;
         	}
-        	agentName.get(i).select("div.jjr_infocard");
+        	agentName.get(0).select("div.jjr_infocard");
         	Elements agentPhone = fy_rows.get(i).select("div.phone");
         	Elements agentTotal = fy_rows.get(i).select("div.item mytotal");
         	Map m = new HashMap<String, String>();
-        	m.put("time", mytime.get(i).text());
-        	m.put("img", agentName.get(i).select("div.head_photo").get(0).attr("src"));
-        	m.put("name", agentName.get(i).select("span").get(i).text());
-        	m.put("brand", agentName.get(i).select("div.brand").get(i).text());
-        	m.put("card", agentName.get(i).select("div.brand").get(i).attr("data-pop-img"));
-        	m.put("phone", agentPhone.get(i).text());
-        	m.put("times", agentTotal.get(i).text());
+        	m.put("time", mytime.get(0).text());
+        	m.put("img", agentName.get(0).select("div.head_photo").get(0).attr("src"));
+        	m.put("name", agentName.get(0).select("span").get(0).text());
+        	m.put("brand", agentName.get(0).select("div.brand").get(0).text());
+        	m.put("card", agentName.get(0).select("div.brand").get(0).attr("data-pop-img"));
+        	m.put("phone", agentPhone.get(0).text());
+        	m.put("times", agentTotal.get(0).text());
         	fyrecordArr[i] = m;
         }
         Elements fypanel = fyrecord.get(0).select("div.panel");
@@ -228,8 +237,65 @@ public class DetailPage {
         fypanelMap.put("last7", fypanel.get(0).select("div.panel-title").get(0).text());
         fypanelMap.put("count", fypanel.get(0).select("div.count").get(0).text());
         fypanelMap.put("totalcount", fypanel.get(0).select("div.totalCount").get(0).text());
+        detail.put("fy_record", fypanelMap);
         
+        JavascriptExecutor driver2 = (JavascriptExecutor)driver;
+        driver2.executeScript("window.scrollBy(0, 700)");
+        driver2.executeScript("window.scrollBy(0, 800)");
+        driver2.executeScript("window.scrollBy(0, 900)");
+        driver2.executeScript("window.scrollBy(0, 1000)");
         
+        Elements xiaoquCard = du.select("div#resblockCardContainer").get(0).select("div.xiaoquCard")
+        		.get(0).select("div.xiaoqu_content").get(0).select("div.xiaoqu_main fl").get(0).select("div.xiaoqu_info");
+        Map[] xqInfoArr = new Map[xiaoquCard.size()];
+        for(int i = 0; i < xiaoquCard.size(); i++) {
+        	Elements label = xiaoquCard.get(i).select("label");
+        	Elements content = xiaoquCard.get(i).select("content");
+        	String con = "";
+        	for(int j = 0 ; j < content.size(); j++) {
+        		con += content.get(j).text() + ",";
+        	}
+        	Map m = new HashMap<String, String>();
+        	m.put("label", label.get(0).text());
+        	m.put("content", con);
+        	xqInfoArr[i] = m;
+        }
+        Map<String, Object> xqInfoMap = new HashMap<String, Object>();
+        xqInfoMap.put("data", xqInfoArr);
+        detail.put("xq_info", xqInfoMap);
+        
+        Elements xq_cjrecord = du.select("div#dealPrice").get(0).select("div#bizcircleDeal").get(0).select("div.row");
+        Map[] xqCjJlArr = new Map[xq_cjrecord.size()];
+        for(int i = 0; i < xq_cjrecord.size(); i++) {
+        	Elements house = xq_cjrecord.get(i).select("div.house");
+        	Elements xqarea = xq_cjrecord.get(i).select("div.area");
+        	Elements date = xq_cjrecord.get(i).select("div.date");
+        	Elements xqprice = xq_cjrecord.get(i).select("div.price");
+        	Elements xqunitprice = xq_cjrecord.get(i).select("div.unitPrice");
+        	Elements from = xq_cjrecord.get(i).select("div.from");
+        	Elements cjfy = house.get(0).select("a");
+        	Elements cjDesc = house.get(0).select("div.desc");
+        	Elements frame = cjDesc.get(0).select("div.frame");
+        	Elements floor = cjDesc.get(0).select("div.floor");
+        	Elements cjname = cjDesc.get(0).select("a");
+    
+        	Map hMap = new HashMap<String, String>();
+        	hMap.put("href", cjfy.get(0).attr("href"));
+        	hMap.put("frame", frame.get(0).text());
+        	hMap.put("floor", floor.get(0).text());
+        	hMap.put("name", cjname.get(0).text());
+        	
+        	Map rs = new HashMap<String, Object>();
+        	rs.put("house", hMap);
+        	rs.put("area", xqarea.get(0).text());
+        	rs.put("date", date.get(0).text());
+        	rs.put("price", xqprice.get(0).text());
+        	rs.put("unitPrice", xqunitprice.get(0).text());
+        	rs.put("from", from.get(0).text());
+        	xqCjJlArr[i] = rs;
+        	detail.put("xq_cjrecord", xqCjJlArr);
+        }
+
 	}
 	
 	private static WebDriver getOneDriver() {
