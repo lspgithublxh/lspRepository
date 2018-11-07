@@ -23,21 +23,21 @@ public class LogTest2 {
 		//1.ok
 //		method1();
 		//2.ok
-//		try {
-//			method2();
-//		} catch (MalformedURLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		for(String s : args) {
-			System.out.println(s);
+		try {
+			method2();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		SimpleDateFormat formate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSS a");
-		System.out.println(formate.format(new Date(System.currentTimeMillis())));
-		long startTime = 1517023620l;
-		long endTime = 1519963200l;
-		int i = 60;
-		System.out.println((endTime - startTime) / 60 * 1.5 / 60 / 60 + "h");
+//		for(String s : args) {
+//			System.out.println(s);
+//		}
+//		SimpleDateFormat formate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSS a");
+//		System.out.println(formate.format(new Date(System.currentTimeMillis())));
+//		long startTime = 1517023620l;
+//		long endTime = 1519963200l;
+//		int i = 60;
+//		System.out.println((endTime - startTime) / 60 * 1.5 / 60 / 60 + "h");
 //		DOMConfigurator.configure("/opt/test/dataProcess/scf_log4j.xml");  
 //		Logger logger = Logger.getLogger(LogTest_Linux.class);
 //        logger.info("Startup base path " + "");
@@ -55,7 +55,7 @@ public class LogTest2 {
 		URL url = new URL("file:///D:/scf_log2.xml");
 		DOMConfigurator.configure(url);  
 		Logger log = Logger.getLogger(LogTest2.class);
-		for(int i = 0; i < 100000; i++) {
+		for(int i = 0; i < 100; i++) {
 			log.info("df我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是我是是 ");
 		}
 	}
