@@ -32,11 +32,7 @@ import com.alibaba.fastjson.JSONObject;
  *  wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 	sudo apt install -f
 	dpkg -i google-chrome-stable_current_amd64.deb
-	--------------------- 
-	作者：MyCodeBattle 
-	来源：CSDN 
-	原文：https://blog.csdn.net/codebattle/article/details/73650023 
-	版权声明：本文为博主原创文章，转载请附上博文链接！
+	缺点在于启动一个线程 占用内存90M 而python启动一个线程占用30M
  * @ClassName:DetailPage
  * @Description:
  * @Author lishaoping
@@ -88,11 +84,13 @@ public class DetailPage {
 		String config = RedisTest.getJedis().rpop(redis);
 		String[] idCitys = config.split(",");
 		driver.get(String.format("https://%s.ke.com/ershoufang/%s.html", idCitys[1], idCitys[0]));
-        driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS); 
+//        driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS); 
         
         //开始
 //        Map<String, Object> detail = new HashMap<String, Object>();
         JSONObject detail = new JSONObject();
+        detail.put("id", idCitys[0]);
+        detail.put("city", idCitys[1]);
         System.out.println("start parse:");
         Document du = Jsoup.parse(driver.getPageSource());
     	try {
