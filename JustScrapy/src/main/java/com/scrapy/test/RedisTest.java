@@ -22,7 +22,7 @@ public class RedisTest {
 		config.setMaxWaitMillis(1000 * 3);
 		config.setTestOnBorrow(false);
 		config.setMaxIdle(5);
-		pool = new JedisPool(config, "localhost", 6379);
+		pool = new JedisPool(config, "localhost", 6379);//不行
 		initialShardedPool();
 		jedis = pool.getResource();
 		sharedJedis = shardedJedisPool.getResource();
