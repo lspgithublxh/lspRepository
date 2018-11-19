@@ -5,6 +5,15 @@ import java.net.MalformedURLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * https://www.cnblogs.com/jessezeng/p/5144317.html极好参考
+ * @ClassName:LogTest3
+ * @Description:
+ * @Author lishaoping
+ * @Date 2018年11月19日
+ * @Version V1.0
+ * @Package com.bj58.fang.log
+ */
 public class LogTest3 {
 
 	static Logger logger = LoggerFactory.getLogger(LogTest3.class);
