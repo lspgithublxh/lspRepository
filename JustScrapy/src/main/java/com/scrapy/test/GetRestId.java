@@ -54,11 +54,35 @@ public class GetRestId {
 	public static void main(String[] args) {
 //		start();
 //		mysqlrest();
-		putToRedis();
-		
+		putToRedis("D:\\log\\rest23.log");
+//		getDetail();
+//		removeAFromB(new String[] {"D:\\log\\detailps.log", "D:\\log\\detailps23.log"}, "D:\\log\\rest22.log", "D:\\log\\rest23.log");
 	}
 
-	private static void putToRedis() {
+	private static void getDetail() {
+		Connection conn = MysqlTest.getConnection();
+		Statement state;
+		try {
+			state = conn.createStatement();
+			ResultSet rs = state.executeQuery("select detail from quanguo2 limit 2,100000");
+			File f = new File("/log/haha2.log");
+			f.createNewFile();
+			FileWriter writer = new FileWriter(f);
+			int i = 0;
+			while(rs.next()) {
+				String detail = rs.getString(1);
+				writer.write(detail);
+				writer.write("\r\n");
+				System.out.println(i++);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void putToRedis(String yuan) {
 		try {
 			Connection conn = MysqlTest.getConnection();
 			Statement state = conn.createStatement();
@@ -70,7 +94,7 @@ public class GetRestId {
 				map.put(id, city);
 			}
 			
-			BufferedReader reader2 = new BufferedReader(new FileReader("D:\\log\\else2.log"));
+			BufferedReader reader2 = new BufferedReader(new FileReader(yuan));
 			String line = "";
 			Jedis jedis = RedisTest.getJedis();
 			int i = 0;
@@ -132,6 +156,81 @@ public class GetRestId {
 		}
 	}
 
+	/**
+	 * 清晰定义一个函数名的重要性
+	 * @param 
+	 * @author lishaoping
+	 * @Date 2018年11月22日
+	 * @Package com.scrapy.test
+	 * @return void
+	 */
+	private static void removeAFromB(String[] fs, String yuan, String newFile) {
+		List<String> can = new ArrayList<String>();
+		int j = 0; 
+		List<String> rest = new ArrayList<String>();
+		try {
+			BufferedReader reader2 = new BufferedReader(new FileReader(yuan));
+			String line = "";
+			while((line = reader2.readLine())!= null) {
+				rest.add(line.trim());
+			}
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		for(String fi : fs) {
+			File f = new File(fi);
+			BufferedReader reader;
+			try {
+				reader = new BufferedReader(new FileReader(f));
+				String line = null;
+				String lastLine = "";
+				while((line = reader.readLine()) != null) {//此方法并行读是否可以reader.readLine()
+					if(line.length() < 10) {
+						System.out.println(line);
+						System.out.println(fi);//日志写入----并发时可能有问题：竟然会有：3016"}的残留--12243比较多
+						System.out.println(lastLine);
+						j++;
+						can.add(line);
+						continue;
+					}
+					j++;
+					String l = line.substring(
+							line.lastIndexOf(",") + 9, 
+							line.length() - 2);
+					System.out.println(j);
+					rest.remove(l);
+				}
+				
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println(can);
+		File el = new File(newFile);
+		if(!el.exists()) {
+			try {
+				el.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		try {
+			FileWriter writer = new FileWriter(el);
+			for(String s : rest) {
+				writer.write(s);
+				writer.write("\r\n");
+			}
+			writer.flush();
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * 
 	 * @param 
