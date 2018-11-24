@@ -114,10 +114,10 @@ public class BFcache2 extends Application{
 	 */
 	public static void autoSeletedXiaoquCache() {//固定存5000条//固定访问次数保留：10次以内的去掉
 //		TreeMap<String, CacheEntity> map = new TreeMap<String, CacheEntity>(); 
-		
+		int score = 3;
 		final Map<String, CacheEntity> map = new ConcurrentHashMap<String, CacheEntity>(5000);
 		for(int i = 0; i < 3000;i++) {
-			map.put(i+"", new CacheEntity(i + "", System.currentTimeMillis(), 10));
+			map.put(i+"", new CacheEntity(i + "", System.currentTimeMillis(), score));
 			System.out.println("put data:" + i);
 		}
 		new Thread(new Runnable() {
@@ -134,7 +134,7 @@ public class BFcache2 extends Application{
 //					System.out.println("reqeust:" + d);
 					if(map.size() < 5000) {
 						System.out.println(map.size());
-						map.put("" + d, new CacheEntity(d + "", System.currentTimeMillis(), 10));
+						map.put("" + d, new CacheEntity(d + "", System.currentTimeMillis(), score));
 					}else {//准备回收
 						System.out.println(map.size());
 						if(map.containsKey(d+"")) {
@@ -152,13 +152,13 @@ public class BFcache2 extends Application{
 										map.remove(entity.getKey());
 										ca = null;
 										System.out.println("no visit:" + entity.getKey() + "---new add:" + d);
-										map.put("" + d, new CacheEntity(d + "", System.currentTimeMillis(), 10));
+										map.put("" + d, new CacheEntity(d + "", System.currentTimeMillis(), score));
 									}else {
 										//不活跃，减1分 
 										ca.setHotPot(ca.getHotPot()-1);
 										System.out.println("bu huo yue:" + entity.getKey());
 										try {
-											Thread.sleep(1000);
+											Thread.sleep(100);
 										} catch (InterruptedException e) {
 											e.printStackTrace();
 										}
@@ -185,7 +185,7 @@ public class BFcache2 extends Application{
 				while(ite.hasNext()) {
 					Entry<String, CacheEntity> entity = ite.next();
 					CacheEntity ca = entity.getValue();
-					if(curr - ca.getLastMod() > 1000) {
+					if(curr - ca.getLastMod() > 100) {
 						//或者移除出map
 						if(ca.getHotPot() - 1 == 0) {
 							map.remove(entity.getKey());
@@ -204,7 +204,7 @@ public class BFcache2 extends Application{
 									}
 									Series<Number, Number> sex = new XYChart.Series<>();
 									System.out.println("--abc---" + index[0] + "--" + entity.getKey());
-									sex.getData().add(new Data<Number, Number>(++index[0], Integer.valueOf(map.size())));
+									sex.getData().add(new Data<Number, Number>(++index[0], Integer.valueOf(map.keySet().size())));
 									chart.getData().add(sex);
 								}
 							});
