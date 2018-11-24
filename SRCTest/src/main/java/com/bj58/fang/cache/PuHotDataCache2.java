@@ -26,11 +26,11 @@ public class PuHotDataCache2<T> {
 	private static final Logger logger = Logger.getLogger(PuHotDataCache2.class);
 	
 	private Map<String, CacheEntity2<T>> cacheMap = new ConcurrentHashMap<String, CacheEntity2<T>>();
-	private static final long taskPerid = 1000 * 60;//1min
-	private static final int maxKeyNum = 5000;
+	private static long taskPerid = 1000 * 60;//1min
+	private static int maxKeyNum = 5000;
 	
-	private static final int avgPerTenMin = 1;//1/10min
-	private static final long tenMin = 1000 * 60 * 10;//10min
+	private static int numPerStatUnit = 1;//1/10min
+	private static long statUnit = 1000 * 60 * 10;//10min
 	
 	private IGetValByKey<T> source = null;
 	
@@ -42,19 +42,18 @@ public class PuHotDataCache2<T> {
 		}else {
 			throw new NoCallbackInterException("no data fund");
 		}
-		
+	}
+	
+	public void config(CacheConfig config) {
+		taskPerid = config.getTaskPerid();
+		maxKeyNum = config.getMaxKeyNum();
+		numPerStatUnit = config.getNumPerStatUnit();
+		statUnit = config.getStatUnit();
 	}
 	
 	public int getMapSize() {
 		return cacheMap.size();
 	}
-
-	@SuppressWarnings("unused")
-	private PuHotDataCache2() {
-		super();
-	}
-
-
 
 	public static void main(String[] args) {
 //		Map<String, String> m = new TreeMap<String, String>();
@@ -165,8 +164,8 @@ public class PuHotDataCache2<T> {
 		while(ite.hasNext()) {
 			Entry<String, CacheEntity2<T>> entity = ite.next();
 			CacheEntity2<T> ca = entity.getValue();
-			float rate =  (ca.getVisiCount() / (currT - ca.getFirstTime()) / ((float)tenMin));//10min种内需要有一个
-			if(rate < avgPerTenMin && cacheMap.size() > maxKeyNum) {
+			float rate =  (ca.getVisiCount() / (currT - ca.getFirstTime()) / ((float)statUnit));//10min种内需要有一个
+			if(rate < numPerStatUnit && cacheMap.size() > maxKeyNum) {
 				ite.remove();
 				count++;
 			}
