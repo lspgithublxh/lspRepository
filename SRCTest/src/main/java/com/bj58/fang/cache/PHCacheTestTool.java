@@ -43,13 +43,12 @@ public class PHCacheTestTool<T> extends Application{
 	
 	private PuHotDataCache2<T> source = null;
 	
+	@SuppressWarnings("rawtypes")
 	private static PuHotDataCache2 quan = null;
 	
 	public void testCache(PuHotDataCache2<T> source) {
 		this.source = source;
 		quan = source;
-		System.out.println(this);
-		System.out.println(source+"--source");
 		launch(new String[] {});
 	}
 
@@ -68,12 +67,10 @@ public class PHCacheTestTool<T> extends Application{
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					System.out.println(this);
-					System.out.println(source+"--source2");
 					long t1 = System.currentTimeMillis();
 					T data = source.getData("" + d);
 					long t2 = System.currentTimeMillis();
-					System.out.println(String.format("test: put data: %s-%s, total%s", d, data, (t2 - t1)));
+					System.out.println(String.format("test: put data: %s-%s, total take %s ms", d, data, (t2 - t1)));
 				}
 			}
 		}).start();
@@ -90,7 +87,6 @@ public class PHCacheTestTool<T> extends Application{
 								return;
 							}
 							Series<Number, Number> sex = new XYChart.Series<>();
-							System.out.println("--abc---" + index[0] + "--" + source.getMapSize());
 							sex.getData().add(new Data<Number, Number>(++index[0], source.getMapSize()));
 							chart.getData().add(sex);
 						}
@@ -105,6 +101,7 @@ public class PHCacheTestTool<T> extends Application{
 		}).start();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void start(Stage arg0) throws Exception {
 		source = quan;
