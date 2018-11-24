@@ -1,14 +1,15 @@
 package com.bj58.fang.cache;
 
-public class CacheEntity {
+public class CacheEntity<T> {
 
-	private String data;
+	private T data;
 	private long lastMod;
 	private int hotPot;
-	public String getData() {
+	
+	public T getData() {
 		return data;
 	}
-	public void setData(String data) {
+	public void setData(T data) {
 		this.data = data;
 	}
 	public long getLastMod() {
@@ -23,7 +24,7 @@ public class CacheEntity {
 	public void setHotPot(int hotPot) {
 		this.hotPot = hotPot;
 	}
-	public CacheEntity(String data, long lastMod, int hotPot) {
+	public CacheEntity(T data, long lastMod, int hotPot) {
 		super();
 		this.data = data;
 		this.lastMod = lastMod;

@@ -20,6 +20,7 @@ public class ShowLine extends Application{
 
 	public static void main(String[] args) {
 		launch(args);
+		
 	}
 	
 	public static LineChart<Number, Number> justChart2() {

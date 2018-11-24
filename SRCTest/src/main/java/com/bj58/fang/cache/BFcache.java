@@ -59,12 +59,12 @@ public class BFcache {
 	
 	public static void main(String[] args) {
 //		testFileRead();
-//		testMapGet();
+		testMapGet();
 //		test2();
 //		testReadLock();
 //		testMapUseMem();
 //		memOvertimeMap();
-		autoSeletedXiaoquCache();
+//		autoSeletedXiaoquCache();
 	}
 
 	

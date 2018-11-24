@@ -4,7 +4,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.LineNumberReader;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 读取文件行，而不是所有行一起读进来
@@ -18,6 +20,16 @@ import java.util.Scanner;
 public class FileLineReadTest {
 
 	public static void main(String[] args) {
+		Map<String, CacheEntity> map = new ConcurrentHashMap<String, CacheEntity>(2);//只是初始化大小
+		map.put("1", new CacheEntity(null, 0, 0));
+		map.put("2", new CacheEntity(null, 0, 0));
+		System.out.println(map);
+		map.put("3", new CacheEntity(null, 0, 0));
+		System.out.println(map);
+//		scannerFile();  
+	}
+
+	private static void scannerFile() {
 		Scanner scanner = null;
 		try {
 			System.gc();
@@ -43,6 +55,6 @@ public class FileLineReadTest {
 //			lnr.skip(arg0)
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		}  
+		}
 	}
 }
