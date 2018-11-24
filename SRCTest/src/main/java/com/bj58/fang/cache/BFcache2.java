@@ -20,6 +20,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.apache.commons.collections.map.HashedMap;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
@@ -52,7 +53,7 @@ import javafx.stage.Stage;
  * @Package com.bj58.fang.cache
  */
 @sun.misc.Contended
-public class BFcache {
+public class BFcache2 extends Application{
 
 	@sun.misc.Contended("id")
 	private int id;
@@ -64,7 +65,8 @@ public class BFcache {
 //		testReadLock();
 //		testMapUseMem();
 //		memOvertimeMap();
-		autoSeletedXiaoquCache();
+//		autoSeletedXiaoquCache();
+		launch(args);
 	}
 
 	
@@ -122,7 +124,6 @@ public class BFcache {
 			@Override
 			public void run() {
 				getOne();
-				int index = 0;
 				while(true) {
 					int d = (int) (Math.random() * 5000);
 					try {
@@ -152,13 +153,15 @@ public class BFcache {
 										ca = null;
 										System.out.println("no visit:" + entity.getKey() + "---new add:" + d);
 										map.put("" + d, new CacheEntity(d + "", System.currentTimeMillis(), 10));
-										Series<Number, Number> sex = new XYChart.Series<>();
-										sex.getData().add(new Data<Number, Number>(++index, d));
-										chart.getData().add(sex);
 									}else {
 										//不活跃，减1分 
 										ca.setHotPot(ca.getHotPot()-1);
 										System.out.println("bu huo yue:" + entity.getKey());
+										try {
+											Thread.sleep(1000);
+										} catch (InterruptedException e) {
+											e.printStackTrace();
+										}
 									}
 									
 								}
@@ -171,6 +174,7 @@ public class BFcache {
 		}).start();
 		//定时任务
 		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);//只启动一个线程
+		int[] index = {0};
 		executor.scheduleAtFixedRate(new Runnable() {
 			@Override
 			public void run() {
@@ -181,7 +185,7 @@ public class BFcache {
 				while(ite.hasNext()) {
 					Entry<String, CacheEntity> entity = ite.next();
 					CacheEntity ca = entity.getValue();
-					if(curr - ca.getLastMod() > min1) {
+					if(curr - ca.getLastMod() > 1000) {
 						//或者移除出map
 						if(ca.getHotPot() - 1 == 0) {
 							map.remove(entity.getKey());
@@ -191,6 +195,24 @@ public class BFcache {
 							//不活跃，减1分 
 							ca.setHotPot(ca.getHotPot()-1);
 							System.out.println("bu huo yue:" + entity.getKey());
+							
+							Platform.runLater(new Runnable() {
+								@Override
+								public void run() {
+									if(chart == null) {
+										return;
+									}
+									Series<Number, Number> sex = new XYChart.Series<>();
+									System.out.println("--abc---" + index[0] + "--" + entity.getKey());
+									sex.getData().add(new Data<Number, Number>(++index[0], Integer.valueOf(map.size())));
+									chart.getData().add(sex);
+								}
+							});
+							try {
+								Thread.sleep(500);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
 						}
 					}
 				}
@@ -204,17 +226,16 @@ public class BFcache {
 	private static LineChart<Number, Number> getOne() {
 		Object lock = new Object();
 		boolean[] ok = {false};
-		Application one = new Application() {
+		Platform.runLater(new Runnable() {
 			@Override
-			public void start(Stage primaryStage) throws Exception {
+			public void run() {
 				chart = ShowLine.justChart2();
 				synchronized (lock) {
 					lock.notify();
 					ok[0] = true;
 				}
 			}
-		};
-		one.launch(new String[] {});
+		});
 		synchronized (lock) {
 			if(!ok[0]) {
 				try {
@@ -311,5 +332,11 @@ public class BFcache {
 			e.printStackTrace();
 		}
 		
+	}
+
+
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		autoSeletedXiaoquCache();
 	}
 }
