@@ -9,7 +9,7 @@ import javafx.scene.chart.XYChart.Series;
 import javafx.stage.Stage;
 
 /**
- * 测试工具
+ * 测试工具----显示remove-put之后的净增量
  * @ClassName:PHCacheTestTool
  * @Description:
  * @Author lishaoping

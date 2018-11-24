@@ -175,22 +175,15 @@ public class PuHotDataCache2<T> {
 		long currT = System.currentTimeMillis();
 		Iterator<Entry<String, CacheEntity2<T>>> ite = cacheMap.entrySet().iterator();
 		int count = 0;
-//		List<String> keyList = new ArrayList<>();
 		while(ite.hasNext()) {
 			Entry<String, CacheEntity2<T>> entity = ite.next();
 			CacheEntity2<T> ca = entity.getValue();
 			float rate =  (ca.getVisiCount() / ((float)(currT - ca.getFirstTime()) / ((float)statUnit)));//10min种内需要有一个
-			System.out.println(rate);
-			if(rate < numPerStatUnit ) {
-//				keyList.add(entity.getKey());
+//			System.out.println(rate);
+			if(rate < numPerStatUnit ) {//&& cacheMap.size() >= maxKeyNum   移除要求更严，所以缓存量只能稳步增增
 				ite.remove();
 				count++;
-//				try {
-//					Thread.sleep(30);
-//				} catch (InterruptedException e) {
-//					e.printStackTrace();
-//				}//等待新的请求填充
-				System.out.println("remove ok:");
+//				System.out.println("remove ok:");
 			}
 		}
 		long t2 = System.currentTimeMillis();
