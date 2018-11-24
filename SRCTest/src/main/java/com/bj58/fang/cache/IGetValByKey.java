@@ -9,7 +9,7 @@ package com.bj58.fang.cache;
  * @Version V1.0
  * @Package com.bj58.fang.cache
  */
-public interface IGetValByKey {
+public interface IGetValByKey<T> {
 
-	public <T> T getValByKey(String key);
+	public T getValByKey(String key);
 }

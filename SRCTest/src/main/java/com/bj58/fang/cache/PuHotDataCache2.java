@@ -1,16 +1,15 @@
 package com.bj58.fang.cache;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.log4j.Logger;
 
 /**
  * 
@@ -22,19 +21,41 @@ import java.util.concurrent.TimeUnit;
  * @Version V1.0
  * @Package com.bj58.fang.cache
  */
-public class PuHotDataCache2 {
+public class PuHotDataCache2<T> {
 
-	Map<String, CacheEntity2> cacheMap = new ConcurrentHashMap<String, CacheEntity2>();
-	private static final long maxEdle = 1000 * 60 * 60;//1h
-	private static final long nonActive = 1000 * 60 * 6;//6min
+	private static final Logger logger = Logger.getLogger(PuHotDataCache2.class);
+	
+	private Map<String, CacheEntity2<T>> cacheMap = new ConcurrentHashMap<String, CacheEntity2<T>>();
 	private static final long taskPerid = 1000 * 60;//1min
-	private static final int iniScore = 10;//
-	private static final int nAScore = 3;
 	private static final int maxKeyNum = 5000;
 	
 	private static final int avgPerTenMin = 1;//1/10min
 	private static final long tenMin = 1000 * 60 * 10;//10min
 	
+	private IGetValByKey<T> source = null;
+	
+	public PuHotDataCache2(IGetValByKey<T> source) throws NoCallbackInterException {
+		super();
+		if(source != null) {
+			this.source = source;
+			scheduledTaskByVisitTime(source);
+		}else {
+			throw new NoCallbackInterException("no data fund");
+		}
+		
+	}
+	
+	public int getMapSize() {
+		return cacheMap.size();
+	}
+
+	@SuppressWarnings("unused")
+	private PuHotDataCache2() {
+		super();
+	}
+
+
+
 	public static void main(String[] args) {
 //		Map<String, String> m = new TreeMap<String, String>();
 //		String tx = "";
@@ -60,25 +81,25 @@ public class PuHotDataCache2 {
 //		SimpleDateFormat format = new SimpleDateFormat("");
 	}
 	
-	
-	
 	/**
 	 *《！--只对单条数据启动一次扣分和remove判读，
-	 *代数变量T
+	 *
 	 * @param 
 	 * @author lishaoping
 	 * @Date 2018年11月24日
 	 * @Package com.bj58.fang.cache
 	 * @return void
 	 */
-	public <T> void putData(String key, IGetValByKey source) {
+	public T getData(String key) {
+		T data = null;
 		long currT = System.currentTimeMillis();
 		if(cacheMap.containsKey(key)) {
-			CacheEntity2 entity = cacheMap.get(key);
+			CacheEntity2<T> entity = cacheMap.get(key);
 			entity.setVisiCount(entity.getVisiCount() + 1);
+			data = entity.getData();
 		}else {
 			if(cacheMap.size() < maxKeyNum) {
-				T data = source.getValByKey(key);
+				data = source.getValByKey(key);
 				CacheEntity2<T> one = new CacheEntity2<T>(data, currT, 1);
 				cacheMap.put(key, one);
 			}else {
@@ -86,7 +107,7 @@ public class PuHotDataCache2 {
 //				cleanCache();
 			}
 		}
-		
+		return data;
 		
 	}
 	
@@ -98,7 +119,7 @@ public class PuHotDataCache2 {
 	 * @Package com.bj58.fang.cache
 	 * @return void
 	 */
-	private <T> void scheduledTaskByVisitTime(IGetValByKey source) {
+	private void scheduledTaskByVisitTime(IGetValByKey<T> source) {
 		ScheduledExecutorService executor = null;
 		try {
 			executor = Executors.newScheduledThreadPool(2);//只启动2个线程
@@ -117,33 +138,41 @@ public class PuHotDataCache2 {
 			executor.scheduleAtFixedRate(new Runnable() {
 				@Override
 				public void run() {//周期任务--更新数据--对map里已经有的数据进行--其他数据不需要
-					Iterator<Entry<String, CacheEntity2>> ite = cacheMap.entrySet().iterator();
+					long t1 = System.currentTimeMillis();
+					Iterator<Entry<String, CacheEntity2<T>>> ite = cacheMap.entrySet().iterator();
 					while(ite.hasNext()) {
-						Entry<String, CacheEntity2> entity = ite.next();
-						CacheEntity2 ca = entity.getValue();
+						Entry<String, CacheEntity2<T>> entity = ite.next();
+						CacheEntity2<T> ca = entity.getValue();
 						T data = source.getValByKey(entity.getKey());
 						ca.setData(data);
 					}
+					long t2 = System.currentTimeMillis();
+					logger.info(String.format("update cache ok, total:%s, take %s ms", cacheMap.size(), t2 - t1));
 				}
 			}, delay, 24 * 60, TimeUnit.MINUTES);
 		}catch (Exception e) {
 			if(executor != null) {
 				executor.shutdownNow();
 			}
+			logger.error("task run error!" + e.getMessage());
 		}
 	} 
 	
 	private void cleanCache() {
 		long currT = System.currentTimeMillis();
-		Iterator<Entry<String, CacheEntity2>> ite = cacheMap.entrySet().iterator();
+		Iterator<Entry<String, CacheEntity2<T>>> ite = cacheMap.entrySet().iterator();
+		int count = 0;
 		while(ite.hasNext()) {
-			Entry<String, CacheEntity2> entity = ite.next();
-			CacheEntity2 ca = entity.getValue();
+			Entry<String, CacheEntity2<T>> entity = ite.next();
+			CacheEntity2<T> ca = entity.getValue();
 			float rate =  (ca.getVisiCount() / (currT - ca.getFirstTime()) / ((float)tenMin));//10min种内需要有一个
 			if(rate < avgPerTenMin && cacheMap.size() > maxKeyNum) {
 				ite.remove();
+				count++;
 			}
 		}
+		long t2 = System.currentTimeMillis();
+		logger.info(String.format("clean cacheKey total:%s, take :%s ms", count, t2 - currT));
 	}
 	
 	public void autoSeletedXiaoquCache() {

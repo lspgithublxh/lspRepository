@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  * @Version V1.0
  * @Package com.bj58.fang.cache
  */
-public class PuHotDataCache {
+public class PuHotDataCache<T> {
 
 	Map<String, CacheEntity> cacheMap = new ConcurrentHashMap<String, CacheEntity>();
 	private static final long maxEdle = 1000 * 60 * 60;//1h
@@ -43,7 +43,7 @@ public class PuHotDataCache {
 	 * @Package com.bj58.fang.cache
 	 * @return void
 	 */
-	public <T> void putData(String key, IGetValByKey source) {
+	public void putData(String key, IGetValByKey<T> source) {
 		long currT = System.currentTimeMillis();
 		if(cacheMap.containsKey(key)) {
 			CacheEntity entity = cacheMap.get(key);
