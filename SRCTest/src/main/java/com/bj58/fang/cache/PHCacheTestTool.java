@@ -29,9 +29,12 @@ public class PHCacheTestTool<T> extends Application{
 			});
 			CacheConfig conf = new CacheConfig();
 			conf.setNumPerStatUnit(1);
-			conf.setStatUnit(300);
-			conf.setTaskPerid(1000);
-			cache.config(conf);
+			conf.setStatUnit(500);//平均速率:1/50ms  而20ms请求一次，共1000条， 那么每条的平均速率1/50ms 所以有50%的会被移除
+			conf.setTaskPerid(500);
+			conf.setMaxKeyNum(1000);
+//			conf.setUpdateDelay(1);
+//			conf.setUpdatePerid(1000);
+			cache.configAndStartClean(conf);
 			new PHCacheTestTool<String>().testCache(cache);
 		} catch (NoCallbackInterException e) {
 			e.printStackTrace();
@@ -63,14 +66,14 @@ public class PHCacheTestTool<T> extends Application{
 				while(true) {
 					int d = (int) (Math.random() * 5000);
 					try {
-						Thread.sleep(20);
+						Thread.sleep(4);//补充速度降低
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 					long t1 = System.currentTimeMillis();
 					T data = source.getData("" + d);
 					long t2 = System.currentTimeMillis();
-					System.out.println(String.format("test: put data: %s-%s, total take %s ms", d, data, (t2 - t1)));
+//					System.out.println(String.format("test: put data: %s-%s, total take %s ms", d, data, (t2 - t1)));
 				}
 			}
 		}).start();

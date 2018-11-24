@@ -1,7 +1,9 @@
 package com.bj58.fang.cache;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,11 +28,14 @@ public class PuHotDataCache2<T> {
 	private static final Logger logger = Logger.getLogger(PuHotDataCache2.class);
 	
 	private Map<String, CacheEntity2<T>> cacheMap = new ConcurrentHashMap<String, CacheEntity2<T>>();
-	private static long taskPerid = 1000 * 60;//1min
-	private static int maxKeyNum = 5000;
+	private long taskPerid = 1000 * 60;//1min
+	private int maxKeyNum = 5000;
 	
-	private static int numPerStatUnit = 1;//1/10min
-	private static long statUnit = 1000 * 60 * 10;//10min
+	private int numPerStatUnit = 1;//1/10min
+	private long statUnit = 1000 * 60 * 10;//10min
+	
+	private long updateDelay = 0;
+	private long updatePerid = 24 * 60 * 60 * 1000;
 	
 	private IGetValByKey<T> source = null;
 	
@@ -38,17 +43,19 @@ public class PuHotDataCache2<T> {
 		super();
 		if(source != null) {
 			this.source = source;
-			scheduledTaskByVisitTime(source);
 		}else {
 			throw new NoCallbackInterException("no data fund");
 		}
 	}
 	
-	public void config(CacheConfig config) {
+	public void configAndStartClean(CacheConfig config) {
 		taskPerid = config.getTaskPerid();
 		maxKeyNum = config.getMaxKeyNum();
 		numPerStatUnit = config.getNumPerStatUnit();
 		statUnit = config.getStatUnit();
+		updateDelay = config.getUpdateDelay();
+		updatePerid = config.getTaskPerid();
+		scheduledTaskByVisitTime(source);
 	}
 	
 	public int getMapSize() {
@@ -101,6 +108,7 @@ public class PuHotDataCache2<T> {
 				data = source.getValByKey(key);
 				CacheEntity2<T> one = new CacheEntity2<T>(data, currT, 1);
 				cacheMap.put(key, one);
+				logger.info(String.format("put key success: %s", key));
 			}else {
 				//主动回收一次， 看有没有位置；；；但是性能消耗大，估计110ms，所以不进行
 //				cleanCache();
@@ -125,15 +133,21 @@ public class PuHotDataCache2<T> {
 			executor.scheduleAtFixedRate(new Runnable() {
 				@Override
 				public void run() {
-					cleanCache();
+					try {
+						cleanCache();
+					} catch (Exception e) {
+						logger.error(e.getMessage());
+					}
 				}
-			}, 1, taskPerid, TimeUnit.SECONDS);
+			}, 1, taskPerid, TimeUnit.MILLISECONDS);
 			//延迟到凌晨
 			//构造明天凌晨的时间
 			Calendar calendar = Calendar.getInstance();
 			calendar.add(Calendar.DATE, 1);
 			calendar.set(Calendar.HOUR_OF_DAY, 2);
-			long delay = (calendar.getTimeInMillis() - System.currentTimeMillis()) / 1000 / 60;
+			if(updateDelay == 0) {
+				updateDelay = (calendar.getTimeInMillis() - System.currentTimeMillis()) / 1000 / 60;
+			}
 			executor.scheduleAtFixedRate(new Runnable() {
 				@Override
 				public void run() {//周期任务--更新数据--对map里已经有的数据进行--其他数据不需要
@@ -148,7 +162,7 @@ public class PuHotDataCache2<T> {
 					long t2 = System.currentTimeMillis();
 					logger.info(String.format("update cache ok, total:%s, take %s ms", cacheMap.size(), t2 - t1));
 				}
-			}, delay, 24 * 60, TimeUnit.MINUTES);
+			}, updateDelay, updatePerid, TimeUnit.MILLISECONDS);
 		}catch (Exception e) {
 			if(executor != null) {
 				executor.shutdownNow();
@@ -161,13 +175,22 @@ public class PuHotDataCache2<T> {
 		long currT = System.currentTimeMillis();
 		Iterator<Entry<String, CacheEntity2<T>>> ite = cacheMap.entrySet().iterator();
 		int count = 0;
+//		List<String> keyList = new ArrayList<>();
 		while(ite.hasNext()) {
 			Entry<String, CacheEntity2<T>> entity = ite.next();
 			CacheEntity2<T> ca = entity.getValue();
-			float rate =  (ca.getVisiCount() / (currT - ca.getFirstTime()) / ((float)statUnit));//10min种内需要有一个
-			if(rate < numPerStatUnit && cacheMap.size() > maxKeyNum) {
+			float rate =  (ca.getVisiCount() / ((float)(currT - ca.getFirstTime()) / ((float)statUnit)));//10min种内需要有一个
+			System.out.println(rate);
+			if(rate < numPerStatUnit ) {
+//				keyList.add(entity.getKey());
 				ite.remove();
 				count++;
+//				try {
+//					Thread.sleep(30);
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}//等待新的请求填充
+				System.out.println("remove ok:");
 			}
 		}
 		long t2 = System.currentTimeMillis();
