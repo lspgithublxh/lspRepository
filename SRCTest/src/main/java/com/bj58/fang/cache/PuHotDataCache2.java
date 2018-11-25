@@ -1,9 +1,7 @@
 package com.bj58.fang.cache;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,7 +13,7 @@ import org.apache.log4j.Logger;
 
 /**
  * 
- * 
+ * map大小稳步增长，更安全
  * @ClassName:HotDataCache
  * @Description:
  * @Author lishaoping

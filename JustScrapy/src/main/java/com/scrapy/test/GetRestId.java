@@ -54,9 +54,9 @@ public class GetRestId {
 	public static void main(String[] args) {
 //		start();
 //		mysqlrest();
-		putToRedis("D:\\log\\rest23.log");
+//		putToRedis("D:\\log\\rest24.log");
 //		getDetail();
-//		removeAFromB(new String[] {"D:\\log\\detailps.log", "D:\\log\\detailps23.log"}, "D:\\log\\rest22.log", "D:\\log\\rest23.log");
+//		removeAFromB(new String[] {"D:\\log\\detailps.log", "D:\\log\\detailps232.log"}, "D:\\log\\rest23.log", "D:\\log\\rest24.log");
 	}
 
 	private static void getDetail() {
