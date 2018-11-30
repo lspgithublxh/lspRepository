@@ -29,7 +29,7 @@ public class LogAnalyze extends Application{
 //		test();
 //		test2();
 //		userAnalize(args);
-		restrictIpAnalize2(args);
+		restrictIpAnalize(args);
 	}
 
 	private static void restrictIpAnalize2(String[] args) {
@@ -42,11 +42,18 @@ public class LogAnalyze extends Application{
 		
 		String regex = "stat_ip.+?ver\\:(.+)?,";
 		int count = 1;
-		String file = "D:\\software\\ss.txt";
+		String file = "D:\\software\\version.txt";
 		table = tableData(regex, count, file);
+		List<String> d = new ArrayList<>();
+		List<List<String>> d2 = new ArrayList<>();
+		for(String ss : table.get(0)) {
+			d.add(ss.substring(0, ss.lastIndexOf(".")));
+		}
+		d2.add(d);
+		table = d2;
 //		for(String ip : table.get(0)) {
 //			System.out.println(IPLocation.test(ip.split(";")[0]));
-//		}
+//		}//版本分布和ip定位分布
 		launch(args);
 	}
 	
@@ -58,13 +65,17 @@ public class LogAnalyze extends Application{
 //		launch(args);
 		
 		
-		String regex = "-\\s+(.+?)restrict.+?success\\:(\\S+)$";
+//		String regex = "stat_ip\\:(.+)?,lat";
+		String regex = "lat\\:(.+)?,lon\\:(.+)?,os";
 		int count = 2;
-		String file = "D:\\software\\ers.txt";
+		String file = "D:\\software\\version.txt";
 		table = tableData(regex, count, file);
-//		for(String ip : table.get(0)) {
-//			System.out.println(IPLocation.test(ip.split(";")[0]));
-//		}
+		System.out.println(table.get(0).size());
+		int size = table.get(0).size();
+		for(int i = 0; i < size; i++) {
+			System.out.println(IPLocation.test2(table.get(1).get(i), table.get(0).get(i)));
+//			System.out.println(IPLocation.test2(ip.split(";")[0]));
+		}
 		launch(args);
 	}
 
@@ -145,16 +156,19 @@ public class LogAnalyze extends Application{
 		return rs;
 	}
 	
+	
+	
 	public static List<List<String>> tableData(String regex, int count, String file) {
 		Pattern p = Pattern.compile(regex);
 		BufferedReader reader;
 		List<List<String>> table = new ArrayList<>();
 		try {
 			reader = new BufferedReader(new FileReader(file));
-			
+			int lcc = 0;
 			String line = null;
 			while((line = reader.readLine()) != null) {
 				Matcher m = p.matcher(line);
+				lcc++;
 				if(m.find()) {
 					for(int i = 1; i <= count; i++) {
 						String val = m.group(i);
@@ -168,6 +182,7 @@ public class LogAnalyze extends Application{
 					}
 				}
 			}
+			System.out.println(lcc);
 		}catch (Exception e) {
 		}
 		return table;
@@ -262,7 +277,8 @@ public class LogAnalyze extends Application{
 		}
 		for(String da : d) {
 			String[] dx = da.split(",");
-			dx[0] = String.format("%s_%.1f%%_%s", dx[1], (Integer.valueOf(dx[1]) / (double )totalCount) * 100, dx[0]);
+//			dx[0] = String.format("%s_%.1f%%_%s", dx[1], (Integer.valueOf(dx[1]) / (double )totalCount) * 100, dx[0]);
+			dx[0] = String.format("%s %.1f%%", dx[0], (Integer.valueOf(dx[1]) / (double )totalCount) * 100);
 			if(dx[0].length() > 20) {
 				dx[0] = dx[0].substring(0, 15);
 			}
@@ -275,12 +291,12 @@ public class LogAnalyze extends Application{
 		pchart.autosize();
 		pchart.setLabelLineLength(10);
 		pchart.setLegendSide(Side.LEFT);
-		pchart.setTitle("饼图");
+		pchart.setTitle("2018.11.27 二手房大类页");
 		pchart.setStartAngle(180);
 		
 		Scene scene = new Scene(pchart, 600, 400);
 		Stage stage = new Stage();
-		stage.setTitle("统计图");
+		stage.setTitle("访问者版本分布统计");
 		stage.setScene(scene);
 		stage.show();
 	}

@@ -80,6 +80,11 @@ public class IPLocation {
 		return rs;
 	}
 	
+	public static String test2(String lon, String lat) {
+		String s = online(lon, lat);
+		return s;
+	}
+	
 	public static String test(String ip) {
 		try {
 			LookupService ls = new LookupService("D:\\download\\GeoLiteCity-2013-01-18.dat", LookupService.GEOIP_MEMORY_CACHE);
@@ -89,6 +94,8 @@ public class IPLocation {
 			s = online(loc.longitude + "", loc.latitude + "");
 			return s;
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
