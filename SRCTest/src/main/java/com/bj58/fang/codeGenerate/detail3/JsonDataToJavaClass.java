@@ -1,4 +1,4 @@
-package com.bj58.fang.codeGenerate.detail2;
+package com.bj58.fang.codeGenerate.detail3;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -21,6 +21,7 @@ import org.apache.commons.io.FileUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.bj58.biz.utility.StringUtil;
+import com.bj58.fang.codeGenerate.json2json.JSONCom;
 
 /**
  * 下一步
@@ -56,14 +57,14 @@ public static String path = "D:\\test\\createClass";
 		}
 
 		filePath = this.getClass().getResource("").getPath();
-		filePath = filePath.replace("/target/classes", "/src/main/java") + "/json2.txt";
+		filePath = filePath.replace("/target/classes", "/src/main/java") + "/json.txt";
 
 		String content = FileUtils.readFileToString(new File(filePath), "UTF-8");
 		JSONObject object = JSONObject.parseObject(content);
 		parseObject(object, "A", "a", false);
 		StringBuilder builder = new StringBuilder();
 		builder.append("package " + package_path + ";\r\n");
-		builder.append("import java.io.IOException;\r\nimport java.io.File;\r\nimport org.apache.commons.io.FileUtils;\r\nimport com.alibaba.fastjson.JSONObject;\r\nimport java.math.BigDecimal;\r\n");
+		builder.append("import java.io.IOException;\r\nimport java.io.File;\r\nimport org.apache.commons.io.FileUtils;\r\nimport com.alibaba.fastjson.JSONObject;\r\nimport java.math.BigDecimal;\r\nimport com.bj58.fang.codeGenerate.json2json.JSONCom;\r\n");
 		builder.append("public class Aconstruct{ \r\n\r\n\t public static void main(String[] args) throws IOException {\r\n");
 		builder.append("\t\tnew Aconstruct().test();\r\n\t}\r\n\r\n");
 		builder.append("\tpublic void test() throws IOException {\r\n");
@@ -74,8 +75,9 @@ public static String path = "D:\\test\\createClass";
 			builder.append(str);
 		}
 		//验证：
-		builder.append("\t\tSystem.out.println(JSONObject.toJSONString(a).length());\r\n");
-		builder.append("\t\tSystem.out.println(FileUtils.readFileToString(new File(Aconstruct.class.getResource(\"\").getPath().replace(\"/target/classes\", \"/src/main/java\") + \"/json.txt\"), \"utf-8\").length());\r\n");
+//		builder.append("\t\tSystem.out.println(JSONObject.toJSONString(a).length());\r\n");
+//		builder.append("\t\tSystem.out.println(FileUtils.readFileToString(new File(Aconstruct.class.getResource(\"\").getPath().replace(\"/target/classes\", \"/src/main/java\") + \"/json.txt\"), \"utf-8\").length());\r\n");
+		builder.append("\t\tJSONCom.jsonCom(JSONObject.toJSONString(a), FileUtils.readFileToString(new File(Aconstruct.class.getResource(\"\").getPath().replace(\"/target/classes\", \"/src/main/java\") + \"/json.txt\"), \"utf-8\")));\r\n");
 		builder.append("\t}\r\n}");
 		File file = new File(path + "\\Aconstruct" + ".java");
 		if(!file.exists()) {
@@ -146,8 +148,8 @@ public static String path = "D:\\test\\createClass";
 				}
 				
 				Object value = entry.getValue();
-				if(attrName.equals("String")) {
-					value = "\"" + value + "\"";
+				if(attrName.equals("String")) {//value == null ? null : ((String)value).replace("\r\n", "")
+					value = "\"" + (value == null ? null : ((String)value).replace("\n", "")) + "\"";
 				}else if(attrName.equals("Long")) {
 					value = value + "l";
 				}

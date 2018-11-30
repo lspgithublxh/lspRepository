@@ -89,7 +89,7 @@ public static String path = "D:\\test\\createClass";
 		
 		//运行构造类：
 		try {
-			Thread.currentThread().sleep(3000);
+			Thread.currentThread().sleep(8000);
 			Class<?> aConstruct = Class.forName(package_path + ".Aconstruct");
 			Method method = aConstruct.getMethod("test");
 			method.invoke(aConstruct.newInstance());
