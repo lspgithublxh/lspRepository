@@ -27,8 +27,11 @@ public class JSONCom {
 			String key = entry.getKey();
 			if(!keys.contains(key)) {
 				String key2 = key.substring(0, 1).toLowerCase() + key.substring(1);
+				String key3 = key.substring(0, 1).toUpperCase() + key.substring(1);
 				if(keys.contains(key2)) {
 					key = key2;
+				}else if(keys.contains(key3)) {
+					key = key3;
 				}else {
 					System.out.println("not equal11" + key + "--" + entry.getValue());
 					System.exit(1);

@@ -77,7 +77,7 @@ public static String path = "D:\\test\\createClass";
 		//验证：
 //		builder.append("\t\tSystem.out.println(JSONObject.toJSONString(a).length());\r\n");
 //		builder.append("\t\tSystem.out.println(FileUtils.readFileToString(new File(Aconstruct.class.getResource(\"\").getPath().replace(\"/target/classes\", \"/src/main/java\") + \"/json.txt\"), \"utf-8\").length());\r\n");
-		builder.append("\t\tJSONCom.jsonCom(JSONObject.toJSONString(a), FileUtils.readFileToString(new File(Aconstruct.class.getResource(\"\").getPath().replace(\"/target/classes\", \"/src/main/java\") + \"/json.txt\"), \"utf-8\")));\r\n");
+		builder.append("\t\tSystem.out.println(JSONCom.jsonCom(JSONObject.toJSONString(a), FileUtils.readFileToString(new File(Aconstruct.class.getResource(\"\").getPath().replace(\"/target/classes\", \"/src/main/java\") + \"/json.txt\"), \"utf-8\")));\r\n");
 		builder.append("\t}\r\n}");
 		File file = new File(path + "\\Aconstruct" + ".java");
 		if(!file.exists()) {
