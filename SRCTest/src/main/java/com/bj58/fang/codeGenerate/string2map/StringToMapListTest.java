@@ -25,7 +25,7 @@ public class StringToMapListTest {
 		tt.readJson(0, data, null, str.toCharArray());
 //		System.out.println(data);
 		//打印方法----构造出json再次
-//		printJson(data);
+		printMapList(data);
 //		JSONObject o = new JSONObject(data);
 		JSONObject o = mapToJSon(data);
 		System.out.println(o);
@@ -63,20 +63,61 @@ public class StringToMapListTest {
 		return arr;
 	}
 
-	private static void printJson(Map<String, Object> data) {
+	/**
+	 * 只打印{}
+	 * @param 
+	 * @author lishaoping
+	 * @Date 2018年12月5日
+	 * @Package com.bj58.fang.codeGenerate.string2map
+	 * @return void
+	 */
+	private static void printMapList(Map<String, Object> data) {
+		System.out.println("{");
+		int curr = 0;
 		for(Entry<String, Object> entry : data.entrySet()) {
-			System.out.println();
+			String type = entry.getValue().getClass().getSimpleName();
+			System.out.print("\"" + entry.getKey() + "\":");
+			if("HashMap".equals(type)) {
+				System.out.println();
+				printMapList((Map<String, Object>) entry.getValue());
+			}else if("ArrayList".equals(type)) {
+				System.out.println();
+				printArray((List<Object>) entry.getValue());
+			}else if("String".equals(type)){
+				System.out.println("\"" + entry.getValue() + "\"");
+			}else {
+				System.out.println(entry.getValue());
+			}
+			//是否打印,
+			if(++curr < data.size()) {
+				System.out.print(",");
+			}
 		}
+		System.out.println("}");
 	}
 
 	private static void printArray(List<Object> data) {
+		System.out.println("[");
+		int curr = 0;
 		for(Object obj : data) {
-			String name = obj.getClass().getSimpleName();
-			if("Map".equals(name)) {
-				System.out.println("");
+			String type = obj.getClass().getSimpleName();
+			if("HashMap".equals(type)) {
+				System.out.println();
+				printMapList((Map<String, Object>) obj);
+			}else if("ArrayList".equals(type)) {
+				System.out.println();
+				printArray((List<Object>) obj);
+			}else if("String".equals(type)){
+				System.out.println("\"" + obj + "\"");
+			}else {
+				System.out.println(obj);
 			}
-			System.out.println(name);
+			//是否打印,
+			if(++curr < data.size()) {
+				System.out.print(",");
+			}
 		}
+		System.out.println("]");
 	}
 
 	/**
@@ -126,7 +167,7 @@ public class StringToMapListTest {
 			if(i >= cs.length) {
 				break;
 			}
-			System.out.println("----json"+ i + ":" + cs.length);
+//			System.out.println("----json"+ i + ":" + cs.length);
 		}
 		return i;
 	}
@@ -141,7 +182,7 @@ public class StringToMapListTest {
 			if(i == source.length - 1) {
 				break;
 			}
-			System.out.println(source[i]);
+//			System.out.println(source[i]);
 			if(source[i] == '{') {
 				type = 3;
 			}else if(source[i] == '[') {
@@ -165,7 +206,7 @@ public class StringToMapListTest {
 			if(i >= source.length) {
 				break;
 			}
-			System.out.println("---array" + i + ":" + source.length);
+//			System.out.println("---array" + i + ":" + source.length);
 		}
 		return i;
 	}
