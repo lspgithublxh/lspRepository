@@ -78,19 +78,21 @@ public class StringToMapListTest {
 			String type = entry.getValue().getClass().getSimpleName();
 			System.out.print("\"" + entry.getKey() + "\":");
 			if("HashMap".equals(type)) {
-				System.out.println();
+//				System.out.println();
 				printMapList((Map<String, Object>) entry.getValue());
 			}else if("ArrayList".equals(type)) {
-				System.out.println();
+//				System.out.println();
 				printArray((List<Object>) entry.getValue());
 			}else if("String".equals(type)){
-				System.out.println("\"" + entry.getValue() + "\"");
+				System.out.print("\"" + entry.getValue() + "\"");
 			}else {
-				System.out.println(entry.getValue());
+				System.out.print(entry.getValue());
 			}
 			//是否打印,
 			if(++curr < data.size()) {
-				System.out.print(",");
+				System.out.println(",");
+			}else {
+				System.out.println();
 			}
 		}
 		System.out.println("}");
@@ -102,19 +104,21 @@ public class StringToMapListTest {
 		for(Object obj : data) {
 			String type = obj.getClass().getSimpleName();
 			if("HashMap".equals(type)) {
-				System.out.println();
+//				System.out.println();
 				printMapList((Map<String, Object>) obj);
 			}else if("ArrayList".equals(type)) {
-				System.out.println();
+//				System.out.println();
 				printArray((List<Object>) obj);
 			}else if("String".equals(type)){
-				System.out.println("\"" + obj + "\"");
+				System.out.print("\"" + obj + "\"");
 			}else {
-				System.out.println(obj);
+				System.out.print(obj);
 			}
 			//是否打印,
 			if(++curr < data.size()) {
-				System.out.print(",");
+				System.out.println(",");
+			}else {
+				System.out.println();
 			}
 		}
 		System.out.println("]");
