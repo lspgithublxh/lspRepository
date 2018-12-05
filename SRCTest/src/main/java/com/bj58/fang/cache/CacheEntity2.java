@@ -5,6 +5,7 @@ public class CacheEntity2<T> {
 	private T data;
 	private long firstTime;
 	private int visiCount;
+	private String key;
 	public T getData() {
 		return data;
 	}
@@ -29,6 +30,11 @@ public class CacheEntity2<T> {
 		this.firstTime = firstTime;
 		this.visiCount = visiCount;
 	}
-	
+	public String getKey() {
+		return key;
+	}
+	public void setKey(String key) {
+		this.key = key;
+	}
 	
 }
