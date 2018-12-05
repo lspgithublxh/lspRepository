@@ -52,7 +52,7 @@ public class PuHotDataCache2<K, T> {
 		numPerStatUnit = config.getNumPerStatUnit();
 		statUnit = config.getStatUnit();
 		updateDelay = config.getUpdateDelay();
-		updatePerid = config.getTaskPerid();
+		updatePerid = config.getUpdatePerid();
 		scheduledTaskByVisitTime(source);
 	}
 	

@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 
 /**
- * 
+ * 另一种更新策略是：根据每条数据的缓存时间----超过某个时间则更新
  * @ClassName:AbstractHotDataCache
  * @Description:
  * @Author lishaoping
@@ -24,10 +24,11 @@ public abstract class AbstractHotDataCache<K, T, E extends AbstractCacheEntity<T
 	private static final Logger logger = Logger.getLogger(AbstractHotDataCache.class);
 	protected Map<K, E> cacheMap = null;
 	protected long taskPerid = 1000 * 60;//1min
+	protected int taskStartHM = 730;
+	protected int taskEndHM = 2359;//59-00 可以写2400
 	protected long updateDelay = 0;
 	protected long updatePerid = 24 * 60 * 60 * 1000;
 	private String cacheName = "default";
-
 
 	public abstract void cleanCache();
 	public abstract T getData(K key);
@@ -42,7 +43,13 @@ public abstract class AbstractHotDataCache<K, T, E extends AbstractCacheEntity<T
 				@Override
 				public void run() {
 					try {
-						cleanCache();
+						Calendar dar = Calendar.getInstance();
+						int curhour = dar.get(Calendar.HOUR_OF_DAY);
+						int curmin = dar.get(Calendar.MINUTE);
+						int curhm = curhour * 100 + curmin;
+						if(curhm >= taskStartHM && curhm < taskEndHM) {
+							cleanCache();
+						}
 					} catch (Exception e) {
 						logger.error(e.getMessage());
 					}

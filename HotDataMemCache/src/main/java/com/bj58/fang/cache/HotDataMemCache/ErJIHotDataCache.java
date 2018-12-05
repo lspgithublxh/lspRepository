@@ -1,11 +1,14 @@
 package com.bj58.fang.cache.HotDataMemCache;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
 
 /**
  * 类似jvm堆内存3代划分，先缓存--再转移--转移算法是更高的访问速率、等基本策略
@@ -18,7 +21,16 @@ import org.apache.log4j.Logger;
  */
 public class ErJIHotDataCache<K, T> extends AbstractHotDataCache<K, T, AbstractCacheEntity<T>>{// 
 	
-	private static final Logger logger = Logger.getLogger(PuHotDataCache.class);
+	static {
+		try {
+			URL url = new URL("file:///D:/scf_log2.xml");
+			DOMConfigurator.configure(url); 
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static final Logger logger = Logger.getLogger(ErJIHotDataCache.class);
 
 	private AbstractHotDataCache<K, T, ? extends AbstractCacheEntity<T>> cache = null;
 	
@@ -36,6 +48,15 @@ public class ErJIHotDataCache<K, T> extends AbstractHotDataCache<K, T, AbstractC
 	
 	private long avgGetTime = -1;
 	private long avgCleanTime = -1;
+	
+	
+	public long getAvgCleanTime() {
+		return avgCleanTime;
+	}
+	
+	public long getAvgGetTime() {
+		return avgGetTime;
+	}
 	
 	/**
 	 * 同等频率的回收，但是速率要求更严格---survivor则到二级缓存里
@@ -56,6 +77,8 @@ public class ErJIHotDataCache<K, T> extends AbstractHotDataCache<K, T, AbstractC
 			}
 			//转移到cache里
 			if(ca.getRateOkCount() >= rateOkCount) {
+				//转移
+				System.out.println("--------zhuanyi  occure--------");
 				int rs = cache.putData(entity.getKey(), ca.getData());
 				if(rs == 1) {
 					ite.remove();
@@ -83,7 +106,9 @@ public class ErJIHotDataCache<K, T> extends AbstractHotDataCache<K, T, AbstractC
 		if(entity != null) {
 			entity.setVisiCount(entity.getVisiCount() + 1);
 			entity.setRateOkCount(entity.getRateOkCount() + 1);
+			System.out.println(entity.getRateOkCount() + "---" + key);
 			data = entity.getData();
+			//也可以转移
 		}else {
 			if(fromCache.size() < maxKeyNum) {
 				data = source.getValByKey(key);
@@ -109,6 +134,9 @@ public class ErJIHotDataCache<K, T> extends AbstractHotDataCache<K, T, AbstractC
 		statUnit = config.getStatUnit();
 		updateDelay = config.getUpdateDelay();
 		updatePerid = config.getTaskPerid();
+		rateOkCount = config.getRateOkCount();
+		taskStartHM = config.getTaskStartHM();
+		taskEndHM = config.getTaskEndHM();
 		scheduledTaskByVisitTime(source);
 	}
 
@@ -117,7 +145,7 @@ public class ErJIHotDataCache<K, T> extends AbstractHotDataCache<K, T, AbstractC
 		return 0;
 	}
 
-	public Number getMapSize() {
+	public int getMapSize() {
 		return fromCache.size();
 	}
 

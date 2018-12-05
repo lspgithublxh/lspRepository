@@ -1,10 +1,12 @@
 package com.bj58.fang.cache.HotDataMemCache;
 
-public class CacheEntity2<T> extends AbstractCacheEntity<T>{
+public class CacheEntity4<K, T> extends AbstractCacheEntity<T>{
 
 	private long firstTime;
 	private int visiCount;
 	private long lastStatisTime;
+	private K key;
+	
 	public long getFirstTime() {
 		return firstTime;
 	}
@@ -17,7 +19,14 @@ public class CacheEntity2<T> extends AbstractCacheEntity<T>{
 	public void setVisiCount(int visiCount) {
 		this.visiCount = visiCount;
 	}
-	public CacheEntity2(T data, long firstTime, int visiCount) {
+	
+	public K getKey() {
+		return key;
+	}
+	public void setKey(K key) {
+		this.key = key;
+	}
+	public CacheEntity4(T data, long firstTime, int visiCount) {
 		super();
 		this.data = data;
 		this.firstTime = firstTime;

@@ -31,9 +31,9 @@ public class PHCacheTestTool4<T> extends Application{
 			});
 			CacheConfig conf = new CacheConfig();
 			conf.setNumPerStatUnit(1);
-			conf.setStatUnit(500 * 5);//平均速率:1/50ms  而20ms请求一次，共1000条， 那么每条的平均速率1/50ms 所以有50%的会被移除
+			conf.setStatUnit(500 * 100);//500 * 20 平均速率:1/50ms  而20ms请求一次，共1000条， 那么每条的平均速率1/50ms 所以有50%的会被移除
 			conf.setTaskPerid(500);
-			conf.setMaxKeyNum(1000);
+			conf.setMaxKeyNum(5000);
 //			conf.setUpdateDelay(1);
 //			conf.setUpdatePerid(1000);
 			cache.configAndStartClean(conf);
@@ -44,9 +44,11 @@ public class PHCacheTestTool4<T> extends Application{
 				}
 			};
 			ErJIHotDataCache<String, String> erji = new ErJIHotDataCache<String, String>(cache, source);
-			conf.setStatUnit(500);
+			conf.setStatUnit(500 * 16);//500 * 10
+			conf.setMaxKeyNum(2500);
+			conf.setRateOkCount(4);
 			erji.configAndStartClean(conf);
-			new PHCacheTestTool4<String>().testCache(erji);
+			new PHCacheTestTool4<String>().testCache(erji, cache);
 		} catch (NoCallbackInterException e) {
 			e.printStackTrace();
 		};
@@ -54,15 +56,22 @@ public class PHCacheTestTool4<T> extends Application{
 	}
 
 	LineChart<Number, Number> chart = null;
+	LineChart<Number, Number> chart2 = null;
+	LineChart<Number, Number> cleanTimeChart = null;
+	LineChart<Number, Number> putTimeChart = null;
 	
 	private ErJIHotDataCache<String, T> source = null;
+	private PuHotDataCache3<String, T> source2 = null;
 	
 	@SuppressWarnings("rawtypes")
-	private ErJIHotDataCache<String, T> quan = null;
+	private static ErJIHotDataCache quan = null;
+	@SuppressWarnings("rawtypes")
+	private static PuHotDataCache3 quan2 = null;
 	
-	public void testCache(ErJIHotDataCache<String, T> erji) {
+	public void testCache(ErJIHotDataCache<String, T> erji, PuHotDataCache3<String, String> cache) {
 		this.source = erji;
 		quan = erji;
+		quan2 = cache;
 		launch(new String[] {});
 	}
 
@@ -103,6 +112,18 @@ public class PHCacheTestTool4<T> extends Application{
 							Series<Number, Number> sex = new XYChart.Series<>();
 							sex.getData().add(new Data<Number, Number>(++index[0], source.getMapSize()));
 							chart.getData().add(sex);
+							
+							Series<Number, Number> sex2 = new XYChart.Series<>();
+							sex2.getData().add(new Data<Number, Number>(++index[0], source2.getMapSize()));
+							chart2.getData().add(sex2);
+							
+							Series<Number, Number> cleanSex = new XYChart.Series<>();
+							cleanSex.getData().add(new Data<Number, Number>(++index[0], source.getAvgCleanTime()));
+							cleanTimeChart.getData().add(cleanSex);
+							
+							Series<Number, Number> putSex = new XYChart.Series<>();
+							putSex.getData().add(new Data<Number, Number>(++index[0], source.getAvgGetTime()));
+							putTimeChart.getData().add(putSex);
 						}
 					});
 					try {
@@ -118,8 +139,35 @@ public class PHCacheTestTool4<T> extends Application{
 	@SuppressWarnings("unchecked")
 	@Override
 	public void start(Stage arg0) throws Exception {
+		//会new新的本类的实例，所以要静态全局
 		source = quan;
+		source2 = quan2;
 		go();
+	}
+	
+	private LineChart<Number, Number> initChart2() {
+		final Object lock = new Object();
+		final boolean[] ok = {false};
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				chart2 = justChart2("二级缓存存量净增图");
+				synchronized (lock) {
+					lock.notify();
+					ok[0] = true;
+				}
+			}
+		});
+		synchronized (lock) {
+			if(!ok[0]) {
+				try {
+					lock.wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return chart2;
 	}
 	
 	private LineChart<Number, Number> initChart() {
@@ -128,7 +176,10 @@ public class PHCacheTestTool4<T> extends Application{
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				chart = justChart2();
+				chart = justChart2("一级缓存存量净增图");
+				chart2 = justChart2("二级缓存存量净增图");
+				cleanTimeChart = justChart2("key清除平均耗时图(μs)");
+				putTimeChart = justChart2("获取平均耗时图(μs)");
 				synchronized (lock) {
 					lock.notify();
 					ok[0] = true;
@@ -147,7 +198,7 @@ public class PHCacheTestTool4<T> extends Application{
 		return chart;
 	}
 	
-	public static LineChart<Number, Number> justChart2() {
+	public static LineChart<Number, Number> justChart2(String name) {
 		LineChart<Number, Number> chart = new LineChart<>(new NumberAxis(), new NumberAxis());
 		chart.autosize();
 		chart.setCreateSymbols(false);
@@ -155,7 +206,7 @@ public class PHCacheTestTool4<T> extends Application{
 		Scene scene = new Scene(chart, 600, 400);
 		chart.getData().add(se);
 		Stage stage = new Stage();
-		stage.setTitle("统计图");
+		stage.setTitle(name);
 		stage.setScene(scene);
 		stage.show();
 		return chart;
