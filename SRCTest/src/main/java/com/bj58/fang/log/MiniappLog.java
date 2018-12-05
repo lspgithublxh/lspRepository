@@ -10,13 +10,15 @@ import java.util.regex.Pattern;
 public class MiniappLog {
 
 	public static void main(String[] args) {
-		generate("/software/after_2.txt", 1);
+//		generate("/software/after_2.txt", 1);
+//		generate("/software/localquery.txt", 1);
+		generate("/software/xiaoqu.txt", 1);
 	}
 	
 	private static void generate(String file, int count) {
-//		Pattern p = Pattern.compile("^(\\d+)----xiaoqu$", Pattern.CASE_INSENSITIVE);
+		Pattern p = Pattern.compile("^(\\d+)----xiaoqu$", Pattern.CASE_INSENSITIVE);
 //		Pattern p = Pattern.compile("^(\\d+)-------localquery$", Pattern.CASE_INSENSITIVE);
-		Pattern p = Pattern.compile("^(\\d+)-------after$", Pattern.CASE_INSENSITIVE);
+//		Pattern p = Pattern.compile("^(\\d+)-------after$", Pattern.CASE_INSENSITIVE);
 //	Pattern p = Pattern.compile("^(\\d+)-------localquery$", Pattern.CASE_INSENSITIVE);
 		BufferedReader reader;
 		List<String> table = new ArrayList<>();

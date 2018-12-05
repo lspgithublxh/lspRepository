@@ -298,6 +298,12 @@
 		    <artifactId>httpclient</artifactId>
 		    <version>4.5</version>
 		</dependency>
+		<!-- 定时器 -->
+		<dependency>
+			<groupId>quartz</groupId>
+			<artifactId>quartz</artifactId>
+			<version>1.5.2</version>
+		</dependency>
   </dependencies>
   <build>
     <finalName>SRCTest</finalName> 
