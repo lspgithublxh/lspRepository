@@ -10,13 +10,72 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
-
+/**
+ * 
+ * @ClassName:SMapTest
+ * @Description:
+ * @Author lishaoping
+ * @Date 2018年12月6日
+ * @Version V1.0
+ * @Package com.bj58.fang.cache
+ */
 public class SMapTest {
 
 	public static void main(String[] args) {
 //		 test();
-		 test2();
+//		 test2();
+		 new SMapTest().test3();
+	}
+
+	ConcurrentSkipListMap<CacheEntity2<String>, String> skipListMap = null;
+	private void test3() {
+		try {
+			skipListMap = new ConcurrentSkipListMap<>(new Comparator<CacheEntity2<String>>() {
+				@Override
+				public int compare(CacheEntity2<String> o1, CacheEntity2<String> o2) {
+					if (o1.getVisiCount() > o2.getVisiCount()) {
+						return 1;
+					} else if (o1.getVisiCount() < o2.getVisiCount()) {
+						return -1;
+					}
+					return 1;
+				}
+			});
+			int i = 0;
+			while(true) {
+				try {
+					Thread.sleep(20);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				CacheEntity2<String> en = new CacheEntity2<String>("", 1l, i);//次数相同就会被覆盖
+				System.out.println("start put");
+				skipListMap.put(en, i++ + "");//会卡死
+				System.out.println("put end");
+				System.out.println(skipListMap.size());
+			}
+//			new Thread(new Runnable() {
+//				
+//				@Override
+//				public void run() {
+//					int i = 0;
+//					while(true) {
+//						try {
+//							Thread.sleep(20);
+//						} catch (InterruptedException e) {
+//							e.printStackTrace();
+//						}
+//						CacheEntity2<String> en = new CacheEntity2<String>("", 1l, 1);
+//						skipListMap.put(en, i++ + "");
+//						System.out.println(skipListMap.size());
+//					}
+//				}
+//			}).start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private static void test2() {
@@ -46,7 +105,7 @@ public class SMapTest {
 		while(entryS.hasNext()) {
 			if(++i <= rmCount) {
 				Entry<CacheEntity2<String>, String> toRemo = entryS.next();
-				entryS.remove();//本策略是这样规定
+//				entryS.remove();//本策略是这样规定
 				cmap.remove(toRemo.getKey().getKey());
 				continue;
 			}
