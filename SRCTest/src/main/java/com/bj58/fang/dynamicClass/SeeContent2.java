@@ -12,6 +12,12 @@ import javax.tools.JavaCompiler.CompilationTask;
 
 public class SeeContent2 {
 
+	static SeeContent2 instanc = new SeeContent2();
+	
+	public static SeeContent2 getInstance() {
+		return instanc;
+	}
+	
 	public static void main(String[] args) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("package com.bj58.fang.dynamicClass; public class B{public static void main(String[] args) {System.out.println(\"hello\");}}");
