@@ -47,6 +47,7 @@ public class DmicImplements {
 				methca = "," + methca.substring(0, methca.length() - 2);
 			}
 			Class<?> ret = m.getReturnType();
+			
 			Annotation[] iann = m.getDeclaredAnnotations();
 //			AnnotatedType[] expe = m.getAnnotatedExceptionTypes();
 //			int i = m.getModifiers();
@@ -54,7 +55,7 @@ public class DmicImplements {
 //			System.out.println(m.toGenericString());
 //			System.out.println(m.toString());
 			String ms = m.toGenericString();
-						ms = ms.replace(" abstract", "");
+			ms = ms.replace(" abstract", "").replace(inter.getName() + ".", "");
 			String juti = ms.substring(ms.indexOf("(") + 1, ms.indexOf(")"));
 			String jutis = "";
 			String dparams = "";
@@ -73,14 +74,17 @@ public class DmicImplements {
 				ms = ms.substring(0, ms.indexOf("(")) + "(" + jutis + ")";
 				dparams = dparams.substring(0, dparams.length() - 1);
 			}
-			String methodCall = String.format("Method m1 = this.getClass().getDeclaredMethod(%s%s);\r\n", iname, methca);
-			String supmethodCall = String.format("Method m2 = super.getClass().getDeclaredMethod(%s%s);\r\n", iname, methca);
-
-			ms = String.format("@Override\r\n %s { %s%s return cb.callback(m1, m2 %s);}\r\n", ms, methodCall, supmethodCall, dparams);
+			String methodCall = String.format("Method m1 = null;\r\n Method m2 = null; try {m1 = this.getClass().getDeclaredMethod(\"%s\"%s);\r\n" + String.format(" m2 = super.getClass().getDeclaredMethod(\"%s\"%s);\r\n} catch (NoSuchMethodException | SecurityException e) {e.printStackTrace();}", iname, methca), iname, methca);
+			boolean hasReturn = "void".equals(ret.getName()) ? false : true;
+			if(hasReturn) {
+				ms = String.format("@Override\r\n %s { %s return (%s)cb.callback(m1, m2 %s);}\r\n", ms, methodCall, ret.getName(), dparams);
+			}else {
+				ms = String.format("@Override\r\n %s { %s }\r\n", ms, methodCall, dparams);
+			}
 //			System.out.println(ms);
 			bul2.append(ms);
 		}
-		builder.append(String.format("package %s; public class %s implements %s{ private com.bj58.fang.dynamicClass.CBInterface cb;public void set8y38mc(com.bj58.fang.dynamicClass.CBInterface cb){ this.cb = cb;} %s}", pack, 
+		builder.append(String.format("package %s;import java.lang.reflect.Method; public class %s implements %s{ private com.bj58.fang.dynamicClass.CBInterface cb;public void set8y38mc(com.bj58.fang.dynamicClass.CBInterface cb){ this.cb = cb;} %s}", pack, 
 				subName, interName, bul2.toString()));
 		System.out.println(builder.toString());
 		Class<?> c = SeeContent2.javaCodeToClass(pack + "." + subName, builder.toString());
