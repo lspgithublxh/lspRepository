@@ -18,7 +18,19 @@ public class DmicImplements {
 		Class aimplements = instanc.getImplements(AConnection.class);
 		try {
 			Object aimple = aimplements.newInstance();
+			CBInterface cb = new CBInterface() {
+
+				@Override
+				public Object callback(Method dynamicMethod, Method superMethod, Object... args) {
+					System.out.println("hehaha");
+					return null;
+				}
+				
+			};
+			instanc.setDmicInstance(cb, aimple);
 			System.out.println(aimple.getClass().getName());
+			AConnection c = (AConnection)aimple;
+			c.method1();
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
@@ -79,7 +91,7 @@ public class DmicImplements {
 			if(hasReturn) {
 				ms = String.format("@Override\r\n %s { %s return (%s)cb.callback(m1, m2 %s);}\r\n", ms, methodCall, ret.getName(), dparams);
 			}else {
-				ms = String.format("@Override\r\n %s { %s }\r\n", ms, methodCall, dparams);
+				ms = String.format("@Override\r\n %s { %s cb.callback(m1, m2 %s);}\r\n", ms, methodCall, dparams);
 			}
 //			System.out.println(ms);
 			bul2.append(ms);
@@ -92,10 +104,10 @@ public class DmicImplements {
 		
 	}
 	
-	public void setDmicInstance(Class<? extends CBInterface> c, Class<?> dinstance) {
+	public void setDmicInstance(CBInterface callback, Object dinstance) {
 		try {
-			Method m = dinstance.getDeclaredMethod("set8y38mc");
-			m.invoke(dinstance, c);
+			Method m = dinstance.getClass().getDeclaredMethod("set8y38mc", CBInterface.class);
+			m.invoke(dinstance, callback);
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
