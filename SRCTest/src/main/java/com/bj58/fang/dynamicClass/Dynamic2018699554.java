@@ -12,5 +12,6 @@ package com.bj58.fang.dynamicClass;import java.lang.reflect.Method; public class
  public int method2(java.lang.Object args0,java.lang.String args1) { Method m1 = null;
  Method m2 = null; try {m1 = this.getClass().getDeclaredMethod("method2",java.lang.Object.class, java.lang.String.class);
  m2 = super.getClass().getDeclaredMethod("method2",java.lang.Object.class, java.lang.String.class);
-} catch (NoSuchMethodException | SecurityException e) {e.printStackTrace();} return (int)cb.callback(m1, m2 ,args0,args1);}
+} catch (NoSuchMethodException | SecurityException e) {e.printStackTrace();} 
+ return (int)cb.callback(m1, m2 ,args0,args1);}
 }

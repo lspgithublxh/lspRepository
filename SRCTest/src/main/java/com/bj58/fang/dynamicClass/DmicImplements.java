@@ -23,7 +23,11 @@ public class DmicImplements {
 				@Override
 				public Object callback(Method dynamicMethod, Method superMethod, Object... args) {
 					System.out.println("hehaha");
-					return null;
+					System.out.println(dynamicMethod.getName());
+					for(Object s : args) {
+						System.out.println(s);
+					}
+					return 1;
 				}
 				
 			};
@@ -31,6 +35,8 @@ public class DmicImplements {
 			System.out.println(aimple.getClass().getName());
 			AConnection c = (AConnection)aimple;
 			c.method1();
+			c.method2(1, "2");
+			c.method3(2, 2);
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
