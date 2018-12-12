@@ -10,14 +10,23 @@ import java.util.Map;
 public class AC2 {
 
 	/**
-	 * 
+	 * 从服务端获取数据
 	 * @param 
 	 * @author lishaoping
 	 * @Date 2018年12月10日
 	 * @Package com.bj58.fang.ArBpCc
 	 * @return Object
 	 */
-	public Object readData(String url) {
+	public Object readData(String url) {//必须认为
+		
+		//
+//		try {
+//			Socket socket = new Socket("localhost", 12334);
+//			
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}//连接到服务器
+		
 		return null;
 	}
 	

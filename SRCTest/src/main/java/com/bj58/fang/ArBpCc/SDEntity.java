@@ -12,7 +12,7 @@ package com.bj58.fang.ArBpCc;
 public class SDEntity {
 
 	private String name;
-	private String url;
+	private String url;//应该独立，name其实意义不大---或者name下包含很多个url--要逐个申请
 	private String[] iop;
 	private long regTime;//首次服务注册时间
 	private long lastUpdateTime;//上次服务更新时间
