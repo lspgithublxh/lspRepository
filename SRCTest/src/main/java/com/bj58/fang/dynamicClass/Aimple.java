@@ -16,5 +16,17 @@ public class Aimple implements AConnection {
 	public Object method3(Object a3, Integer a4) {
 		return new Object();
 	}
-
+	
+//	public static void main(String[] args) {
+//	Aimple m = new Aimple();
+//	try {
+//		Method me = Aimple.class.getDeclaredMethod("method2", Object.class, String.class);
+//		Object rs = me.invoke(m, new Object[] {new Object(), "ee"});
+//		System.out.println(rs);
+//	} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//	}
+//	
+//}
 }

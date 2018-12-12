@@ -36,20 +36,24 @@ public class DmicImplements {
 					}
 					//1.主要工作：将服务名、方法、参数序列化，然后取socke接口将方法、参数等发送到该接口，使得服务端处理并返回结果，然后反序列化
 					//2.使用的数据发送和接收都是按字节进行的
-					if(instance != null) {
-						System.out.println(instance.getClass().getName());
-						try {
-							superMethod.invoke(instance, args);
-						} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-							e.printStackTrace();
-						}
-					}
+//					if(instance != null) {
+//						System.out.println(instance.getClass().getName());
+//						try {
+//							superMethod.invoke(instance, args);
+//						} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+//							e.printStackTrace();
+//						}
+//					}
+					proxy.proxy(dynamicMethod, instance);
 					return 1;
 				}
 				
 			};
 			instanc.setDmicInstance(cb, aimple);
 			System.out.println(aimple.getClass().getName());
+			Aimple sub = (Aimple) aimple;
+//			sub.method2(null, "222");
+			sub.method1();
 //			AConnection c = (AConnection)aimple;
 //			c.method1();
 //			c.method2(1, "2");
@@ -173,6 +177,8 @@ public class DmicImplements {
 		boolean first = true;
 		for(Method m : mes) {
 			String iname = m.getName();
+			String fullName = m.toGenericString();
+			fullName = fullName.replace("."+inter.getSimpleName()+".", "."+ subName + ".");
 			Class<?>[] iparams = m.getParameterTypes();
 			String methca = "";
 			String argsStr = "";
@@ -212,17 +218,17 @@ public class DmicImplements {
 			boolean hasReturn = "void".equals(ret.getName()) ? false : true;
 			if(hasReturn) {
 				ms = String.format("@Override\r\n %s { %s return (%s)cb.callback(this,proxy, m1, m2 %s);}\r\n", ms, methodCall, ret.getName(), dparams);
-				proxy.append(String.format("%s if(\"%s\".equals(method.toGenericString())){return super.%s(%s);}", first ? "" : "else", m.toGenericString(), iname, argsStr));//个数和类型，强转
+				proxy.append(String.format("%s if(\"%s\".equals(method.toGenericString())){System.out.println(\"proxy method get in\");return super.%s(%s);}", first ? "" : "else", fullName, iname, argsStr));//个数和类型，强转
 			}else {
 				ms = String.format("@Override\r\n %s { %s cb.callback(this,proxy, m1, m2 %s);}\r\n", ms, methodCall, dparams);
-				proxy.append(String.format("%s if(\"%s\".equals(method.toGenericString())){super.%s(%s);}", first ? "" : "else", m.toGenericString(), iname, argsStr));//个数和类型，强转
+				proxy.append(String.format("%s if(\"%s\".equals(method.toGenericString())){System.out.println(\"proxy method get in\");super.%s(%s);}", first ? "" : "else", fullName, iname, argsStr));//个数和类型，强转
 			}
 //			System.out.println(ms);
 			bul2.append(ms);
 			first = false;
 		}
 		//补充方法---补充一些东西
-		bul2.append(String.format(" private Object proxy(Method method, BIaoji a, Object... args){%s; return null;}\r\n", proxy.toString()));
+		bul2.append(String.format(" public Object proxy(Method method, BIaoji a, Object... args){%s;System.out.println(\"proxy method get out\"); return null;}\r\n", proxy.toString()));
 		String impeExt = isInterface ? "implements" : "extends";
 		builder.append(String.format("package %s;import java.lang.reflect.Method; public class %s %s %s{ private com.bj58.fang.dynamicClass.CBInterface cb;public void set8y38mc(com.bj58.fang.dynamicClass.CBInterface cb){ this.cb = cb;} %s}", pack, 
 				subName, impeExt, interName, bul2.toString()));
