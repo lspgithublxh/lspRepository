@@ -20,10 +20,15 @@ public class ProxySub {
 					break;
 				}
 			}
-			System.out.println(method.toGenericString());
-			System.out.println("public void com.bj58.fang.dynamicClass.Aimple.method1()".equals(method.toGenericString()));
+//			System.out.println(method.toGenericString());
+//			System.out.println("public void com.bj58.fang.dynamicClass.Aimple.method1()".equals(method.toGenericString()));
 //			Method m = instance.getClass().getDeclaredMethod("proxy", Method.class, BIaoji.class, new Object[0].getClass());
-			Object res = m.invoke(instance, method, null,  new Object[] {});//new Object(), "ee"
+			Object res = null;
+			if(method.getName().contains("method1")) {
+				res = m.invoke(instance, method, null,  new Object[] {});//new Object(), "ee"
+			}else {
+				res = m.invoke(instance, method, null,  new Object[] {null, "ee"});//new Object(), "ee"
+			}
 			System.out.println(res);
 			System.out.println("--------invoke ok");
 			return res;

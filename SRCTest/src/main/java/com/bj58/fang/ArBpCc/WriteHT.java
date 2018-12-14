@@ -99,6 +99,28 @@ public class WriteHT  extends Thread{
 		case 4://client有关的写
 			ac1.writeHandle(out, comSoc, 1, this);
 			break;
+		case 5://client有关的写
+			ac1.writeHandle(out, comSoc, 2, this);
+			break;
+		case 6://server有关的写
+			String data3 = this.context.get("data").toString();
+			String status2 = this.context.get("status").toString();
+			String mes = this.context.get("message").toString();
+			writeStr(String.format("callback:|%s|%s|%s", status2, mes, data3.length()));
+			byte[] data = data3.getBytes();
+			for(int i = 0; i < data.length; i+= 1024) {
+				int end = i + 1024;
+				byte[] buf = new byte[1024];
+				if(i + 1024 > data.length) {
+					end = data.length;
+				}
+				for(int j = i; j < end; j++) {
+					buf[j - i] = data[j];
+				}
+				writeArray(buf, 0, 1024);//发送多余的一些，
+			}
+			as1.writeHandle(out, comSoc, 1, this);
+			break;
 		default:
 			break;
 		}

@@ -52,8 +52,8 @@ public class DmicImplements {
 			instanc.setDmicInstance(cb, aimple);
 			System.out.println(aimple.getClass().getName());
 			Aimple sub = (Aimple) aimple;
-//			sub.method2(null, "222");
-			sub.method1();
+			sub.method2(null, "222");
+//			sub.method1();
 //			AConnection c = (AConnection)aimple;
 //			c.method1();
 //			c.method2(1, "2");

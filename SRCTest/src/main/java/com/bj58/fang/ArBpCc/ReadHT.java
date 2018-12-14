@@ -114,7 +114,7 @@ public class ReadHT extends Thread{
 				if(line2.startsWith("serv")) {
 					String[] info = line2.split("\\|");
 					String serName = info[1];
-					String serUrl = info[2];
+					String serUrl = info[2];//一般没太大意义
 					String length = info[3];
 					ByteArrayOutputStream out = readData(Integer.valueOf(length));
 					String ipPorts = out.toString();
@@ -122,9 +122,36 @@ public class ReadHT extends Thread{
 					SDEntity entity = new SDEntity(serName, serUrl, ipport);
 					this.context.put(serName, entity);
 					ac1.readHandle(in, comSoc, 1, this);
+				}else if(line2.startsWith("callback")) {
+					String[] info = line2.split("\\|");
+					String status = info[1];
+					String message = info[2];//一般没太大意义
+					String length = info[3];
+					ByteArrayOutputStream out = readData(Integer.valueOf(length));
+					this.context.put("data", out.toString());
+					this.context.put("status", status);
+					this.context.put("message", message);
+					//回调接口?--否则亲自释放锁
+					Object lock = this.context.get("mainLock");
+					synchronized (lock) {
+						lock.notify();
+					}
 				}
 				break;
-			case 2:
+			case 2://server的读
+				String line3 = input.readUTF();
+				if(line3.startsWith("methodCall")) {
+					String[] info = line3.split("\\|");
+					String interName = info[1];
+					String methodName = info[2];//一般没太大意义
+					String length = info[3];
+					//开始回调准备
+					ByteArrayOutputStream out = readData(Integer.valueOf(length));
+					this.context.put("para", out.toString());
+					this.context.put("interName", interName);
+					this.context.put("methodName", methodName);
+					as1.readHandle(in, comSoc, 1, this);
+				}
 				break;
 			default:
 				break;

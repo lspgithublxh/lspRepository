@@ -1,8 +1,12 @@
 package com.bj58.fang.ArBpCc;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 启动侦听
@@ -52,5 +56,38 @@ public class AS1 {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	public void readHandle(InputStream in, Socket sock, int type, ReadHT reader) {
+		switch (type) {
+		case 1:
+			//取参数，执行方法调用
+			Object param = reader.context.get("para");
+			Object inter = reader.context.get("interName");
+			Object method = reader.context.get("methodName");
+			String data = methodExecute(inter, method, param);
+			//写回数据
+			Map<String, Object> context = new HashMap<>();
+			context.put("data", data);
+			context.put("status", "200");
+			context.put("message", "");
+			try {
+				new WriteHT(sock.getOutputStream(), 6, sock).config(context).start();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
+	private String methodExecute(Object inter, Object method, Object param) {
+		System.out.println("service call success!!");
+		return "data";
+	}
+
+	public void writeHandle(OutputStream out, Socket comSoc, int i, WriteHT writeHT) {
+		System.out.println("server write callback");
 	}
 }
