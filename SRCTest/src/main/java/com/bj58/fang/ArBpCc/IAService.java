@@ -7,4 +7,6 @@ public interface IAService {
 	public int count(int a);
 	
 	public int visit(List<String> asli);
+	
+	public int vi(SDEntity entity);
 }

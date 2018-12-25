@@ -16,4 +16,10 @@ public class AService implements IAService{
 		return 0;
 	}
 
+	@Override
+	public int vi(SDEntity entity) {
+		System.out.println("service call the  vi method:" + entity.toString());
+		return 0;
+	}
+
 }

@@ -58,6 +58,8 @@ public class Test {
 				li.add("something");
 				count = serivce.visit(li);
 				System.out.println("完成远程调用" + count);
+				count = serivce.vi(new SDEntity("test", "hahah/hahaha", new String[] {"localhost:8080"}));
+				System.out.println("完成远程调用" + count);
 			}
 		}).start();
 

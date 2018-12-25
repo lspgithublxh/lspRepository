@@ -1,5 +1,8 @@
 package com.bj58.fang.ArBpCc;
 
+import java.io.Serializable;
+import java.util.Arrays;
+
 /**
  * serviceDes
  * @ClassName:SDEntity
@@ -9,8 +12,12 @@ package com.bj58.fang.ArBpCc;
  * @Version V1.0
  * @Package com.bj58.fang.ArBpCc
  */
-public class SDEntity {
+public class SDEntity implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String name;
 	private String url;//应该独立，name其实意义不大---或者name下包含很多个url--要逐个申请
 	private String[] iop;
@@ -52,6 +59,11 @@ public class SDEntity {
 		this.name = name;
 		this.url = url;
 		this.iop = iop;
+	}
+	@Override
+	public String toString() {
+		return "SDEntity [name=" + name + ", url=" + url + ", iop=" + Arrays.toString(iop) + ", regTime=" + regTime
+				+ ", lastUpdateTime=" + lastUpdateTime + "]";
 	}
 	
 }
