@@ -19,6 +19,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ARC {
 
+	private static ARC inst = new ARC();
+	public static ARC getInstance() {
+		return inst;
+	}
+	
 	Map<String, SDEntity> info = new ConcurrentHashMap<>();
 	
 	/**
@@ -33,9 +38,9 @@ public class ARC {
 		try {
 			ServerSocket server = new ServerSocket(12444);
 			while(true) {
-				System.out.println("wait to access");
+				System.out.println("ARC wait to access");
 				Socket client = server.accept();
-				System.out.println("received a request:");
+				System.out.println("ARC received a request:");
 				new ReadHT(client.getInputStream(), 3, client).start();
 //				new WriteHT(client.getOutputStream(), type, comSoc)//不能直接写，要根据读的结果来写；；主动调用的专门再看
 				//写线程，主动去查各个服务是否还能联系
@@ -64,6 +69,12 @@ public class ARC {
 				String[] content = generateServiceEntity(service, 1);
 				WriteHT writer = new WriteHT(comSoc.getOutputStream(), 1, comSoc);
 				writer.writeStr(content[0]);
+				//需要等一会儿
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 				writer.writeStr(content[1]);
 			} catch (IOException e) {
 				e.printStackTrace();

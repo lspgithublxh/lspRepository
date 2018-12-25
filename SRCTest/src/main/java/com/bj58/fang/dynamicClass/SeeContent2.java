@@ -27,6 +27,14 @@ public class SeeContent2 {
 		try {
 			b = a.newInstance();
 			System.out.println(b.getClass().getName());
+			a = javaCodeToClass("com.bj58.fang.ArBpCc.Dynamic2005567569", "package com.bj58.fang.ArBpCc;import java.lang.reflect.Method; public class Dynamic2005567569 implements IAService{ private com.bj58.fang.dynamicClass.CBInterface cb;public void set8y38mc(com.bj58.fang.dynamicClass.CBInterface cb){ this.cb = cb;} @Override\r\n" + 
+					" public int count(int args0) { Method m1 = null;\r\n" + 
+					" Method m2 = null; try {m1 = this.getClass().getDeclaredMethod(\"count\",int.class);\r\n" + 
+					" m2 = super.getClass().getDeclaredMethod(\"count\",int.class);\r\n" + 
+					"} catch (NoSuchMethodException | SecurityException e) {e.printStackTrace();} return (int)cb.callback(null, m1, m2 ,args0);}\r\n" + 
+					"}");
+			b = a.newInstance();
+			System.out.println(b.getClass().getName());
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
@@ -53,13 +61,15 @@ public class SeeContent2 {
 		options.add(outDir);
 		CompilationTask task = compiler.getTask(null, fileM, diagno, options, null, flist);
 		boolean rs = task.call();
-		StrObject2 obj = fileM.getObject();
-		DynamicClassLoader dc = new DynamicClassLoader(Thread.currentThread().getContextClassLoader());
-		try {
-			Class<?> o = dc.loadClass(name, obj);
-			return o;
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+		if(rs) {
+			StrObject2 obj = fileM.getObject();
+			DynamicClassLoader dc = new DynamicClassLoader(Thread.currentThread().getContextClassLoader());
+			try {
+				Class<?> o = dc.loadClass(name, obj);
+				return o;
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
 		}
 		return null;
 	}

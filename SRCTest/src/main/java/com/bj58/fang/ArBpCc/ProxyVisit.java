@@ -22,7 +22,7 @@ public class ProxyVisit {
 			String interName = url.substring(url.indexOf("/") + 1);
 			Class<?> c = DmicImplements.getInstance().getImplements(cl);
 			proxy = c.newInstance();
-			DmicImplements.getInstance().setDmicInstance(new GeneralCallBackFun(serviceName, interName), c);
+			DmicImplements.getInstance().setDmicInstance(new GeneralCallBackFun(serviceName, interName), proxy);
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}

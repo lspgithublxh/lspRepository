@@ -12,6 +12,7 @@ import java.util.Map;
  * 启动侦听
  * 回调处理
  * 发送注册
+ * --注册-请求-调用-返回为止
  * @ClassName:AS1
  * @Description:
  * @Author lishaoping
@@ -21,6 +22,11 @@ import java.util.Map;
  */
 public class AS1 {
 
+	
+	private static AS1 inst = new AS1();
+	public static AS1 getInstance() {
+		return inst;
+	}
 	public static void main(String[] args) {
 		
 	}
@@ -41,17 +47,21 @@ public class AS1 {
 				
 				@Override
 				public void run() {
-					try {
-						Socket toclient = server.accept();
-						
-					} catch (IOException e) {
-						e.printStackTrace();
+					while(true) {
+						try {
+							System.out.println("AS1 wait to access!");
+							Socket toclient = server.accept();
+							new ReadHT(toclient.getInputStream(), 2, toclient).start();
+							System.out.println("AS1 receive a access!");
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			}).start();
-			//2.发送
+			//2.发送 --注册
 			Socket toreg = new Socket("localhost", 12444);
-			new WriteHT(toreg.getOutputStream(), 3, toreg).config("").start();
+			new WriteHT(toreg.getOutputStream(), 3, toreg).config("reg:|aservice|aservice/IAServiceImpl|15").start();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -65,7 +75,7 @@ public class AS1 {
 			Object param = reader.context.get("para");
 			Object inter = reader.context.get("interName");
 			Object method = reader.context.get("methodName");
-			String data = methodExecute(inter, method, param);
+			Object data = methodExecute(inter, method, param);
 			//写回数据
 			Map<String, Object> context = new HashMap<>();
 			context.put("data", data);
@@ -82,12 +92,31 @@ public class AS1 {
 		}
 	}
 
-	private String methodExecute(Object inter, Object method, Object param) {
+	private Object methodExecute(Object inter, Object method, Object param) {
 		System.out.println("service call success!!");
+		if(((String)method).contains("count")) {
+			return 1;
+		}
 		return "data";
 	}
 
-	public void writeHandle(OutputStream out, Socket comSoc, int i, WriteHT writeHT) {
+	public void writeHandle(OutputStream out, Socket comSoc, int status, WriteHT writeHT) {
+		switch (status) {
+		case 1:
+			//再写ip
+			byte[] front = new byte[1024];
+			byte[] content = "localhost:12334".getBytes();
+			for(int i = 0; i < content.length; i++) {//都是正数
+				front[i] = content[i];
+			}
+			for(int i = content.length; i < 1024; i++) {
+				front[i] = 0;
+			}
+			writeHT.writeArray(front, 0, front.length);
+			break;
+		default:
+			break;
+		}
 		System.out.println("server write callback");
 	}
 }

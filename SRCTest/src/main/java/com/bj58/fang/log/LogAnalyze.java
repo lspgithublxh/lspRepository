@@ -29,7 +29,7 @@ public class LogAnalyze extends Application{
 //		test();
 //		test2();
 //		userAnalize(args);
-		restrictIpAnalize(args);
+		restrictIpAnalize2(args);
 	}
 
 	private static void restrictIpAnalize2(String[] args) {
@@ -42,7 +42,7 @@ public class LogAnalyze extends Application{
 		
 		String regex = "stat_ip.+?ver\\:(.+)?,";
 		int count = 1;
-		String file = "D:\\software\\version.txt";
+		String file = "D:\\software\\tt.txt";
 		table = tableData(regex, count, file);
 		List<String> d = new ArrayList<>();
 		List<List<String>> d2 = new ArrayList<>();

@@ -9,9 +9,9 @@ import java.util.Map;
 
 public class AC2 {
 
-	private static AC2 inst = new AC2();
-	private Map<String, Object> config = new HashMap<>();
 	
+	private Map<String, Object> config = new HashMap<>();
+	private static AC2 inst = new AC2();
 	public static AC2 getInstance() {
 		return inst;
 	}
@@ -48,6 +48,7 @@ public class AC2 {
 		//请求、获取服务线
 //		String servName = "abc";
 		SDEntity ser = null;
+		System.out.println("AC2 start to get service entity");
 		try {
 			if(config.containsKey(servName)) {
 				return (SDEntity) config.get(servName);
@@ -57,8 +58,8 @@ public class AC2 {
 			config.put("serviceName", servName);
 			Object lock = new Object();
 			config.put("mainLock", lock);
-			new WriteHT(socket.getOutputStream(), 4, socket).config(config).start();
 			new ReadHT(socket.getInputStream(), 1, socket).config(config).start();
+			new WriteHT(socket.getOutputStream(), 4, socket).config(config).start();
 			synchronized (lock) {
 				lock.wait();
 			}
@@ -78,6 +79,7 @@ public class AC2 {
 			synchronized (lock) {
 				lock.notify();
 			}
+			//回写数据
 			break;
 		default:
 			break;
@@ -92,31 +94,47 @@ public class AC2 {
 			writer.writeStr("req:service|" + serName);
 			break;
 		case 2://调用服务返回数据
+			System.out.println("client start remote call : sleep 3000ms");
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			String request = (String) writer.context.get("request");
-			//休息一会儿，进行发送--否则缓冲了，除非也读取长度
-			byte[] front = new byte[1024];
-			byte[] content = request.getBytes();
-			for(int i = 0; i < content.length; i++) {//都是正数
-				front[i] = content[i];
-			}
-			for(int i = content.length; i < 1024; i++) {
-				front[i] = 0;
-			}
-			writer.writeArray(front, 0, front.length);
 			String para = (String) writer.context.get("para");
-			System.out.println("start --- send data---:");
-			byte[] data = para.getBytes();
-			for(int i = 0; i < data.length; i+= 1024) {
-				int end = i + 1024;
-				byte[] buf = new byte[1024];
-				if(i + 1024 > data.length) {
-					end = data.length;
-				}
-				for(int j = i; j < end; j++) {
-					buf[j - i] = data[j];
-				}
-				writer.writeArray(buf, 0, 1024);//发送多余的一些，
-			}
+			writer.writeStr(request);
+//			try {
+//				Thread.sleep(1000);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+//			writer.writeStr(para);
+			//直接写会失败---方法的选择
+			//休息一会儿，进行发送--否则缓冲了，除非也读取长度
+//			byte[] front = new byte[1024];
+//			byte[] content = request.getBytes();
+//			for(int i = 0; i < content.length; i++) {//都是正数
+//				front[i] = content[i];
+//			}
+//			for(int i = content.length; i < 1024; i++) {
+//				front[i] = 0;
+//			}
+//			System.out.println("start --- send method data to server---:");
+//			writer.writeArray(front, 0, front.length);
+//			String para = (String) writer.context.get("para");
+//			System.out.println("start --- send method data to server---:");
+//			byte[] data = para.getBytes();
+//			for(int i = 0; i < data.length; i+= 1024) {
+//				int end = i + 1024;
+//				byte[] buf = new byte[1024];
+//				if(i + 1024 > data.length) {
+//					end = data.length;
+//				}
+//				for(int j = i; j < end; j++) {
+//					buf[j - i] = data[j];
+//				}
+//				writer.writeArray(buf, 0, 1024);//发送多余的一些，
+//			}
 			break;
 		default:
 			break;

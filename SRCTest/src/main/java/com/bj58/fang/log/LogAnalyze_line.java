@@ -33,7 +33,7 @@ import javafx.stage.Stage;
 public class LogAnalyze_line extends Application{
 
 	public static void main(String[] args) {
-		generate("D:\\software\\ss.txt", 2);
+		generate("D:\\software\\tt.txt", 2);
 		mapreduce(table);
 		launch(args);
 	}

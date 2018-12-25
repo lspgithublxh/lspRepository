@@ -303,9 +303,9 @@ public class DmicImplements {
 			String methodCall = String.format("Method m1 = null;\r\n Method m2 = null; try {m1 = this.getClass().getDeclaredMethod(\"%s\"%s);\r\n" + String.format(" m2 = super.getClass().getDeclaredMethod(\"%s\"%s);\r\n} catch (NoSuchMethodException | SecurityException e) {e.printStackTrace();}", iname, methca), iname, methca);
 			boolean hasReturn = "void".equals(ret.getName()) ? false : true;
 			if(hasReturn) {
-				ms = String.format("@Override\r\n %s { %s return (%s)cb.callback(%s, m1, m2 %s);}\r\n", ms, methodCall, ret.getName(),thisGet, dparams);
+				ms = String.format("@Override\r\n %s { %s return (%s)cb.callback(%s,null, m1, m2 %s);}\r\n", ms, methodCall, ret.getName(),thisGet, dparams);
 			}else {
-				ms = String.format("@Override\r\n %s { %s cb.callback(%s, m1, m2 %s);}\r\n", ms, methodCall, thisGet, dparams);
+				ms = String.format("@Override\r\n %s { %s cb.callback(%s,null, m1, m2 %s);}\r\n", ms, methodCall, thisGet, dparams);
 			}
 //			System.out.println(ms);
 			bul2.append(ms);

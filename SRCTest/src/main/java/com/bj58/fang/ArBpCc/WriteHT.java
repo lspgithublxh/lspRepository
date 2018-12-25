@@ -28,9 +28,9 @@ public class WriteHT  extends Thread{
 	private int off;
 	private int len;
 	
-	ARC arc = null;
-	AS1 as1 = null;
-	AC2 ac1 = null;
+	ARC arc = ARC.getInstance();
+	AS1 as1 = AS1.getInstance();
+	AC2 ac1 = AC2.getInstance();
 	
 	public WriteHT config(String message) {
 		this.content = message;
@@ -38,6 +38,14 @@ public class WriteHT  extends Thread{
 	}
 	
 	public WriteHT config(Map<String, Object> context) {
+//		String name = obj.getClass().getSimpleName();
+//		if("ARC".equals(name)) {
+//			arc = (ARC) obj;
+//		}else if("AS1".equals(name)) {
+//			as1 = (AS1) obj;
+//		}else if("AC2".equals(name)) {
+//			ac1 = (AC2) obj;
+//		}
 		this.context = context;
 		return this;
 	}
@@ -57,6 +65,33 @@ public class WriteHT  extends Thread{
 		this.comSoc = comSoc;
 	}
 	
+	public ARC getArc() {
+		return arc;
+	}
+
+	public ARC setArc(ARC arc) {
+		this.arc = arc;
+		return arc;
+	}
+
+	public AS1 getAs1() {
+		return as1;
+	}
+
+	public AS1 setAs1(AS1 as1) {
+		this.as1 = as1;
+		return as1;
+	}
+
+	public AC2 getAc1() {
+		return ac1;
+	}
+
+	public AC2 setAc1(AC2 ac1) {
+		this.ac1 = ac1;
+		return ac1;
+	}
+
 	public int writeStr(String text){
 		try {
 			output.writeUTF(text);
@@ -94,7 +129,9 @@ public class WriteHT  extends Thread{
 		case 2://arc有关的写
 			writeArray(data, off, len);
 			break;
-		case 3://server有关的写
+		case 3://server有关的写  注册一个服务
+			int status3 = writeStr(content);
+			as1.writeHandle(out, comSoc, 1, this);
 			break;
 		case 4://client有关的写
 			ac1.writeHandle(out, comSoc, 1, this);

@@ -10,18 +10,24 @@ import java.util.Map;
 
 public class ReadHT extends Thread{
 
-	AC2 ac1 = null;
-	AS1 as1 = null;
-	ARC arc = null;
+	ARC arc = ARC.getInstance();
+	AS1 as1 = AS1.getInstance();
+	AC2 ac1 = AC2.getInstance();
 	
 	int type = 1;//1.server, 2.client, 3.regcenter
 	InputStream in = null;
 	DataInputStream input = null;
 	Socket comSoc = null;
 	Map<String, Object> context = new HashMap<>();
+	private GeneralCallBackFun callback = null;
 	
 	public ReadHT config(Map<String, Object> context) {
 		this.context = context;
+		return this;
+	}
+	
+	public ReadHT config(GeneralCallBackFun callback) {
+		this.callback  = callback;
 		return this;
 	}
 	
@@ -64,6 +70,7 @@ public class ReadHT extends Thread{
 	@Override
 	public void run() {
 		try {
+			System.out.println("read thread:---" + type);
 			switch (type) {
 			case 3:
 				//1.阅读标记位
@@ -110,14 +117,21 @@ public class ReadHT extends Thread{
 				break;
 			case 1://client的读，分2种  一是服务信息，二是调服务返回的数据
 				//1.阅读标记位
+				System.out.println("type 1 read wait");
 				String line2 = input.readUTF();
+				System.out.println("type 1 read:" + line2);
 				if(line2.startsWith("serv")) {
+					System.out.println("read serv from arc:" + line2);
 					String[] info = line2.split("\\|");
 					String serName = info[1];
 					String serUrl = info[2];//一般没太大意义
 					String length = info[3];
-					ByteArrayOutputStream out = readData(Integer.valueOf(length));
-					String ipPorts = out.toString();
+					System.out.println("start read serv again!:");
+//					ByteArrayOutputStream out = readData(Integer.valueOf(length));
+//					System.out.println("read service ok!:");
+//					String ipPorts = out.toString();
+					String ipPorts = input.readUTF();
+					System.out.println("read service ok!:" + ipPorts);
 					String[] ipport = ipPorts.split(";");
 					SDEntity entity = new SDEntity(serName, serUrl, ipport);
 					this.context.put(serName, entity);
@@ -136,18 +150,23 @@ public class ReadHT extends Thread{
 					synchronized (lock) {
 						lock.notify();
 					}
+					//回调generalCallback
+					callback.readBack(in, comSoc, 1, this);
 				}
 				break;
 			case 2://server的读
+				System.out.println("type2 read wait!");
 				String line3 = input.readUTF();
+				System.out.println("type2 read Ok:" + line3);
 				if(line3.startsWith("methodCall")) {
 					String[] info = line3.split("\\|");
 					String interName = info[1];
 					String methodName = info[2];//一般没太大意义
 					String length = info[3];
 					//开始回调准备
-					ByteArrayOutputStream out = readData(Integer.valueOf(length));
-					this.context.put("para", out.toString());
+//					ByteArrayOutputStream out = readData(Integer.valueOf(length));
+//					this.context.put("para", out.toString());
+					this.context.put("para", "dd");
 					this.context.put("interName", interName);
 					this.context.put("methodName", methodName);
 					as1.readHandle(in, comSoc, 1, this);
