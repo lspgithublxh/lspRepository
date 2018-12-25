@@ -95,7 +95,7 @@ public class AS1 {
 	private Object methodExecute(Object inter, Object method, Object param) {
 		System.out.println("service call success!!");
 		if(((String)method).contains("count")) {
-			return 1;
+			return 13456;
 		}
 		return "data";
 	}

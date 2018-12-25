@@ -45,6 +45,8 @@ public class GeneralCallBackFun implements CBInterface{
 					params.append(o.toString());
 					params.append(",");
 				}
+				//TODO 纯属测试
+				params.append("this a test data");
 				int len = params.length() > 0 ? params.length() - 1 : 0;
 				String methodName = superMethod.toGenericString();
 				String request = String.format("methodCall:|%s|%s|%s", interName, methodName, len);

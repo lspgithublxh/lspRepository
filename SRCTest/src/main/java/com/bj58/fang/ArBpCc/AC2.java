@@ -97,13 +97,8 @@ public class AC2 {
 			String request = (String) writer.context.get("request");
 			String para = (String) writer.context.get("para");
 			writer.writeStr(request);
-//			try {
-//				Thread.sleep(1000);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
-//			writer.writeStr(para);
-			//直接写会失败---方法的选择
+
+			//直接写会失败---方法的选择  ---先str后data就不会失败
 			//休息一会儿，进行发送--否则缓冲了，除非也读取长度
 //			byte[] front = new byte[1024];
 //			byte[] content = request.getBytes();
@@ -117,18 +112,18 @@ public class AC2 {
 //			writer.writeArray(front, 0, front.length);
 //			String para = (String) writer.context.get("para");
 //			System.out.println("start --- send method data to server---:");
-//			byte[] data = para.getBytes();
-//			for(int i = 0; i < data.length; i+= 1024) {
-//				int end = i + 1024;
-//				byte[] buf = new byte[1024];
-//				if(i + 1024 > data.length) {
-//					end = data.length;
-//				}
-//				for(int j = i; j < end; j++) {
-//					buf[j - i] = data[j];
-//				}
-//				writer.writeArray(buf, 0, 1024);//发送多余的一些，
-//			}
+			byte[] data = para.getBytes();
+			for(int i = 0; i < data.length; i+= 1024) {
+				int end = i + 1024;
+				byte[] buf = new byte[1024];
+				if(i + 1024 > data.length) {
+					end = data.length;
+				}
+				for(int j = i; j < end; j++) {
+					buf[j - i] = data[j];
+				}
+				writer.writeArray(buf, 0, 1024);//发送多余的一些，
+			}
 			break;
 		default:
 			break;
