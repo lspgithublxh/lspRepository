@@ -3,6 +3,9 @@ package com.bj58.fang.ArBpCc;
 /**
  * 读的模式可以改为读块，有多少块；；第一块为验证配置块---要读要转要验证，后面的是数据块
  * 读线程要在写线程前面
+ * 
+ * netty:参考：https://www.cnblogs.com/little-fly/p/8683197.html
+ * 		参考2：https://www.cnblogs.com/fairjm/p/netty_common_pattern.html
  * @ClassName:Test
  * @Description:
  * @Author lishaoping

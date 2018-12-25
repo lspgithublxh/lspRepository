@@ -94,12 +94,12 @@ public class AC2 {
 			writer.writeStr("req:service|" + serName);
 			break;
 		case 2://调用服务返回数据
-			System.out.println("client start remote call : sleep 3000ms");
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+//			System.out.println("client start remote call : sleep 3000ms");
+//			try {
+//				Thread.sleep(3000);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
 			String request = (String) writer.context.get("request");
 			String para = (String) writer.context.get("para");
 			writer.writeStr(request);
