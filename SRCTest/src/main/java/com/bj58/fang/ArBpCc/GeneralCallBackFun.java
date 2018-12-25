@@ -47,10 +47,10 @@ public class GeneralCallBackFun implements CBInterface{
 				}
 				//TODO 纯属测试
 				params.append("this a test data");
-				int len = params.length() > 0 ? params.length() - 1 : 0;
+				byte[] para = params.substring(0, params.length() - 1).getBytes();
+				int len = para.length > 0 ? para.length : 0;
 				String methodName = superMethod.toGenericString();
 				String request = String.format("methodCall:|%s|%s|%s", interName, methodName, len);
-				String para = params.substring(0, params.length() - 1);
 				//send to 发送两次
 				Object lock = new Object();
 				Map<String, Object> context = new HashMap<>();

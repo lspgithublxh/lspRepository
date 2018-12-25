@@ -166,7 +166,6 @@ public class ReadHT extends Thread{
 					//开始回调准备
 					ByteArrayOutputStream out = readData(Integer.valueOf(length));
 					this.context.put("para", out.toString());
-					this.context.put("para", "dd");
 					this.context.put("interName", interName);
 					this.context.put("methodName", methodName);
 					as1.readHandle(in, comSoc, 1, this);
