@@ -1,9 +1,11 @@
 package com.bj58.fang.ArBpCc;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
@@ -165,7 +167,13 @@ public class ReadHT extends Thread{
 					String length = info[3];
 					//开始回调准备
 					ByteArrayOutputStream out = readData(Integer.valueOf(length));
-					this.context.put("para", out.toString());
+					//反序列化
+					ObjectInputStream objIn = new ObjectInputStream(new ByteArrayInputStream(out.toByteArray()));
+					try {
+						this.context.put("para", objIn.readObject());
+					} catch (ClassNotFoundException e) {
+						e.printStackTrace();
+					}
 					this.context.put("interName", interName);
 					this.context.put("methodName", methodName);
 					as1.readHandle(in, comSoc, 1, this);

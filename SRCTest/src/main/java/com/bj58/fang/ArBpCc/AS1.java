@@ -3,6 +3,8 @@ package com.bj58.fang.ArBpCc;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
@@ -61,7 +63,7 @@ public class AS1 {
 			}).start();
 			//2.发送 --注册
 			Socket toreg = new Socket("localhost", 12444);
-			new WriteHT(toreg.getOutputStream(), 3, toreg).config("reg:|aservice|aservice/IAServiceImpl|15").start();
+			new WriteHT(toreg.getOutputStream(), 3, toreg).config("reg:|aservice|aservice/AService|15").start();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -91,13 +93,101 @@ public class AS1 {
 			break;
 		}
 	}
-
+	
 	private Object methodExecute(Object inter, Object method, Object param) {
-		System.out.println("service call success!! and read Param is : " + param);
-		if(((String)method).contains("count")) {
-			return 13456;
+		System.out.println("service call success!! and read Param[] is : " + param);
+		Object rs = null;
+		if("AService".equals(inter.toString())) {
+//			return method1(inter, method, param);
+			Class<?> cls;
+			try {
+				cls = Class.forName("com.bj58.fang.ArBpCc." + inter.toString());
+				Object instance = cls.newInstance();
+				Method[] mes = cls.getDeclaredMethods();
+				String namexx = method.toString();
+				namexx = namexx.substring(namexx.lastIndexOf(".") + 1);
+				for(Method m : mes) {
+					String name2 = m.toGenericString();
+					name2 = name2.substring(name2.lastIndexOf(".") + 1);
+					if(namexx.equals(name2)) {
+						boolean run = false;
+						if(param != null) {
+							Object[] params = (Object[]) param;
+							if(params.length > 0) {
+								rs = m.invoke(instance, params);
+								run = true;
+							}
+						}
+						if(!run) {
+							rs = m.invoke(instance);
+						}
+						break;
+					}
+				}
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
-		return "data";
+		
+		return rs;
+	}
+	private Object method1(Object inter, Object method, Object param) {
+		try {
+			Class<?> cls = Class.forName("com.bj58.fang.ArBpCc." + inter.toString());
+			boolean run = false;
+			Object instance = cls.newInstance();
+			if(param != null) {
+				Object[] params = (Object[]) param;
+				if(params.length > 0) {
+					Class<?>[] types = new Class<?>[params.length];
+					int i = 0;
+					for(Object pa : params) {
+						types[i++] = pa.getClass();
+					}
+					Method me = cls.getMethod(method.toString(), types);
+					Object rs = me.invoke(instance, params);
+					run = true;
+					return rs;
+				}
+			}
+			if(!run) {
+				Method me = cls.getMethod(method.toString());
+				Object rs = me.invoke(instance);
+				return rs;
+			}
+			
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public void writeHandle(OutputStream out, Socket comSoc, int status, WriteHT writeHT) {

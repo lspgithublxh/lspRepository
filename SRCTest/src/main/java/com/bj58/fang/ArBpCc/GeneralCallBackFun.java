@@ -1,7 +1,10 @@
 package com.bj58.fang.ArBpCc;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.HashMap;
@@ -38,16 +41,8 @@ public class GeneralCallBackFun implements CBInterface{
 		for(String ip : iop) {
 			String[] ippo = ip.split("\\:");
 			try {
-				//参数序列化
-				StringBuilder params = new StringBuilder();
-				//序列化方式：写到byte[]里
-				for(Object o : args) {//序列化--toString()方法
-					params.append(o.toString());
-					params.append(",");
-				}
-				//TODO 纯属测试
-				params.append("this a test data");
-				byte[] para = params.substring(0, params.length() - 1).getBytes();
+//				byte[] para = getSerilizeParam(args);
+				byte[] para = getSerilizeParam2(args);
 				int len = para.length > 0 ? para.length : 0;
 				String methodName = superMethod.toGenericString();
 				String request = String.format("methodCall:|%s|%s|%s", interName, methodName, len);
@@ -87,6 +82,48 @@ public class GeneralCallBackFun implements CBInterface{
 		//2.
 		System.out.println("get Data failed!!");
 		return null;
+	}
+
+	/**
+	 * 新的序列化方式---多个对象序列化
+	 * 可以转json然后发送，然后从json再转为对象
+	 * @param 
+	 * @author lishaoping
+	 * @Date 2018年12月25日
+	 * @Package com.bj58.fang.ArBpCc
+	 * @return byte[]
+	 */
+	private byte[] getSerilizeParam2(Object[] args) {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		try {
+			ObjectOutputStream objOut = new ObjectOutputStream(out);
+			objOut.writeObject(args);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return out.toByteArray();
+	}
+
+	/**
+	 * 老方法
+	 * @param 
+	 * @author lishaoping
+	 * @Date 2018年12月25日
+	 * @Package com.bj58.fang.ArBpCc
+	 * @return byte[]
+	 */
+	private byte[] getSerilizeParam(Object... args) {
+		//参数序列化
+		StringBuilder params = new StringBuilder();
+		//序列化方式：写到byte[]里
+		for(Object o : args) {//序列化--toString()方法
+			params.append(o.toString());
+			params.append(",");
+		}
+		//TODO 纯属测试
+		params.append("this a test data");
+		byte[] para = params.substring(0, params.length() - 1).getBytes();
+		return para;
 	}
 
 	public void readBack(InputStream in, Socket sock, int type, ReadHT reader) {
