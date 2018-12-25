@@ -1,5 +1,8 @@
 package com.bj58.fang.ArBpCc;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 读的模式可以改为读块，有多少块；；第一块为验证配置块---要读要转要验证，后面的是数据块
  * 读线程要在写线程前面
@@ -35,7 +38,7 @@ public class Test {
 			}
 		}).start();
 		try {
-			Thread.sleep(3000);
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -50,6 +53,10 @@ public class Test {
 				int count = serivce.count(2);
 				System.out.println("完成远程调用" + count);
 				count = serivce.count(3);
+				System.out.println("完成远程调用" + count);
+				List<String> li = new ArrayList<String>();
+				li.add("something");
+				count = serivce.visit(li);
 				System.out.println("完成远程调用" + count);
 			}
 		}).start();

@@ -1,6 +1,7 @@
 package com.bj58.fang.ArBpCc;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 public class Dynamic2005567569 implements IAService {
 	private com.bj58.fang.dynamicClass.CBInterface cb;
@@ -20,5 +21,11 @@ public class Dynamic2005567569 implements IAService {
 			e.printStackTrace();
 		}
 		return (int) cb.callback(null, null, m1, m2, args0);
+	}
+
+	@Override
+	public int visit(List<String> asli) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }
