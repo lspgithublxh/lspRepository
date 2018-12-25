@@ -40,6 +40,7 @@ public class GeneralCallBackFun implements CBInterface{
 			try {
 				//参数序列化
 				StringBuilder params = new StringBuilder();
+				//序列化方式：写到byte[]里
 				for(Object o : args) {//序列化--toString()方法
 					params.append(o.toString());
 					params.append(",");

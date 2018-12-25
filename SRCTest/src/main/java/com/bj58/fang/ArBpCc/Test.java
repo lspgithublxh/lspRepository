@@ -49,6 +49,8 @@ public class Test {
 				IAService serivce = ProxyVisit.proxyMethod(ent.getUrl(), IAService.class);
 				int count = serivce.count(2);
 				System.out.println("完成远程调用" + count);
+				count = serivce.count(3);
+				System.out.println("完成远程调用" + count);
 			}
 		}).start();
 
