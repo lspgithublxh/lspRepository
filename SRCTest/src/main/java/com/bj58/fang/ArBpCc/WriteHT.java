@@ -140,11 +140,11 @@ public class WriteHT  extends Thread{
 			ac1.writeHandle(out, comSoc, 2, this);
 			break;
 		case 6://server有关的写
-			String data3 = this.context.get("data").toString();
+			byte[] data3 = (byte[]) this.context.get("data");
 			String status2 = this.context.get("status").toString();
 			String mes = this.context.get("message").toString();
-			writeStr(String.format("callback:|%s|%s|%s", status2, mes, data3.length()));
-			byte[] data = data3.getBytes();
+			writeStr(String.format("callback:|%s|%s|%s", status2, mes, data3.length));
+			byte[] data = data3;
 			for(int i = 0; i < data.length; i+= 1024) {
 				int end = i + 1024;
 				byte[] buf = new byte[1024];
@@ -156,7 +156,7 @@ public class WriteHT  extends Thread{
 				}
 				writeArray(buf, 0, 1024);//发送多余的一些，
 			}
-			as1.writeHandle(out, comSoc, 1, this);
+			System.out.println("server write back ok");
 			break;
 		default:
 			break;

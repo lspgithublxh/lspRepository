@@ -34,4 +34,10 @@ public class Dynamic2005567569 implements IAService {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	@Override
+	public SDEntity shuang(SDEntity entity) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

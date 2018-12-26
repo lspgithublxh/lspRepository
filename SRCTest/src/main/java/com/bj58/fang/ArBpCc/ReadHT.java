@@ -144,7 +144,7 @@ public class ReadHT extends Thread{
 					String message = info[2];//一般没太大意义
 					String length = info[3];
 					ByteArrayOutputStream out = readData(Integer.valueOf(length));
-					this.context.put("data", out.toString());
+					this.context.put("data", out.toByteArray());
 					this.context.put("status", status);
 					this.context.put("message", message);
 					//回调接口?--否则亲自释放锁

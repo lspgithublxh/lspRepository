@@ -1,7 +1,10 @@
 package com.bj58.fang.ArBpCc;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -78,9 +81,18 @@ public class AS1 {
 			Object inter = reader.context.get("interName");
 			Object method = reader.context.get("methodName");
 			Object data = methodExecute(inter, method, param);
+			//对象序列化
+			ByteArrayOutputStream outb = new ByteArrayOutputStream();
+			ObjectOutputStream outs;
+			try {
+				outs = new ObjectOutputStream(outb);
+				outs.writeObject(data);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 			//写回数据
 			Map<String, Object> context = new HashMap<>();
-			context.put("data", data);
+			context.put("data", outb.toByteArray());
 			context.put("status", "200");
 			context.put("message", "");
 			try {
@@ -105,10 +117,12 @@ public class AS1 {
 				Object instance = cls.newInstance();
 				Method[] mes = cls.getDeclaredMethods();
 				String namexx = method.toString();
-				namexx = namexx.substring(namexx.lastIndexOf(".") + 1);
+				String prex = namexx.substring(0, namexx.indexOf("("));
+				namexx = namexx.substring(prex.lastIndexOf(".") + 1);
 				for(Method m : mes) {
 					String name2 = m.toGenericString();
-					name2 = name2.substring(name2.lastIndexOf(".") + 1);
+					String prex2 = name2.substring(0, name2.indexOf("("));
+					name2 = name2.substring(prex2.lastIndexOf(".") + 1);
 					if(namexx.equals(name2)) {
 						boolean run = false;
 						if(param != null) {
@@ -125,19 +139,14 @@ public class AS1 {
 					}
 				}
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			

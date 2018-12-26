@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
 import java.net.Socket;
@@ -62,15 +63,22 @@ public class GeneralCallBackFun implements CBInterface{
 				Object status = context.get("status");
 				if("200".equals(status)) {
 					Object readData = context.get("data");
-					System.out.println("callback data is :" + readData);
-					//以后会是一个序列化和反序列化的过程 --- 直接转为正确的对象---从byte[] 转
-					Class<?> retType = superMethod.getReturnType();
-					String name = retType.getName();
-					if("java.lang.Integer".equals(name) || "int".equals(name)) {
-						readData = Integer.valueOf((String) readData);
-					}else if("java.lang.Long".equals(name)) {
-						readData = Long.valueOf((String) readData);
+					ByteArrayInputStream inb = new ByteArrayInputStream((byte[]) readData);
+					ObjectInputStream ins = new ObjectInputStream(inb);
+					try {
+						readData = ins.readObject();
+						System.out.println("callback data is :" + readData);
+					} catch (ClassNotFoundException e) {
+						e.printStackTrace();
 					}
+					//以后会是一个序列化和反序列化的过程 --- 直接转为正确的对象---从byte[] 转
+//					Class<?> retType = superMethod.getReturnType();
+//					String name = retType.getName();
+//					if("java.lang.Integer".equals(name) || "int".equals(name)) {
+//						readData = Integer.valueOf((String) readData);
+//					}else if("java.lang.Long".equals(name)) {
+//						readData = Long.valueOf((String) readData);
+//					}
 					return readData;
 				}
 			} catch (IOException e) {

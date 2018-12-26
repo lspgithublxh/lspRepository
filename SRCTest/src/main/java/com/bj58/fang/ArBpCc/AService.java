@@ -22,4 +22,10 @@ public class AService implements IAService{
 		return 0;
 	}
 
+	@Override
+	public SDEntity shuang(SDEntity entity) {
+		System.out.println("for the input:" + entity.toString());
+		return new SDEntity("sdentity", "AService/AServiceImpl", new String[] {"localhost:12334"});
+	}
+
 }

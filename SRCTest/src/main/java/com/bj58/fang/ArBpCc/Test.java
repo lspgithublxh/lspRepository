@@ -60,6 +60,8 @@ public class Test {
 				System.out.println("完成远程调用" + count);
 				count = serivce.vi(new SDEntity("test", "hahah/hahaha", new String[] {"localhost:8080"}));
 				System.out.println("完成远程调用" + count);
+				SDEntity en = serivce.shuang(ent);
+				System.out.println("完成远程调用" + en.toString());
 			}
 		}).start();
 
