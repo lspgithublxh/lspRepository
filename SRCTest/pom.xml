@@ -304,6 +304,12 @@
 			<artifactId>quartz</artifactId>
 			<version>1.5.2</version>
 		</dependency>
+		<!-- test thrift -->
+		<dependency>
+		  <groupId>org.apache.thrift</groupId>
+		  <artifactId>libthrift</artifactId>
+		  <version>0.11.0</version>
+		</dependency>
   </dependencies>
   <build>
     <finalName>SRCTest</finalName> 
