@@ -11,6 +11,15 @@ public class FFFchai {
 		this.age = age;
 	}
 	public String getName() {
+		for(int i = 0; i < 100; i++) {
+			int j = i * 2;
+			System.out.println(j);
+		}
+		try {
+			Thread.sleep(10);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		return name;
 	}
 	public void setName(String name) {
