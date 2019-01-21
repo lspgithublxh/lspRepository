@@ -9,11 +9,17 @@ import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.junit.Test;
+
 import com.alibaba.fastjson.JSONObject;
+import com.bj58.fang.unity.service.unitycmc.contract.entitys.UnityLocal;
+import com.bj58.fang.unity.service.unitycmc.contract.ibll.IUnityLocalService;
+import com.bj58.spat.scf.client.proxy.builder.ProxyFactory;
 
 public class DateTest{
 	
@@ -89,6 +95,19 @@ public class DateTest{
 //		System.out.println(String.format("%.8f", decimal) + " " + mstime / 1000);
 	}//1524818927
 
+	@Test
+	public void test1() {
+		String url = "tcp://unitycmc/UnityLocalRelationService";
+		IUnityLocalService service = ProxyFactory.create(IUnityLocalService.class, url);
+		try {
+			List<UnityLocal> list = service.getCityList();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
 	public static String authEncode(String source) {
 		String rs = "";
 		String result = "";

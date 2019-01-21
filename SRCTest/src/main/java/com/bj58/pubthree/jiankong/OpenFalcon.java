@@ -1,5 +1,16 @@
 package com.bj58.pubthree.jiankong;
 
+/**
+ * 1.监控指标：cpu mem disk net interface 使用率和空闲和速度延时
+ * 			jvm监控：各代各对象
+ * 			业务进程监控-资源消耗监控
+ * @ClassName:OpenFalcon
+ * @Description:
+ * @Author lishaoping
+ * @Date 2018年12月30日
+ * @Version V1.0
+ * @Package com.bj58.pubthree.jiankong
+ */
 public class OpenFalcon {
 
 	public static void main(String[] args) {
