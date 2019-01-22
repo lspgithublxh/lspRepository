@@ -27,4 +27,5 @@ public interface A {
 //	void d(String a);
 	
 	boolean equals(Object obj);
+	
 }
