@@ -20,7 +20,12 @@ import javax.management.remote.JMXServiceURL;
 /**
  * jvm远程监控
  * 并且动态设置jvm参数：setVMOption jconsole控制台可以----并且启动不需要参数：：本地可以--远程则需要配置端口了
- * 
+ * 参考:https://www.cnblogs.com/dongguacai/p/5900507.html
+ * -----WebLogic/JBoss所以特有的地方---监控页面：：基于JMX
+ * 原理：
+ *  Jconsole获取到和发送参数<---connector<---MBeanServer:驻地管理服务器---->vm和环境的各个参数封装为MBean
+ * 使用原因：：
+ *  抛弃使用配置文件，而基本使用jconsole远程控制，像wconfig。
  * jvm管理客户机
  * @ClassName:JvmVisitTest
  * @Description:

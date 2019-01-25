@@ -40,7 +40,19 @@ import javax.management.MBeanServerFactory;
 public class MxBeansTest {
 
 	public static void main(String[] args) {
-		test();
+//		test();
+		//核数
+		test2();
+	}
+
+	private static void test2() {
+		//日志打印
+		Runtime.getRuntime().traceInstructions(true);
+		Runtime.getRuntime().traceMethodCalls(true);
+		//最大内存和cpu核数
+		System.out.println("cpu core:" + Runtime.getRuntime().availableProcessors());
+		System.out.println("jvm mem could use max(MB):" + Runtime.getRuntime().maxMemory() / 1024 / 1024);
+		System.out.println("jvm mem could use rest (MB):" + Runtime.getRuntime().freeMemory() / 1024 / 1024);
 	}
 
 	private static void test() {
