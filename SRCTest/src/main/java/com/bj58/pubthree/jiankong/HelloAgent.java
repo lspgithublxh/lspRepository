@@ -20,7 +20,7 @@ public class HelloAgent {
 			
 			Jack jack = new Jack();
 			server.registerMBean(jack, new ObjectName("jack:name=enen"));
-			jack.addNotificationListener(new HelloListener(), null, hello);
+			jack.addNotificationListener(new HelloListener(), null, jack);
 			
 			Thread.sleep(60 * 60 * 1000);
 		} catch (MalformedObjectNameException | NullPointerException | InstanceAlreadyExistsException | MBeanRegistrationException | NotCompliantMBeanException e) {
