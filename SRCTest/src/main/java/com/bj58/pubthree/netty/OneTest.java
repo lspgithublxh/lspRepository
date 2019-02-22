@@ -46,7 +46,9 @@ public class OneTest {
 						super.messageReceived(ctx, e);
 						System.out.println("message receivd");
 						BigEndianHeapChannelBuffer mes = (BigEndianHeapChannelBuffer) e.getMessage();
-						System.out.println(mes.toString());
+						byte[] b = new byte[mes.readableBytes()];
+						mes.readBytes(b, 0, mes.readableBytes());
+						System.out.println(new String(b));
 						Channel chan = e.getChannel();
 						chan.write(mes);
 						System.out.println("server return message ok!");
