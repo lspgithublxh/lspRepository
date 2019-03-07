@@ -125,10 +125,11 @@ public class Server {
 				try {
 					ServerSocket server = new ServerSocket(port);
 					while(true) {
+						System.out.println("wait at port:");
 						Socket cl = server.accept();
+						System.out.println("accept a link");
 						//判断：是投票来的，还是请求token
 						ser.new ReadThread(cl).start();
-//						ser.new WriteThread(cl).start();
 					}
 					
 				} catch (IOException e) {
@@ -213,7 +214,14 @@ public class Server {
 					String data = in.readUTF();
 					System.out.println("received data:" + data);
 					if(data.startsWith("vote|")) {//vote|投票ip|自己ip|票数|其他ip
+						//如果已经选举好了----说明当前已经选举好了，这个请求 是 一个新加的server----自动扩充
 						String[] info = data.split("|");
+						if(voteFinish.get()) {
+							Socket so = new Socket(info[2], port);
+							new WriteThread(so).setMes(String.format("brocast|token|%s", localIp)).start();
+							System.out.println("add server, brocast to it ok:" + info[2]);
+							break;
+						}
 						if(info[1].equals(maxIp)) {//和自己计算的一样 
 							//向maxIp发送投票，或者自己累计
 							if(maxIp.equals(localIp)) {
@@ -221,10 +229,16 @@ public class Server {
 								int num = voteCount.addAndGet(Integer.valueOf(info[3]));
 //									int num = voteCount.incrementAndGet();
 								if(num >= serverCount / 2) {
-									//自己已经是，开始启动请求token程序---畅通
-									
+									//自己已经是，开始启动请求token程序---畅通:::可以动态-不必此时
+									System.out.println("I am the centerserver!!");
 									//开始广播：自己是center
+									for(String serv : serverList) {
+										Socket so = new Socket(serv, port);
+										new WriteThread(so).setMes(String.format("brocast|token|%s", localIp)).start();
+										System.out.println("brocast ok:" + serv);
+									}
 									//最后设置
+									centerServer = localIp;
 									voteFinish.set(true);
 								}else {
 									//还不能自主决定---但是何时是个头？主动询问?超时询问？都结合？
@@ -234,22 +248,28 @@ public class Server {
 								}
 								
 							}else {
-								//发送vote 给maxIp机器---自己不是，但是别人投票了。票数增加
-								
+								//发送vote 给maxIp机器---自己不是，但是别人投票了。直接转发
+								Socket so = new Socket(maxIp, port);
+								new WriteThread(so).setMes(String.format("vote|%s|%s|%s", maxIp, info[2], 1)).start();
 							}
-						}else {//专门再发送给maxIp---不累计，直接转发---自己不是，但是别人投票了。票数增加
-							
+						}else {//专门再发送给maxIp---不累计，直接转发---自己不是，但是别人投票了。直接转发
+							Socket so = new Socket(maxIp, port);
+							new WriteThread(so).setMes(String.format("vote|%s|%s|%s", maxIp, info[2], 1)).start();
 						}
-					}else if(data.startsWith("get|token|")) {
+						break;
+					}else if(data.startsWith("get|token|")) {//选举已经结束，本身已经是一个centerserver了
 						//返回token---可以是一个独立程序
 						String token = getToken();//返回
 						String retInfo = "ret|token|" + token;
-						pureWrite(sock, retInfo);//sync
-					}else if(data.startsWith("ret|token|")){
-						String[] infos = data.split("|");
-						String token = infos[2];//对外提供的sock接口
-						//发送，返回给客户端
-					}else if(data.startsWith("cget|token|")) {
+						new WriteThread(sock).setMes(retInfo).start();
+						break;
+					}
+//					else if(data.startsWith("ret|token|")){
+//						String[] infos = data.split("|");
+//						String token = infos[2];//对外提供的sock接口
+//						//发送，返回给客户端
+//					}
+					else if(data.startsWith("cget|token|")) {
 						//作为对外提供接口，选举出来之后则从本地、或者linkserver里取数据，；；没有选举出来就等待
 						String token = "{\"token\":\"%s\"}";
 						if(voteFinish.get()) {
@@ -258,37 +278,20 @@ public class Server {
 							}else {
 								//远程获取
 								final Socket so = new Socket(centerServer, port);
-								final String[] dats = new String[1];
-								final Object lock = new Object();
-								new Thread(new Runnable() {
-									public void run() {
-										try {
-											DataInputStream ins = new DataInputStream(so.getInputStream());
-											String data = ins.readUTF();
-											dats[0] = data;
-											synchronized (lock) {
-												lock.notifyAll();
-											}
-										} catch (IOException e) {
-											e.printStackTrace();
-										}
-									}
-								}).start();
+								ReadThread rt = new ReadThread(null);
+								String key = rt.getDataNonSync(so);
 								new WriteThread(so).setMes("get|token").start();
-								synchronized (lock) {
-									try {
-										lock.wait();
-									} catch (InterruptedException e) {
-										e.printStackTrace();
-									}
-								}
-								token = String.format(token, getToken());
+								String tok = rt.data.get(key);
+								String[] infos = tok.split("|");
+								tok = infos[2];
+								token = String.format(token, tok);
 							}
 							new WriteThread(sock).setMes("cret|token|ok|" + token).start();
 						}else {
 							//阻塞，异步--返回没准备好
 							new WriteThread(sock).setMes("cret|token|wait").start();
 						}
+						break;
 					}else if(data.startsWith("brocast|token|")) {//广播信息
 						//
 						String[] infos = data.split("|");
@@ -321,6 +324,7 @@ public class Server {
 	}
 	
 	private String getToken() {
+		//纯粹本地取token
 		return "this_is_token";
 	}
 	
