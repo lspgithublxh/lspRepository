@@ -293,8 +293,8 @@ public class Server {
 				public void run() {
 					try {
 						DataInputStream ins = new DataInputStream(so.getInputStream());
-						String data = ins.readUTF();
-						ReadThread.this.data.put(key, data);
+						String info = ins.readUTF();
+						data.put(key, info);
 						synchronized (lockData) {
 							lockData.notifyAll();
 						}
@@ -319,7 +319,7 @@ public class Server {
 						String[] info = data.split("\\|");
 						if(voteFinish.get()) {
 							Socket so = new Socket(info[2], port);
-							new WriteThread(so).setMes(String.format("brocast|token|%s", localIp)).start();
+							new WriteThread(so).setMes(String.format("brocast|centerserver|%s", localIp)).start();
 							System.out.println("add server, brocast to it ok:" + info[2]);
 							break;
 						}
@@ -366,17 +366,19 @@ public class Server {
 								boolean health = pingIpPort(centerServer, port);
 								if(!health) {
 									vote(true);//重新选举，不可能等待，所以直接bad返回
-									new WriteThread(sock).setMes("cret|token|wait").start();
+									new WriteThread(sock).setMes("cret|token|wait|").start();
 									break;
 								}
 								final Socket so = new Socket(centerServer, port);
 								ReadThread rt = new ReadThread(null);
 								String key = rt.getDataNonSync(so);
-								new WriteThread(so).setMes("get|token").start();
-								String tok = rt.data.get(key);
-								String[] infos = tok.split("\\|");
-								tok = infos[2];
-								token = String.format(token, tok);
+								new WriteThread(so).setMes("get|token|").start();
+								String tok = rt.getFuture(key);
+								if(tok != null && tok.startsWith("ret|token|")) {
+									String[] infos = tok.split("\\|");
+									tok = infos[2];
+									token = String.format(token, tok);
+								}
 							}
 							new WriteThread(sock).setMes("cret|token|ok|" + token).start();
 						}else {
@@ -384,7 +386,7 @@ public class Server {
 							new WriteThread(sock).setMes("cret|token|wait").start();
 						}
 						break;
-					}else if(data.startsWith("brocast|token|")) {//广播信息
+					}else if(data.startsWith("brocast|centerserver|")) {//广播信息
 						//
 						String[] infos = data.split("\\|");
 						centerServer = infos[2];
@@ -421,7 +423,7 @@ public class Server {
 						continue;
 					}
 					Socket so = new Socket(serv, port);
-					new WriteThread(so).setMes(String.format("brocast|token|%s", localIp)).start();
+					new WriteThread(so).setMes(String.format("brocast|centerserver|%s", localIp)).start();
 					System.out.println("brocast ok:" + serv);
 				}
 				//最后设置

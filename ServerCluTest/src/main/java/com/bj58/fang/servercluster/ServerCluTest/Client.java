@@ -12,6 +12,7 @@ public class Client {
 		//请求一个token试试
 		try {
 			final Socket ss = new Socket("10.8.18.214", 10456);
+//			final Socket ss = new Socket("10.8.9.59", 10456);
 			new Thread(new Runnable() {
 				
 				@Override
