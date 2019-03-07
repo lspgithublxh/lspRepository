@@ -23,10 +23,10 @@ import aj.org.objectweb.asm.Opcodes;
 public class ASMTest {
 
 	public static void main(String[] args) {
-//		generateAClass();
+		generateAClass();
 //		updateClassFile();
 //		testC();
-		test();
+//		test();
 	}
 
 	private static void test() {

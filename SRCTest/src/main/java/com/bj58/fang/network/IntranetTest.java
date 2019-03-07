@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 public class IntranetTest {
 
 	public static void main(String[] args) {
-//		allIp();
+		allIp();
 //		System.out.println(reachAbleAndPort());
 		List<String> ipL = new ArrayList<>();
 		allIp2(new int[] {10, 0, 0, 0},  3, ipL);
@@ -71,6 +71,7 @@ public class IntranetTest {
 					ips.add(m.group(1));
 				}
 			}
+			System.out.println(ips);
 			System.out.println(ips.size());
 			//逐个建立试探	
 		} catch (IOException e) {
