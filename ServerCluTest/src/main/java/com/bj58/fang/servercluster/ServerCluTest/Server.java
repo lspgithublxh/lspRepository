@@ -312,7 +312,7 @@ public class Server {
 				DataInputStream in = new DataInputStream(sock.getInputStream());
 				while(true) {
 					System.out.println("start read...");
-					String data = in.readUTF();
+					String data = in.readUTF();//非阻塞？总是会出现---再次读的问题；或许是因为
 					System.out.println("received data:" + data);
 					if(data.startsWith("vote|")) {//vote|投票ip|自己ip|票数|其他ip
 						//如果已经选举好了----说明当前已经选举好了，这个请求 是 一个新加的server----自动扩充
@@ -396,6 +396,7 @@ public class Server {
 					}else {
 						break;
 					}
+					
 				}
 				
 			} catch (IOException e) {
