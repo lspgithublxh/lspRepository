@@ -3,6 +3,9 @@ package com.bj58.fang.servercluster.ServerCluTest;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
 import java.lang.reflect.Field;
 import java.net.Socket;
 import java.util.Map;
@@ -26,7 +29,54 @@ public class App
 //			System.out.println("lianbushang");
 //		}
 //        System.out.println("ok");
-    	new Thread(new Runnable() {
+    	threadTrace();
+//    	threadTrace2();
+//    	Boolean s = true;
+//    	System.out.println(s == true);
+    }
+
+	private static void threadTrace2() {
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				while(true) {
+					System.out.println("-----------------");
+					ThreadMXBean mxbean = ManagementFactory.getThreadMXBean();
+					System.out.println("CurrentThreadCpuTime: " + mxbean.getCurrentThreadCpuTime() + " TotalStartedThreadCount:" + mxbean.getTotalStartedThreadCount());
+//					System.out.println(mxbean.getTotalStartedThreadCount());
+//					System.out.println(mxbean.getPeakThreadCount());
+//					System.out.println(mxbean.getCurrentThreadUserTime());
+//					System.out.println(mxbean.getDaemonThreadCount());
+//					System.out.println(mxbean.getThreadCpuTime(Thread.currentThread().getId()));
+//					System.out.println(mxbean.getThreadUserTime(Thread.currentThread().getId()));
+//					for(Long id : mxbean.getAllThreadIds()) {
+//						System.out.println("thread id:" + id);
+//					}
+					ThreadInfo[] ti = mxbean.getThreadInfo(mxbean.getAllThreadIds());
+					for(ThreadInfo tfi : ti) {
+						System.out.println("threadId:" + tfi.getThreadId() + " name:" + tfi.getThreadName() + " state:" + tfi.getThreadState().name());
+						StackTraceElement[] v = tfi.getStackTrace();
+						if(v != null) {
+							for(StackTraceElement el : v) {//+ " class:" + el.getClassName() 
+								System.out.println(" at:" + el.getClassName()  + "." +  el.getMethodName() + "(" + el.getFileName() + ":" + el.getLineNumber() + ")");
+							}
+							
+						}
+					}
+					System.out.println("-----------------");
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}).start();
+	}
+
+	private static void threadTrace() {
+		new Thread(new Runnable() {
 
 			@Override
 			public void run() {
@@ -42,7 +92,7 @@ public class App
 						System.out.println("thread name:" + th.getName() + " state:" + th.getState().name() + "  ----:");
 						if(v != null) {
 							for(StackTraceElement el : v) {//+ " class:" + el.getClassName() 
-								System.out.println(" at:" + el.getClassName()  + " on " +  el.getMethodName() + "() line:" + el.getLineNumber());
+								System.out.println(" at:" + el.getClassName()  + "." +  el.getMethodName() + "(" + el.getFileName() + ":" + el.getLineNumber() + ")");
 							}
 							
 						}
@@ -113,5 +163,5 @@ public class App
 			e.printStackTrace();
 			System.out.println("ssssbushang");
 		}
-    }
+	}
 }
