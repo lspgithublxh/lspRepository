@@ -6,9 +6,11 @@ import redis
 from pymongo import MongoClient
 from bs4 import BeautifulSoup
 import threading
-
+import logging
+from logging.handlers import TimedRotatingFileHandler
+import json
 client = MongoClient('localhost', 27017)#10.252.62.125
-col = client['detail']['beijing']
+col = client['detail']['quanguo2']
 
 chrome_options = Options()
 chrome_options.add_argument('--no-sandbox')#解决DevToolsActivePort文件不存在的报错
@@ -20,8 +22,8 @@ chrome_options.add_argument('blink-settings=imagesEnabled=false') #不加载图�
 chrome_options.add_argument('--headless') #浏览器不提供可视化页面. linux下如果系统不支持可视化不加
 def redisHandle():
     i = 0
-    while i < 5:
-        one = threading.Thread(target=threadHandle, args=())
+    while i < 1:
+        one = threading.Thread(target=threadHandle2, args=())
         one.start()
         i += 1
     pass
@@ -31,18 +33,55 @@ def threadHandle():
                            chrome_options=chrome_options)
     pool = redis.ConnectionPool(host='localhost', port=6379, decode_responses=True)
     r = redis.Redis(connection_pool=pool)
-    url = 'https://bj.ke.com/ershoufang/{}.html'
+    # url = 'https://bj.ke.com/ershoufang/{}.html'
     while True:
-        print 'get id start:'
-        id = r.rpop('detail')
-        print 'get id:', id #or wait is ok , can't None
-        if id is None:
-            print 'get end, id is None'
+        print 'get url start:'
+        url = r.rpop('url')
+        print 'get url:', url #or wait is ok , can't None
+        if url is None:
+            print 'get end, url is None'
             break
-        rs = parseDetail(url.format(id), bro)
+        rs = parseDetail(url, bro)
         if rs == -1: continue
+        if rs == -2: break
+        rs['url'] = url
+        id = url[url.index('ershoufang') + 11:url.index('.html')]
         rs['id'] = id
         col.insert(rs)
+
+def getlogger():
+    logger = logging.getLogger('someone')
+    logger.setLevel(logging.INFO)
+    ch = TimedRotatingFileHandler("d:/log/detailps.log", when='D', encoding='UTF-8')
+    ch.setLevel(logging.INFO)
+    logger.addHandler(ch)
+    return logger
+
+def threadHandle2():
+    bro = webdriver.Chrome(executable_path="C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe",
+                           chrome_options=chrome_options)
+    pool = redis.ConnectionPool(host='localhost', port=6379, decode_responses=True)
+    r = redis.Redis(connection_pool=pool)
+    url = 'https://{}.ke.com/ershoufang/{}.html'
+    logger = getlogger()
+    # logging.basicConfig(level=logging.INFO, format='%(message)s', filename='d:/log/detailp.log', filemode='a')
+    while True:
+        print 'get url start:'
+        ctid = r.rpop('ctid')
+        two = ctid.split(',')
+        print 'get id:', two[0] #or wait is ok , can't None
+        if two[1] is None:
+            print 'get end, url is None'
+            break
+        rs = parseDetail(url.format(two[1],two[0]), bro)
+        if rs == -1: continue
+        if rs == -2: continue
+        rs['city'] = two[1]
+        rs['id'] = two[0]
+        # col.insert(rs)
+        rs = json.dumps(rs, ensure_ascii=False)
+        # logging.info(rs)
+        logger.info(rs +'\r')
 
 def parseDetail(url, bro):
     # xxx = getContent(url)  # 'https://bj.ke.com/'
@@ -54,7 +93,7 @@ def parseDetail(url, bro):
         page = bro.page_source
         bs = BeautifulSoup(page, 'html.parser')
     except:
-        return -1
+        return -2
     body = bs.body
     if body is None: return -1
     rs = {}
@@ -159,8 +198,8 @@ def parseDetail(url, bro):
         agent_['head'] = head_href
         agent_['brokerName'] = brokerName.text
         agent_['brand'] = brand.text
-        agent_['xinxika'] = xinxika.text
-        agent_['zhengka'] = zhengka.text
+        agent_['xinxika'] = xinxika
+        agent_['zhengka'] = zhengka
         agent_['phone'] = agPhone.text
         rs['agentInfo'] = agentInfo
     except:pass
@@ -173,14 +212,18 @@ def parseDetail(url, bro):
         baseinfolist = []
         for baseli in baseLis:
             baseI = baseli.find('span',{'class':'label'})
-            baseitem = {'name':baseI.text, 'value':baseli.text}
+            li_text = baseli.text
+            li_text = li_text.replace('\n', '')[baseI.text.__len__():]
+            baseitem = {'name':baseI.text, 'value':li_text}
             baseinfolist.append(baseitem)
         transaction  = introContent.find('div', {'class': 'transaction'})
         transclis = transaction.find('ul').find_all('li')
         tranarr = []
         for baseli in transclis:
             baseI = baseli.find('span', {'class': 'label'})
-            baseitem = {'name': baseI.text, 'value': baseli.text}
+            li_text = baseli.text
+            li_text = li_text.replace('\n','')[baseI.text.__len__():]
+            baseitem = {'name': baseI.text, 'value': li_text}
             tranarr.append(baseitem)
         basetransbody = {}
         basetransbody['baseinfolist'] = baseinfolist
@@ -230,6 +273,7 @@ def parseDetail(url, bro):
         daikan_['phone'] = daikanphone.text
         daikan_['desc'] = daikan_desc.text
         daikan_['record'] = daikan_record.text
+        daikan['imgurl'] = daikanimg_url
         rs['daikan'] = daikan_
     except:pass
 
@@ -286,7 +330,7 @@ def parseDetail(url, bro):
 
         fy_record = body.find('div', {'id': 'record'})
         fy_list = fy_record.find('div', {'class': 'list'})
-        fy_content = fy_record.find('div', {'class': 'content'})
+        fy_content = fy_list.find('div', {'class': 'content'})
         fy_rows = fy_content.find_all('div', {'class': 'row'})
         fy_data = []
         for fy_row in fy_rows:
@@ -412,4 +456,9 @@ def parseDetail(url, bro):
 
 if __name__ == '__main__':
     redisHandle()
+    # url = 'https://bj.ke.com/ershoufang/xdfds12222.html'
+    # print url
+    # print url[url.index('ershoufang') + 11:url.index('.html')]
+    # logging.basicConfig(level=logging.INFO, format='%(message)s', filename='d:/log/detailp.log', filemode='a')
+    # logging.info('中文')
     pass

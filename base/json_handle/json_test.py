@@ -4,7 +4,8 @@ a = ['a',1,'c']
 b = {'名字':'李少平','age':26, 'address':'北京市朝阳区'}
 # s = json.dump(b,encoding='utf-8')
 # print s
-
+c = [b]
+print json.dumps(c, ensure_ascii=False)
 r2 = json.dumps(b, encoding='utf-8')
 print r2
 r2 = json.dumps(b)
@@ -32,7 +33,9 @@ obj2 = json.loads(r2)
 print obj2
 obj2 = json.loads(r2, encoding='utf-8')
 acb = {'name':'我'}
+print obj2['age']
 print '\xe6\x88\x91', u'\u6211'
+print 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 print json.dumps(acb, ensure_ascii=False)
 print json.dumps(acb)
 c = json.dumps(acb)

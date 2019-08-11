@@ -53,6 +53,12 @@ class HttpHandle(BaseHTTPRequestHandler):
         self.wfile.write('Hello world!')
         return
 
+    def do_POST(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/json')
+        self.end_headers()
+        data = {'v': 'vvvv'}
+        self.wfile.write(bytes(json.dumps(data, ensure_ascii=False, ), encoding='utf-8'))
 
 try:
     print 'server start at 8000'

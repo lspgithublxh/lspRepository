@@ -2,7 +2,7 @@
 import sys
 from bs4 import BeautifulSoup
 from fangyuanSel import getContent
-from fangyuanSel import bro,webdriver,cursor
+from fangyuanSel import webdriver,cursor
 from lxml import etree
 from pymongo import MongoClient
 import json

@@ -55,7 +55,7 @@ def getPageBox(url):
     return b.text
 
 if __name__ == '__main__':
-    # print parseGetCity()
+    print parseGetCity()
     # print parseGetSubCity('https://bj.ke.com/ershoufang')
-    getPageBox('https://bj.ke.com/ershoufang/pg2000')
+    # getPageBox('https://bj.ke.com/ershoufang/pg2000')
     #不用page的方式，而是看url有没有被重定向的方式---如果重定向了，那么就说明到底了

@@ -45,11 +45,11 @@ def putRedis():
         r = redis.Redis(connection_pool=pool)  # host='localhost',port=6379, db=0
     except Exception as e:
         print e
-    cursor.execute('SELECT DISTINCT id FROM beijing')
+    cursor.execute('SELECT id,city FROM quanguo2')
     rows = cursor.fetchall()
     for row in rows:
         id = row[0]
-        r.lpush('detail', id)
+        r.lpush('ctid', '{},{}'.format(row[0],row[1]))
         print id
 
 def putTest():
@@ -68,7 +68,11 @@ if __name__ == '__main__':
     b = ['xx']
     arr.extend(b)
     print arr
+    baseI = '房屋用途'
+    li_text = '\n房屋用途\n普通住宅\n'
+    li_text = li_text.replace('\n', '')[baseI.__len__():]
+    print li_text
     # arx = ['ss','ss','x','3']
     # print arx[1:2], arx[2:3]
-    # putRedis()
-    putTest()
+    putRedis()
+    # putTest()

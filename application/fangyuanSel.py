@@ -320,6 +320,48 @@ def buchong():
                 print e
         c += 1
 
+def mainMethod_3():
+    bro = webdriver.Chrome(executable_path="C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe")
+    p = re.compile('.*?/(\d*)\.html')
+    #u'hf',u'wuhu', u'bf', u'huainan', u'mas', u'huaibei', u'tl', u'aq', u'tc', u'huangshan', u'mingguang', u'fy', u'suzhou', u'la', u'hq', u'bozhou', u'chizhou', u'xuancheng', u'cz', u'ng', u'tianchang', u'bj',
+    #u'cq', u'fz'
+    import experiment as exp
+    urls = exp.getAllcity()
+    # citys = [u'bj']
+    from totalPage import getByPage
+    for url in urls:
+        firsturl = 'https:{}'.format(url)
+        xxx = getContent(bro, firsturl + '/ershoufang')  # 'https://bj.ke.com/'
+        page = xxx['page']
+        quyu = parseGetSubCity2(page)
+        print xxx['url']
+        print 'quyu:' , quyu
+        subcitys = []
+        for cc in quyu:
+            subsuburl = ''
+            if cc.__contains__('.ke.com'):
+                subsuburl = cc
+            else:
+                subsuburl = firsturl + cc
+            xxx = getContent(bro, subsuburl)
+            page = xxx['page']
+            tocount = findCount(page)
+            if tocount / 30 > 100:
+                subs = getByPage(page)
+                subcitys.extend(subs)
+            else:
+                print 'total:' , tocount
+                subcitys.append(cc)
+        lenx = subcitys.__len__()
+        part = subcitys.__len__()
+        start = 0
+        city = url[2:].split('.')[0]
+        while start < lenx:
+            cys = subcitys[start:start+part]
+            # th = threading.Thread(target=fenpeiUrl, args=(city, firsturl, p,cys))
+            # th.start()
+            fenpeiUrl(city, firsturl, p,cys, bro)
+            start += part
 
 def mainMethod2():
     bro = webdriver.Chrome(executable_path="C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe")
@@ -406,7 +448,7 @@ def getAndSave(city, p, visurl, sub, bro):
 
         rs = parseContent(page)
         if rs.__len__() == 0: break
-        sql = '''insert into quanguo(id,priceInfo,followInfo,flood,address,title,detail,img,city,area) values'''
+        sql = '''insert into quanguo2(id,priceInfo,followInfo,flood,address,title,detail,img,city,area) values'''
         for item in rs:
             # print json.dumps(item, ensure_ascii=False)
             if item.has_key('priceInfo'):  # print item['priceInfo']
@@ -435,7 +477,7 @@ if __name__ == '__main__':
     reload(sys)
     sys.setdefaultencoding('UTF-8')
     # buchong()
-    mainMethod2()
+    # mainMethod2()
     # bro.get('https://bj.ke.com/ershoufang')
     # page1 = bro.page_source
     # print bro.title, bro.current_url
@@ -448,3 +490,4 @@ if __name__ == '__main__':
     #     print bro.title
     #
     # print bro.title, bro.current_url
+    mainMethod_3()

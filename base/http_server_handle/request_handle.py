@@ -1,5 +1,7 @@
 #codingg=utf-8
 import requests
+import time
+
 header = {
 "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
 "Accept-Encoding":"gzip, deflate, br",
@@ -16,3 +18,22 @@ response = requests.get("https://www.baidu.com", headers=header, timeout=80)
 print response.text
 
 # requests.post("url", data={})
+import json, threading
+
+def handle():
+    print('start' + threading.currentThread().getName())
+    data = {'clientId':'b6ab5dc63efb2ea7c7de1317bd9a9d58', 'clientSecret':'180def1ba07798ba4447790830358be3'}
+    res = requests.post('http://localhost:9999', json=json.loads(json.dumps(data)))
+    print(res.json())
+
+
+for i in range(1, 10):
+    time.sleep(0.5)
+    thread = threading.Thread(name='one' + str(i), target=handle)
+    thread.start()
+
+# res = requests.get('http://localhost:9999')
+# print(res.json())
+
+
+
