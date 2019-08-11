@@ -10,6 +10,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+
+import com.bj58.jdkjinspecial.java18.lamda_methodExpression.FunFormInterface4;
 
 /**
  * 一些特别的设定
@@ -153,9 +156,19 @@ public class FeatureTest {
 		}
 		System.out.println(f8.convert(" world"));
 		//
-		
+		FuntionForm1<String, String> lam = v -> v;//方法引用和lamda定义方法表达式结合
+//		FunFormInterface4 m4 = Integer::byteValue;
+		FuntionForm1.tt(FeatureTest::hah2);
 	}
 
+	public static Integer hah() {
+		return 1;
+	}
+	
+	public static Integer hah2(String s) {
+		return 1;
+	}
+	
 	/**
 	 * 匿名实现函数
 	 * @param 
