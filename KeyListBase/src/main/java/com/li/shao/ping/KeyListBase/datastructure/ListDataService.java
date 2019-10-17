@@ -8,6 +8,13 @@ import com.google.common.collect.Maps;
 import com.li.shao.ping.KeyListBase.datastructure.entity.LinkedNode;
 
 import lombok.extern.slf4j.Slf4j;
+/**
+ * 性能比较好
+ * TODO 
+ * @author lishaoping
+ * @date 2019年10月17日
+ * @file ListDataService
+ */
 @Slf4j
 public class ListDataService implements DataService{
 
@@ -32,6 +39,9 @@ public class ListDataService implements DataService{
 		List<LinkedNode> nodeList = transToNodeList(nodes);
 		//
 		LinkedNode root = dataMap.get(key);
+		if(root == null) {
+			return;
+		}
 		for(LinkedNode entity : nodeList) {
 			LinkedNode scorePos = null;
 			LinkedNode idPos = null;
@@ -144,21 +154,35 @@ public class ListDataService implements DataService{
 
 	public static void main(String[] args) {
 		ListDataService serv = new ListDataService();
-		long t1 = System.nanoTime();
-		long t11 = System.currentTimeMillis();
-		serv.initUserNodesByKeyAndData("1`2.1`data`12`3.3`secend`11`2.2`data2", 1L);
-		String data = serv.queryTopNByKey(1L, 5);
-		log.info(data);
-		serv.updateNodesByKey("1`2.8`data", 1L);
-		String data2 = serv.queryTopNByKey(1L, 5);
-		log.info(data2);
-		serv.updateNodesByKey("11`2.7`data2", 1L);
-		String data3 = serv.queryTopNByKey(1L, 5);
-		log.info(data3);
-		long t2 = System.nanoTime();
-		long t22 = System.currentTimeMillis();
-		log.info((t2 - t1) / 1000 / 1000 + "ms");
-		log.info((t22 - t11) + "ms");
 		
+		serv.initUserNodesByKeyAndData("1`2.1`data`12`3.3`secend`11`2.2`data2", 1L);
+		//
+		for(int j = 1; j < 1000; j++) {
+			StringBuilder builder = new  StringBuilder();
+			for(int i = 0; i < 3000; i++) {
+				builder.append(i).append("`").append(Math.random() * 100).append("`").append("this_data").append("`");
+			}
+			String d = builder.substring(0, builder.length() - 1).toString();
+			serv.initUserNodesByKeyAndData(d, (long)j);
+			System.out.println("" + j);
+		}
+
+		for(int j = 0; j < 1000; j++) {
+			long t1 = System.nanoTime();
+			long t11 = System.currentTimeMillis();
+			String data = serv.queryTopNByKey(1L, 5);
+			log.info(data);
+			serv.updateNodesByKey(((int)Math.random() * 100)+ "`" + (Math.random() + 10) +  "`data", 1L);
+			String data2 = serv.queryTopNByKey(1L, 5);
+			log.info(data2);
+			serv.updateNodesByKey(((int)Math.random() * 100) + "`" + (Math.random() + 10)  + "`data2", 1L);
+			String data3 = serv.queryTopNByKey(1L, 5);
+			log.info(data3);
+			long t2 = System.nanoTime();
+			long t22 = System.currentTimeMillis();
+			log.info((t2 - t1) / 1000 / 1000 + "ms");
+			log.info((t22 - t11) + "ms");
+		}
+		//强化
 	}
 }
