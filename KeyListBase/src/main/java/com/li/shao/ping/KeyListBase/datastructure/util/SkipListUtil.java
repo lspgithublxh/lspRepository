@@ -170,9 +170,11 @@ public class SkipListUtil {
 	
 	public static void main(String[] args) {
 		SkipListUtil skipListUtil = new SkipListUtil();
-		for(int i = 0; i < 15; i++) {
+		List<Integer> li = Lists.newArrayList();
+		for(int i = 0; i < 115; i++) {
 			int d = (int)(Math.random() * 100);
 			System.out.print(d + ",");
+			li.add(d);
 			boolean rs = skipListUtil.add(d);
 //			System.out.print(rs + ",");
 		}
@@ -186,6 +188,12 @@ public class SkipListUtil {
 			System.out.print(cc.getVal() + ",");
 			cc = cc.getNext();
 		}
-		
+		//查找
+//		System.out.println();
+//		for(Integer inte : li) {
+//			SkipNode node = skipListUtil.query(inte);
+//			System.out.println(node.getVal());
+//		}
+		//
 	}
 }
