@@ -10,7 +10,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.io.Files;
 
 import lombok.Data;
 
@@ -34,5 +33,8 @@ public class GuavaTools {
 		Strings.isNullOrEmpty("a");
 		//文件操作
 //		Files.copy(from, to);
+		//表达式赋值
+		Integer fuzhi = Integer.valueOf("aa");
+		
 	}
 }
