@@ -26,6 +26,9 @@ public class SkipListUtil {
 	public SkipNode query(Integer val) {
 		SkipNode cur = root;
 		while(cur.getVal() < val) {
+			if(cur.getNext() == null) {
+				return null;
+			}
 			if(cur.getNext().getVal() > val) {
 				cur = cur.getBottom();
 			}else{
@@ -194,6 +197,10 @@ public class SkipListUtil {
 //			SkipNode node = skipListUtil.query(inte);
 //			System.out.println(node.getVal());
 //		}
-		//
+		//删除
+		boolean dele = skipListUtil.deleteNode(11);
+		System.out.println();
+		System.out.println(dele);
+		System.out.println(skipListUtil.query(11));
 	}
 }
