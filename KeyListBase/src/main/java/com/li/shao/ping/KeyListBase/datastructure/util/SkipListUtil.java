@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 import com.li.shao.ping.KeyListBase.datastructure.entity.SkipNode;
 
 /**
- * 
+ * 1h实现一个跳表
  * TODO 
  * @author lishaoping
  * @date 2019年11月20日
