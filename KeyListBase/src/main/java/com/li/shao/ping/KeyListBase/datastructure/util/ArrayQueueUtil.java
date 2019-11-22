@@ -20,7 +20,7 @@ public class ArrayQueueUtil {
 	private Object[] arr = new Object[capacity];
 	private int start = 0;
 	private int end = 0;
-	public volatile int size = 0;//不用volatile那么size的改变不会被另一个线程感知，导致的问题如：一直put很多次,却size==0读不出来；即便同步块中也没用
+	public volatile int size = 0;//不用volatile那么size的改变不会被另一个线程感知，导致的问题如：一直put很多次,却size==0读不出来；即便同步块中也没用--同步块中修改之后，其他线程还是看不到做的修改
 	
 	
 	public ArrayQueueUtil(int capacity) {

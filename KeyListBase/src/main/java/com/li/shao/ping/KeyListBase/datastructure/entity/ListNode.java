@@ -10,6 +10,6 @@ import lombok.experimental.Accessors;
 public class ListNode<V extends Serializable> {
 	private double score;
 	private V value;
-	private long id;
+	private volatile long id;
 	private boolean wait;
 }
