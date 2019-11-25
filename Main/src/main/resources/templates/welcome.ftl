@@ -47,6 +47,81 @@ function submitConfig(){
 
 <div style="margin-top: 10px;display: inline-block;margin-left: 50px;">
 <form id="config">
+<table>
+<tr>
+<td>考试类型：</td>
+<td><input id="examTypeId" value="${config.examTypeId}" name="examType" /></br></td>
+</tr>
+<tr>
+<td>问题优先级 参数1：</td>
+<td><input value="${config.priorityAlgorithmParam1}" name="priorityAlgorithmParam1" /></br></td>
+</tr>
+<tr>
+<td>问题优先级 参数2：</td>
+<td><input value="${config.priorityAlgorithmParam2}" name="priorityAlgorithmParam2" /></br></td>
+</tr>
+<tr>
+<td>综合推荐知识点的个数：</td>
+<td><input value="${config.compositeTopn}" name="compositeTopn" /></br></td>
+</tr>
+<tr>
+<td>综合推荐知识点的复杂度总和限制：</td>
+<td><input value="${config.compositeComplexTotalMax}" name="compositeComplexTotalMax" /></br></td>
+</tr>
+<tr>
+<td>限定一级知识点推荐时的推荐知识点最多个数：</td>
+<td><input value="${config.topKpRequestTopn}" name="topKpRequestTopn" /></br></td>
+</tr>
+<tr>
+<td>知识点最大级别</td>
+<td><input value="${config.knowledgeLvlMax}" name="knowledgeLvlMax" /></br></td>
+</tr>
+<tr>
+<td>初始化知识点的掌握度:</td>
+<td><input value="${config.initKpGraspVal}" name="initKpGraspVal" /></br></td>
+</tr>
+<tr>
+<td>知识点相似度阈值：</td>
+<td><input value="${config.kpSimilarThredshold}" name="kpSimilarThredshold" /></br></td>
+</tr>
+<tr>
+<td>相邻层知识点的相似递减率：</td>
+<td><input value="${config.kpLvlReduceRadio}" name="kpLvlReduceRadio" /></br></td>
+</tr>
+<tr>
+<td>筛选知识点点时知识点的最低优先级：</td>
+<td><input value="${config.kpPriorityMin}" name="kpPriorityMin" /></br></td>
+</tr>
+<tr>
+<td>复杂度归一化参数值：</td>
+<td><input value="${config.comlexNormalizeParam}" name="comlexNormalizeParam" /></br></td>
+</tr>
+<tr>
+<td>知识点更新步长系数：</td>
+<td><input value="${config.kpUpdateStep}" name="kpUpdateStep" /></br></td>
+</tr>
+<tr>
+<td>知识点更新练习系数：</td>
+<td><input value="${config.kpUpdateLearn}" name="kpUpdateLearn" /></br></td>
+</tr>
+<tr>
+<td>知识点更新学习系数：</td>
+<td><input value="${config.comlexNormalizeParam}" name="comlexNormalizeParam" /></br></td>
+</tr>
+<tr>
+<td>知识点更新遗忘系数：</td>
+<td><input value="${config.kpUpdateForget}" name="kpUpdateForget" /></br></td>
+</tr>
+<tr>
+<td>添加时间：</td>
+<td><input value="${config.addTime}" name="addTime" /></br></td>
+</tr>
+<tr>
+<td colspan="2">
+<div data-v-adc76164="" class="el-form-item el-form-item--small" style="text-align: center;"><!----><div class="el-form-item__content" style="margin-left: 120px;"><button onclick="submitConfig()" data-v-adc76164="" type="button" class="el-button el-button--primary el-button--medium"><!----><!----><span>点击</span></button><!----></div></div>
+</td>
+</tr>
+</table>
 考试类型：<input id="examTypeId" value="${config.examTypeId}" name="examType" /></br>
 问题优先级 参数1：<input value="${config.priorityAlgorithmParam1}" name="priorityAlgorithmParam1" /></br>
 问题优先级 参数2：<input value="${config.priorityAlgorithmParam2}" name="priorityAlgorithmParam2" /></br>
@@ -66,7 +141,9 @@ function submitConfig(){
 知识点更新学习系数：<input value="${config.kpUpdateLearn}" name="kpUpdateLearn" /></br>
 知识点更新遗忘系数：<input value="${config.kpUpdateForget}" name="kpUpdateForget" /></br>
 添加时间：<input value="${config.addTime}" name="addTime" /></br>
-<input type="button" value="点击" name="点击" onclick="submitConfig()"><!--alert('hello'); -->
+<!-- <input type="button" value="点击" name="点击" onclick="submitConfig()"> --><!--alert('hello'); -->
+<div data-v-adc76164="" class="el-form-item el-form-item--small" style="text-align: center;"><!----><div class="el-form-item__content" style="margin-left: 120px;"><button onclick="submitConfig()" data-v-adc76164="" type="button" class="el-button el-button--primary el-button--medium"><!----><!----><span>点击</span></button><!----></div></div>
+
 </form>
 </div>
 </body>
