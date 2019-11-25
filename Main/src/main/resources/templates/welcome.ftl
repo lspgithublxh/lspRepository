@@ -33,16 +33,16 @@ function submitConfig(){
 <img class="pic" src="https://www.tooopen.com/static/ad/1500X50-too.png" style="width: 100%; height: 75px;margin-right: 0;margin-left: 0;">
 </div>
 <div style="width:20%;display: inline-block;vertical-align: top;">
-<ul id="menu" role="menu" class="el-menu el-menu--inline" data-old-padding-top="" data-old-padding-bottom="" data-old-overflow="" style="background-color: rgb(48, 65, 86);"> <a href="#/pms/product" class="">
-<li role="menuitem" tabindex="-1" class="el-menu-item" style="padding-left: 40px; color: rgb(64, 158, 255); background-color: rgb(48, 65, 86);"><svg data-v-81d70f2a="" aria-hidden="true" class="svg-icon"><use data-v-81d70f2a="" xlink:href="#icon-product-list"></use></svg> <span>消防</span></li>
-</a><a href="#/pms/addProduct" class="router-link-exact-active router-link-active">
-<li role="menuitem" tabindex="-1" class="el-menu-item is-active" style="padding-left: 40px; color: rgb(191, 203, 217); background-color: rgb(48, 65, 86);"><svg data-v-81d70f2a="" aria-hidden="true" class="svg-icon"><use data-v-81d70f2a="" xlink:href="#icon-product-add"></use></svg> <span>基金</span></li>
-</a><!----><!----><!----><a href="#/pms/productCate" class="">
-<li role="menuitem" tabindex="-1" class="el-menu-item" style="padding-left: 40px; color: rgb(191, 203, 217); background-color: rgb(48, 65, 86);"><svg data-v-81d70f2a="" aria-hidden="true" class="svg-icon"><use data-v-81d70f2a="" xlink:href="#icon-product-cate"></use></svg> <span>会计</span></li>
-</a><!----><!----><a href="#/pms/productAttr" class="">
-<li role="menuitem" tabindex="-1" class="el-menu-item" style="padding-left: 40px; color: rgb(191, 203, 217); background-color: rgb(48, 65, 86);"><svg data-v-81d70f2a="" aria-hidden="true" class="svg-icon"><use data-v-81d70f2a="" xlink:href="#icon-product-attr"></use></svg> <span>法考</span></li>
-</a><!----><!----><!----><a href="#/pms/brand" class="">
-<li role="menuitem" tabindex="-1" class="el-menu-item" style="padding-left: 40px; color: rgb(191, 203, 217); background-color: rgb(48, 65, 86);"><svg data-v-81d70f2a="" aria-hidden="true" class="svg-icon"><use data-v-81d70f2a="" xlink:href="#icon-product-brand"></use></svg> <span>一建</span></li>
+<ul id="menu" role="menu" class="el-menu el-menu--inline" data-old-padding-top="" data-old-padding-bottom="" data-old-overflow="" style="background-color: rgb(48, 65, 86);"> <a class="">
+<li value="1" role="menuitem" tabindex="-1" class="el-menu-item" style="padding-left: 40px; color: rgb(191, 203, 217); background-color: rgb(48, 65, 86);"><svg data-v-81d70f2a="" aria-hidden="true" class="svg-icon"><use data-v-81d70f2a="" xlink:href="#icon-product-list"></use></svg> <span>消防</span></li>
+</a><a class="router-link-exact-active router-link-active">
+<li value="2" role="menuitem" tabindex="-1" class="el-menu-item is-active" style="padding-left: 40px; color: rgb(191, 203, 217); background-color: rgb(48, 65, 86);"><svg data-v-81d70f2a="" aria-hidden="true" class="svg-icon"><use data-v-81d70f2a="" xlink:href="#icon-product-add"></use></svg> <span>基金</span></li>
+</a><!----><!----><!----><a class="">
+<li value="3" role="menuitem" tabindex="-1" class="el-menu-item" style="padding-left: 40px; color: rgb(191, 203, 217); background-color: rgb(48, 65, 86);"><svg data-v-81d70f2a="" aria-hidden="true" class="svg-icon"><use data-v-81d70f2a="" xlink:href="#icon-product-cate"></use></svg> <span>会计</span></li>
+</a><!----><!----><a  class="">
+<li value="4" role="menuitem" tabindex="-1" class="el-menu-item" style="padding-left: 40px; color: rgb(191, 203, 217); background-color: rgb(48, 65, 86);"><svg data-v-81d70f2a="" aria-hidden="true" class="svg-icon"><use data-v-81d70f2a="" xlink:href="#icon-product-attr"></use></svg> <span>法考</span></li>
+</a><!----><!----><!----><a  class="">
+<li value="5" role="menuitem" tabindex="-1" class="el-menu-item" style="padding-left: 40px; color: rgb(191, 203, 217); background-color: rgb(48, 65, 86);"><svg data-v-81d70f2a="" aria-hidden="true" class="svg-icon"><use data-v-81d70f2a="" xlink:href="#icon-product-brand"></use></svg> <span>一建</span></li>
 </a><!----><!---->
 </ul>
 </div>
@@ -129,11 +129,22 @@ function submitConfig(){
 </body>
 <script  type="text/javascript">
  $("ul#menu a li").on("click",function(){     
-   $("ul#menu a li").each(function(){
-   $(this).css("color","rgb(191, 203, 217)");
+  $("ul#menu a li").each(function(){
+     $(this).css("color","rgb(191, 203, 217)");
    });
-	$(this).css("color","rgb(64, 158, 255)");
-	
+  $(this).css("color","rgb(64, 158, 255)");
+  //$.get("/ab?examTypeId=" + $(this).attr("value"), function(result){
+  	//alert(result);
+ // });
+ window.location.href="/ab?examTypeId=" + $(this).attr("value");
+ });
+ //当前状态
+ var url = window.location.href;
+ var type = url.split("?")[1].split("=")[1];
+ $("ul#menu a li").each(function(){
+     if($(this).attr("value") == type + ""){
+       $(this).css("color","rgb(64, 158, 255)");
+     }
  });
 </script>
 </html>
