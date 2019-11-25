@@ -5,11 +5,12 @@
 <link rel="stylesheet" type="text/css" href="/css/easy.css" />
 <script type="text/javascript">
 function submitConfig(){
- alert($("#examTypeId").attr("value"));
- // console.log($("#config").serializeArray());
- alert(encodeURI($("#config").serialize()));
+  	var truthBeTold = window.confirm("确定修改？");
+	if (!truthBeTold) {
+	 return;
+	}
+
  var data = $("#config").serialize();
- // alert($("#config").serializeObject());
  var fdata = $("#config").serializeArray();
  var target = {};
  for(var j in fdata){
@@ -18,9 +19,14 @@ function submitConfig(){
  }
  target = JSON.stringify(target);
  target = encodeURI(target);
- alert(target);
  $.get("/html?token=" + target, function(result){
- 	alert(result);
+    if("success" == result){
+    	alert("修改成功");
+    }else{
+        alert("修改失败");
+    }
+ 	
+ 	
  });
 }
 

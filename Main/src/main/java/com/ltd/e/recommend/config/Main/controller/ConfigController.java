@@ -38,6 +38,7 @@ public class ConfigController {
 	}
 
 	@GetMapping("/html")
+	@ResponseBody
 	public String dd(@RequestParam(required = true) String token) {
 		try {
 			System.out.println("ddd");
@@ -46,7 +47,7 @@ public class ConfigController {
 			e.printStackTrace();
 			return "sss";
 		}
-		return "/index.html";
+		return "success";
 	}
 	
 	@PostMapping("/html")
