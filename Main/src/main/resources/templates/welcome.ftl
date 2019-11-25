@@ -36,7 +36,7 @@ function submitConfig(){
 </head>
 <body style="margin: 0px;background-color: bisque;">
 <div>
-<img class="pic" src="https://www.tooopen.com/static/ad/1500X50-too.png" style="width: 100%; height: 75px;margin-right: 0;margin-left: 0;">
+<img class="pic" src="/img/head.png" style="width: 100%; height: 75px;margin-right: 0;margin-left: 0;">
 </div>
 <div style="width:20%;display: inline-block;vertical-align: top;">
 <ul id="menu" role="menu" class="el-menu el-menu--inline" data-old-padding-top="" data-old-padding-bottom="" data-old-overflow="" style="background-color: rgb(48, 65, 86);"> <a class="">
@@ -142,7 +142,7 @@ function submitConfig(){
   //$.get("/ab?examTypeId=" + $(this).attr("value"), function(result){
   	//alert(result);
  // });
- window.location.href="/ab?examTypeId=" + $(this).attr("value");
+ window.location.href="/config?examTypeId=" + $(this).attr("value");
  });
  //当前状态
  var url = window.location.href;
