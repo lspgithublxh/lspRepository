@@ -24,6 +24,8 @@ function submitConfig(){
  });
 }
 
+//click
+
 </script>
 </head>
 <body style="margin: 0px;background-color: bisque;">
@@ -31,7 +33,7 @@ function submitConfig(){
 <img class="pic" src="https://t12.baidu.com/it/u=3999260081,4172311933&amp;fm=76" style="width: 100%; height: 75px;margin-right: 0;margin-left: 0;">
 </div>
 <div style="width:20%;display: inline-block;vertical-align: top;">
-<ul role="menu" class="el-menu el-menu--inline" data-old-padding-top="" data-old-padding-bottom="" data-old-overflow="" style="background-color: rgb(48, 65, 86);"> <a href="#/pms/product" class="">
+<ul id="menu" role="menu" class="el-menu el-menu--inline" data-old-padding-top="" data-old-padding-bottom="" data-old-overflow="" style="background-color: rgb(48, 65, 86);"> <a href="#/pms/product" class="">
 <li role="menuitem" tabindex="-1" class="el-menu-item" style="padding-left: 40px; color: rgb(191, 203, 217); background-color: rgb(48, 65, 86);"><svg data-v-81d70f2a="" aria-hidden="true" class="svg-icon"><use data-v-81d70f2a="" xlink:href="#icon-product-list"></use></svg> <span>商品列表</span></li>
 </a><a href="#/pms/addProduct" class="router-link-exact-active router-link-active">
 <li role="menuitem" tabindex="-1" class="el-menu-item is-active" style="padding-left: 40px; color: rgb(64, 158, 255); background-color: rgb(48, 65, 86);"><svg data-v-81d70f2a="" aria-hidden="true" class="svg-icon"><use data-v-81d70f2a="" xlink:href="#icon-product-add"></use></svg> <span>添加商品</span></li>
@@ -125,4 +127,20 @@ function submitConfig(){
 </form>
 </div>
 </body>
+<script  type="text/javascript">
+ $("ul#menu a li").on("click",function(){     
+   $("ul#menu a li").each(function(){
+   $(this).css("color","rgb(191, 203, 217)");
+  // console.log($(this).find("li").css("color"));
+   //	alert($(this).find("li").css("color"));
+   });
+	$(this).css("color","rgb(64, 158, 255)");
+	
+   //  alert($(this).text());
+    // alert($(this).css("color"));
+ });
+ //$("ul").on("click", function(){
+// 	
+ //});
+</script>
 </html>
