@@ -26,7 +26,7 @@ function submitConfig(){
 
 </script>
 </head>
-<body style="margin: 0px;">
+<body style="margin: 0px;background-color: bisque;">
 <div>
 <img class="pic" src="https://t12.baidu.com/it/u=3999260081,4172311933&amp;fm=76" style="width: 100%; height: 75px;margin-right: 0;margin-left: 0;">
 </div>
@@ -122,28 +122,6 @@ function submitConfig(){
 </td>
 </tr>
 </table>
-考试类型：<input id="examTypeId" value="${config.examTypeId}" name="examType" /></br>
-问题优先级 参数1：<input value="${config.priorityAlgorithmParam1}" name="priorityAlgorithmParam1" /></br>
-问题优先级 参数2：<input value="${config.priorityAlgorithmParam2}" name="priorityAlgorithmParam2" /></br>
-综合推荐知识点的个数：<input value="${config.compositeTopn}" name="compositeTopn" /></br>
-综合推荐知识点的复杂度总和限制：<input value="${config.compositeComplexTotalMax}" name="compositeComplexTotalMax" /></br>
-限定一级知识点推荐时的复杂度总和限制：<input value="${config.topKpComplexTotalMax}" name="topKpComplexTotalMax" /></br>
-限定一级知识点推荐时的推荐知识点最多个数：<input value="${config.topKpRequestTopn}" name="topKpRequestTopn" /></br>
-知识点最大级别<input value="${config.knowledgeLvlMax}" name="knowledgeLvlMax" /></br>
-初始化知识点的掌握度<input value="${config.initKpGraspVal}" name="initKpGraspVal" /></br>
-知识点相似度阈值：<input value="${config.kpSimilarThredshold}" name="kpSimilarThredshold" /></br>
-相邻层知识点的相似递减率：<input value="${config.kpLvlReduceRadio}" name="kpLvlReduceRadio" /></br>
-筛选知识点点时知识点的最低优先级：<input value="${config.kpPriorityMin}" name="kpPriorityMin" /></br>
-复杂度归一化参数值：<input value="${config.comlexNormalizeParam}" name="comlexNormalizeParam" /></br>
-重要度归一化参数值：<input value="${config.importanceNormalizeParam}" name="importanceNormalizeParam" /></br>
-知识点更新步长系数：<input value="${config.kpUpdateStep}" name="kpUpdateStep" /></br>
-知识点更新练习系数：<input value="${config.kpUpdatePractise}" name="kpUpdatePractise" /></br>
-知识点更新学习系数：<input value="${config.kpUpdateLearn}" name="kpUpdateLearn" /></br>
-知识点更新遗忘系数：<input value="${config.kpUpdateForget}" name="kpUpdateForget" /></br>
-添加时间：<input value="${config.addTime}" name="addTime" /></br>
-<!-- <input type="button" value="点击" name="点击" onclick="submitConfig()"> --><!--alert('hello'); -->
-<div data-v-adc76164="" class="el-form-item el-form-item--small" style="text-align: center;"><!----><div class="el-form-item__content" style="margin-left: 120px;"><button onclick="submitConfig()" data-v-adc76164="" type="button" class="el-button el-button--primary el-button--medium"><!----><!----><span>点击</span></button><!----></div></div>
-
 </form>
 </div>
 </body>
