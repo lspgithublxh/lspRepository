@@ -30,19 +30,19 @@ function submitConfig(){
 </head>
 <body style="margin: 0px;background-color: bisque;">
 <div>
-<img class="pic" src="https://t12.baidu.com/it/u=3999260081,4172311933&amp;fm=76" style="width: 100%; height: 75px;margin-right: 0;margin-left: 0;">
+<img class="pic" src="https://www.tooopen.com/static/ad/1500X50-too.png" style="width: 100%; height: 75px;margin-right: 0;margin-left: 0;">
 </div>
 <div style="width:20%;display: inline-block;vertical-align: top;">
 <ul id="menu" role="menu" class="el-menu el-menu--inline" data-old-padding-top="" data-old-padding-bottom="" data-old-overflow="" style="background-color: rgb(48, 65, 86);"> <a href="#/pms/product" class="">
-<li role="menuitem" tabindex="-1" class="el-menu-item" style="padding-left: 40px; color: rgb(191, 203, 217); background-color: rgb(48, 65, 86);"><svg data-v-81d70f2a="" aria-hidden="true" class="svg-icon"><use data-v-81d70f2a="" xlink:href="#icon-product-list"></use></svg> <span>商品列表</span></li>
+<li role="menuitem" tabindex="-1" class="el-menu-item" style="padding-left: 40px; color: rgb(64, 158, 255); background-color: rgb(48, 65, 86);"><svg data-v-81d70f2a="" aria-hidden="true" class="svg-icon"><use data-v-81d70f2a="" xlink:href="#icon-product-list"></use></svg> <span>消防</span></li>
 </a><a href="#/pms/addProduct" class="router-link-exact-active router-link-active">
-<li role="menuitem" tabindex="-1" class="el-menu-item is-active" style="padding-left: 40px; color: rgb(64, 158, 255); background-color: rgb(48, 65, 86);"><svg data-v-81d70f2a="" aria-hidden="true" class="svg-icon"><use data-v-81d70f2a="" xlink:href="#icon-product-add"></use></svg> <span>添加商品</span></li>
+<li role="menuitem" tabindex="-1" class="el-menu-item is-active" style="padding-left: 40px; color: rgb(191, 203, 217); background-color: rgb(48, 65, 86);"><svg data-v-81d70f2a="" aria-hidden="true" class="svg-icon"><use data-v-81d70f2a="" xlink:href="#icon-product-add"></use></svg> <span>基金</span></li>
 </a><!----><!----><!----><a href="#/pms/productCate" class="">
-<li role="menuitem" tabindex="-1" class="el-menu-item" style="padding-left: 40px; color: rgb(191, 203, 217); background-color: rgb(48, 65, 86);"><svg data-v-81d70f2a="" aria-hidden="true" class="svg-icon"><use data-v-81d70f2a="" xlink:href="#icon-product-cate"></use></svg> <span>商品分类</span></li>
+<li role="menuitem" tabindex="-1" class="el-menu-item" style="padding-left: 40px; color: rgb(191, 203, 217); background-color: rgb(48, 65, 86);"><svg data-v-81d70f2a="" aria-hidden="true" class="svg-icon"><use data-v-81d70f2a="" xlink:href="#icon-product-cate"></use></svg> <span>会计</span></li>
 </a><!----><!----><a href="#/pms/productAttr" class="">
-<li role="menuitem" tabindex="-1" class="el-menu-item" style="padding-left: 40px; color: rgb(191, 203, 217); background-color: rgb(48, 65, 86);"><svg data-v-81d70f2a="" aria-hidden="true" class="svg-icon"><use data-v-81d70f2a="" xlink:href="#icon-product-attr"></use></svg> <span>商品类型</span></li>
+<li role="menuitem" tabindex="-1" class="el-menu-item" style="padding-left: 40px; color: rgb(191, 203, 217); background-color: rgb(48, 65, 86);"><svg data-v-81d70f2a="" aria-hidden="true" class="svg-icon"><use data-v-81d70f2a="" xlink:href="#icon-product-attr"></use></svg> <span>法考</span></li>
 </a><!----><!----><!----><a href="#/pms/brand" class="">
-<li role="menuitem" tabindex="-1" class="el-menu-item" style="padding-left: 40px; color: rgb(191, 203, 217); background-color: rgb(48, 65, 86);"><svg data-v-81d70f2a="" aria-hidden="true" class="svg-icon"><use data-v-81d70f2a="" xlink:href="#icon-product-brand"></use></svg> <span>品牌管理</span></li>
+<li role="menuitem" tabindex="-1" class="el-menu-item" style="padding-left: 40px; color: rgb(191, 203, 217); background-color: rgb(48, 65, 86);"><svg data-v-81d70f2a="" aria-hidden="true" class="svg-icon"><use data-v-81d70f2a="" xlink:href="#icon-product-brand"></use></svg> <span>一建</span></li>
 </a><!----><!---->
 </ul>
 </div>
@@ -52,7 +52,7 @@ function submitConfig(){
 <table>
 <tr>
 <td>考试类型：</td>
-<td><input id="examTypeId" value="${config.examTypeId}" name="examType" /></br></td>
+<td><input id="examTypeId" value="${config.examTypeId}" readonly name="examType" /></br></td>
 </tr>
 <tr>
 <td>问题优先级 参数1：</td>
@@ -120,7 +120,7 @@ function submitConfig(){
 </tr>
 <tr>
 <td colspan="2">
-<div data-v-adc76164="" class="el-form-item el-form-item--small" style="text-align: center;"><!----><div class="el-form-item__content" style="margin-left: 120px;"><button onclick="submitConfig()" data-v-adc76164="" type="button" class="el-button el-button--primary el-button--medium"><!----><!----><span>点击</span></button><!----></div></div>
+<div data-v-adc76164="" class="el-form-item el-form-item--small" style="text-align: center;"><!----><div class="el-form-item__content" style="margin-left: 120px;"><button onclick="submitConfig()" data-v-adc76164="" type="button" class="el-button el-button--primary el-button--medium"><!----><!----><span>修改</span></button><!----></div></div>
 </td>
 </tr>
 </table>
@@ -131,16 +131,9 @@ function submitConfig(){
  $("ul#menu a li").on("click",function(){     
    $("ul#menu a li").each(function(){
    $(this).css("color","rgb(191, 203, 217)");
-  // console.log($(this).find("li").css("color"));
-   //	alert($(this).find("li").css("color"));
    });
 	$(this).css("color","rgb(64, 158, 255)");
 	
-   //  alert($(this).text());
-    // alert($(this).css("color"));
  });
- //$("ul").on("click", function(){
-// 	
- //});
 </script>
 </html>
