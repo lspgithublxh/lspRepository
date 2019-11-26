@@ -14,13 +14,13 @@ public class RecommendConfigPK implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private long user_id;
-	private long exam_type_id;
+	private short configVersion;
+	private short examTypeId;
 	
-	public RecommendConfigPK(long userId, long exam_type_id) {
+	public RecommendConfigPK(short configVersion, short examTypeId) {
 		super();
-		this.user_id = userId;
-		this.exam_type_id = exam_type_id;
+		this.configVersion = configVersion;
+		this.examTypeId = examTypeId;
 	}
 	
 	@Override
@@ -32,12 +32,12 @@ public class RecommendConfigPK implements Serializable{
 			return false;
 		}
 		RecommendConfigPK pk = (RecommendConfigPK) o;
-		return Objects.equals(user_id, pk.user_id) && Objects.equals(exam_type_id, pk.exam_type_id);
+		return Objects.equals(configVersion, pk.configVersion) && Objects.equals(examTypeId, pk.examTypeId);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(user_id, exam_type_id);
+		return Objects.hash(configVersion, examTypeId);
 	}
 
 	public RecommendConfigPK() {

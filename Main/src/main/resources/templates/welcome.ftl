@@ -17,15 +17,16 @@ function submitConfig(){
    console.log(fdata[j]);
    target[fdata[j]["name"]] = fdata[j]["value"];
  }
+ target['configVersion'] = "${config.configVersion}";
  target = JSON.stringify(target);
  target = encodeURI(target);
- $.get("/html?token=" + target, function(result){
+ $.get("/update?token=" + target, function(result){
     if("success" == result){
     	alert("修改成功");
     }else{
         alert("修改失败");
     }
- 	
+
  	
  });
 }
@@ -36,7 +37,7 @@ function submitConfig(){
 </head>
 <body style="margin: 0px;background-color: bisque;">
 <div>
-<img class="pic" src="/img/head.png" style="width: 100%; height: 75px;margin-right: 0;margin-left: 0;">
+<img class="pic" src="/img/head.png" style="width: 100%; height: 45px;margin-right: 0;margin-left: 0;">
 </div>
 <div style="width:20%;display: inline-block;vertical-align: top;">
 <ul id="menu" role="menu" class="el-menu el-menu--inline" data-old-padding-top="" data-old-padding-bottom="" data-old-overflow="" style="background-color: rgb(48, 65, 86);"> <a class="">
@@ -58,7 +59,7 @@ function submitConfig(){
 <table>
 <tr>
 <td>考试类型：</td>
-<td><input id="examTypeId" value="${config.examTypeId}" readonly name="examType" /></br></td>
+<td><input id="examTypeId" value="${config.examTypeId}" readonly name="examTypeId" /></br></td>
 </tr>
 <tr>
 <td>问题优先级 参数1：</td>
@@ -123,6 +124,10 @@ function submitConfig(){
 <tr>
 <td>添加时间：</td>
 <td><input value="${config.addTime}" name="addTime" /></br></td>
+</tr>
+<tr style="display:none">
+<td>配置版本：</td>
+<td><input value="${config.configVersion}" name="configVersion" /></br></td>
 </tr>
 <tr>
 <td colspan="2">

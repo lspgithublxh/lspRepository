@@ -5,14 +5,20 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.gson.Gson;
 import com.ltd.e.recommend.config.Main.model.RecommendConfig;
 import com.ltd.e.recommend.config.Main.service.ConfigService;
-
+/**
+ * 配置controller
+ * TODO 
+ * @author lishaoping
+ * @date 2019年11月25日
+ * @file ConfigController
+ */
 @Controller
 public class ConfigController {
 
@@ -25,52 +31,20 @@ public class ConfigController {
 	@Autowired
 	private ConfigService configService;
 
-	@GetMapping("/hello")
-	@ResponseBody
-	public Object buyProductChannel(@RequestParam(required = true) String token) {
-		try {
-			System.out.println("ddd");
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "sss";
-		}
-		return "ssss";
-	}
-
-	@GetMapping("/html")
+	@GetMapping("/update")
 	@ResponseBody
 	public String dd(@RequestParam(required = true) String token) {
 		try {
-			System.out.println("ddd");
-			System.out.println(token);
+			RecommendConfig config = new Gson().fromJson(token, RecommendConfig.class);
+			configService.saveRecommendConfig(config);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return "sss";
+			return "fail";
 		}
 		return "success";
 	}
-	
-	@PostMapping("/html")
-	public String post(@RequestParam(required = true) String data) {
-		try {
-			System.out.println("ddd");
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "sss";
-		}
-		return "/index.html";
-	}
 
-	@RequestMapping("/")
-	public String index(ModelMap map) {
-		// 加入一个属性，用来在模板中读取
-		map.addAttribute("name", userName);
-		map.addAttribute("bookTitle", bookTitle);
-		// return模板文件的名称，对应src/main/resources/templates/welcome.html
-		return "welcome";
-	}
-
-	@RequestMapping("/ab")
+	@RequestMapping("/config")
 	public String findConfigByExamType(ModelMap map,@RequestParam(required = true) String examTypeId) {
 		try {
 			// 加入一个属性，用来在模板中读取

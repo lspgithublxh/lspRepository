@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -18,11 +19,15 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @Entity(name="recommend_config")
+@IdClass(value =RecommendConfigPK.class )
 public class RecommendConfig {
 
 	@Id
 	@Column(name="exam_type_id", nullable=false)
 	private short examTypeId;
+	@Id
+	@Column(name="config_version", nullable=false)
+	private short configVersion;
 	
 	@Column(name="priority_algorithm_param2", nullable=false)
 	private double priorityAlgorithmParam2;
@@ -74,9 +79,6 @@ public class RecommendConfig {
 	
 	@Column(name="kp_update_forget", nullable=false)
 	private double kpUpdateForget;
-	
-	@Column(name="config_version", nullable=false)
-	private short configVersion;
 	
 	@Column(name="add_time", nullable=false)
 	private Timestamp addTime;
