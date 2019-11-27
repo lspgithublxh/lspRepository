@@ -2,6 +2,8 @@ package com.ltd.e.recommend.config.Main.model;
 
 import java.io.Serializable;
 import java.util.Objects;
+
+import lombok.Data;
 /**
  * 
  * TODO 
@@ -9,6 +11,7 @@ import java.util.Objects;
  * @date 2019年11月18日
  * @file RecommendConfigPK
  */
+@Data
 public class RecommendConfigPK implements Serializable{
 	/**
 	 * 
