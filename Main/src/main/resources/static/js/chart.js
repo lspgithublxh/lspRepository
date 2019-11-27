@@ -10,8 +10,30 @@ $.get("/statis?examTypeId=2", function(result){
 	//	 data2.push(result[i]['value']);
 	}
 });
-console.log(data1);
-console.log(xAxisData);
+var a = 1;
+setInterval(function(){
+$.get("/statis?examTypeId=2", function(result){
+    data1 = [];
+	for(var i = 0; i < result.length; i++){
+		 xAxisData.push('i' + result[i]['itemId']);
+		 data1.push(result[i]['value']);
+	}
+	
+	a = a+1;
+	var option = {
+		series: [{
+        name: 'priority',
+        type: 'bar',
+        data: data1,
+        animationDelay: function (idx) {
+            return idx * 10;
+        }
+    }]
+	};
+	myChart.setOption(option);
+});
+	
+}, 20000);
 option = {
     title: {
         text: '用户优先级'
