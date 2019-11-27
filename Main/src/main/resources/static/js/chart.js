@@ -2,18 +2,22 @@ var myChart = echarts.init(document.getElementById('main'));
 var xAxisData = [];
 var data1 = [];
 var data2 = [];
-for (var i = 0; i < 100; i++) {
-    xAxisData.push('类目' + i);
-    data1.push((Math.sin(i / 5) * (i / 5 -10) + i / 6) * 5);
-    data2.push((Math.cos(i / 5) * (i / 5 -10) + i / 6) * 5);
-}
-
+$.ajaxSettings.async = false;
+$.get("/statis?examTypeId=2", function(result){
+	for(var i = 0; i < result.length; i++){
+		 xAxisData.push('i' + result[i]['itemId']);
+		 data1.push(result[i]['value']);
+	//	 data2.push(result[i]['value']);
+	}
+});
+console.log(data1);
+console.log(xAxisData);
 option = {
     title: {
-        text: '柱状图动画延迟'
+        text: '用户优先级'
     },
     legend: {
-        data: ['bar', 'bar2'],
+        data: ['priority'],
         align: 'left'
     },
     toolbox: {
@@ -39,18 +43,11 @@ option = {
     yAxis: {
     },
     series: [{
-        name: 'bar',
+        name: 'priority',
         type: 'bar',
         data: data1,
         animationDelay: function (idx) {
             return idx * 10;
-        }
-    }, {
-        name: 'bar2',
-        type: 'bar',
-        data: data2,
-        animationDelay: function (idx) {
-            return idx * 10 + 100;
         }
     }],
     animationEasing: 'elasticOut',

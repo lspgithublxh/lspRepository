@@ -27,5 +27,4 @@ public interface RecommendConfigRepository extends JpaRepository<RecommendConfig
 //	@Modifying
 //	@Query(value="insert into user_recommend_no(user_id, exam_type_id, recommend_no) values(?1, ?3, ?2) on duplicate key update recommend_no=?2", nativeQuery = true)
 //	void updateUserRecommendConfig(long userId, long recommendNo, short examType);
-
 }
