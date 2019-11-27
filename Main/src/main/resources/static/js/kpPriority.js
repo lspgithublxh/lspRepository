@@ -1,4 +1,4 @@
-var myChart = echarts.init(document.getElementById('main'));
+var myChart = echarts.init(document.getElementById('priority'));
 var xAxisData = [];
 var data1 = [];
 var data2 = [];

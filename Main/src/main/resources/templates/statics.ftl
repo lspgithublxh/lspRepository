@@ -18,10 +18,10 @@
 </a><!----><!----><!---->
 </ul>
 </div>
-<div id="main" style="width: 1200px;height:400px;margin-top: 20px;"></div>
+<div id="priority" style="width: 1200px;height:400px;margin-top: 20px;"></div>
 <div id="recommendTimes" style="width: 1200px;height:400px;"></div>
 </div>
 </body>
-<script src="/js/chart.js" type="text/javascript"></script>
+<script src="/js/kpPriority.js" type="text/javascript"></script>
 <script src="/js/recommendTimes.js" type="text/javascript"></script>
 </html>
