@@ -43,7 +43,22 @@ public class StaticsServiceImpl implements StaticsService{
 		@SuppressWarnings("unchecked")
 		List<Object> kpIdList = query.getResultList();//StaticsItem
 		List<StaticsItem> collect = kpIdList.stream().map(obj -> new StaticsItem().setItemId(((BigInteger)((Object[])obj)[0]).longValue())
-				.setValue(((Double)((Object[])obj)[1]).doubleValue())).collect(Collectors.toList());
+				.setValue(((Double)((Object[])obj)[1]))).collect(Collectors.toList());
+		System.out.println(collect);
+		return collect;
+	}
+
+	@Override
+	public List<StaticsItem> getRecommendTimes(long userId, short examTypeId) {
+		StringBuilder kpTable = new StringBuilder(RecommendConsts.USER_QUESTION_TABLE_PREFIX);
+		kpTable.append(RecommendConsts.EXAM_SPLITOR).append(ExamType.getVal(examTypeId).name());
+		String sql = RecommendConsts.QUERY_USER_QUESTION_RECOM_TIMES_LIST.replace("%tableName%", kpTable.toString());
+		Query query = entityManager.createNativeQuery(sql);//, StaticsItem.class
+		query.setParameter("userId", userId);
+		@SuppressWarnings("unchecked")
+		List<Object> kpIdList = query.getResultList();//StaticsItem
+		List<StaticsItem> collect = kpIdList.stream().map(obj -> new StaticsItem().setItemId(((BigInteger)((Object[])obj)[0]).longValue())
+				.setValue(((Integer)((Object[])obj)[1]))).collect(Collectors.toList());
 		System.out.println(collect);
 		return collect;
 	}

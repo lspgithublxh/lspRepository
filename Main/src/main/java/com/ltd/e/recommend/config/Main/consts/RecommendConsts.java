@@ -21,5 +21,6 @@ public class RecommendConsts {
 	public final static String QUERY_USER_QUESTION_RECOMMEND_TIMES = "SELECT * FROM %tableName% WHERE user_id=:userId AND question_id IN (:qIds)";
 
 	public final static String QUERY_USER_KNOWLEGE_PRIORITY_LIST = "SELECT knowledge_point_lvl3_id as itemId, priority as value FROM %tableName% where user_id=:userId order by priority desc";
+	public final static String QUERY_USER_QUESTION_RECOM_TIMES_LIST = "SELECT question_id as itemId, recommend_times as value FROM %tableName% where user_id=:userId order by recommend_times desc";
 
 }

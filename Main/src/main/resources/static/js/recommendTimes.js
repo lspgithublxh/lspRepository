@@ -1,10 +1,11 @@
-var myChart = echarts.init(document.getElementById('main'));
+$(function(){
+var myChart = echarts.init(document.getElementById('recommendTimes'));
 var xAxisData = [];
 var data1 = [];
 var data2 = [];
 $.ajaxSettings.async = false;
 var params = location.href.split('?')[1];
-$.get("/priority?" + params, function(result){
+$.get("/recomemndTimes?" + params, function(result){
 	for(var i = 0; i < result.length; i++){
 		 xAxisData.push('i' + result[i]['itemId']);
 		 data1.push(result[i]['value']);
@@ -13,7 +14,7 @@ $.get("/priority?" + params, function(result){
 });
 var a = 1;
 setInterval(function(){
-$.get("/priority?" + params, function(result){
+$.get("/recomemndTimes?" + params, function(result){
     data1 = [];
 	for(var i = 0; i < result.length; i++){
 		 xAxisData.push('i' + result[i]['itemId']);
@@ -37,10 +38,10 @@ $.get("/priority?" + params, function(result){
 }, 20000);
 option = {
     title: {
-        text: '知识点优先级'
+        text: '问题推荐次数'
     },
     legend: {
-        data: ['priority'],
+        data: ['recommendTimes'],
         align: 'left'
     },
     toolbox: {
@@ -66,7 +67,7 @@ option = {
     yAxis: {
     },
     series: [{
-        name: 'priority',
+        name: 'recommendTimes',
         type: 'bar',
         data: data1,
         animationDelay: function (idx) {
@@ -80,3 +81,4 @@ option = {
 };
 
 myChart.setOption(option);
+})
