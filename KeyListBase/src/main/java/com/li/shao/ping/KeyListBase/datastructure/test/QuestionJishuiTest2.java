@@ -18,7 +18,9 @@ public class QuestionJishuiTest2 {
 //		int total = jishuiTotal(new int[][] {{3,2,3,3,5},{4,1,1,4,6},{1,2,4,5,6},{1,6,8,9,6},{1,6,8,9,6}});
 //		int total = jishuiTotal(new int[][] {{3,2,3,3,5},{4,1,1,4,6},{4,2,4,5,6},{1,6,8,9,6},{1,6,8,9,6}});
 
-		int total = jishuiTotal(new int[][] {{3,3,3,3,5},{4,1,1,4,6},{4,2,4,5,6},{1,6,8,9,6},{1,6,8,9,6}});
+//		int total = jishuiTotal(new int[][] {{3,3,3,3,5},{4,1,1,4,6},{4,2,4,5,6},{1,6,8,9,6},{1,6,8,9,6}});
+		int total = jishuiTotal(new int[][] {{3,3,3,3,5},{4,1,1,2,6},{4,2,4,1,6},{6,1,1,2,6},{1,6,8,9,6}});
+
 		System.out.println(total);
 		
 		
@@ -156,7 +158,7 @@ public class QuestionJishuiTest2 {
 				int[] first = xiuz.get(0);
 				//------------------add
 				//左边走, 找全坑
-				if(shendu[first[0]][first[1]] > 0) {//需要调整左边left起点位置
+				if(lianxuKen.size() < xiuz.size() && shendu[first[0]][first[1]] > 0) {//需要调整左边left起点位置
 					boolean startLeft = false;
 					for(int j = 0;;) {
 						j = j == 0 ? xiuz.size() - 1 : --j;//下一个位置
