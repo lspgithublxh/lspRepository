@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-public class QuestionJishuiTest {
+public class QuestionJishuiTest2 {
 
 	public static void main(String[] args) {
 //		int total = jishuiTotal(new int[][] {{3,2,3},{4,0,5},{1,2,6}});
@@ -64,7 +64,7 @@ public class QuestionJishuiTest {
 			//向下
 			while(xP <= endX) {//(xp,yp)位置的深度
 				xiuz.add(new int[] {xP,yP});
-				if(xP == endX || yP == endY) {
+				if(xP == arr.length - 1 || yP == arr[0].length - 1) {//TODO yP == endY
 					shendu[xP][yP] = 0 - arr[xP][yP];//负数不计算
 					shendu[xP][yP] = shendu[xP][yP] < 0 ? 0 : shendu[xP][yP];//负数归零
 				}else {
@@ -84,7 +84,7 @@ public class QuestionJishuiTest {
 			//向左
 			while(yP >= startY) {//(xp,yp)位置的深度
 				xiuz.add(new int[] {xP,yP});
-				if(xP == endX || yP == 0) {
+				if(xP == arr.length - 1 || yP == 0) {//TODO
 					shendu[xP][yP] = 0 - arr[xP][yP];//负数不计算
 					shendu[xP][yP] = shendu[xP][yP] < 0 ? 0 : shendu[xP][yP];//负数归零
 				}else {
@@ -104,7 +104,7 @@ public class QuestionJishuiTest {
 			//向上--且不到起点
 			while(xP > startX) {//(xp,yp)位置的深度
 				xiuz.add(new int[] {xP,yP});
-				if(xP == endX || yP == 0) {
+				if(xP == endX || yP == 0) {//TODO
 					shendu[xP][yP] = 0 - arr[xP][yP];//负数不计算
 					shendu[xP][yP] = shendu[xP][yP] < 0 ? 0 : shendu[xP][yP];//负数归零
 				}else {
@@ -153,6 +153,27 @@ public class QuestionJishuiTest {
 				if(kenMowei == -1) {//无坑,不修正
 					break;
 				}//寻找最低边界
+				int[] first = xiuz.get(0);
+				//------------------add
+				//左边走, 找全坑
+				if(shendu[first[0]][first[1]] > 0) {//需要调整左边left起点位置
+					boolean startLeft = false;
+					for(int j = 0;;) {
+						j = j == 0 ? xiuz.size() - 1 : --j;//下一个位置
+						int[] node = xiuz.get(j);
+						if(shendu[node[0]][node[1]] > 0) {//是坑
+							lianxuKen.add(0, node);
+							startLeft = true;
+						}else if(startLeft) {//不是坑
+							leftDuan = j;
+							break;
+						}
+						if(lianxuKen.size() == xiuz.size()) {
+							break;
+						}
+					}
+				}
+				//------------------add
 				if(lianxuKen.size() == xiuz.size()) {//全是坑
 					//寻找最低高度
 					int gao = Integer.MAX_VALUE;
@@ -163,7 +184,7 @@ public class QuestionJishuiTest {
 						}
 					}
 					//开始修正
-					for(int[] no : xiuz) {
+					for(int[] no : xiuz) {//TODO
 						int ca = gao - arr[no[0]][no[1]];
 						shendu[no[0]][no[1]] = ca < 0 ? 0 : ca;
 					}
@@ -181,7 +202,7 @@ public class QuestionJishuiTest {
 						}
 					}
 					//开始修正
-					for(int[] no : xiuz) {
+					for(int[] no : lianxuKen) {
 						int ca = gao - arr[no[0]][no[1]];
 						shendu[no[0]][no[1]] = ca < 0 ? 0 : ca;
 					}
