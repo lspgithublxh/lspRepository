@@ -7,7 +7,7 @@ import com.google.common.collect.Lists;
 public class QuestionJishuiTest {
 
 	public static void main(String[] args) {
-		int total = jishuiTotal(new int[][] {{3,2,3},{4,1,5},{1,2,6}});
+		int total = jishuiTotal(new int[][] {{3,2,3},{4,0,5},{1,2,6}});
 		System.out.println(total);
 		
 	}
@@ -51,7 +51,7 @@ public class QuestionJishuiTest {
 			//向下
 			while(xP <= endX) {//(xp,yp)位置的深度
 				xiuz.add(new int[] {xP,yP});
-				if(xP == 0 || yP == 0) {
+				if(xP == endX || yP == endY) {
 					shendu[xP][yP] = 0 - arr[xP][yP];//负数不计算
 					shendu[xP][yP] = shendu[xP][yP] < 0 ? 0 : shendu[xP][yP];//负数归零
 				}else {
@@ -60,7 +60,7 @@ public class QuestionJishuiTest {
 				xP++;
 			}
 			xP = endX;//转折点
-			if(xP == 0 || yP == 0) {//忽略
+			if(xP == 0 || yP == endY) {//忽略
 			}else {
 				int shendu2 = arr[xP + 1][yP] - arr[xP][yP] + shendu[xP + 1][yP];
 				shendu2 = shendu2 < 0 ? 0 : shendu2;
@@ -70,7 +70,7 @@ public class QuestionJishuiTest {
 			//向左
 			while(yP >= startY) {//(xp,yp)位置的深度
 				xiuz.add(new int[] {xP,yP});
-				if(xP == 0 || yP == 0) {
+				if(xP == endX || yP == 0) {
 					shendu[xP][yP] = 0 - arr[xP][yP];//负数不计算
 					shendu[xP][yP] = shendu[xP][yP] < 0 ? 0 : shendu[xP][yP];//负数归零
 				}else {
@@ -79,17 +79,17 @@ public class QuestionJishuiTest {
 				yP--;
 			}
 			yP = startY;//转折点
-			if(xP == 0 || yP == 0) {//忽略
+			if(xP == endX || yP == 0) {//忽略
 			}else {
 				int shendu2 = arr[xP][yP - 1] - arr[xP][yP] + shendu[xP][yP - 1];
 				shendu2 = shendu2 < 0 ? 0 : shendu2;
 				shendu[xP][yP] = shendu[xP][yP] > shendu2 ? shendu2 : shendu[xP][yP];
 			}
-			xP++;
+			xP--;
 			//向上--且不到起点
 			while(xP > startX) {//(xp,yp)位置的深度
 				xiuz.add(new int[] {xP,yP});
-				if(xP == 0 || yP == 0) {
+				if(xP == endX || yP == 0) {
 					shendu[xP][yP] = 0 - arr[xP][yP];//负数不计算
 					shendu[xP][yP] = shendu[xP][yP] < 0 ? 0 : shendu[xP][yP];//负数归零
 				}else {
@@ -111,6 +111,7 @@ public class QuestionJishuiTest {
 				boolean startLian = false;
 				int rightDuan = -1;
 				int leftDuan = xiuz.size() - 1;
+				int total = 0;
 				for(int i = 0; i < xiuz.size();) {
 					int[] node = xiuz.get(i);
 					
@@ -129,6 +130,9 @@ public class QuestionJishuiTest {
 						break;
 					}
 					i = ++i % xiuz.size();
+					if(++total > xiuz.size()) {
+						break;
+					}
 				}
 				if(kenMowei == -1) {//无坑,不修正
 					break;
@@ -168,8 +172,11 @@ public class QuestionJishuiTest {
 					//只移除连续坑
 					xiuz.removeAll(lianxuKen);
 				}
-				
+				lianxuKen.clear();
 			}
+			xiuz.clear();
+			lianxuKen.clear();
+			currQuan++;
 		}
 		//深度表打印---直接计算总和
 		int zonghe = 0;
@@ -180,6 +187,7 @@ public class QuestionJishuiTest {
 				zonghe += x;
 			}
 		}
+		System.out.println();
 		return zonghe;
 	}
 }
