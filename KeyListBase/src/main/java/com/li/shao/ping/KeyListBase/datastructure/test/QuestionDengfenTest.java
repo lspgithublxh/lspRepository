@@ -8,7 +8,7 @@ public class QuestionDengfenTest {
 
 	public static void main(String[] args) {
 //		List<double[]> points = dengfen(new int[][]{{1,2},{1,5},{3,5},{3,7},{5,7},{5,2},{1,2}}, 2);
-		List<double[]> points = dengfen(new int[][]{{1,1},{1,5},{5,5},{5,1},{1,1}}, 8);
+		List<double[]> points = dengfen(new int[][]{{1,1},{1,5},{5,5},{5,1},{1,1}}, 999);
 
 		points.stream().forEach(item ->{
 			System.out.print("(" + item[0] + "," + item[1] + "),");
