@@ -17,7 +17,9 @@ myChart.hideLoading();
 //var data = {"name":"100","children":[{"name":"57","children":[{"name":"49","children":[{"name":"33","children":[{"name":"18","value":18}]},{"name":"54","value":54}]},{"name":"85","children":[{"name":"73","value":73},{"name":"94","children":[{"name":"91","value":91}]}]}]}]};
 //var data = {     "name": "49",     "children": [         {             "name": "33",             "children": [                 {                     "name": "18",                     "value": 18                 }             ]         },         {             "name": "54",             "value": 54         }     ] };
 //var data = {     "name": "analytics",     "children": [         {             "name": "cluster",             "children": [                 {                     "name": "AgglomerativeCluster",                     "value": 3938                 },                 {                     "name": "CommunityStructure",                     "value": 3812                 },                 {                     "name": "HierarchicalCluster",                     "value": 6714                 },                 {                     "name": "MergeEdge",                     "value": 743                 }             ]         },         {             "name": "graph",             "children": [                 {                     "name": "BetweennessCentrality",                     "value": 3534                 },                 {                     "name": "LinkDistance",                     "value": 5731                 },                 {                     "name": "MaxFlowMinCut",                     "value": 7840                 },                 {                     "name": "ShortestPaths",                     "value": 5914                 },                 {                     "name": "SpanningTree",                     "value": 3416                 }             ]         },         {             "name": "optimization",             "children": [                 {                     "name": "AspectRatioBanker",                     "value": 7074                 }             ]         }     ] };
-var data = {"name":"100","children":[{"name":"57","children":[{"name":"49","children":[{"name":"33","children":[{"name":"18","value":18}]},{"name":"54","value":54}]},{"name":"85","children":[{"name":"73","value":73},{"name":"94","children":[{"name":"91","value":91}]}]}]}]};
+var data = 
+{"name":"100","children":[{"name":"84","children":[{"name":"23","children":[{"name":"5","children":[{"name":"11","children":[{"name":"17","value":17}]}]},{"name":"71","children":[{"name":"45","children":[{"name":"32","value":32}]}]}]},{"name":"95","children":[{"name":"94","value":94}]}]}]}
+;
 
  echarts.util.each(data.children, function (datum, index) {
         index % 2 === 0 && (datum.collapsed = true);
@@ -40,7 +42,8 @@ var data = {"name":"100","children":[{"name":"57","children":[{"name":"49","chil
                 right: '20%',
 
                 symbolSize: 7,
-
+				mcHereShow: true,
+				initialTreeDepth:10,
                 label: {
                     normal: {
                         position: 'left',
