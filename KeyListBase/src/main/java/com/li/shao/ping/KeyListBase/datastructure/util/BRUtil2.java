@@ -259,10 +259,22 @@ public class BRUtil2 {
 			//先替换值，再看删除替换结点--肯定是单结点
 			cur.val = replace.val;
 			deleteSingleNodeNotLeftNode(replace);
-		}else {
+		}else if(cur.left != null){
 			Node replace = findLeftReplaceNode(cur.left);
 			cur.val = replace.val;
 			deleteSingleNodeNotRightNode(replace);
+		}else {
+			if(cur.red) {
+				if(p.left == cur) {
+					p.left = null;
+					cur.parent = null;
+				}else {
+					p.right = null;
+					cur.parent = null;
+				}
+			}else {
+				balanceDeleteBlackLeafNode(cur);
+			}
 		}
 	}
 	
@@ -359,7 +371,7 @@ public class BRUtil2 {
 	 */
 	public Node findRightReplaceNode(Node node) {
 		Node cur = node;
-		while(cur != null) {
+		while(cur.left != null) {
 			cur = cur.left;
 		}
 		return cur;
@@ -372,7 +384,7 @@ public class BRUtil2 {
 	 */
 	public Node findLeftReplaceNode(Node node) {
 		Node cur = node;
-		while(cur != null) {
+		while(cur.right != null) {
 			cur = cur.right;
 		}
 		return cur;
@@ -458,11 +470,35 @@ public class BRUtil2 {
 						rightRotate(left);
 						return;
 					}else {//黑色，变红，右选，再继续
-						top.red = true;
-						rightRotate(left);
-						cur = left;//继续
-						top = left.parent;
-						continue;
+						Node cleftR = left.right;//TODO 右旋之前
+						if(cleftR != null && cleftR.red) {//分两大类操作
+							Node cleftF = left.left;
+							if(cleftF == null || !cleftF.red) {
+								cleftR.red = false;
+								left.red = true;
+								leftRotate(cleftR);
+								//开始 平衡
+								top.red = true;
+								rightRotate(cleftR);
+								cur = cleftR;
+								top = left.parent;
+								continue;
+							}else {//双红
+								cleftF.red = false;
+								cleftR.red = false;
+								left.red = true;
+								//处理
+								left.red = false;
+								rightRotate(left);
+								return;
+							}
+						}else {//已经是黑色，不动
+							top.red = true;
+							rightRotate(left);
+							cur = left;//继续
+							top = left.parent;
+							continue;
+						}
 					}
 				}else {
 					Node right = top.right;
@@ -476,11 +512,36 @@ public class BRUtil2 {
 						leftRotate(right);
 						return;
 					}else {//黑色，变红，右选，再继续
-						top.red = true;
-						leftRotate(right);
-						cur = right;//继续
-						top = right.parent;
-						continue;
+						Node crightL = right.left;
+						if(crightL != null && crightL.red) {//左旋之前
+							Node crightR = right.right;
+							if(crightR == null || !crightR.red) {
+								crightL.red = false;
+								right.red = true;
+								rightRotate(crightL);
+								//处理
+								top.red = true;
+								leftRotate(crightL);
+								cur = crightL;
+								top = crightL.parent;
+								continue;
+							}else {//双红
+								crightR.red = false;
+								crightL.red = false;
+								right.red = true;
+								//处理
+								right.red = false;
+								leftRotate(right);
+								return;
+							}
+						}else {
+							top.red = true;
+							leftRotate(right);
+							cur = right;//继续
+							top = right.parent;
+							continue;
+						}
+						
 					}
 				}
 			}
@@ -553,24 +614,50 @@ public class BRUtil2 {
 //	}
 	
 	public static void main(String[] args) {
+//		addNodeTest();//
+		deleteNodeTest();
+	}
+
+	private static void deleteNodeTest() {
+		BRUtil2 util = new BRUtil2();
+		IntStream.of(93,10,19,63,48,37,50,40,28,77,20,85,37,3).boxed().forEach(item ->{//,37,50,40,28,77,20,85,37,3
+//			int m = (int)(Math.random() * 100);
+			if(item == 63) {
+				System.out.println();
+			}
+			util.addNode(item);
+//			System.out.println(item);
+			EcharNode ro = new EcharNode();
+			util.logTreeForEchart(util.root, ro, "roo_");
+			System.out.println(new Gson().toJson(ro));
+		});
+		System.out.println("delete after");
+		util.deleteNode(63);
+		
+		EcharNode ro = new EcharNode();
+		util.logTreeForEchart(util.root, ro, "roo_");
+		System.out.println(new Gson().toJson(ro));
+	}
+
+	private static void addNodeTest() {
 		System.out.println(new Node().red);
 		BRUtil2 util = new BRUtil2();
-		for(int i = 0; i < 100; i++) {
-			int m = (int)(Math.random() * 100);
-			System.out.println(m);
-			util.addNode(m);
-		}
-//		IntStream.of(93,10,19,63,48).boxed().forEach(item ->{//,37,50,40,28,77,20,85,37,3
-////			int m = (int)(Math.random() * 100);
-//			if(item == 63) {
-//				System.out.println();
-//			}
-//			util.addNode(item);
-////			System.out.println(item);
-//			EcharNode ro = new EcharNode();
-//			util.logTreeForEchart(util.root, ro, "roo_");
-//			System.out.println(new Gson().toJson(ro));
-//		});
+//		for(int i = 0; i < 10; i++) {
+//			int m = (int)(Math.random() * 10);
+//			System.out.println(m);
+//			util.addNode(m);
+//		}
+		IntStream.of(93,10,19,63,48).boxed().forEach(item ->{//,37,50,40,28,77,20,85,37,3
+//			int m = (int)(Math.random() * 100);
+			if(item == 63) {
+				System.out.println();
+			}
+			util.addNode(item);
+//			System.out.println(item);
+			EcharNode ro = new EcharNode();
+			util.logTreeForEchart(util.root, ro, "roo_");
+			System.out.println(new Gson().toJson(ro));
+		});
 		List<String> nodes = Lists.newArrayList();
 		util.logPath(util.root, "", nodes);
 		for(String path : nodes) {
