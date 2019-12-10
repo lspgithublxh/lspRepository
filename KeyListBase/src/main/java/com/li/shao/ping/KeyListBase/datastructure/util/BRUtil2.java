@@ -155,7 +155,14 @@ public class BRUtil2 {
 		}
 		//变色阶段
 		changeColor(parent);
+		resetRoot();
+	}
+
+	private void resetRoot() {
 		//重新root找到阶段
+		if(root == null) {
+			return;
+		}
 		Node newRoot = root;
 		while(newRoot.parent != null) {
 			newRoot = newRoot.parent;
@@ -236,6 +243,9 @@ public class BRUtil2 {
 	private void deleteNode(int val) {
 		//找到删除点 --看能不能删--转到替换点
 		//找到替换点，数据替换后，替换点为该删点----直到这个改删点 删除后可以直接被连接，则直接连接，然后进行向上均衡即可。
+		if(root == null) {
+			return;
+		}
 		Node cur = root;
 		Node p = root.parent;
 		while(cur != null) {
@@ -276,6 +286,8 @@ public class BRUtil2 {
 				balanceDeleteBlackLeafNode(cur);
 			}
 		}
+		//重置根结点
+		resetRoot();
 	}
 	
 	/**
@@ -402,6 +414,7 @@ public class BRUtil2 {
 		Node p = node.parent;
 		if(p == null) {
 			log.info("delete ok ,root ");
+			root = null;
 			return;
 		}
 		//先删除
@@ -547,6 +560,7 @@ public class BRUtil2 {
 			}
 		}
 		//已经到根结点，退出，完成
+		resetRoot();//重置，因为会改变
 	}
 	
 	public void logPath(Node cur, String path, List<String> li) {
@@ -595,6 +609,17 @@ public class BRUtil2 {
 		}
 	}
 	
+	public int count(Node node, int old) {
+		old++;
+		if(node.left != null) {
+			old += count(node.left, 0);
+		}
+		if(node.right != null) {
+			old += count(node.right, 0);
+		}
+		return old;
+	}
+	
 //	public List<String> logPath() {
 //		List<String> li = Lists.newArrayList();
 //		Node cur = root;
@@ -629,24 +654,31 @@ public class BRUtil2 {
 //		EcharNode ro2 = new EcharNode();
 //		util.logTreeForEchart(util.root, ro2, "roo_");
 //		System.out.println(new Gson().toJson(ro2));
-		
-		IntStream.of(99,4,62,81,19,18,98,46,40,18,66,8,52,99,18,21,96,70,47,15,54,38,87,2,19,63,48,95,89,72,19,5,35,67,83,24,31,56,77,17,84,29,81,60,3,69,88,86,55,80,73,66,12,41,53,4,46,30,22,73,58,19,61,29,30,10,29,13,74,4,40,76,4,89,50,96,15,56,10,67,46,70,5,2,19,28,19,36,18,61,63,24,96,78,72,5,84,48,51,79).boxed().forEach(item ->{//,37,50,40,28,77,20,85,37,3
+		int[] arr = {99,4,62,81,19,18,98,46,40,18,66,8,52,99,18,21,96,70,47,15,54,38,87,2,19,63,48,95,89,72,19,5,35,67,83,24,31,56,77,17,84,29,81,60,3,69,88,86,55,80,73,66,12,41,53,4,46,30,22,73,58,19,61,29,30,10,29,13,74,4,40,76,4,89,50,96,15,56,10,67,46,70,5,2,19,28,19,36,18,61,63,24,96,78,72,5,84,48,51,79};
+		IntStream.of(arr).boxed().forEach(item ->{//,37,50,40,28,77,20,85,37,3
 //			int m = (int)(Math.random() * 100);
-			if(item == 63) {
-				System.out.println();
-			}
 			util.addNode(item);
 //			System.out.println(item);
 			EcharNode ro = new EcharNode();
 			util.logTreeForEchart(util.root, ro, "roo_");
 			System.out.println(new Gson().toJson(ro));
 		});
-		System.out.println("delete after");
-		util.deleteNode(67);
-		
-		EcharNode ro = new EcharNode();
-		util.logTreeForEchart(util.root, ro, "roo_");
-		System.out.println(new Gson().toJson(ro));
+//		int to = util.count(util.root, 0);
+//		System.out.println(to);
+		for(int de : arr) {
+			if(de == 84) {
+				System.out.println();
+			}
+			int total = util.count(util.root, 0);
+			Node nb = util.findTarget(de);
+			System.out.println("before delete :" + de + " exists : " + (nb == null ? false : true) + " total :" + total);
+			util.deleteNode(de);
+			Node node = util.findTarget(de);
+			System.out.println("delete after : success:" + (node == null ? true : false));
+			EcharNode ro = new EcharNode();
+			util.logTreeForEchart(util.root, ro, "roo_");
+			System.out.println(new Gson().toJson(ro));
+		}
 	}
 
 	private static void addNodeTest() {
