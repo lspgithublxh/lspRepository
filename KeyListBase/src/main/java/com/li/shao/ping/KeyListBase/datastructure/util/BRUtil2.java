@@ -1,6 +1,7 @@
 package com.li.shao.ping.KeyListBase.datastructure.util;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
@@ -44,7 +45,7 @@ public class BRUtil2 {
 		private Node right;
 		private Node parent;
 		private int val;
-		private boolean red;
+		private boolean red = true;// = true
 	}
 	
 	public Node findTarget(int val) {
@@ -80,14 +81,16 @@ public class BRUtil2 {
 			}
 		} 
 		
-		node.left = p;
-		p.parent = node;
-		
 		Node cleft = node.left;
 		p.right = cleft;
 		if(cleft != null) {
 			cleft.parent = p;
 		}
+		
+		node.left = p;
+		p.parent = node;
+		
+		
 		
 	}
 	
@@ -107,20 +110,22 @@ public class BRUtil2 {
 			}
 		} 
 		
-		node.right = p;
-		p.parent = node;
-		
 		Node cright = node.right;
 		p.left = cright;
 		if(cright != null) {
 			cright.parent = p;
 		}
+		
+		node.right = p;
+		p.parent = node;
+		
+		
 	}
 	
 	public void addNode(int val) {
 		//增加结点，根据条件判断是否要 左旋/右旋旋转
 		if(root == null) {
-			root = new Node().setVal(val);
+			root = new Node().setVal(val).setRed(false);
 			return;
 		}
 		//搜索到插入位置
@@ -150,6 +155,12 @@ public class BRUtil2 {
 		}
 		//变色阶段
 		changeColor(parent);
+		//重新root找到阶段
+		Node newRoot = root;
+		while(newRoot.parent != null) {
+			newRoot = newRoot.parent;
+		}
+		root = newRoot;
 	}
 
 	private void changeColor(Node parent) {
@@ -161,29 +172,52 @@ public class BRUtil2 {
 		Node pp = parent.parent;//不可能为null;因为parent是红色
 		if(pp.left == parent) {//parent是左结点
 			Node pb = pp.right;
-			if(!pb.red) {//父兄为黑
-				parent.red = false;
-				pp.red = true;
-				rightRotate(parent);//父右旋
+			if(pb == null || !pb.red) {//父兄为黑 TODO父兄不存在
+				Node cright = parent.right;
+				if(cright != null && cright.red) {//TODO add 需要先左旋, 必须直接引用
+					leftRotate(cright);
+					changeColor(cright);//变色
+				}else {
+					parent.red = false;
+					pp.red = true;
+					rightRotate(parent);//父右旋
+				}
+				
 			}else {//父兄为红
 				parent.red = false;
 				pb.red = false;
 				pp.red = true;
 				//祖为结点继续变色
-				changeColor(pp.parent);
+				if(pp.parent == null) {//root
+					pp.red = false;
+				}else {
+					changeColor(pp.parent);
+				}
+				
 			}
 		}else{//parent是右结点
 			Node pb = pp.left;
-			if(!pb.red) {//父兄为黑
-				parent.red = false;
-				pp.red = true;
-				leftRotate(parent);
+			if(pb == null || !pb.red) {//父兄为黑
+				Node cleft = parent.left;
+				if(cleft != null && cleft.red) {
+					rightRotate(cleft);
+					changeColor(cleft);//变色
+				}else {
+					parent.red = false;
+					pp.red = true;
+					leftRotate(parent);
+				}
+				
 			}else {//父兄为红
 				parent.red = false;
 				pb.red = false;
 				pp.red = true;
 				//祖为结点继续变色
-				changeColor(pp.parent);
+				if(pp.right == null) {
+					pp.red = false;
+				}else {
+					changeColor(pp.parent);
+				}
 			}
 		}
 	}
@@ -476,15 +510,15 @@ public class BRUtil2 {
 		private List<EcharNode> children;
 	}
 	
-	public void logTreeForEchart(Node node, EcharNode er) {
+	public void logTreeForEchart(Node node, EcharNode er, String direction) {
 		if(node == null) {
 			return;
 		}
-		er.name = node.val + "";
+		er.name = direction + (node.red ? "red" : "blk") + node.val;
 		if(node.left != null) {
 			EcharNode left = new EcharNode().setName(node.val + "");
 			er.setChildren(Lists.newArrayList()).getChildren().add(left);
-			logTreeForEchart(node.left, left);
+			logTreeForEchart(node.left, left, "lef_");
 		}
 		if(node.right != null) {
 			EcharNode right = new EcharNode().setName(node.val + "");
@@ -493,7 +527,7 @@ public class BRUtil2 {
 			}else {
 				er.getChildren().add(right);
 			}
-			logTreeForEchart(node.right, right);
+			logTreeForEchart(node.right, right, "rig_");
 		}
 		if(node.right == null && node.left == null) {
 			er.value = node.val;
@@ -521,18 +555,31 @@ public class BRUtil2 {
 	public static void main(String[] args) {
 		System.out.println(new Node().red);
 		BRUtil2 util = new BRUtil2();
-		util.root = new Node().setVal(100);
-		for(int i = 0; i < 10; i++) {
-			int m = (int)(Math.random() * 100);
-			util.addNode(m);
-		}
+//		util.root = new Node().setVal(100);
+//		for(int i = 0; i < 100; i++) {
+//			int m = (int)(Math.random() * 100);
+//			util.addNode(m);
+//			System.out.println(m);
+//			
+//		}
+//		IntStream.of(56,57,11,42,84,37,50).boxed().forEach(item ->{//,37,50,40,28,77,20,85,37,3
+////			int m = (int)(Math.random() * 100);
+//			if(item == 37) {
+//				System.out.println();
+//			}
+//			util.addNode(item);
+////			System.out.println(item);
+//			EcharNode ro = new EcharNode();
+//			util.logTreeForEchart(util.root, ro, "roo_");
+//			System.out.println(new Gson().toJson(ro));
+//		});
 		List<String> nodes = Lists.newArrayList();
 		util.logPath(util.root, "", nodes);
 		for(String path : nodes) {
 			System.out.println(path);
 		}
 		EcharNode ro = new EcharNode();
-		util.logTreeForEchart(util.root, ro);
+		util.logTreeForEchart(util.root, ro, "roo_");
 		System.out.println(new Gson().toJson(ro));
 
 		//打印则打印每条路径；全部路径
