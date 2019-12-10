@@ -620,7 +620,17 @@ public class BRUtil2 {
 
 	private static void deleteNodeTest() {
 		BRUtil2 util = new BRUtil2();
-		IntStream.of(93,10,19,63,48,37,50,40,28,77,20,85,37,3).boxed().forEach(item ->{//,37,50,40,28,77,20,85,37,3
+		
+//		for(int i = 0; i < 100; i++) {
+//			int m = (int)(Math.random() * 100);
+//			System.out.println(m);
+//			util.addNode(m);
+//		}
+//		EcharNode ro2 = new EcharNode();
+//		util.logTreeForEchart(util.root, ro2, "roo_");
+//		System.out.println(new Gson().toJson(ro2));
+		
+		IntStream.of(99,4,62,81,19,18,98,46,40,18,66,8,52,99,18,21,96,70,47,15,54,38,87,2,19,63,48,95,89,72,19,5,35,67,83,24,31,56,77,17,84,29,81,60,3,69,88,86,55,80,73,66,12,41,53,4,46,30,22,73,58,19,61,29,30,10,29,13,74,4,40,76,4,89,50,96,15,56,10,67,46,70,5,2,19,28,19,36,18,61,63,24,96,78,72,5,84,48,51,79).boxed().forEach(item ->{//,37,50,40,28,77,20,85,37,3
 //			int m = (int)(Math.random() * 100);
 			if(item == 63) {
 				System.out.println();
@@ -632,7 +642,7 @@ public class BRUtil2 {
 			System.out.println(new Gson().toJson(ro));
 		});
 		System.out.println("delete after");
-		util.deleteNode(63);
+		util.deleteNode(66);
 		
 		EcharNode ro = new EcharNode();
 		util.logTreeForEchart(util.root, ro, "roo_");
