@@ -213,7 +213,7 @@ public class BRUtil2 {
 				pb.red = false;
 				pp.red = true;
 				//祖为结点继续变色
-				if(pp.right == null) {
+				if(pp.parent == null) {//add right pp.right == null || 
 					pp.red = false;
 				}else {
 					changeColor(pp.parent);
@@ -555,16 +555,14 @@ public class BRUtil2 {
 	public static void main(String[] args) {
 		System.out.println(new Node().red);
 		BRUtil2 util = new BRUtil2();
-//		util.root = new Node().setVal(100);
-//		for(int i = 0; i < 100; i++) {
-//			int m = (int)(Math.random() * 100);
-//			util.addNode(m);
-//			System.out.println(m);
-//			
-//		}
-//		IntStream.of(56,57,11,42,84,37,50).boxed().forEach(item ->{//,37,50,40,28,77,20,85,37,3
+		for(int i = 0; i < 100; i++) {
+			int m = (int)(Math.random() * 100);
+			System.out.println(m);
+			util.addNode(m);
+		}
+//		IntStream.of(93,10,19,63,48).boxed().forEach(item ->{//,37,50,40,28,77,20,85,37,3
 ////			int m = (int)(Math.random() * 100);
-//			if(item == 37) {
+//			if(item == 63) {
 //				System.out.println();
 //			}
 //			util.addNode(item);
