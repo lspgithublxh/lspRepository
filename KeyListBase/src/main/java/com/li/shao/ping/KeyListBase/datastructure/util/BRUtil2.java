@@ -642,7 +642,7 @@ public class BRUtil2 {
 			System.out.println(new Gson().toJson(ro));
 		});
 		System.out.println("delete after");
-		util.deleteNode(66);
+		util.deleteNode(67);
 		
 		EcharNode ro = new EcharNode();
 		util.logTreeForEchart(util.root, ro, "roo_");
