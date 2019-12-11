@@ -187,7 +187,8 @@ public class BRUtil2 {
 				}else {
 					parent.red = false;
 					pp.red = true;
-					rightRotate(parent);//父右旋
+					rightRotate(parent);//父右旋--黑色
+					
 				}
 				
 			}else {//父兄为红
@@ -224,6 +225,85 @@ public class BRUtil2 {
 					pp.red = false;
 				}else {
 					changeColor(pp.parent);
+				}
+			}
+		}
+	}
+	
+	
+	/**
+	 * parent为双红之上红
+	 * @param parent
+	 */
+	private void changeColor2(Node parent) {
+		//开始判断旋转
+		if(parent == null || !parent.red) {
+			return;
+		}
+		//需要旋转
+		Node pp = parent.parent;//不可能为null;因为parent是红色
+		if(pp.left == parent) {//parent是左结点
+			Node pb = pp.right;
+			if(pb == null || !pb.red) {//父兄为黑 TODO父兄不存在
+				Node cright = parent.right;
+				//---------- 增加
+				if(cright == null) {
+					parent.red = false;
+					pp.red = true;
+					changeColor2(pp.parent);//
+					return;
+				}
+				//-------------增加
+				if(cright.red) {//TODO add 需要先左旋, 必须直接引用
+					leftRotate(cright);
+					changeColor2(cright);//变色
+				}else {
+					parent.red = false;
+					pp.red = true;
+					rightRotate(parent);//父右旋--黑色
+					
+				}
+				
+			}else {//父兄为红
+				parent.red = false;
+				pb.red = false;
+				pp.red = true;
+				//祖为结点继续变色
+				if(pp.parent == null) {//root
+					pp.red = false;
+				}else {
+					changeColor2(pp.parent);
+				}
+				
+			}
+		}else{//parent是右结点
+			Node pb = pp.left;
+			if(pb == null || !pb.red) {//父兄为黑
+				Node cleft = parent.left;
+				if(cleft == null) {
+					parent.red = false;
+					pp.red = true;
+					changeColor2(pp.parent);
+					return;
+				}
+				if(cleft.red) {
+					rightRotate(cleft);
+					changeColor2(cleft);//变色
+				}else {
+					parent.red = false;
+					pp.red = true;
+					leftRotate(parent);
+				}
+				
+			}else {//父兄为红
+				parent.red = false;
+				pb.red = false;
+				pp.red = true;
+				//祖为结点继续变色
+				if(pp.parent == null) {//add right pp.right == null || 
+					pp.red = false;
+				}else {
+					changeColor2(pp.parent);
 				}
 			}
 		}
@@ -456,18 +536,92 @@ public class BRUtil2 {
 					if(left == null) {
 						top.red = false;
 						return;
-					}else {//直接右旋
+					}else {//先判断，再右旋
+						Node cleftR = left.right;
 						rightRotate(left);
+						//或者右旋后，看是否要红色均衡
+						if(cleftR != null && cleftR.red) {
+							changeColor2(cleftR.parent);
+						}
 						return;
+//						//法2
+//						Node cleftR = left.right;
+//						if(cleftR != null && cleftR.red) {
+//							Node cleftL = left.left;
+//							if(cleftL == null) {
+//								cleftR.red = false;
+//								left.red = true;
+//								//处理
+//								top.red = false;
+//								rightRotate(left);
+//								return;//已经均衡
+//							}
+//							if(cleftL.red) {
+//								cleftL.red = false;
+//								cleftR.red = false;
+//								left.red = true;
+//								//处理
+//								top.red = false;
+//								rightRotate(left);
+//								return;
+//							}else {
+//								cleftR.red = false;
+//								left.red = true;
+//								leftRotate(cleftR);
+//								//处理--直接右旋
+//								rightRotate(cleftR);
+//								return;
+//							}
+//						}else {//直接右旋，退出即可
+//							rightRotate(left);
+//							return;
+//						}
+						
 					}
 				}else {
 					Node right = top.right;
 					if(right == null) {
 						top.red = false;
 						return;
-					}else {//直接右旋
+					}else {//
+						Node crightL = right.left;
 						leftRotate(right);
+						if(crightL != null && crightL.red) {
+							changeColor2(crightL.parent);
+						}
 						return;
+						//法2
+//						Node crightL = right.left;
+//						if(crightL != null && crightL.red) {
+//							Node crightR = right.right;
+//							if(crightR == null) {
+//								crightR.red = false;
+//								right.red = true;
+//								//处理
+//								top.red = false;
+//								leftRotate(right);
+//								return;//已经均衡
+//							}
+//							if(crightR.red) {
+//								crightR.red = false;
+//								crightL.red = false;
+//								right.red = true;
+//								//处理
+//								top.red = false;
+//								leftRotate(right);
+//								return;
+//							}else {
+//								crightL.red = false;
+//								right.red = true;
+//								rightRotate(crightL);
+//								//处理--直接右旋
+//								leftRotate(crightL);
+//								return;
+//							}
+//						}else {//直接右旋，退出即可
+//							leftRotate(right);
+//							return;
+//						}
 					}
 				}
 			}else {//top是黑色 ----需要到根结点
@@ -480,13 +634,25 @@ public class BRUtil2 {
 					}
 					if(left.red) {//红色有用--直接上旋, 再变黑--；；就。。黑色需要均衡---子变红：
 						left.red = false;
+						if(left.right != null) {
+							left.right.red = true;
+						}
 						rightRotate(left);
 						return;
 					}else {//黑色，变红，右选，再继续
 						Node cleftR = left.right;//TODO 右旋之前
 						if(cleftR != null && cleftR.red) {//分两大类操作
 							Node cleftF = left.left;
-							if(cleftF == null || !cleftF.red) {
+							if(cleftF == null) {
+								cleftR.red = false;
+								left.red = true;
+								//处理
+								left.red = false;
+								cleftR.red = true;//TODO 多黑，变红
+								rightRotate(left);
+								return;
+							}
+							if(!cleftF.red) {
 								cleftR.red = false;
 								left.red = true;
 								leftRotate(cleftR);
@@ -502,6 +668,8 @@ public class BRUtil2 {
 								left.red = true;
 								//处理
 								left.red = false;
+								//多一个，恢复原色 TODO
+								cleftR.red = true;
 								rightRotate(left);
 								return;
 							}
@@ -522,13 +690,25 @@ public class BRUtil2 {
 					}
 					if(right.red) {//红色有用--直接上旋, 再变黑--；；就。。黑色需要均衡---子变红：
 						right.red = false;
+						if(right.left != null) {
+							right.left.red = true;
+						}
 						leftRotate(right);
 						return;
 					}else {//黑色，变红，右选，再继续
 						Node crightL = right.left;
 						if(crightL != null && crightL.red) {//左旋之前
 							Node crightR = right.right;
-							if(crightR == null || !crightR.red) {
+							if(crightR == null) {
+								crightL.red = false;
+								right.red = true;
+								//处理
+								right.red = false;
+								crightL.red = true;//多黑，变红
+								leftRotate(right);
+								return;
+							}
+							if( !crightR.red) {
 								crightL.red = false;
 								right.red = true;
 								rightRotate(crightL);
@@ -544,6 +724,7 @@ public class BRUtil2 {
 								right.red = true;
 								//处理
 								right.red = false;
+								crightL.red = true;//多黑，变红
 								leftRotate(right);
 								return;
 							}
@@ -620,6 +801,99 @@ public class BRUtil2 {
 		return old;
 	}
 	
+	public boolean verify() {
+		if(root == null) {
+			return true;
+		}
+		//根
+		if(root.red) {
+			return false;
+		}
+		//长度：
+		int min = Integer.MAX_VALUE;
+		int max = Integer.MIN_VALUE;
+		int[] pat = new int[] { max, min};
+		pathLength(root, pat, 0);
+		if(pat[0] > pat[1] * 2) {
+			return false;
+		}
+		//红黑
+		boolean visiteOk = visitAll(root);
+		if(!visiteOk) {
+			return false;
+		}
+		//黑子
+		int[] a = new int[] {-1,1};
+		heiziCount(root, a, 0);
+		if(a[1] == 0) {
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean visitAll(Node node) {
+		Node left = node.left;
+		Node right = node.right;
+		if(node.red) {
+			if(left != null && left.red
+					||
+					right != null && right.red) {
+				return false;
+			}
+		}
+		boolean rs = true;
+		if(left != null) {
+			rs = rs && visitAll(left);
+		}
+		if(right != null) {
+			rs = rs && visitAll(right);
+		}
+		return rs;
+	}
+
+	public void pathLength(Node node, int[] len, int curLen) {
+		if(node == null) {
+			return;
+		}
+		curLen++;
+		if(node.left != null) {
+			pathLength(node.left, len, curLen);
+		}
+		if(node.right != null) {
+			pathLength(node.right, len, curLen);
+		}
+		if(node.left == null && node.right == null) {
+			if(curLen > len[0]) {
+				len[0] = curLen;
+			}
+			if(curLen < len[1]){
+				len[1] = curLen;
+			}
+		}
+	}
+	
+	public void heiziCount(Node node, int[] count, int curCount) {
+		if(node == null) {
+			return;
+		}
+		if(!node.red) {
+			curCount++;
+		}
+		if(node.left != null) {
+			heiziCount(node.left, count, curCount);
+		}
+		if(node.right != null) {
+			heiziCount(node.right, count, curCount);
+		}
+		if(node.left == null && node.right == null) {
+			if(count[0] == -1) {
+				count[0] = curCount;
+			}else if(curCount != count[0]) {
+				count[1] = 0;
+			}
+		}
+	}
+	
 //	public List<String> logPath() {
 //		List<String> li = Lists.newArrayList();
 //		Node cur = root;
@@ -640,33 +914,46 @@ public class BRUtil2 {
 	
 	public static void main(String[] args) {
 //		addNodeTest();//
-		deleteNodeTest();
+		int i = 0;
+		while(i++ < 1000) {//
+			deleteNodeTest();
+		}
+		System.out.println("dd");
 	}
 
 	private static void deleteNodeTest() {
 		BRUtil2 util = new BRUtil2();
 		
+//		List<Integer> arr = Lists.newArrayList();
 //		for(int i = 0; i < 100; i++) {
 //			int m = (int)(Math.random() * 100);
 //			System.out.println(m);
 //			util.addNode(m);
+//			arr.add(m);
 //		}
 //		EcharNode ro2 = new EcharNode();
 //		util.logTreeForEchart(util.root, ro2, "roo_");
 //		System.out.println(new Gson().toJson(ro2));
+		//91,77,24,33,63,99,19,69,55,16,76,64,71,31,36,82,26,31,65,81,44,64,40,97,89,48,89,47,9,78,64,64,67,31,30,63,89,2,55,49,74,16,12,18,56,50,75,84,51,12,70,72,41,66,90,5,34,70,81,57,34,52,40,0,79,42,5,40,46,36,16,15,52,66,30,75,16,20,84,59,69,51,23,40,91,1,38,13,17,59,35,49,9,66,70,57,16,95,89,67
 		int[] arr = {99,4,62,81,19,18,98,46,40,18,66,8,52,99,18,21,96,70,47,15,54,38,87,2,19,63,48,95,89,72,19,5,35,67,83,24,31,56,77,17,84,29,81,60,3,69,88,86,55,80,73,66,12,41,53,4,46,30,22,73,58,19,61,29,30,10,29,13,74,4,40,76,4,89,50,96,15,56,10,67,46,70,5,2,19,28,19,36,18,61,63,24,96,78,72,5,84,48,51,79};
 		IntStream.of(arr).boxed().forEach(item ->{//,37,50,40,28,77,20,85,37,3
 //			int m = (int)(Math.random() * 100);
 			util.addNode(item);
+			
+			boolean verify = util.verify();
+			System.out.println("verify rs:" + verify);
+			if(!verify) {
+				System.out.println();
+			}
+			
 //			System.out.println(item);
 			EcharNode ro = new EcharNode();
 			util.logTreeForEchart(util.root, ro, "roo_");
 			System.out.println(new Gson().toJson(ro));
 		});
-//		int to = util.count(util.root, 0);
-//		System.out.println(to);
+		
 		for(int de : arr) {
-			if(de == 84) {
+			if(de == 74) {
 				System.out.println();
 			}
 			int total = util.count(util.root, 0);
@@ -675,6 +962,11 @@ public class BRUtil2 {
 			util.deleteNode(de);
 			Node node = util.findTarget(de);
 			System.out.println("delete after : success:" + (node == null ? true : false));
+			boolean verify = util.verify();
+			System.out.println("verify rs:" + verify);
+			if(!verify) {
+				System.out.println();
+			}
 			EcharNode ro = new EcharNode();
 			util.logTreeForEchart(util.root, ro, "roo_");
 			System.out.println(new Gson().toJson(ro));
@@ -691,7 +983,7 @@ public class BRUtil2 {
 //		}
 		IntStream.of(93,10,19,63,48).boxed().forEach(item ->{//,37,50,40,28,77,20,85,37,3
 //			int m = (int)(Math.random() * 100);
-			if(item == 63) {
+			if(item == 36) {
 				System.out.println();
 			}
 			util.addNode(item);
@@ -711,5 +1003,13 @@ public class BRUtil2 {
 
 		//打印则打印每条路径；全部路径
 //		System.out.println(new Gson().toJson(util.root));
+	}
+	
+	/**
+	 * 增加：纯粹是向上均衡。均衡点为红，看父、父兄、祖来变色和旋转；同时可能需要在旋转前，均衡点本身旋转为与父祖同侧(均衡点有左分支--直接左旋；无左分支，直接父黑祖红父右旋，然后到右分支去平衡---就可以继续向上了)；
+	 *      删除：先找到替换节点，替换数后改删替换节点，直到替换节点是叶子节点，然后从叶子节点开始向上均衡(方法为向上找到红则替换，找到分支则再均衡左右)。
+	 */
+	public void shuoming() {
+		
 	}
 }
