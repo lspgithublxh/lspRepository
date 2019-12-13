@@ -85,11 +85,19 @@ public class SimpleConnectPoolUtil {
 				}
 			}
 		}
+		if(workerSet.isEmpty() || (queue.size() > workerSet.size() * 2 && workerSet.size() < maxWorkerNum)) {
+			synchronized (workerSet) {
+				if(workerSet.size() < maxWorkerNum) {
+					workerSet.add(new Worker("front-worker-" + user, service, ipPort));
+				}
+			}
+		}
 		boolean rs = queue.offer(new Task().setData(data).setSyn(user));
 		if(!rs) {
 			log.error("[add-data-to-task] error!");
 			return null;
 		}
+		//worker是否足够
 		//等待结果并返回
 		synchronized (user.intern()) {
 			try {
@@ -122,6 +130,8 @@ public class SimpleConnectPoolUtil {
 		private String syn;
 	}
 	
+	@Data
+	@Accessors(chain = true)
 	class Worker{
 		
 		private String service;
@@ -138,6 +148,12 @@ public class SimpleConnectPoolUtil {
 			String[] arr = targetIpPort.split(":");
 			this.ip = arr[0];
 			this.port = Integer.valueOf(arr[1]);
+			try {
+				socket = new Socket(ip, port);
+				start();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 		public void start() {//只是执行一次，没有并发的问题
@@ -155,11 +171,7 @@ public class SimpleConnectPoolUtil {
 				while(true) {
 					try {//发送数据
 						Task td = taskQueue.poll(maxIdelTime, TimeUnit.MILLISECONDS);
-						byte[] data = td.getData();//需要连带 syn一起发送
-						if(socket == null) {
-							socket = new Socket(ip, port);
-						}
-						if(data == null) {//超时了，删除worker
+						if(td == null) {//超时了，删除worker
 							synchronized (tasks) {
 								if(workers.size() > maxIdleWorkerNum) {
 									workers.get(target).remove(this);
@@ -168,12 +180,13 @@ public class SimpleConnectPoolUtil {
 								continue;
 							}
 						}
+						byte[] data = td.getData();//需要连带 syn一起发送
 						tpool.addTask(()->{
 							try {
 								OutputStream out = socket.getOutputStream();
-								//格式化发送
-								
-								out.write(data);
+								//格式化发送 TODO
+								System.out.println("start send");
+								formSend(data, td.syn, out);
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
@@ -194,7 +207,9 @@ public class SimpleConnectPoolUtil {
 			int num = 0;
 			String user = "";
 			while(true) {
+				System.out.println("wait server:");
 				int len = input.read(cache);
+				System.out.println("accept");
 				if(first) {//计算块个数：
 					num = ((cache[0] & 0xff) << 24) + ((cache[1] & 0xff) << 16) + ((cache[2] & 0xff) << 8) + cache[3];
 					if(num > 0) {
@@ -207,9 +222,9 @@ public class SimpleConnectPoolUtil {
 				innerCache.write(cache, 0, len);
 				if(--num == 0) {//读取完毕，放到用户区域
 					first = true;
-					receivedMap.put(user, cache);
-					synchronized (user.intern()) {
-						user.intern().notify();
+					receivedMap.put(user.trim(), cache);
+					synchronized (user.trim().intern().intern()) {
+						user.trim().intern().notify();
 					}
 				}
 			}
@@ -276,7 +291,7 @@ public class SimpleConnectPoolUtil {
 		});
 		String send = "hello,server, rpc call";
 		byte[] received = util.sendData("user", "localhost:12345", send.getBytes());
-		System.out.println(new String(received));
+		System.out.println("received:" + new String(received));
 		
 	}
 

@@ -101,7 +101,7 @@ public class ServiceServerUtil {
 			innerCache.write(cache, 0, len);
 			if(--num == 0) {//读取完毕，放到用户区域
 				first = true;
-				receivedMap.put(user, cache);
+				receivedMap.put(user.trim(), cache);
 				synchronized (in) {
 					in.notify();
 				}
