@@ -212,7 +212,7 @@ public class SimpleConnectPoolUtil {
 							td.syn.trim().intern().wait();
 						}
 						//等一会儿再发送看
-						Thread.sleep(1000);
+//						Thread.sleep(1000);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
