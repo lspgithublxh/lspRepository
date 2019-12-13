@@ -313,7 +313,7 @@ public class SimpleConnectPoolUtil {
 			return null;//或者直接亲自new 一个worker发送；但是麻烦
 		});
 		AtomicInteger count = new AtomicInteger();
-		for(int i = 0; i < 4; i++) {
+		for(int i = 0; i < 8; i++) {
 			final int j = i;
 			SimpleThreadPoolUtil.pool.addTask(()->{
 				for(int k = 0; k < 50; k++) {
@@ -329,7 +329,7 @@ public class SimpleConnectPoolUtil {
 			});
 		}
 		try {
-			Thread.sleep(3000);
+			Thread.sleep(10000);
 			System.out.println(count.get());
 		} catch (InterruptedException e) {
 			e.printStackTrace();
