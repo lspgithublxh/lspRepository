@@ -26,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
  * 每个服务的每个ip下都建立一个任务队列：由多个socket来消费
  * 发送数据之后-阻塞等待响应：请求响应模式(发送成功的确认消息也是)
  * 发送数据之后-异步消费返回。
+ * --直接开发完成测试成功，甚至没怎么修改
  * @author lishaoping
  * @date 2019年12月12日
  * @package  com.li.shao.ping.KeyListBase.datastructure.geneutil

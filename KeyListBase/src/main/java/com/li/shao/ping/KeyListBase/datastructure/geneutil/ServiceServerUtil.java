@@ -88,7 +88,9 @@ public class ServiceServerUtil {
 		int num = 0;
 		String user = "";
 		while(true) {
+			System.out.println("wait client send data:");
 			int len = input.read(cache);
+			System.out.println("received:");
 			if(first) {//计算块个数：
 				num = ((cache[0] & 0xff) << 24) + ((cache[1] & 0xff) << 16) + ((cache[2] & 0xff) << 8) + cache[3];
 				if(num > 0) {

@@ -144,7 +144,7 @@ public class SimpleThreadPoolUtil {
 		
 	}
    
-  public static SimpleThreadPoolUtil pool = new SimpleThreadPoolUtil(10, 20, 3, 1000,
+  public static SimpleThreadPoolUtil pool = new SimpleThreadPoolUtil(100, 200, 30, 1000,
 			(task) ->{task.run();return true;}) ;
    
    public static void main(String[] args) {
