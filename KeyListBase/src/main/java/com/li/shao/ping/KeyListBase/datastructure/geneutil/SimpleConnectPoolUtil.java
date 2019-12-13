@@ -185,7 +185,7 @@ public class SimpleConnectPoolUtil {
 							try {
 								OutputStream out = socket.getOutputStream();
 								//格式化发送 TODO
-								System.out.println("start send");
+								System.out.println("start send" + name);
 								formSend(data, td.syn, out);
 							} catch (IOException e) {
 								e.printStackTrace();
@@ -223,6 +223,7 @@ public class SimpleConnectPoolUtil {
 				if(--num == 0) {//读取完毕，放到用户区域
 					first = true;
 					receivedMap.put(user.trim(), cache);
+					System.out.println("read:" + name);
 					synchronized (user.trim().intern().intern()) {
 						user.trim().intern().notify();
 					}
@@ -289,9 +290,11 @@ public class SimpleConnectPoolUtil {
 		SimpleConnectPoolUtil util = new SimpleConnectPoolUtil(100, 200, 10, 1000, (servie, ipPort, data)->{
 			return null;//或者直接亲自new 一个worker发送；但是麻烦
 		});
-		String send = "hello,server, rpc call";
-		byte[] received = util.sendData("user", "localhost:12345", send.getBytes());
-		System.out.println("received:" + new String(received));
+		for(int i = 0; i < 10; i++) {
+			String send = "hello,server, rpc call" + i;
+			byte[] received = util.sendData("user", "localhost:12345", send.getBytes());
+			System.out.println("received:" + new String(received));
+		}
 		
 	}
 
