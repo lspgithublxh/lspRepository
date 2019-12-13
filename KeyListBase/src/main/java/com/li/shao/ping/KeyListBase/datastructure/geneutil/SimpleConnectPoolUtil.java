@@ -312,7 +312,8 @@ public class SimpleConnectPoolUtil {
 		SimpleConnectPoolUtil util = new SimpleConnectPoolUtil(100, 200, 10, 1000, (servie, ipPort, data)->{
 			return null;//或者直接亲自new 一个worker发送；但是麻烦
 		});
-		for(int i = 0; i < 2; i++) {
+		AtomicInteger count = new AtomicInteger();
+		for(int i = 0; i < 4; i++) {
 			final int j = i;
 			SimpleThreadPoolUtil.pool.addTask(()->{
 				for(int k = 0; k < 10; k++) {
@@ -320,11 +321,18 @@ public class SimpleConnectPoolUtil {
 					byte[] received = util.sendData("user", "localhost:12345", send.getBytes());
 					if(received != null) {
 						log.info("success:" + new String(received));
+						count.incrementAndGet();
 					}else {
 						log.info("success: null");
 					}
 				}
 			});
+		}
+		try {
+			Thread.sleep(3000);
+			System.out.println(count.get());
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 		
 	}
