@@ -7,8 +7,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -21,11 +23,13 @@ import com.google.common.collect.Maps;
 public class ServiceServerUtil {
 
 	private Map<String, byte[]> receivedMap;
+	private Map<InputStream, List<String>> inputStreamMap;
 	
 	public void startServer() {
 		//
 		try {
 			receivedMap = Maps.newHashMap();
+			inputStreamMap = Maps.newHashMap();
 			ServerSocket server = new ServerSocket(12345);
 			while(true) {
 				System.out.println("wait at 12345");
@@ -36,6 +40,7 @@ public class ServiceServerUtil {
 						InputStream in = socket.getInputStream();
 						OutputStream out = socket.getOutputStream();
 						DataInputStream input = new DataInputStream(in);
+						inputStreamMap.put(in, Lists.newArrayList());
 						SimpleThreadPoolUtil.pool.addTask(()->{
 							SimpleThreadPoolUtil.pool.addTask(()->{
 								try {
@@ -45,14 +50,22 @@ public class ServiceServerUtil {
 								}
 							});
 							while(true) {
-								synchronized (in) {
+								synchronized (in) {//TODO
 									try {
-										receivedMap.forEach((key, val)->{
+										List<String> userList = inputStreamMap.get(in);
+										userList.forEach(key ->{
+											byte[] val = receivedMap.get(key);
 											System.out.println("consumer:" + key + ", " + new String(val));
 											//返回客户端数据
 											formSend("callback data".getBytes(), key, out);
+											receivedMap.remove(key);
 										});
-										receivedMap.clear();
+										userList.clear();
+//										receivedMap.forEach((key, val)->{
+//											System.out.println("consumer:" + key + ", " + new String(val));
+//											//返回客户端数据
+//											formSend("callback data".getBytes(), key, out);
+//										});
 										in.wait();
 									} catch (InterruptedException e) {
 										e.printStackTrace();
@@ -103,6 +116,8 @@ public class ServiceServerUtil {
 			innerCache.write(cache, 0, len);
 			if(--num == 0) {//读取完毕，放到用户区域
 				first = true;
+				List<String> userList = inputStreamMap.get(in);
+				userList.add(user.trim());
 				receivedMap.put(user.trim(), cache);
 				synchronized (in) {
 					in.notify();
