@@ -1,6 +1,9 @@
 package com.li.shao.ping.KeyListBase.datastructure.inter;
 
-public interface RejectionStrategy2 {
+import com.li.shao.ping.KeyListBase.datastructure.entity.Rejection2Entity;
 
-	byte[] handle(String service, String ipPort, byte[] task);
+public interface RejectionStrategy2<T> {
+
+	 byte[] handle(Rejection2Entity<T> entity);
+
 }

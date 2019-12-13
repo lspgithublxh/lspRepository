@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.AbstractQueue;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -17,6 +18,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.li.shao.ping.KeyListBase.datastructure.entity.Rejection2Entity;
 import com.li.shao.ping.KeyListBase.datastructure.inter.RejectionStrategy;
 import com.li.shao.ping.KeyListBase.datastructure.inter.RejectionStrategy2;
 
@@ -45,7 +47,7 @@ public class SimpleConnectPoolUtil {
 	private int maxWorkerNum;
 	private int maxIdleWorkerNum;
 	private int maxTaskNum;
-	private RejectionStrategy2 reject;
+	private RejectionStrategy2<Task> reject;
 	
 	public SimpleConnectPoolUtil() {}
 	
@@ -53,7 +55,7 @@ public class SimpleConnectPoolUtil {
 			(task) ->{task.run();return true;}) ;
 	
 	public SimpleConnectPoolUtil(int maxWorkerNum, int maxTaskNum, int maxIdleWorkerNum
-			,long maxIdelTime,RejectionStrategy2 reject) {
+			,long maxIdelTime,RejectionStrategy2<Task> reject) {
 		this.maxWorkerNum = maxWorkerNum;
 		this.maxIdelTime = maxIdelTime;
 		this.maxTaskNum = maxTaskNum;
@@ -61,7 +63,7 @@ public class SimpleConnectPoolUtil {
 		this.reject = reject;
 		initMap();
 	}
-	
+
 	private void initMap() {
 		//从注册中心获取 所有的调用服务及其ip:port列表
 		String service = "user";
@@ -88,7 +90,8 @@ public class SimpleConnectPoolUtil {
 					if(workerSet.size() >= maxWorkerNum) {
 						workerSet.add(new Worker("new-worker-" + user, service, ipPort));
 					}
-					return reject.handle(service, ipPort, data);
+					return reject.handle(new Rejection2Entity<Task>().setService(service)
+							.setIpPort(ipPort).setTask(data).setQueue(queue).setUser(user));
 				}
 			}
 		}
@@ -309,11 +312,26 @@ public class SimpleConnectPoolUtil {
 //		justTest();
 		//
 		log.info("hello");
-		SimpleConnectPoolUtil util = new SimpleConnectPoolUtil(100, 200, 10, 1000, (servie, ipPort, data)->{
-			return null;//或者直接亲自new 一个worker发送；但是麻烦
+		SimpleConnectPoolUtil util = new SimpleConnectPoolUtil(100, 200, 10, 1000, item ->{
+			LinkedBlockingQueue<Task> queue = item.getQueue();
+			String user = item.getUser();
+			try {
+				queue.put(item.getUtil().new Task().setData(item.getTask()).setSyn(user));
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+			System.out.println("buchong task");
+			synchronized (user.intern()) {
+				try {
+					user.intern().wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			return item.getReceivedMap().get(user);
 		});
 		AtomicInteger count = new AtomicInteger();
-		for(int i = 0; i < 8; i++) {
+		for(int i = 0; i < 10; i++) {
 			final int j = i;
 			SimpleThreadPoolUtil.pool.addTask(()->{
 				for(int k = 0; k < 50; k++) {
@@ -329,7 +347,7 @@ public class SimpleConnectPoolUtil {
 			});
 		}
 		try {
-			Thread.sleep(10000);
+			Thread.sleep(3000);
 			System.out.println(count.get());
 		} catch (InterruptedException e) {
 			e.printStackTrace();
