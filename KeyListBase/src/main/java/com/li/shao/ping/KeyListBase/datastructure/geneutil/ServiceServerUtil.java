@@ -15,7 +15,7 @@ import com.google.common.collect.Maps;
 
 /**
  * server
- *
+ *重大问题：server没有响应5次客户端的请求。client请求了9次，只有4次返回。
  * @author lishaoping
  * @date 2019年12月12日
  * @package  com.li.shao.ping.KeyListBase.datastructure.geneutil
@@ -28,11 +28,10 @@ public class ServiceServerUtil {
 	public void startServer() {
 		//
 		try {
-			receivedMap = Maps.newHashMap();
-			inputStreamMap = Maps.newHashMap();
+			receivedMap = Maps.newConcurrentMap();
+			inputStreamMap = Maps.newConcurrentMap();
 			ServerSocket server = new ServerSocket(12345);
 			while(true) {
-				System.out.println("wait at 12345");
 				Socket socket = server.accept();
 				System.out.println("accept ");
 				SimpleThreadPoolUtil.pool.addTask(()->{
@@ -41,9 +40,11 @@ public class ServiceServerUtil {
 						OutputStream out = socket.getOutputStream();
 						DataInputStream input = new DataInputStream(in);
 						inputStreamMap.put(in, Lists.newArrayList());
+						System.out.println(in);
 						SimpleThreadPoolUtil.pool.addTask(()->{
 							SimpleThreadPoolUtil.pool.addTask(()->{
 								try {
+									System.out.println("start listen read:");
 									formatRead(in);
 								} catch (IOException e) {
 									e.printStackTrace();
@@ -102,7 +103,6 @@ public class ServiceServerUtil {
 		String user = "";
 		while(true) {
 			int len = input.read(cache);
-			System.out.println("received:");
 			if(first) {//计算块个数：
 				num = ((cache[0] & 0xff) << 24) + ((cache[1] & 0xff) << 16) + ((cache[2] & 0xff) << 8) + cache[3];
 				if(num > 0) {
@@ -113,7 +113,8 @@ public class ServiceServerUtil {
 				continue;
 			}
 			innerCache.write(cache, 0, len);
-			if(--num == 0) {//读取完毕，放到用户区域
+			if(--num == 0) {//读取完毕，放到用户区域::是否因为处理时间太长而导致错过了流？？
+				System.out.println("received one request:");
 				first = true;
 				List<String> userList = inputStreamMap.get(in);
 				userList.add(user.trim());

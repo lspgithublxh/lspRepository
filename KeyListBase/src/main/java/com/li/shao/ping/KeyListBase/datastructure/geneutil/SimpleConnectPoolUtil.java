@@ -12,6 +12,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.li.shao.ping.KeyListBase.datastructure.inter.RejectionStrategy;
@@ -32,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
  * @package  com.li.shao.ping.KeyListBase.datastructure.geneutil
  */
 @Slf4j
+@SpringBootApplication
 public class SimpleConnectPoolUtil {
 
 	private Map<String, LinkedBlockingQueue<Task>> tasks;
@@ -42,6 +46,8 @@ public class SimpleConnectPoolUtil {
 	private int maxIdleWorkerNum;
 	private int maxTaskNum;
 	private RejectionStrategy2 reject;
+	
+	public SimpleConnectPoolUtil() {}
 	
 	private SimpleThreadPoolUtil tpool = new SimpleThreadPoolUtil(100, 200, 10, 1000,
 			(task) ->{task.run();return true;}) ;
@@ -189,19 +195,24 @@ public class SimpleConnectPoolUtil {
 							}
 						}
 						byte[] data = td.getData();//需要连带 syn一起发送
-						tpool.addTask(()->{
+						Runnable task = ()->{
 							try {
+								log.info("send before:" + td.syn);
 								OutputStream out = socket.getOutputStream();
 								//格式化发送 TODO
+								log.info("send:" + td.syn);
 								formSend(data, td.syn, out);
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
-						});
+						};
+						boolean addTask = tpool.addTask(task);
 						//TODO 等待读取完毕，才开始下一个任务的拉取
-						synchronized (td.syn.trim().intern().intern()) {
+						synchronized (td.syn.trim().intern()) {
 							td.syn.trim().intern().wait();
 						}
+						//等一会儿再发送看
+						Thread.sleep(1000);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -219,7 +230,6 @@ public class SimpleConnectPoolUtil {
 			String user = "";
 			while(true) {
 				int len = input.read(cache);
-				System.out.println("received:");
 				if(first) {//计算块个数：
 					num = ((cache[0] & 0xff) << 24) + ((cache[1] & 0xff) << 16) + ((cache[2] & 0xff) << 8) + cache[3];
 					if(num > 0) {
@@ -231,6 +241,7 @@ public class SimpleConnectPoolUtil {
 				}
 				innerCache.write(cache, 0, len);
 				if(--num == 0) {//读取完毕，放到用户区域
+					log.info("received:");
 					first = true;
 					receivedMap.put(user.trim(), cache);
 					synchronized (user.trim().intern().intern()) {
@@ -294,21 +305,23 @@ public class SimpleConnectPoolUtil {
 	
 	
 	public static void main(String[] args) {
+//		SpringApplication.run(SimpleConnectPoolUtil.class, args);
 //		justTest();
 		//
+		log.info("hello");
 		SimpleConnectPoolUtil util = new SimpleConnectPoolUtil(100, 200, 10, 1000, (servie, ipPort, data)->{
 			return null;//或者直接亲自new 一个worker发送；但是麻烦
 		});
-		for(int i = 0; i < 10; i++) {
+		for(int i = 0; i < 20; i++) {
 			final int j = i;
 			SimpleThreadPoolUtil.pool.addTask(()->{
-				for(int k = 0; k < 2; k++) {
+				for(int k = 0; k < 1; k++) {
 					String send = "hello,server, rpc call" + j;
 					byte[] received = util.sendData("user", "localhost:12345", send.getBytes());
 					if(received != null) {
-						System.out.println("success:" + new String(received));
+						log.info("success:" + new String(received));
 					}else {
-						System.out.println("success: null");
+						log.info("success: null");
 					}
 				}
 			});

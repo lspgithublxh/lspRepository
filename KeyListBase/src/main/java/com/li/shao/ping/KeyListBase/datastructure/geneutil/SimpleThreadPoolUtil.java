@@ -88,8 +88,10 @@ public class SimpleThreadPoolUtil {
 					}
 				}
 			}
-			boolean rs = tasks.offer(task);
-			return rs;
+			synchronized (SimpleThreadPoolUtil.class) {
+				boolean rs = tasks.offer(task);
+				return rs;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -133,6 +135,7 @@ public class SimpleThreadPoolUtil {
 						status.set(2);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
+						System.out.println("error-worker");
 						log.error("[worker-take-error]" + name);
 						status.set(2);
 					}
@@ -153,6 +156,14 @@ public class SimpleThreadPoolUtil {
 //		SimpleThreadPoolUtil pool = new SimpleThreadPoolUtil(10, 20, 3, 1000);
 			SimpleThreadPoolUtil pool = new SimpleThreadPoolUtil(10, 20, 3, 1000,
 					(task) ->{task.run();return true;}) ;
+		for(int i = 0; i< 100; i++) {
+			final int j = i;
+			pool.addTask(()->{
+				System.out.println("execute task" + j);
+			});
+		}
+		Thread.sleep(3000);
+		System.out.println("--------------------------------");
 		for(int i = 0; i< 100; i++) {
 			final int j = i;
 			pool.addTask(()->{
