@@ -86,9 +86,9 @@ public class SimpleConnectPoolUtil {
 				}
 			}
 		}
-		if(workerSet.isEmpty() || (queue.size() > workerSet.size() * 2 && workerSet.size() < maxWorkerNum)) {
+		if(workerSet.isEmpty() || (queue.size() > workerSet.size() * 3 && workerSet.size() < maxWorkerNum)) {
 			synchronized (workerSet) {
-				if(workerSet.size() < maxWorkerNum) {
+				if(workerSet.isEmpty() || (queue.size() > workerSet.size() * 3 && workerSet.size() < maxWorkerNum)) {
 					workerSet.add(new Worker("front-worker-" + user, service, ipPort));
 				}
 			}
@@ -119,7 +119,7 @@ public class SimpleConnectPoolUtil {
 	private AtomicInteger no = new AtomicInteger(0);
 	
 	private int increNum() {
-		int incre = no.getAndIncrement();
+		int incre = no.incrementAndGet();
 		no.compareAndSet(100000, 0);
 		return incre;
 	}
@@ -131,6 +131,13 @@ public class SimpleConnectPoolUtil {
 		private String syn;
 	}
 	
+	/**
+	 * 更好的是给：每个1024数据包都带上一个归属头
+	 *
+	 * @author lishaoping
+	 * @date 2019年12月13日
+	 * @package  com.li.shao.ping.KeyListBase.datastructure.geneutil
+	 */
 	@Data
 	@Accessors(chain = true)
 	class Worker{
@@ -186,12 +193,15 @@ public class SimpleConnectPoolUtil {
 							try {
 								OutputStream out = socket.getOutputStream();
 								//格式化发送 TODO
-								System.out.println("start send" + name);
 								formSend(data, td.syn, out);
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
 						});
+						//TODO 等待读取完毕，才开始下一个任务的拉取
+						synchronized (td.syn.trim().intern().intern()) {
+							td.syn.trim().intern().wait();
+						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -208,9 +218,8 @@ public class SimpleConnectPoolUtil {
 			int num = 0;
 			String user = "";
 			while(true) {
-				System.out.println("wait server:");
 				int len = input.read(cache);
-				System.out.println("accept");
+				System.out.println("received:");
 				if(first) {//计算块个数：
 					num = ((cache[0] & 0xff) << 24) + ((cache[1] & 0xff) << 16) + ((cache[2] & 0xff) << 8) + cache[3];
 					if(num > 0) {
@@ -224,9 +233,8 @@ public class SimpleConnectPoolUtil {
 				if(--num == 0) {//读取完毕，放到用户区域
 					first = true;
 					receivedMap.put(user.trim(), cache);
-					System.out.println("read:" + name);
 					synchronized (user.trim().intern().intern()) {
-						user.trim().intern().notify();
+						user.trim().intern().notifyAll();
 					}
 				}
 			}
@@ -297,7 +305,11 @@ public class SimpleConnectPoolUtil {
 				for(int k = 0; k < 1; k++) {
 					String send = "hello,server, rpc call" + j;
 					byte[] received = util.sendData("user", "localhost:12345", send.getBytes());
-					System.out.println("received:" + new String(received));
+					if(received != null) {
+						System.out.println("success:" + new String(received));
+					}else {
+						System.out.println("success: null");
+					}
 				}
 			});
 		}

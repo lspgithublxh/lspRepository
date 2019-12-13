@@ -101,7 +101,6 @@ public class ServiceServerUtil {
 		int num = 0;
 		String user = "";
 		while(true) {
-			System.out.println("wait client send data:");
 			int len = input.read(cache);
 			System.out.println("received:");
 			if(first) {//计算块个数：
