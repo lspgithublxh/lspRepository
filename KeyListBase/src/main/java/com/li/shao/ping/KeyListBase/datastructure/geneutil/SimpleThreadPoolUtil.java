@@ -29,7 +29,7 @@ public class SimpleThreadPoolUtil {
 	private int maxTaskNum;
 	private RejectionStrategy rejHandle;
 	
-	private SimpleThreadPoolUtil(int maxWorkerNum, int maxTaskNum, int maxIdleWorkerNum
+	public SimpleThreadPoolUtil(int maxWorkerNum, int maxTaskNum, int maxIdleWorkerNum
 			,long maxIdelTime) throws Exception {
 		this.maxWorkerNum = maxWorkerNum;
 		this.maxIdelTime = maxIdelTime;
@@ -41,8 +41,8 @@ public class SimpleThreadPoolUtil {
 		initWorkder();
 	}
 	
-	private SimpleThreadPoolUtil(int maxWorkerNum, int maxTaskNum, int maxIdleWorkerNum
-			,long maxIdelTime, RejectionStrategy rejHandle) throws Exception {
+	public SimpleThreadPoolUtil(int maxWorkerNum, int maxTaskNum, int maxIdleWorkerNum
+			,long maxIdelTime, RejectionStrategy rejHandle){
 		this.maxWorkerNum = maxWorkerNum;
 		this.maxIdelTime = maxIdelTime;
 		this.maxTaskNum = maxTaskNum;
@@ -51,7 +51,11 @@ public class SimpleThreadPoolUtil {
 		workers = new HashSet<Worker>(maxWorkerNum);
 		//初始化创建最小线程数
 		this.maxIdleWorkerNum = maxIdleWorkerNum;
-		initWorkder();
+		try {
+			initWorkder();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void initWorkder() throws Exception {
@@ -66,15 +70,22 @@ public class SimpleThreadPoolUtil {
 	public boolean addTask(Runnable task) {
 		try {
 			//同步查看：队列已经满,则看能否新增worker
-			if(tasks.size() == maxTaskNum) {
+			if(tasks.size() >= maxTaskNum) {
 				synchronized (this) {
 					if(tasks.size() >= maxTaskNum) {
 						if(workers.size() < maxWorkerNum) {
 							workers.add(new Worker("new-worker-" + task.hashCode()).start());
-						}else {
-							return rejHandle == null ? false : rejHandle.handle(task);//不能再添加任务--执行 拒绝策略：false, exception, main-exe
 						}
+						return rejHandle == null ? false : rejHandle.handle(task);//不能再添加任务--执行 拒绝策略：false, exception, main-exe
 					}//继续
+				}
+			}
+			//可以一半task的时候开始增加woker TODO add
+			if(tasks.size() >= maxTaskNum / 2 && tasks.size() < maxTaskNum) {
+				synchronized (this) {
+					if(tasks.size() >= maxTaskNum / 2 && tasks.size() < maxTaskNum) {
+						workers.add(new Worker("new-worker-" + task.hashCode()).start());
+					}
 				}
 			}
 			boolean rs = tasks.offer(task);
@@ -92,7 +103,7 @@ public class SimpleThreadPoolUtil {
    class Worker{
 		private AtomicInteger status;//执行者 状态, 运行中1，还是idle2
 		private long startTime;
-		private long updateTime;
+//		private long updateTime;
 		private String name;
 	public Worker(String name) {
 		this.name = name;
@@ -132,6 +143,9 @@ public class SimpleThreadPoolUtil {
 		}
 		
 	}
+   
+  public static SimpleThreadPoolUtil pool = new SimpleThreadPoolUtil(10, 20, 3, 1000,
+			(task) ->{task.run();return true;}) ;
    
    public static void main(String[] args) {
 	//线程池测试
