@@ -31,6 +31,10 @@ public class ServiceServerUtil {
 	private Map<InputStream, List<String>> inputStreamMap;
 	private AtomicInteger count = new AtomicInteger(0);
 	
+	private SimpleThreadPoolUtil tpool = new SimpleThreadPoolUtil(20, 200, 10, 1000,
+			(task) ->{task.run();log.info("rejection thread execute");;return true;}) ;
+	
+	
 	public void startServer() {
 		//
 		try {
@@ -39,7 +43,7 @@ public class ServiceServerUtil {
 			ServerSocket server = new ServerSocket(12345);
 			while(true) {
 				Socket socket = server.accept();
-				System.out.println("accept ");
+				log.info("accept ");
 				SimpleThreadPoolUtil.pool.addTask(()->{
 					try {
 						InputStream in = socket.getInputStream();

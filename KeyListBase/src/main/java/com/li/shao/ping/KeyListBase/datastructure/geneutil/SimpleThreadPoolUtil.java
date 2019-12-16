@@ -2,6 +2,7 @@ package com.li.shao.ping.KeyListBase.datastructure.geneutil;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -22,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SimpleThreadPoolUtil {
 
-	private LinkedBlockingQueue<Runnable> tasks;
+	private ArrayBlockingQueue<Runnable> tasks;//LinkedBlockingQueue
 	private Set<Worker> workers;
 	private int maxWorkerNum;
 	private int maxIdleWorkerNum;
@@ -35,7 +36,7 @@ public class SimpleThreadPoolUtil {
 		this.maxWorkerNum = maxWorkerNum;
 		this.maxIdelTime = maxIdelTime;
 		this.maxTaskNum = maxTaskNum;
-		tasks = new LinkedBlockingQueue<Runnable>(maxTaskNum);
+		tasks = new ArrayBlockingQueue<Runnable>(maxTaskNum);
 		workers = new HashSet<Worker>(maxWorkerNum);
 		//初始化创建最小线程数
 		this.maxIdleWorkerNum = maxIdleWorkerNum;
@@ -48,7 +49,7 @@ public class SimpleThreadPoolUtil {
 		this.maxIdelTime = maxIdelTime;
 		this.maxTaskNum = maxTaskNum;
 		this.rejHandle = rejHandle;
-		tasks = new LinkedBlockingQueue<Runnable>(maxTaskNum);
+		tasks = new ArrayBlockingQueue<Runnable>(maxTaskNum);
 		workers = new HashSet<Worker>(maxWorkerNum);
 		//初始化创建最小线程数
 		this.maxIdleWorkerNum = maxIdleWorkerNum;

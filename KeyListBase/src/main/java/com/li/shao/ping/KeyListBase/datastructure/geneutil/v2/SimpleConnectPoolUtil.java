@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.util.AbstractQueue;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -59,7 +60,11 @@ public class SimpleConnectPoolUtil {
 	private SimpleThreadPoolUtil tpool = new SimpleThreadPoolUtil(20, 200, 10, 1000,
 			(task) ->{task.run();log.info("rejection thread execute");;return true;}) ;
 	
-	private SimpleThreadPoolUtil tpool2 = new SimpleThreadPoolUtil(10, 100, 10, 1000,
+	private SimpleThreadPoolUtil tpool1 = new SimpleThreadPoolUtil(20, 200, 10, 1000,
+			(task) ->{task.run();log.info("rejection thread execute");;return true;}) ;
+	
+	
+	private SimpleThreadPoolUtil tpool2 = new SimpleThreadPoolUtil(200, 200, 60, 1000,
 			(task) ->{task.run();log.info("rejection thread execute");;return true;}) ;
 	
 	
@@ -83,7 +88,7 @@ public class SimpleConnectPoolUtil {
 		int len = ipArr.length;
 		for(int i = 0; i < len; i++) {
 			String target = service + "`" + ipArr[i];
-			tasks.put(target, new LinkedBlockingQueue<Task>());
+			tasks.put(target, new LinkedBlockingQueue<Task>(this.maxTaskNum));
 			workers.put(target, Sets.newHashSet());
 		}
 	}
@@ -243,7 +248,7 @@ public class SimpleConnectPoolUtil {
 					e.printStackTrace();
 				}
 			});
-			tpool.addTask(()->{
+			tpool1.addTask(()->{
 				while(true) {
 					try {//发送数据
 						Task td = taskQueue.poll(maxIdelTime, TimeUnit.MILLISECONDS);
@@ -270,8 +275,8 @@ public class SimpleConnectPoolUtil {
 								e.printStackTrace();
 							}
 						};
-						boolean addTask = tpool2.addTask(task);
-//						ThreadPoolUtil.getThreadPool().execute(task);
+//						boolean addTask = tpool2.addTask(task);
+						ThreadPoolUtil.getThreadPool().execute(task);
 						countPoll.incrementAndGet();
 						countQueue.set(taskQueue.size());
 //						log.info("get task count:" + td.getSyn() + "x" + task.hashCode() + "-" + addTask);
@@ -409,11 +414,13 @@ public class SimpleConnectPoolUtil {
 		});
 		AtomicInteger count = new AtomicInteger();
 		AtomicInteger count2 = new AtomicInteger();
+		AtomicInteger countCall = new AtomicInteger(0);
 		for(int i = 0; i < 500; i++) {
 			final int j = i;
 			SimpleThreadPoolUtil.pool.addTask(()->{
 				for(int k = 0; k < 10; k++) {
 					String send = "hello,server, rpc call" + j;
+					countCall.incrementAndGet();
 					byte[] received = util.sendData("user", "localhost:12345", send.getBytes());
 					if(received != null) {
 						log.info("success:" + new String(received));
@@ -428,6 +435,7 @@ public class SimpleConnectPoolUtil {
 		try {
 			Thread.sleep(15000);
 			System.out.println(count.get() + "," + count2.get());
+			System.out.println("call-count:" + countCall.get());
 			System.out.println("send-count:" + util.countSend.get());
 			System.out.println("poll-count:" + util.countPoll.get());
 			System.out.println("taskQueue-count:" + util.countQueue.get());
