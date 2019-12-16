@@ -446,10 +446,10 @@ public class SimpleConnectPoolUtil {
 		AtomicInteger countCall = new AtomicInteger(0);
 		AtomicLong endTime = new AtomicLong(0);
 		long t1 = System.currentTimeMillis();
-		for(int i = 0; i < 1000; i++) {
+		for(int i = 0; i < 10000; i++) {
 			final int j = i;
 			new Thread(()->{
-				for(int k = 0; k < 50; k++) {
+				for(int k = 0; k < 10; k++) {
 					String send = "hello,server, rpc call" + j;
 					countCall.incrementAndGet();
 					byte[] received = util.sendData("user", "localhost:12345", send.getBytes());
@@ -466,7 +466,7 @@ public class SimpleConnectPoolUtil {
 		}
 		 
 		try {
-			Thread.sleep(15000);
+			Thread.sleep(25000);
 			System.out.println(count.get() + "," + count2.get());
 			System.out.println("call-count:" + countCall.get());
 			System.out.println("send-count:" + util.countSend.get());

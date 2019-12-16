@@ -90,7 +90,7 @@ public class ServiceServerUtil {
 //							//开始写数据
 //							
 //						}
-						Thread.sleep(7000);
+						Thread.sleep(17000);
 						System.out.println("count:" + count.get());
 					} catch (Exception e) {
 						e.printStackTrace();
