@@ -443,10 +443,10 @@ public class SimpleConnectPoolUtil {
 		AtomicInteger count = new AtomicInteger();
 		AtomicInteger count2 = new AtomicInteger();
 		AtomicInteger countCall = new AtomicInteger(0);
-		for(int i = 0; i < 500; i++) {
+		for(int i = 0; i < 600; i++) {
 			final int j = i;
 			new Thread(()->{
-				for(int k = 0; k < 20; k++) {
+				for(int k = 0; k < 50; k++) {
 					String send = "hello,server, rpc call" + j;
 					countCall.incrementAndGet();
 					byte[] received = util.sendData("user", "localhost:12345", send.getBytes());
