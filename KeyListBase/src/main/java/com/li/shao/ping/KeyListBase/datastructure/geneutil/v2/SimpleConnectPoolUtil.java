@@ -297,8 +297,8 @@ public class SimpleConnectPoolUtil {
 								e.printStackTrace();
 							}
 						};
-//						boolean addTask = tpool2.addTask(task);
-						ThreadPoolUtil.getThreadPool().execute(task);
+						boolean addTask = tpool2.addTask(task);
+//						ThreadPoolUtil.getThreadPool().execute(task);
 						countPoll.incrementAndGet();
 						countQueue.set(taskQueue.size());
 //						log.info("get task count:" + td.getSyn() + "x" + task.hashCode() + "-" + addTask);

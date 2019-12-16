@@ -91,6 +91,12 @@ public class SimpleThreadPoolUtil {
 				}
 			}
 			synchronized (this) {
+				if(tasks.size() >= maxTaskNum) {
+					if(workers.size() < maxWorkerNum) {
+						workers.add(new Worker("new-worker-" + task.hashCode()).start());
+					}
+					return rejHandle == null ? false : rejHandle.handle(task);//不能再添加任务--执行 拒绝策略：false, exception, main-exe
+				}
 				boolean rs = tasks.offer(task);
 				return rs;
 			}
