@@ -331,10 +331,11 @@ public class SimpleConnectPoolUtil {
 			return item.getReceivedMap().get(user);
 		});
 		AtomicInteger count = new AtomicInteger();
+		AtomicInteger count2 = new AtomicInteger();
 		for(int i = 0; i < 10; i++) {
 			final int j = i;
 			SimpleThreadPoolUtil.pool.addTask(()->{
-				for(int k = 0; k < 50; k++) {
+				for(int k = 0; k < 100; k++) {
 					String send = "hello,server, rpc call" + j;
 					byte[] received = util.sendData("user", "localhost:12345", send.getBytes());
 					if(received != null) {
@@ -342,13 +343,14 @@ public class SimpleConnectPoolUtil {
 						count.incrementAndGet();
 					}else {
 						log.info("success: null");
+						count2.incrementAndGet();
 					}
 				}
 			});
 		}
 		try {
 			Thread.sleep(3000);
-			System.out.println(count.get());
+			System.out.println(count.get() + "," + count2.get());
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
