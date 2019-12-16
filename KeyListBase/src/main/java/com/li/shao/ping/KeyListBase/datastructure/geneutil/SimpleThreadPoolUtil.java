@@ -89,7 +89,7 @@ public class SimpleThreadPoolUtil {
 					}
 				}
 			}
-			synchronized (SimpleThreadPoolUtil.class) {
+			synchronized (this) {
 				boolean rs = tasks.offer(task);
 				return rs;
 			}
