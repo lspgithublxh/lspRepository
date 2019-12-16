@@ -402,7 +402,7 @@ public class SimpleConnectPoolUtil {
 		for(int i = 0; i < 50; i++) {
 			final int j = i;
 			SimpleThreadPoolUtil.pool.addTask(()->{
-				for(int k = 0; k < 10; k++) {
+				for(int k = 0; k < 100; k++) {
 					String send = "hello,server, rpc call" + j;
 					byte[] received = util.sendData("user", "localhost:12345", send.getBytes());
 					if(received != null) {
