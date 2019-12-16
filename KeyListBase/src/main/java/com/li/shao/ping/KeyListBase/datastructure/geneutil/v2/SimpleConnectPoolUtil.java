@@ -446,7 +446,7 @@ public class SimpleConnectPoolUtil {
 		for(int i = 0; i < 500; i++) {
 			final int j = i;
 			new Thread(()->{
-				for(int k = 0; k < 10; k++) {
+				for(int k = 0; k < 20; k++) {
 					String send = "hello,server, rpc call" + j;
 					countCall.incrementAndGet();
 					byte[] received = util.sendData("user", "localhost:12345", send.getBytes());
