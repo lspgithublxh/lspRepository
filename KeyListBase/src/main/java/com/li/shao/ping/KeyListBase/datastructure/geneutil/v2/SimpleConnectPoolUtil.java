@@ -356,10 +356,10 @@ public class SimpleConnectPoolUtil {
 		});
 		AtomicInteger count = new AtomicInteger();
 		AtomicInteger count2 = new AtomicInteger();
-		for(int i = 0; i < 500; i++) {
+		for(int i = 0; i < 50; i++) {
 			final int j = i;
 			SimpleThreadPoolUtil.pool.addTask(()->{
-				for(int k = 0; k < 1; k++) {
+				for(int k = 0; k < 10; k++) {
 					String send = "hello,server, rpc call" + j;
 					byte[] received = util.sendDataTest("user", "localhost:12345", send.getBytes());
 					if(received != null) {
