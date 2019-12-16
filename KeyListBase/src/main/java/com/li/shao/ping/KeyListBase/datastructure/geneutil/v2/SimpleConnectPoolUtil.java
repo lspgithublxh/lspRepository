@@ -13,6 +13,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -443,6 +444,8 @@ public class SimpleConnectPoolUtil {
 		AtomicInteger count = new AtomicInteger();
 		AtomicInteger count2 = new AtomicInteger();
 		AtomicInteger countCall = new AtomicInteger(0);
+		AtomicLong endTime = new AtomicLong(0);
+		long t1 = System.currentTimeMillis();
 		for(int i = 0; i < 600; i++) {
 			final int j = i;
 			new Thread(()->{
@@ -457,9 +460,11 @@ public class SimpleConnectPoolUtil {
 						log.info("success: null");
 						count2.incrementAndGet();
 					}
+					endTime.set(System.currentTimeMillis());
 				}
 			}).start();
 		}
+		 
 		try {
 			Thread.sleep(15000);
 			System.out.println(count.get() + "," + count2.get());
@@ -470,6 +475,7 @@ public class SimpleConnectPoolUtil {
 			System.out.println("offerfaield-count:" + util.countOfferFail.get());
 			System.out.println("offer-labor:" + countLabor.get());
 			System.out.println("taskQueue-count:" + util.countQueue.get());
+			System.out.println("total-time:" + (endTime.get() - t1));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
