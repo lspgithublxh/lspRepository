@@ -59,7 +59,7 @@ public class SimpleConnectPoolUtil {
 	private SimpleThreadPoolUtil tpool = new SimpleThreadPoolUtil(20, 200, 10, 1000,
 			(task) ->{task.run();log.info("rejection thread execute");;return true;}) ;
 	
-	private SimpleThreadPoolUtil tpool2 = new SimpleThreadPoolUtil(20, 200, 10, 1000,
+	private SimpleThreadPoolUtil tpool2 = new SimpleThreadPoolUtil(10, 100, 10, 1000,
 			(task) ->{task.run();log.info("rejection thread execute");;return true;}) ;
 	
 	
@@ -271,8 +271,11 @@ public class SimpleConnectPoolUtil {
 							}
 						};
 //						boolean addTask = tpool2.addTask(task);
+						ThreadPoolUtil.getThreadPool().execute(task);
+						countPoll.incrementAndGet();
+						countQueue.set(taskQueue.size());
 //						log.info("get task count:" + td.getSyn() + "x" + task.hashCode() + "-" + addTask);
-						new Thread(task).start();//线程组？
+//						new Thread(task).start();//线程组？--马上执行就可以？
 						//TODO 等待读取完毕，才开始下一个任务的拉取
 						synchronized (td.syn.trim().intern()) {
 							td.syn.trim().intern().wait();
@@ -380,6 +383,8 @@ public class SimpleConnectPoolUtil {
 	}
 
 	AtomicInteger countSend = new AtomicInteger(0);
+	AtomicInteger countPoll = new AtomicInteger(0);
+	AtomicInteger countQueue = new AtomicInteger(0);
 	
 	private static void otherTest() {
 		log.info("hello");
@@ -421,9 +426,11 @@ public class SimpleConnectPoolUtil {
 			});
 		}
 		try {
-			Thread.sleep(10000);
+			Thread.sleep(15000);
 			System.out.println(count.get() + "," + count2.get());
 			System.out.println("send-count:" + util.countSend.get());
+			System.out.println("poll-count:" + util.countPoll.get());
+			System.out.println("taskQueue-count:" + util.countQueue.get());
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
