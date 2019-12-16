@@ -55,7 +55,11 @@ public class SimpleConnectPoolUtil {
 	public SimpleConnectPoolUtil() {}
 	
 	private SimpleThreadPoolUtil tpool = new SimpleThreadPoolUtil(20, 200, 10, 1000,
-			(task) ->{task.run();return true;}) ;
+			(task) ->{task.run();log.info("rejection thread execute");;return true;}) ;
+	
+	private SimpleThreadPoolUtil tpool2 = new SimpleThreadPoolUtil(20, 200, 10, 1000,
+			(task) ->{task.run();log.info("rejection thread execute");;return true;}) ;
+	
 	
 	public SimpleConnectPoolUtil(int maxWorkerNum, int maxTaskNum, int maxIdleWorkerNum
 			,long maxIdelTime,RejectionStrategy22<Task> reject) {
@@ -98,6 +102,36 @@ public class SimpleConnectPoolUtil {
 				.setService(service).setUtil(this)
 				.setReceivedMap(receivedMap)
 				.setIpPort(ipPort).setTask(data).setQueue(queue).setUser(user));
+
+	}
+	
+	public byte[] sendDataTest2(String service, String ipPort, byte[] data) {
+		String target = service + "`" + ipPort;
+		String user = currCallNo();
+		Set<Worker> workerSet = workers.get(target);
+		if(workerSet.isEmpty()) {
+			synchronized (workerSet) {
+				if(workerSet.isEmpty()) {
+					workerSet.add(new Worker("front-worker-" + user, service, ipPort));
+				}
+			}
+		}
+		LinkedBlockingQueue<Task> queue = tasks.get(target);
+		boolean rs = queue.offer(new Task().setData(data).setSyn(user));
+		if(!rs) {
+			log.error("[add-data-to-task] error!");
+			return null;
+		}
+		//worker是否足够
+		//等待结果并返回
+		synchronized (user.intern()) {
+			try {
+				user.intern().wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		return receivedMap.get(user);
 
 	}
 	
@@ -221,6 +255,7 @@ public class SimpleConnectPoolUtil {
 							}
 						}
 						byte[] data = td.getData();//需要连带 syn一起发送
+						
 						Runnable task = ()->{
 							try {
 								log.info("send before:" + td.syn);
@@ -232,7 +267,9 @@ public class SimpleConnectPoolUtil {
 								e.printStackTrace();
 							}
 						};
-						boolean addTask = tpool.addTask(task);
+						boolean addTask = tpool2.addTask(task);
+						log.info("get task count:" + td.getSyn() + "x" + task.hashCode() + "-" + addTask);
+//						new Thread(task).start();//线程组？
 						//TODO 等待读取完毕，才开始下一个任务的拉取
 						synchronized (td.syn.trim().intern()) {
 							td.syn.trim().intern().wait();
@@ -267,11 +304,12 @@ public class SimpleConnectPoolUtil {
 				}
 				innerCache.write(cache, 0, len);
 				if(--num == 0) {//读取完毕，放到用户区域
-					log.info("received:");
+					log.info("received: " + user.trim());
 					first = true;
-					receivedMap.put(user.trim(), cache);
+					receivedMap.put(user.trim(), innerCache.toByteArray());
 					synchronized (user.trim().intern().intern()) {
 						user.trim().intern().notifyAll();
+						innerCache.reset();
 					}
 				}
 			}
@@ -334,6 +372,11 @@ public class SimpleConnectPoolUtil {
 //		SpringApplication.run(SimpleConnectPoolUtil.class, args);
 //		justTest();
 		//
+		otherTest();
+		
+	}
+
+	private static void otherTest() {
 		log.info("hello");
 		SimpleConnectPoolUtil util = new SimpleConnectPoolUtil(10, 20, 10, 1000, item ->{
 			LinkedBlockingQueue<Task> queue = item.getQueue();
@@ -359,9 +402,9 @@ public class SimpleConnectPoolUtil {
 		for(int i = 0; i < 50; i++) {
 			final int j = i;
 			SimpleThreadPoolUtil.pool.addTask(()->{
-				for(int k = 0; k < 100; k++) {
+				for(int k = 0; k < 10; k++) {
 					String send = "hello,server, rpc call" + j;
-					byte[] received = util.sendDataTest("user", "localhost:12345", send.getBytes());
+					byte[] received = util.sendData("user", "localhost:12345", send.getBytes());
 					if(received != null) {
 						log.info("success:" + new String(received));
 						count.incrementAndGet();
@@ -378,10 +421,53 @@ public class SimpleConnectPoolUtil {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
 	}
 
 	private static void justTest() {
+		LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>();
+		for(int i = 0; i < 10; i++) {
+			new Thread(()->{
+				while(true) {
+					try {
+//						synchronized (queue) {
+							Runnable s = queue.poll(1000, TimeUnit.MILLISECONDS);
+							log.info("runnable:" + s + " " + queue.size());
+//						}
+						
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}).start();
+		}
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		for(int i = 0; i < 50; i++) {
+			new Thread(()->{
+				try {
+					synchronized (SimpleThreadPoolUtil.class) {
+						boolean rs = queue.offer(()->{});
+						log.info("offer:" + rs + " queue:" + queue.size());
+					}
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}).start();
+		}
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+//		justT();
+	}
+
+	private static void justT() {
 		Integer a = 111;
 		System.out.println(a & 0x00FF);
 		System.out.println(a & 0xFF00);

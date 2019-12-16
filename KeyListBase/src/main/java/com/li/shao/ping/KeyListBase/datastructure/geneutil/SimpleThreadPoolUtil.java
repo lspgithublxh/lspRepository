@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import com.li.shao.ping.KeyListBase.datastructure.inter.RejectionStrategy;
 
@@ -120,6 +121,7 @@ public class SimpleThreadPoolUtil {
 						status.set(2);
 						Runnable ts = tasks.poll(maxIdelTime, TimeUnit.MILLISECONDS);
 						//原子读取并且删除woker
+//						log.info("ts:" + tasks.size() + "worksize:" + workers.size());
 						if(ts == null) {
 							synchronized (tasks) {
 								if(workers.size() > maxIdleWorkerNum) {
@@ -130,6 +132,7 @@ public class SimpleThreadPoolUtil {
 								}
 							}
 						}
+//						log.info("hashcode:" + ts.hashCode());
 						status.set(1);
 						ts.run();
 						status.set(2);

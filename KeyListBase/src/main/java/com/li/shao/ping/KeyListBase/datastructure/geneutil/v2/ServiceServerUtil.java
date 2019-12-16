@@ -117,10 +117,11 @@ public class ServiceServerUtil {
 			if(--num == 0) {//读取完毕，放到用户区域::是否因为处理时间太长而导致错过了流？？
 				System.out.println("received one request:");
 				first = true;
-				receivedMap.put(user.trim(), cache);
+				receivedMap.put(user.trim(), innerCache.toByteArray());
 				synchronized (in) {
 					List<String> userList = inputStreamMap.get(in);
 					userList.add(user.trim());
+					innerCache.reset();
 					in.notify();
 				}
 			}
