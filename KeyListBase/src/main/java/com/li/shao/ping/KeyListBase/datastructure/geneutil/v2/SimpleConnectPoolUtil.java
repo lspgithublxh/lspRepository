@@ -35,6 +35,8 @@ import lombok.extern.slf4j.Slf4j;
  * 发送数据之后-阻塞等待响应：请求响应模式(发送成功的确认消息也是)
  * 发送数据之后-异步消费返回。
  * --直接开发完成测试成功，甚至没怎么修改
+ * -------------------------
+ * 不能用同一个线程池
  * @author lishaoping
  * @date 2019年12月12日
  * @package  com.li.shao.ping.KeyListBase.datastructure.geneutil
@@ -259,6 +261,7 @@ public class SimpleConnectPoolUtil {
 						Runnable task = ()->{
 							try {
 								log.info("send before:" + td.syn);
+								countSend.incrementAndGet();
 								OutputStream out = socket.getOutputStream();
 								//格式化发送 TODO
 								log.info("send:" + td.syn);
@@ -267,9 +270,9 @@ public class SimpleConnectPoolUtil {
 								e.printStackTrace();
 							}
 						};
-						boolean addTask = tpool2.addTask(task);
-						log.info("get task count:" + td.getSyn() + "x" + task.hashCode() + "-" + addTask);
-//						new Thread(task).start();//线程组？
+//						boolean addTask = tpool2.addTask(task);
+//						log.info("get task count:" + td.getSyn() + "x" + task.hashCode() + "-" + addTask);
+						new Thread(task).start();//线程组？
 						//TODO 等待读取完毕，才开始下一个任务的拉取
 						synchronized (td.syn.trim().intern()) {
 							td.syn.trim().intern().wait();
@@ -376,6 +379,8 @@ public class SimpleConnectPoolUtil {
 		
 	}
 
+	AtomicInteger countSend = new AtomicInteger(0);
+	
 	private static void otherTest() {
 		log.info("hello");
 		SimpleConnectPoolUtil util = new SimpleConnectPoolUtil(10, 20, 10, 1000, item ->{
@@ -399,10 +404,10 @@ public class SimpleConnectPoolUtil {
 		});
 		AtomicInteger count = new AtomicInteger();
 		AtomicInteger count2 = new AtomicInteger();
-		for(int i = 0; i < 50; i++) {
+		for(int i = 0; i < 500; i++) {
 			final int j = i;
 			SimpleThreadPoolUtil.pool.addTask(()->{
-				for(int k = 0; k < 100; k++) {
+				for(int k = 0; k < 10; k++) {
 					String send = "hello,server, rpc call" + j;
 					byte[] received = util.sendData("user", "localhost:12345", send.getBytes());
 					if(received != null) {
@@ -416,8 +421,9 @@ public class SimpleConnectPoolUtil {
 			});
 		}
 		try {
-			Thread.sleep(3000);
+			Thread.sleep(10000);
 			System.out.println(count.get() + "," + count2.get());
+			System.out.println("send-count:" + util.countSend.get());
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

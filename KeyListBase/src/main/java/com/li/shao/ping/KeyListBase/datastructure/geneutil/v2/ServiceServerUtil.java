@@ -9,10 +9,13 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.li.shao.ping.KeyListBase.datastructure.geneutil.SimpleThreadPoolUtil;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * server
@@ -21,10 +24,12 @@ import com.li.shao.ping.KeyListBase.datastructure.geneutil.SimpleThreadPoolUtil;
  * @date 2019年12月12日
  * @package  com.li.shao.ping.KeyListBase.datastructure.geneutil
  */
+@Slf4j
 public class ServiceServerUtil {
 
 	private Map<String, byte[]> receivedMap;
 	private Map<InputStream, List<String>> inputStreamMap;
+	private AtomicInteger count = new AtomicInteger(0);
 	
 	public void startServer() {
 		//
@@ -41,7 +46,6 @@ public class ServiceServerUtil {
 						OutputStream out = socket.getOutputStream();
 						DataInputStream input = new DataInputStream(in);
 						inputStreamMap.put(in, Lists.newArrayList());
-						System.out.println(in);
 						SimpleThreadPoolUtil.pool.addTask(()->{
 							SimpleThreadPoolUtil.pool.addTask(()->{
 								try {
@@ -82,7 +86,9 @@ public class ServiceServerUtil {
 //							//开始写数据
 //							
 //						}
-					} catch (IOException e) {
+						Thread.sleep(7000);
+						System.out.println("count:" + count.get());
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				});
@@ -115,7 +121,8 @@ public class ServiceServerUtil {
 			}
 			innerCache.write(cache, 0, len);
 			if(--num == 0) {//读取完毕，放到用户区域::是否因为处理时间太长而导致错过了流？？
-				System.out.println("received one request:");
+				log.info("received one request:");
+				count.incrementAndGet();
 				first = true;
 				receivedMap.put(user.trim(), innerCache.toByteArray());
 				synchronized (in) {
