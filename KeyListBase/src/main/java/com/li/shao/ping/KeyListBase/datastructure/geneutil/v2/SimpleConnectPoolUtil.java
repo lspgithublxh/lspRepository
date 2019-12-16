@@ -446,7 +446,7 @@ public class SimpleConnectPoolUtil {
 		AtomicInteger countCall = new AtomicInteger(0);
 		AtomicLong endTime = new AtomicLong(0);
 		long t1 = System.currentTimeMillis();
-		for(int i = 0; i < 600; i++) {
+		for(int i = 0; i < 1000; i++) {
 			final int j = i;
 			new Thread(()->{
 				for(int k = 0; k < 50; k++) {
