@@ -54,6 +54,7 @@ public class SimpleConnectPoolUtil {
 	private int maxIdleWorkerNum;
 	private int maxTaskNum;
 	private RejectionStrategy22<Task> reject;
+	private SimpleConnectPoolUtil curUtil;
 	
 	public SimpleConnectPoolUtil() {}
 	
@@ -75,6 +76,7 @@ public class SimpleConnectPoolUtil {
 		this.maxTaskNum = maxTaskNum;
 		this.maxIdleWorkerNum = maxIdleWorkerNum;
 		this.reject = reject;
+		curUtil = this;
 		initMap();
 	}
 
@@ -147,8 +149,15 @@ public class SimpleConnectPoolUtil {
 		String user = currCallNo();
 		LinkedBlockingQueue<Task> queue = tasks.get(target);
 		Set<Worker> workerSet = workers.get(target);
+		if(workerSet.isEmpty() || (queue.size() > workerSet.size() * 3 && workerSet.size() < maxWorkerNum)) {
+			synchronized (Rejection2Entity2.class) {
+				if(workerSet.isEmpty() || (queue.size() > workerSet.size() * 3 && workerSet.size() < maxWorkerNum)) {
+					workerSet.add(new Worker("front-worker-" + user, service, ipPort));
+				}
+			}
+		}
 		if(queue.size() >= maxTaskNum) {
-			synchronized (queue) {
+			synchronized (Rejection2Entity.class) {
 				if(queue.size() >= maxTaskNum) {//先考虑加worker
 					if(workerSet.size() >= maxWorkerNum) {
 						workerSet.add(new Worker("new-worker-" + user, service, ipPort));
@@ -159,17 +168,27 @@ public class SimpleConnectPoolUtil {
 				}
 			}
 		}
-		if(workerSet.isEmpty() || (queue.size() > workerSet.size() * 3 && workerSet.size() < maxWorkerNum)) {
-			synchronized (workerSet) {
-				if(workerSet.isEmpty() || (queue.size() > workerSet.size() * 3 && workerSet.size() < maxWorkerNum)) {
-					workerSet.add(new Worker("front-worker-" + user, service, ipPort));
+		
+		//不能用queue进行，因为queue是一个局部变量;不同的线程存放地点是不一样的,hashcode也不一样的
+		synchronized (this) {//这个方法不能并发的offer,必须枷锁---否则会漏掉很多；；同理不能并发的pull
+			if(queue.size() >= maxTaskNum) {
+				if(workerSet.size() >= maxWorkerNum) {
+					workerSet.add(new Worker("new-worker-" + user, service, ipPort));
 				}
+				return reject.handle(new Rejection2Entity2<Task>().setService(service).setUtil(this)
+						.setReceivedMap(receivedMap)
+						.setIpPort(ipPort).setTask(data).setQueue(queue).setUser(user));
+
 			}
-		}
-		boolean rs = queue.offer(new Task().setData(data).setSyn(user));
-		if(!rs) {
-			log.error("[add-data-to-task] error!");
-			return null;
+			boolean rs = queue.offer(new Task().setData(data).setSyn(user));
+			if(!rs) {
+				log.error("[add-data-to-task] error!");
+				countOfferFail.incrementAndGet();
+				return null;
+			}else {//失败的原因？
+				
+			}
+			countOffer.incrementAndGet();
 		}
 		//worker是否足够
 		//等待结果并返回
@@ -251,7 +270,10 @@ public class SimpleConnectPoolUtil {
 			tpool1.addTask(()->{
 				while(true) {
 					try {//发送数据
-						Task td = taskQueue.poll(maxIdelTime, TimeUnit.MILLISECONDS);
+						Task td;
+						synchronized (workers) {//必须线程同步拉，但又不能喝offer同步//但是仍然可能会少拉一个
+							td = taskQueue.poll(maxIdelTime, TimeUnit.MILLISECONDS);
+						}
 						if(td == null) {//超时了，删除worker
 							synchronized (tasks) {
 								if(workers.size() > maxIdleWorkerNum) {
@@ -390,14 +412,20 @@ public class SimpleConnectPoolUtil {
 	AtomicInteger countSend = new AtomicInteger(0);
 	AtomicInteger countPoll = new AtomicInteger(0);
 	AtomicInteger countQueue = new AtomicInteger(0);
+	AtomicInteger countOffer = new AtomicInteger(0);
+	AtomicInteger countOfferFail = new AtomicInteger(0);
 	
 	private static void otherTest() {
 		log.info("hello");
+		AtomicInteger countLabor = new AtomicInteger(0);
 		SimpleConnectPoolUtil util = new SimpleConnectPoolUtil(10, 20, 10, 1000, item ->{
 			LinkedBlockingQueue<Task> queue = item.getQueue();
 			String user = item.getUser();
 			try {
-				queue.put(item.getUtil().new Task().setData(item.getTask()).setSyn(user));
+				countLabor.incrementAndGet();
+				synchronized (item.getUtil()) {
+					queue.put(item.getUtil().new Task().setData(item.getTask()).setSyn(user));
+				}
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
@@ -417,7 +445,7 @@ public class SimpleConnectPoolUtil {
 		AtomicInteger countCall = new AtomicInteger(0);
 		for(int i = 0; i < 500; i++) {
 			final int j = i;
-			SimpleThreadPoolUtil.pool.addTask(()->{
+			new Thread(()->{
 				for(int k = 0; k < 10; k++) {
 					String send = "hello,server, rpc call" + j;
 					countCall.incrementAndGet();
@@ -430,7 +458,7 @@ public class SimpleConnectPoolUtil {
 						count2.incrementAndGet();
 					}
 				}
-			});
+			}).start();
 		}
 		try {
 			Thread.sleep(15000);
@@ -438,6 +466,9 @@ public class SimpleConnectPoolUtil {
 			System.out.println("call-count:" + countCall.get());
 			System.out.println("send-count:" + util.countSend.get());
 			System.out.println("poll-count:" + util.countPoll.get());
+			System.out.println("offer-count:" + util.countOffer.get());
+			System.out.println("offerfaield-count:" + util.countOfferFail.get());
+			System.out.println("offer-labor:" + countLabor.get());
 			System.out.println("taskQueue-count:" + util.countQueue.get());
 		} catch (InterruptedException e) {
 			e.printStackTrace();
