@@ -8,8 +8,11 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,9 +27,11 @@ import lombok.extern.slf4j.Slf4j;
 public class ServerSelector {
 
 	private NServiceServerPoolUtil util;
+	public Map<String, Boolean> userReadableMap;
 	
 	public ServerSelector(NServiceServerPoolUtil util) {
 		this.util = util;
+		this.userReadableMap = Maps.newHashMap();
 	}
 
 	public void startSelector() {
@@ -40,7 +45,7 @@ public class ServerSelector {
 			log.info("start selector");
 			while (true) {
 				int count = selector.select();//至少一个通道selected才返回
-				log.info("select get:" + count);
+//				log.info("select get:" + count);
 				if (count > 0) {
 					Set<SelectionKey> keys = selector.selectedKeys();
 					Iterator<SelectionKey> iterator = keys.iterator();
@@ -63,6 +68,7 @@ public class ServerSelector {
 							String[] names = util.channelNameMap.get(clientN);
 							String name = names[0];
 							synchronized (name.intern()) {//激活
+								userReadableMap.put(name, true);
 								name.intern().notify();
 							}
 						}

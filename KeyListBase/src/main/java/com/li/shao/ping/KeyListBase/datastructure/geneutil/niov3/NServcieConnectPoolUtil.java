@@ -76,6 +76,7 @@ public class NServcieConnectPoolUtil {
 		tasks = Maps.newHashMap();
 		workers = Maps.newHashMap();
 		socketWorkerMap = Maps.newHashMap();
+		receivedMap = Maps.newHashMap();
 		int len = ipArr.length;
 		for(int i = 0; i < len; i++) {
 			String target = service + "`" + ipArr[i];
@@ -211,7 +212,9 @@ public class NServcieConnectPoolUtil {
 			try {
 				//等待连接好--连接建立
 				synchronized (this.name.intern()) {
-					this.name.wait();
+					if(!selector.linkMap.containsKey(channel)) {
+						this.name.wait();
+					}
 				}
 				//开始读准备
 				tpool2.addTask(()->{
@@ -248,6 +251,7 @@ public class NServcieConnectPoolUtil {
 								try {
 									//格式化发送 TODO
 									log.info("send:" + td.syn);
+									log.info("send data:" + new String(data));
 									countSend.incrementAndGet();
 									writeData(data, td.syn);
 								} catch (Exception e) {
@@ -275,16 +279,23 @@ public class NServcieConnectPoolUtil {
 			ByteBuffer buffer = ByteBuffer.allocate(1024);
 			try {
 				synchronized (this.name.intern()) {//等待selector激活
-					this.name.intern().wait();
+					if(!selector.readMap.containsKey(channel)) {
+						this.name.intern().wait();
+					}
+					selector.readMap.remove(channel);//用true/false效率更高
 				}
+				byte[] cache = new byte[1024];
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				boolean first = true;
+				int num = 0;
+				String user = "";
 				while(true) {
-					int count = channel.read(buffer);
-					byte[] cache = new byte[1024];
-					ByteArrayOutputStream out = new ByteArrayOutputStream();
-					boolean first = true;
-					int num = 0;
-					String user = "";
+					int count = 1;
 					while(count > 0) {
+						count = channel.read(buffer);
+						if(count == 0) {
+							break;
+						}
 						buffer.flip();
 						buffer.get(cache, 0, count);
 						if(first) {//第一次
@@ -294,6 +305,7 @@ public class NServcieConnectPoolUtil {
 							}
 							//计算响应谁的64个字节
 							user = new String(cache, 4, 68);
+							buffer.clear();
 							continue;
 						}
 						out.write(cache, 0, count);
@@ -305,12 +317,15 @@ public class NServcieConnectPoolUtil {
 								user.trim().intern().notifyAll();
 								out.reset();
 							}
+							buffer.clear();
+							break;
 						}
-						count = channel.read(buffer);
 					}
-					log.info("read data:" + new String(out.toByteArray()));
 					synchronized (this.name.intern()) {//等待selector激活
-						this.name.intern().wait();
+						if(!selector.readMap.containsKey(channel)) {
+							this.name.intern().wait();
+						}
+						selector.readMap.remove(channel);
 					}
 				}
 			} catch (Exception e) {
@@ -359,7 +374,6 @@ public class NServcieConnectPoolUtil {
 		private void justSend(byte[] header, int offset, int len) {
 			
 			ByteBuffer buf = ByteBuffer.wrap(header, offset, len);//"hello,server".getBytes()
-			log.info("write header:");
 			try {
 				while (buf.hasRemaining()) {
 					channel.write(buf);

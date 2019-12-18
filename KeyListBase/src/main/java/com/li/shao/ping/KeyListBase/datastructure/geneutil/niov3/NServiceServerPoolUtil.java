@@ -57,49 +57,55 @@ public class NServiceServerPoolUtil {
 		try {
 			String[] names = channelNameMap.get(channel);
 			String writePointName = names[1];
-			synchronized (writePointName.intern().intern()) {//
-				writePointName.intern().wait();
-				//批量写回数据--对收到的所有客户端返回
-				receivedMap.forEach((user, received) -> {
-					//开始返回调用数据
-					byte[] data = "hello,client".getBytes();
-					byte[] syn = user.getBytes();
-					int blockLen = data.length / 1024 + (data.length % 1024 > 0 ? 1 : 0);
-					byte[] header = new byte[1024];
-					header[0] = (byte) (blockLen >> 24);
-					header[1] = (byte) (blockLen >> 16);
-					header[2] = (byte) (blockLen >> 8);
-					header[3] = (byte) (blockLen >> 0);
-					//增加64字节user
-					int index = 4;
-					for (byte s : syn) {
-						header[index++] = s;
-						if (index > 67) {//截取
-							break;
-						}
+			while(true) {
+				synchronized (writePointName.intern()) {//
+					if(receivedMap.isEmpty()) {
+						writePointName.intern().wait();
 					}
-					justSend(channel, header, 0, header.length);
-					//发送正式数据
-					//发送有效数据
-					int startPos = 0;
-					int endPos = 1024 > data.length ? data.length : 1024;
-					byte[] buffer = new byte[1024];
-					int j = startPos;
-					for (int i = 0; i < 1024; j++, i++) {
-						if (j >= endPos) {
-							//临时数据也开始刷
-							justSend(channel, buffer, 0, i);
-							break;
+					//批量写回数据--对收到的所有客户端返回
+					receivedMap.forEach((user, received) -> {
+						//开始返回调用数据
+						log.info("received data:" + new String(received));
+						byte[] data = "hello,client".getBytes();
+						byte[] syn = user.getBytes();
+						int blockLen = data.length / 1024 + (data.length % 1024 > 0 ? 1 : 0);
+						byte[] header = new byte[1024];
+						header[0] = (byte) (blockLen >> 24);
+						header[1] = (byte) (blockLen >> 16);
+						header[2] = (byte) (blockLen >> 8);
+						header[3] = (byte) (blockLen >> 0);
+						//增加64字节user
+						int index = 4;
+						for (byte s : syn) {
+							header[index++] = s;
+							if (index > 67) {//截取
+								break;
+							}
 						}
-						buffer[i] = data[j];
-						if (i == 1023) {
-							i = -1;
-							//开始刷数据,完整
-							justSend(channel, buffer, 0, buffer.length);
+						justSend(channel, header, 0, header.length);
+						//发送正式数据
+						//发送有效数据
+						int startPos = 0;
+						int endPos = 1024 > data.length ? data.length : 1024;
+						byte[] buffer = new byte[1024];
+						int j = startPos;
+						for (int i = 0; i < 1024; j++, i++) {
+							if (j >= endPos) {
+								//临时数据也开始刷
+								justSend(channel, buffer, 0, i);
+								break;
+							}
+							buffer[i] = data[j];
+							if (i == 1023) {
+								i = -1;
+								//开始刷数据,完整
+								justSend(channel, buffer, 0, buffer.length);
+							}
 						}
-					}
-				});
-			} 
+					});
+					receivedMap.clear();
+				} 
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -109,7 +115,6 @@ public class NServiceServerPoolUtil {
 	private void justSend(SocketChannel channel, byte[] header, int offset, int len) {
 		
 		ByteBuffer buf = ByteBuffer.wrap(header, offset, len);//"hello,server".getBytes()
-		log.info("write header:");
 		try {
 			while (buf.hasRemaining()) {
 				channel.write(buf);
@@ -126,16 +131,24 @@ public class NServiceServerPoolUtil {
 		String writePointName = names[1];
 		try {
 			synchronized (name.intern()) {//等待selector激活
-				name.intern().wait();
+				Boolean has = serverSelector.userReadableMap.get(name);
+				if(has == null || !has) {
+					name.intern().wait();
+				}
+				serverSelector.userReadableMap.remove(name);
 			}
+			byte[] cache = new byte[1024];
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			boolean first = true;
+			int num = 0;
+			String user = "";
 			while(true) {
-				int count = channel.read(buffer);
-				byte[] cache = new byte[1024];
-				ByteArrayOutputStream out = new ByteArrayOutputStream();
-				boolean first = true;
-				int num = 0;
-				String user = "";
+				int count = 1;
 				while(count > 0) {
+					count = channel.read(buffer);
+					if(count == 0) {
+						break;
+					}
 					buffer.flip();
 					buffer.get(cache, 0, count);
 					if(first) {//第一次
@@ -145,6 +158,7 @@ public class NServiceServerPoolUtil {
 						}
 						//计算响应谁的64个字节
 						user = new String(cache, 4, 68);
+						buffer.clear();
 						continue;
 					}
 					out.write(cache, 0, count);
@@ -152,16 +166,21 @@ public class NServiceServerPoolUtil {
 						log.info("received: " + user.trim());
 						first = true;
 						receivedMap.put(user.trim(), out.toByteArray());
-						synchronized (writePointName.intern().intern()) {//激发调用方返回
+						synchronized (writePointName.intern()) {//激发调用方返回
 							writePointName.intern().notifyAll();
 							out.reset();
 						}
+						buffer.clear();
+						break;//
 					}
-					count = channel.read(buffer);
+					
 				}
-				log.info("read data:" + new String(out.toByteArray()));
-				synchronized (name.intern()) {//等待selector激活
-					name.intern().wait();
+				synchronized (name.intern()) {//等待下次selector激活
+					Boolean has = serverSelector.userReadableMap.get(name);
+					if(has == null || !has) {
+						name.intern().wait();
+					}
+					serverSelector.userReadableMap.remove(name);
 				}
 			}
 		} catch (Exception e) {
