@@ -423,7 +423,7 @@ public class NServcieConnectPoolUtil {
 		AtomicInteger countCall = new AtomicInteger(0);
 		AtomicLong endTime = new AtomicLong(0);
 		long t1 = System.currentTimeMillis();
-		for(int i = 0; i < 1; i++) {
+		for(int i = 0; i < 2; i++) {
 			final int j = i;
 			new Thread(()->{
 				for(int k = 0; k < 10; k++) {
