@@ -33,10 +33,11 @@ public class ServerSelector {
 		try {
 			ServerSocketChannel server = ServerSocketChannel.open();
 			server.configureBlocking(false);
-			server.bind(new InetSocketAddress("127.0.0.1", 8080));
+			server.bind(new InetSocketAddress("127.0.0.1", 10023));
 			Selector selector = Selector.open();
 			server.register(selector, SelectionKey.OP_ACCEPT);//同时可以传递附加对象attach
 			AtomicInteger linkCount = new AtomicInteger(0);
+			log.info("start selector");
 			while (true) {
 				int count = selector.select();//至少一个通道selected才返回
 				log.info("select get:" + count);

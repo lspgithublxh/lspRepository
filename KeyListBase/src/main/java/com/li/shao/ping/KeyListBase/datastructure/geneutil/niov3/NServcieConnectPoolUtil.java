@@ -82,6 +82,9 @@ public class NServcieConnectPoolUtil {
 			tasks.put(target, new LinkedBlockingQueue<Task>(this.maxTaskNum));
 			workers.put(target, Sets.newHashSet());
 		}
+		new Thread(()->{
+			selector.selector();
+		}).start();
 	}
 
 	/**
@@ -196,7 +199,9 @@ public class NServcieConnectPoolUtil {
 				selector.register(channel);
 				socketWorkerMap.put(channel, this);
 				this.channel.connect(new InetSocketAddress("127.0.0.1", 10023));
-				startWork();//主动方,开始写
+				tpool.addTask(()->{
+					startWork();//主动方,开始写
+				});
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -209,7 +214,7 @@ public class NServcieConnectPoolUtil {
 					this.name.wait();
 				}
 				//开始读准备
-				tpool1.addTask(()->{
+				tpool2.addTask(()->{
 					readData();
 				});
 //				while(true) {

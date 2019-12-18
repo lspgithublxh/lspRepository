@@ -19,6 +19,7 @@ public class ClientSelector {
 	private Selector selector;
 	public Map<SocketChannel, Boolean> linkMap;
 	public NServcieConnectPoolUtil pool;
+	public Object resiterLock = new Object();
 	
 	public ClientSelector(NServcieConnectPoolUtil pool) {
 		try {
@@ -32,7 +33,13 @@ public class ClientSelector {
 	
 	public void register(SocketChannel channel) {
 		try {
-			channel.register(selector, SelectionKey.OP_CONNECT);
+			//缺点：在select()阻塞的时候不能注册，会等待它释放;所以先唤醒
+			synchronized (resiterLock) {
+				selector.wakeup();
+				channel.register(selector, SelectionKey.OP_CONNECT);//里面用了publicKeys来同步，seletor.select()也用了这个同步
+				resiterLock.notify();
+				log.info("register suc");
+			}
 		} catch (ClosedChannelException e) {
 			e.printStackTrace();
 		}
@@ -68,6 +75,10 @@ public class ClientSelector {
 							}//激发开始读数据
 						}
 						
+					}
+				}else {
+					synchronized (resiterLock) {
+//						resiterLock.wait(1000);
 					}
 				}
 			} 
