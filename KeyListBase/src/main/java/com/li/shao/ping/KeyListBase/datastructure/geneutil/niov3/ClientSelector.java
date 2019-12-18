@@ -65,7 +65,7 @@ public class ClientSelector {
 							channel.register(selector, SelectionKey.OP_READ);
 							//激发发送数据--或者什么也不先做；只是连接确定
 							Worker worker = pool.socketWorkerMap.get(channel);
-							log.info("start read thread");
+							log.info("start read thread" + channel.hashCode());
 							synchronized (worker.getName().intern()) {
 								linkMap.put(channel, true);
 								worker.getName().notify();

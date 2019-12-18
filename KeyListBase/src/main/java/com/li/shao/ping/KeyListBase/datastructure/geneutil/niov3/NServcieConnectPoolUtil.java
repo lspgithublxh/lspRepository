@@ -12,6 +12,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -143,9 +144,9 @@ public class NServcieConnectPoolUtil {
 		}
 		//worker是否足够
 		//等待结果并返回
-		synchronized (user.intern()) {
+		synchronized (user.trim().intern()) {
 			try {
-				user.intern().wait();
+				user.trim().intern().wait();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -213,7 +214,7 @@ public class NServcieConnectPoolUtil {
 				//等待连接好--连接建立
 				synchronized (this.name.intern()) {
 					if(!selector.linkMap.containsKey(channel)) {
-						this.name.wait();
+						this.name.intern().wait();
 					}
 				}
 				//开始读准备
@@ -312,8 +313,8 @@ public class NServcieConnectPoolUtil {
 						if(--num == 0) {//读取完毕，放到用户区域
 							log.info("received: " + user.trim());
 							first = true;
-							receivedMap.put(user.trim(), out.toByteArray());
-							synchronized (user.trim().intern().intern()) {//激发调用方返回
+							synchronized (user.trim().intern()) {//激发调用方返回
+								receivedMap.put(user.trim(), out.toByteArray());
 								user.trim().intern().notifyAll();
 								out.reset();
 							}
@@ -372,7 +373,10 @@ public class NServcieConnectPoolUtil {
 		}
 
 		private void justSend(byte[] header, int offset, int len) {
-			
+			if(channel.isConnectionPending()) {
+				log.info("pending:" + channel.hashCode());
+				log.info("pending then:" + socketWorkerMap.keySet().stream().map(item->item.hashCode()).collect(Collectors.toList()));
+			}
 			ByteBuffer buf = ByteBuffer.wrap(header, offset, len);//"hello,server".getBytes()
 			try {
 				while (buf.hasRemaining()) {
@@ -421,30 +425,37 @@ public class NServcieConnectPoolUtil {
 		AtomicInteger count = new AtomicInteger();
 		AtomicInteger count2 = new AtomicInteger();
 		AtomicInteger countCall = new AtomicInteger(0);
+		AtomicInteger countFirst = new AtomicInteger(0);
 		AtomicLong endTime = new AtomicLong(0);
 		long t1 = System.currentTimeMillis();
-		for(int i = 0; i < 2; i++) {
+		for(int i = 0; i < 100; i++) {
 			final int j = i;
 			new Thread(()->{
-				for(int k = 0; k < 10; k++) {
-					String send = "hello,server, rpc call" + j;
-					countCall.incrementAndGet();
-					byte[] received = util.sendData("user", "localhost:12345", send.getBytes());
-					if(received != null) {
-						log.info("success:" + new String(received));
-						count.incrementAndGet();
-					}else {
-						log.info("success: null");
-						count2.incrementAndGet();
+				try {
+					countFirst.incrementAndGet();
+					for(int k = 0; k < 1; k++) {
+						String send = "hello,server, rpc call" + j;
+						countCall.incrementAndGet();
+						byte[] received = util.sendData("user", "localhost:12345", send.getBytes());
+						if(received != null) {
+							log.info("success:" + new String(received));
+							count.incrementAndGet();
+						}else {
+							log.info("success: null");
+							count2.incrementAndGet();
+						}
+						endTime.set(System.currentTimeMillis());
 					}
-					endTime.set(System.currentTimeMillis());
+				}catch (Exception e) {
+					e.printStackTrace();
 				}
 			}).start();
 		}
 		 
 		try {
-			Thread.sleep(25000);
+			Thread.sleep(3000);
 			System.out.println(count.get() + "," + count2.get());
+			System.out.println("turn-count:" + countFirst.get());
 			System.out.println("call-count:" + countCall.get());
 			System.out.println("send-count:" + util.countSend.get());
 			System.out.println("poll-count:" + util.countPoll.get());

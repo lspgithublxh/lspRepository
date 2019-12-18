@@ -34,7 +34,7 @@ public class NServiceServerPoolUtil {
 	
 	public NServiceServerPoolUtil() {
 		this.serverSelector = new ServerSelector(this);
-		this.receivedMap = Maps.newHashMap();
+		this.receivedMap = Maps.newConcurrentMap();
 		this.channelNameMap = Maps.newHashMap();
 	}
 	
@@ -165,8 +165,8 @@ public class NServiceServerPoolUtil {
 					if(--num == 0) {//读取完毕，放到用户区域
 						log.info("received: " + user.trim());
 						first = true;
-						receivedMap.put(user.trim(), out.toByteArray());
 						synchronized (writePointName.intern()) {//激发调用方返回
+							receivedMap.put(user.trim(), out.toByteArray());
 							writePointName.intern().notifyAll();
 							out.reset();
 						}
