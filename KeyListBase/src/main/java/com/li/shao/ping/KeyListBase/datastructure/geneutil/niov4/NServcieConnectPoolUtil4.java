@@ -375,29 +375,29 @@ public class NServcieConnectPoolUtil4 {
 		}
 
 		private void justSend(byte[] header, int offset, int len) {
-			if(channel.isConnectionPending()) {
-				log.info("pending:" + channel.hashCode());
-				log.info("pending then:" + socketWorkerMap.keySet().stream().map(item->item.hashCode()).collect(Collectors.toList()));
-			}
 			ByteBuffer buf = ByteBuffer.wrap(header, offset, len);//"hello,server".getBytes()
 			try {
+				if(channel.isConnectionPending()) {
+					log.info("[pending]");
+					channel.finishConnect();
+				}
 				while (buf.hasRemaining()) {
 					channel.write(buf);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				try {
-					countSendFail.incrementAndGet();
-					while(channel.isConnectionPending()) {
-						System.out.println("[pending]");
-						channel.finishConnect();
-					}
-					while (buf.hasRemaining()) {
-						channel.write(buf);
-					} 
-				} catch (Exception e2) {
-					e.printStackTrace();
-				}
+//				try {
+//					countSendFail.incrementAndGet();
+//					if(channel.isConnectionPending()) {
+//						System.out.println("[pending]");
+//						channel.finishConnect();
+//					}
+//					while (buf.hasRemaining()) {
+//						channel.write(buf);
+//					} 
+//				} catch (Exception e2) {
+//					e.printStackTrace();
+//				}
 			}
 		}
 		
