@@ -85,9 +85,9 @@ public class SimpleConnectPoolUtil {
 		//从注册中心获取 所有的调用服务及其ip:port列表
 		String service = "user";
 		String[] ipArr = new String[] {"localhost:12345", "localhost:13456"};
-		tasks = Maps.newHashMap();
-		receivedMap = Maps.newHashMap();
-		workers = Maps.newHashMap();
+		tasks = Maps.newConcurrentMap();
+		receivedMap = Maps.newConcurrentMap();
+		workers = Maps.newConcurrentMap();
 		int len = ipArr.length;
 		for(int i = 0; i < len; i++) {
 			String target = service + "`" + ipArr[i];
@@ -195,7 +195,10 @@ public class SimpleConnectPoolUtil {
 		//等待结果并返回
 		synchronized (user.intern()) {
 			try {
-				user.intern().wait();
+				if(!receivedMap.containsKey(user)) {
+					user.intern().wait(25000);
+				}
+				
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -446,10 +449,10 @@ public class SimpleConnectPoolUtil {
 		AtomicInteger countCall = new AtomicInteger(0);
 		AtomicLong endTime = new AtomicLong(0);
 		long t1 = System.currentTimeMillis();
-		for(int i = 0; i < 10000; i++) {
+		for(int i = 0; i < 3000; i++) {
 			final int j = i;
 			new Thread(()->{
-				for(int k = 0; k < 10; k++) {
+				for(int k = 0; k < 30; k++) {
 					String send = "hello,server, rpc call" + j;
 					countCall.incrementAndGet();
 					byte[] received = util.sendData("user", "localhost:12345", send.getBytes());
