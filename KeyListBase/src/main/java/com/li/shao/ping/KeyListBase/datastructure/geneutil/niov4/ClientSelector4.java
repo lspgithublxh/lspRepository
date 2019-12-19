@@ -7,6 +7,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.common.collect.Maps;
 import com.li.shao.ping.KeyListBase.datastructure.geneutil.niov4.NServcieConnectPoolUtil4.Worker;
@@ -21,6 +22,7 @@ public class ClientSelector4 {
 	public Map<SocketChannel, Boolean> readMap;
 	public NServcieConnectPoolUtil4 pool;
 	public Object resiterLock = new Object();
+	public AtomicInteger countRead = new AtomicInteger(0);
 	
 	public ClientSelector4(NServcieConnectPoolUtil4 pool) {
 		try {
@@ -71,6 +73,7 @@ public class ClientSelector4 {
 								worker.getName().notify();
 							}
 						}else if(key.isReadable()) {
+							countRead.incrementAndGet();
 							SocketChannel channel = (SocketChannel) key.channel();
 							Worker worker = pool.socketWorkerMap.get(channel);
 							synchronized (worker.getName().intern()) {

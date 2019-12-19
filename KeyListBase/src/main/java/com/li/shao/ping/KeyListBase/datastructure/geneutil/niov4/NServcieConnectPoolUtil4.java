@@ -31,7 +31,8 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 遗漏消息的问题
+ * 遗漏消息的问题--channel断开pending---finishconnect即可
+ * 没有激活调用方的问题--调用方还没有等待，所在线程得到cpu时间落后了，而数据已经发送出去且收到返回了；---所以看有没有数据需不需要等待
  *
  * @author lishaoping
  * @date 2019年12月17日
@@ -148,11 +149,16 @@ public class NServcieConnectPoolUtil4 {
 		//等待结果并返回
 		synchronized (user.trim().intern()) {
 			try {
-				user.trim().intern().wait();
+				//可能已经先被激活了
+				if(!receivedMap.containsKey(user)) {
+					user.trim().intern().wait(40000);
+				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
+				log.info("waitout:" + user);
 			}
 		}
+		callSucSet.add(user);
 		return receivedMap.get(user);
 	}
 	
@@ -314,6 +320,7 @@ public class NServcieConnectPoolUtil4 {
 						out.write(cache, 0, count);
 						if(--num == 0) {//读取完毕，放到用户区域
 							log.info("received: " + user.trim());
+							countRead.incrementAndGet();
 							first = true;
 							synchronized (user.trim().intern()) {//激发调用方返回
 								receivedMap.put(user.trim(), out.toByteArray());
@@ -321,7 +328,7 @@ public class NServcieConnectPoolUtil4 {
 								out.reset();
 							}
 							buffer.clear();
-							break;
+//							break;
 						}
 					}
 					synchronized (this.name.intern()) {//等待selector激活
@@ -406,7 +413,9 @@ public class NServcieConnectPoolUtil4 {
 	AtomicInteger countSend = new AtomicInteger(0);
 	AtomicInteger countSendFail = new AtomicInteger(0);
 	AtomicInteger countPoll = new AtomicInteger(0);
+	AtomicInteger countRead = new AtomicInteger(0);
 	AtomicInteger countQueue = new AtomicInteger(0);
+	static Set<String> callSucSet = Sets.newHashSet();
 	
 	public static void main(String[] args) {
 		otherTest();
@@ -434,6 +443,7 @@ public class NServcieConnectPoolUtil4 {
 					e.printStackTrace();
 				}
 			}
+			callSucSet.add(user);
 			log.info("after buchong task" + user.intern());
 			return item.getReceivedMap().get(user);
 		});
@@ -442,6 +452,8 @@ public class NServcieConnectPoolUtil4 {
 		AtomicInteger countCall = new AtomicInteger(0);
 		AtomicInteger countFirst = new AtomicInteger(0);
 		AtomicLong endTime = new AtomicLong(0);
+		
+		
 		long t1 = System.currentTimeMillis();
 		for(int i = 0; i < 3000; i++) {
 			final int j = i;
@@ -459,6 +471,11 @@ public class NServcieConnectPoolUtil4 {
 			System.out.println("offer-count:" + util.countOffer.get());
 			System.out.println("offerfaield-count:" + util.countOfferFail.get());
 			System.out.println("offer-labor:" + countLabor.get());
+			System.out.println("read-count:" + util.countRead.get());
+			System.out.println("receivedMapsize:" + util.receivedMap.size());
+			util.receivedMap.keySet().removeAll(callSucSet);
+			System.out.println("blockCall:" + util.receivedMap);
+			System.out.println("readable-count:" + util.selector.countRead.get());
 			System.out.println("taskQueue-count:" + util.countQueue.get());
 			System.out.println("total-time:" + (endTime.get() - t1));
 		} catch (InterruptedException e) {
@@ -484,6 +501,7 @@ public class NServcieConnectPoolUtil4 {
 						log.info("success: null");
 						count2.incrementAndGet();
 					}
+					
 					endTime.set(System.currentTimeMillis());
 				}
 			}catch (Exception e) {
