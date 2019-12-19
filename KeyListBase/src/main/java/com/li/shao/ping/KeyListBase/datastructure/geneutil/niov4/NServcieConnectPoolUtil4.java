@@ -473,7 +473,7 @@ public class NServcieConnectPoolUtil4 {
 		new Thread(()->{
 			try {
 				countFirst.incrementAndGet();
-				for(int k = 0; k < 10; k++) {
+				for(int k = 0; k < 30; k++) {
 					String send = "hello,server, rpc call" + j;
 					countCall.incrementAndGet();
 					byte[] received = util.sendData("user", "localhost:12345", send.getBytes());
