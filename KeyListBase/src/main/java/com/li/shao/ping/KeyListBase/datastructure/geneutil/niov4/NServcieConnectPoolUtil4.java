@@ -1,4 +1,4 @@
-package com.li.shao.ping.KeyListBase.datastructure.geneutil.niov3;
+package com.li.shao.ping.KeyListBase.datastructure.geneutil.niov4;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -18,10 +18,12 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.li.shao.ping.KeyListBase.datastructure.entity.Rejection2Entity;
 import com.li.shao.ping.KeyListBase.datastructure.entity.Rejection2Entity2;
+import com.li.shao.ping.KeyListBase.datastructure.entity.Rejection2Entity24;
 import com.li.shao.ping.KeyListBase.datastructure.entity.Rejection2Entity2I;
 import com.li.shao.ping.KeyListBase.datastructure.geneutil.SimpleThreadPoolUtil;
 import com.li.shao.ping.KeyListBase.datastructure.geneutil.v2.SimpleConnectPoolUtil;
 import com.li.shao.ping.KeyListBase.datastructure.inter.RejectionStrategy22;
+import com.li.shao.ping.KeyListBase.datastructure.inter.RejectionStrategy24;
 import com.li.shao.ping.KeyListBase.datastructure.inter.RejectionStrategy2I;
 
 import lombok.Data;
@@ -36,18 +38,18 @@ import lombok.extern.slf4j.Slf4j;
  * @package  com.li.shao.ping.KeyListBase.datastructure.geneutil.niov3
  */
 @Slf4j
-public class NServcieConnectPoolUtil{
+public class NServcieConnectPoolUtil4 {
 
 	private Map<String, LinkedBlockingQueue<Task>> tasks;
 	public Map<SocketChannel, Worker> socketWorkerMap;
 	private Map<String, Set<Worker>> workers;
 	private Map<String, byte[]> receivedMap;
-	private ClientSelector selector;
+	private ClientSelector4 selector;
 	private long maxIdelTime;
 	private int maxWorkerNum;
 	private int maxIdleWorkerNum;
 	private int maxTaskNum;
-	private RejectionStrategy2I<Task> reject;
+	private RejectionStrategy24<Task> reject;
 	
 	private SimpleThreadPoolUtil tpool = new SimpleThreadPoolUtil(20, 200, 10, 1000,
 			(task) ->{task.run();log.info("rejection thread execute");;return true;}) ;
@@ -57,9 +59,9 @@ public class NServcieConnectPoolUtil{
 			(task) ->{task.run();log.info("rejection thread execute");;return true;}) ;
 	
 	
-	public NServcieConnectPoolUtil(int maxWorkerNum, int maxTaskNum, int maxIdleWorkerNum
-			,long maxIdelTime,RejectionStrategy2I<Task> reject) {
-		this.selector = new ClientSelector(this);
+	public NServcieConnectPoolUtil4(int maxWorkerNum, int maxTaskNum, int maxIdleWorkerNum
+			,long maxIdelTime,RejectionStrategy24<Task> reject) {
+		this.selector = new ClientSelector4(this);
 		this.maxWorkerNum = maxWorkerNum;
 		this.maxIdelTime = maxIdelTime;
 		this.maxTaskNum = maxTaskNum;
@@ -74,10 +76,10 @@ public class NServcieConnectPoolUtil{
 		//获取全部服务
 		String service = "user";
 		String[] ipArr = new String[] {"localhost:12345", "localhost:13456"};
-		tasks = Maps.newHashMap();
-		workers = Maps.newHashMap();
-		socketWorkerMap = Maps.newHashMap();
-		receivedMap = Maps.newHashMap();
+		tasks = Maps.newConcurrentMap();
+		workers = Maps.newConcurrentMap();
+		socketWorkerMap = Maps.newConcurrentMap();
+		receivedMap = Maps.newConcurrentMap();
 		int len = ipArr.length;
 		for(int i = 0; i < len; i++) {
 			String target = service + "`" + ipArr[i];
@@ -114,7 +116,7 @@ public class NServcieConnectPoolUtil{
 					if(workerSet.size() >= maxWorkerNum) {
 						workerSet.add(new Worker("new-worker-" + user, service, ipPort));
 					}
-					return reject.handle(new Rejection2Entity2I<Task>().setService(service).setUtil(this)
+					return reject.handle(new Rejection2Entity24<Task>().setService(service).setUtil(this)
 							.setReceivedMap(receivedMap)
 							.setIpPort(ipPort).setTask(data).setQueue(queue).setUser(user));
 				}
@@ -127,7 +129,7 @@ public class NServcieConnectPoolUtil{
 				if(workerSet.size() >= maxWorkerNum) {
 					workerSet.add(new Worker("new-worker-" + user, service, ipPort));
 				}
-				return reject.handle(new Rejection2Entity2I<Task>().setService(service).setUtil(this)
+				return reject.handle(new Rejection2Entity24<Task>().setService(service).setUtil(this)
 						.setReceivedMap(receivedMap)
 						.setIpPort(ipPort).setTask(data).setQueue(queue).setUser(user));
 
@@ -400,7 +402,7 @@ public class NServcieConnectPoolUtil{
 	private static void otherTest() {
 		log.info("hello");
 		AtomicInteger countLabor = new AtomicInteger(0);
-		NServcieConnectPoolUtil util = new NServcieConnectPoolUtil(10, 20, 10, 1000, item ->{
+		NServcieConnectPoolUtil4 util = new NServcieConnectPoolUtil4(10, 20, 10, 1000, item ->{
 			LinkedBlockingQueue<Task> queue = item.getQueue();
 			String user = item.getUser();
 			try {
@@ -430,26 +432,7 @@ public class NServcieConnectPoolUtil{
 		long t1 = System.currentTimeMillis();
 		for(int i = 0; i < 100; i++) {
 			final int j = i;
-			new Thread(()->{
-				try {
-					countFirst.incrementAndGet();
-					for(int k = 0; k < 1; k++) {
-						String send = "hello,server, rpc call" + j;
-						countCall.incrementAndGet();
-						byte[] received = util.sendData("user", "localhost:12345", send.getBytes());
-						if(received != null) {
-							log.info("success:" + new String(received));
-							count.incrementAndGet();
-						}else {
-							log.info("success: null");
-							count2.incrementAndGet();
-						}
-						endTime.set(System.currentTimeMillis());
-					}
-				}catch (Exception e) {
-					e.printStackTrace();
-				}
-			}).start();
+			newThread(util, count, count2, countCall, countFirst, endTime, j);
 		}
 		 
 		try {
@@ -467,5 +450,31 @@ public class NServcieConnectPoolUtil{
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+
+
+
+	private static void newThread(NServcieConnectPoolUtil4 util, AtomicInteger count, AtomicInteger count2,
+			AtomicInteger countCall, AtomicInteger countFirst, AtomicLong endTime, final int j) {
+		new Thread(()->{
+			try {
+				countFirst.incrementAndGet();
+				for(int k = 0; k < 1; k++) {
+					String send = "hello,server, rpc call" + j;
+					countCall.incrementAndGet();
+					byte[] received = util.sendData("user", "localhost:12345", send.getBytes());
+					if(received != null) {
+						log.info("success:" + new String(received));
+						count.incrementAndGet();
+					}else {
+						log.info("success: null");
+						count2.incrementAndGet();
+					}
+					endTime.set(System.currentTimeMillis());
+				}
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}).start();
 	}
 }
