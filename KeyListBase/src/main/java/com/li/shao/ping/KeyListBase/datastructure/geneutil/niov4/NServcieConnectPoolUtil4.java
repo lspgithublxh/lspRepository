@@ -386,12 +386,25 @@ public class NServcieConnectPoolUtil4 {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
+				try {
+					countSendFail.incrementAndGet();
+					while(channel.isConnectionPending()) {
+						System.out.println("[pending]");
+						channel.finishConnect();
+					}
+					while (buf.hasRemaining()) {
+						channel.write(buf);
+					} 
+				} catch (Exception e2) {
+					e.printStackTrace();
+				}
 			}
 		}
 		
 	}
 	
 	AtomicInteger countSend = new AtomicInteger(0);
+	AtomicInteger countSendFail = new AtomicInteger(0);
 	AtomicInteger countPoll = new AtomicInteger(0);
 	AtomicInteger countQueue = new AtomicInteger(0);
 	
@@ -441,6 +454,7 @@ public class NServcieConnectPoolUtil4 {
 			System.out.println("turn-count:" + countFirst.get());
 			System.out.println("call-count:" + countCall.get());
 			System.out.println("send-count:" + util.countSend.get());
+			System.out.println("sendfailed-count:" + util.countSendFail.get());
 			System.out.println("poll-count:" + util.countPoll.get());
 			System.out.println("offer-count:" + util.countOffer.get());
 			System.out.println("offerfaield-count:" + util.countOfferFail.get());

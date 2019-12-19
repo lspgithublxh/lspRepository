@@ -201,7 +201,7 @@ public class NServiceServerPoolUtil4 {
 							out.reset();
 						}
 						buffer.clear();
-						break;//
+//						break;//
 					}
 					
 				}
@@ -226,6 +226,7 @@ public class NServiceServerPoolUtil4 {
 					Thread.sleep(5000);
 					System.out.println("received:" + util.countReceived.get());
 					System.out.println("send" + util.countSend.get());
+					System.out.println("readable-count:" + util.serverSelector.countReadable.get());
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

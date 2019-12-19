@@ -28,6 +28,7 @@ public class ServerSelector4 {
 
 	private NServiceServerPoolUtil4 util;
 	public Map<String, Boolean> userReadableMap;
+	public AtomicInteger countReadable = new AtomicInteger(0);
 	
 	public ServerSelector4(NServiceServerPoolUtil4 util) {
 		this.util = util;
@@ -63,6 +64,7 @@ public class ServerSelector4 {
 							//启动监听
 							util.acceptSocketChannel(clientN);
 						}else if(key.isReadable()) {//必然只是socketChannel
+							countReadable.incrementAndGet();
 							SocketChannel clientN = (SocketChannel) key.channel();
 							//触发可以读了
 							String[] names = util.channelNameMap.get(clientN);
