@@ -223,7 +223,7 @@ public class NServiceServerPoolUtil4 {
 			NServiceServerPoolUtil4 util = new NServiceServerPoolUtil4();
 			new Thread(()->{
 				try {
-					Thread.sleep(15000);
+					Thread.sleep(40000);
 					System.out.println("received:" + util.countReceived.get());
 					System.out.println("send" + util.countSend.get());
 					System.out.println("readable-count:" + util.serverSelector.countReadable.get());

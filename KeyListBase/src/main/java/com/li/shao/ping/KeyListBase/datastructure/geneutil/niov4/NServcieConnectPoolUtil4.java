@@ -443,13 +443,13 @@ public class NServcieConnectPoolUtil4 {
 		AtomicInteger countFirst = new AtomicInteger(0);
 		AtomicLong endTime = new AtomicLong(0);
 		long t1 = System.currentTimeMillis();
-		for(int i = 0; i < 1000; i++) {
+		for(int i = 0; i < 3000; i++) {
 			final int j = i;
 			newThread(util, count, count2, countCall, countFirst, endTime, j);
 		}
 		 
 		try {
-			Thread.sleep(15000);
+			Thread.sleep(40000);
 			System.out.println(count.get() + "," + count2.get());
 			System.out.println("turn-count:" + countFirst.get());
 			System.out.println("call-count:" + countCall.get());
