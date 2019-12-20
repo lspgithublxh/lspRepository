@@ -31,14 +31,18 @@ public class HandleLRU_KUtil<T,V> {
 	private int maxSize;
 	private int minVisitCount;
 	
+	HandleLRU_KUtil<T, V> history;
 	{
 		leftLimit.right = rightLimit;
 		rightLimit.left = leftLimit;
 	}
 	
-	public HandleLRU_KUtil(int maxSize, int minVisitCount) {
+	public HandleLRU_KUtil(int maxSize, int minVisitCount, boolean hasHistry) {
 		this.maxSize = maxSize;
 		this.minVisitCount = minVisitCount;
+		if(hasHistry) {
+			history = new HandleLRU_KUtil<T, V>(maxSize, minVisitCount, false);
+		}
 	}
 	
 	@Data
@@ -61,10 +65,23 @@ public class HandleLRU_KUtil<T,V> {
 		}
 	}
 	
-	public synchronized boolean put(T key, V val) {
+	public synchronized Node put(T key, V val) {
+		
 		Node node = keyNodeMap.get(key);
-		if(node == null) {//不包含
-			Node n = new Node(key, val, System.nanoTime(), 0);
+		if(node == null) {//主程序不包含
+			if(history != null) {//主程序
+				Node hnode = history.put(key, val);
+				if(hnode.times < minVisitCount) {
+					return null;//不加入主程序
+				}else {//移除掉,再加入主程序
+					history.delete(key);
+					insertLeft(hnode);
+					size.incrementAndGet();
+					keyNodeMap.put(key, hnode);
+					return hnode;
+				}
+			}
+			Node n = new Node(key, val, System.nanoTime(), 1);
 			if(size.get() >= maxSize) {
 				//移除右边
 				removeRight();
@@ -75,14 +92,15 @@ public class HandleLRU_KUtil<T,V> {
 				size.incrementAndGet();
 			}
 			keyNodeMap.put(key, n);
+			return n;
 		}else {//包含
 			node.val = val;
 			node.updatetime = System.nanoTime();
 			node.times++;
-			//移动条件还要满足才行：
-			if(node.times < minVisitCount) {
-				return true;
-			}
+//			//移动条件还要满足才行：
+//			if(node.times < minVisitCount) {
+//				return node;
+//			}
 			Node nLef = node.left;
 			Node nRig = node.right;
 			
@@ -91,8 +109,9 @@ public class HandleLRU_KUtil<T,V> {
 			
 			
 			insertLeft(node);
+			
 		}
-		return true;
+		return node;
 	}
 
 	private void removeRight() {
@@ -124,10 +143,17 @@ public class HandleLRU_KUtil<T,V> {
 	
 	public V get(T key) {
 		Node node = keyNodeMap.get(key);
+		if(node == null) {
+			V v = history.get(key);
+			return v;
+		}
 		return node.val;
 	}
 	
 	public synchronized void delete(T key) {
+		if(history != null) {
+			history.delete(key);
+		}
 		Node node = keyNodeMap.get(key);
 		if(node != null) {
 			keyNodeMap.remove(key);
@@ -141,14 +167,14 @@ public class HandleLRU_KUtil<T,V> {
 	public synchronized void printList() {
 		Node cur = leftLimit;
 		while(cur != null) {
-			log.info(cur.val + "," + cur.updatetime);
+			log.info(cur.val + "," + cur.updatetime + "," + cur.times);
 			cur = cur.right;
 		}
 	}
 	
 	public static void main(String[] args) {
 		try {
-			HandleLRU_KUtil<String, Integer> util = new HandleLRU_KUtil<String, Integer>(100, 10);
+			HandleLRU_KUtil<String, Integer> util = new HandleLRU_KUtil<String, Integer>(100, 10, true);
 			SimpleThreadPoolUtil.pool.addTask(() -> {
 				final String name = "thread1";
 				for (int i = 0; i < 10000; i++) {
