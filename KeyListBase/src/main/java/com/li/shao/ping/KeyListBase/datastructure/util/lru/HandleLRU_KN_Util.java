@@ -31,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
  * @package  com.li.shao.ping.KeyListBase.datastructure.util
  */
 @Slf4j
-public class HandleLRU_KUtil<T,V> {
+public class HandleLRU_KN_Util<T,V> {
 
 	Node leftLimit = new Node(null,null, 0 ,0);
 	Node rightLimit = new Node(null,null, 0 ,0);
@@ -39,18 +39,20 @@ public class HandleLRU_KUtil<T,V> {
 	private AtomicInteger size = new AtomicInteger(0);
 	private int maxSize;
 	private int minVisitCount;
+	private int deep;//代表有几层历史
 	
-	HandleLRU_KUtil<T, V> history;
+	HandleLRU_KN_Util<T, V> history;
 	{
 		leftLimit.right = rightLimit;
 		rightLimit.left = leftLimit;
 	}
 	
-	public HandleLRU_KUtil(int maxSize, int minVisitCount, boolean hasHistry) {
+	public HandleLRU_KN_Util(int maxSize, int minVisitCount, int deep) {
 		this.maxSize = maxSize;
 		this.minVisitCount = minVisitCount;
-		if(hasHistry) {
-			history = new HandleLRU_KUtil<T, V>(maxSize, minVisitCount, false);
+		this.deep = deep;
+		if(deep > 0) {
+			history = new HandleLRU_KN_Util<T, V>(maxSize, minVisitCount, deep - 1);
 		}
 	}
 	
@@ -153,8 +155,10 @@ public class HandleLRU_KUtil<T,V> {
 	public V get(T key) {
 		Node node = keyNodeMap.get(key);
 		if(node == null) {
-			V v = history.get(key);
-			return v;
+			if(history != null) {
+				V v = history.get(key);
+				return v;
+			}
 		}
 		return node.val;
 	}
@@ -170,10 +174,14 @@ public class HandleLRU_KUtil<T,V> {
 			Node nrig = node.right;
 			nlef.right = nrig;
 			nrig.left = nlef;
+			size.decrementAndGet();
 		}
 	}
 	
 	public synchronized void printList() {
+		if(history != null) {
+			history.printList();
+		}
 		Node cur = leftLimit;
 		while(cur != null) {
 			log.info(cur.val + "," + cur.updatetime + "," + cur.times);
@@ -181,12 +189,21 @@ public class HandleLRU_KUtil<T,V> {
 		}
 	}
 	
+	public synchronized void deepSize() {
+		HandleLRU_KN_Util<T,V> cur = this;
+		while(cur != null) {
+			log.info(cur.deep + "-deep-" + cur.size.get());
+			cur = cur.history;
+		}
+	}
+	
 	public static void main(String[] args) {
 		try {
-			HandleLRU_KUtil<String, Integer> util = new HandleLRU_KUtil<String, Integer>(100, 10, true);
+			//有几层历史
+			HandleLRU_KN_Util<String, Integer> util = new HandleLRU_KN_Util<String, Integer>(100, 10, 1);
 			SimpleThreadPoolUtil.pool.addTask(() -> {
 				final String name = "thread1";
-				for (int i = 0; i < 10000; i++) {
+				for (int i = 0; i < 3000; i++) {
 					SimpleThreadPoolUtil.pool.addTask(() -> {
 						int v = (int) (Math.random() * 1000);
 						util.put(name + "key" + v, v);
@@ -195,7 +212,7 @@ public class HandleLRU_KUtil<T,V> {
 			});
 			SimpleThreadPoolUtil.pool.addTask(() -> {
 				final String name = "thread2";
-				for (int i = 0; i < 10000; i++) {
+				for (int i = 0; i < 3000; i++) {
 					SimpleThreadPoolUtil.pool.addTask(() -> {
 						int v = (int) (Math.random() * 1000);
 						util.put(name + "key" + v, v);
@@ -209,6 +226,8 @@ public class HandleLRU_KUtil<T,V> {
 			}
 			util.printList();
 			System.out.println(util.size.get());
+			System.out.println("---------------");
+			util.deepSize();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
