@@ -1,10 +1,12 @@
 package com.li.shao.ping.KeyListBase.datastructure.util.lru;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.li.shao.ping.KeyListBase.datastructure.geneutil.SimpleThreadPoolUtil;
 
@@ -26,6 +28,8 @@ import lombok.extern.slf4j.Slf4j;
  *   规律1：很长的完全不重复的数据
  *规律2： 某几个数据在一组不重复的数据中间隔出现；
  *规律3：
+ *
+ *keyNodeMap与链表的数量上的不一致
  * @author lishaoping
  * @date 2019年12月20日
  * @package  com.li.shao.ping.KeyListBase.datastructure.util
@@ -77,25 +81,35 @@ public class HandleLRU_KN_Util<T,V> {
 	}
 	
 	public synchronized Node put(T key, V val) {
-		
 		Node node = keyNodeMap.get(key);
 		if(node == null) {//主程序不包含
 			if(history != null) {//主程序
 				Node hnode = history.put(key, val);
-				if(hnode.times < minVisitCount) {
+				if(hnode == null || hnode.times < minVisitCount) {
 					return null;//不加入主程序
 				}else {//移除掉,再加入主程序
 					history.delete(key);
-					insertLeft(hnode);
-					size.incrementAndGet();
+					
+					if(size.get() >= maxSize) {
+						//移除右边
+						removeRight();
+						insertLeft(hnode);
+						//
+					}else {
+						insertLeft(hnode);
+						size.incrementAndGet();
+					}
+					
 					keyNodeMap.put(key, hnode);
-					return hnode;
+					return null;//不再往上加
 				}
 			}
 			Node n = new Node(key, val, System.nanoTime(), 1);
 			if(size.get() >= maxSize) {
 				//移除右边
+//				pringCur();
 				removeRight();
+//				pringCur();
 				insertLeft(n);
 				//
 			}else {
@@ -105,6 +119,9 @@ public class HandleLRU_KN_Util<T,V> {
 			keyNodeMap.put(key, n);
 			return n;
 		}else {//包含
+//			log.info("contain before");
+//			pringCur();
+//			log.info(keyNodeMap.keySet().toString());//会造成死锁
 			node.val = val;
 			node.updatetime = System.nanoTime();
 			node.times++;
@@ -120,7 +137,8 @@ public class HandleLRU_KN_Util<T,V> {
 			
 			
 			insertLeft(node);
-			
+//			pringCur();
+//			log.info("contain after");
 		}
 		return node;
 	}
@@ -131,6 +149,9 @@ public class HandleLRU_KN_Util<T,V> {
 		
 		rightThree.right = rightLimit;
 		rightLimit.left = rightThree;
+		if(rightTwo.key != null) {
+			keyNodeMap.remove(rightTwo.key);
+		}
 	}
 
 	private void insertLeft(Node n) {
@@ -158,6 +179,8 @@ public class HandleLRU_KN_Util<T,V> {
 			if(history != null) {
 				V v = history.get(key);
 				return v;
+			}else {
+				return null;
 			}
 		}
 		return node.val;
@@ -189,6 +212,16 @@ public class HandleLRU_KN_Util<T,V> {
 		}
 	}
 	
+	public synchronized void pringCur() {
+		Node cur = leftLimit;
+		System.out.println("deep:" + deep);
+		while(cur != null) {
+			System.out.print(cur.val + ",");
+			cur = cur.right;
+		}
+		System.out.println();
+	}
+	
 	public synchronized void deepSize() {
 		HandleLRU_KN_Util<T,V> cur = this;
 		while(cur != null) {
@@ -198,36 +231,57 @@ public class HandleLRU_KN_Util<T,V> {
 	}
 	
 	public static void main(String[] args) {
+//		test1();
+		test2();
+	}
+
+	private static void test2() {
+		HandleLRU_KN_Util<String, Integer> util = new HandleLRU_KN_Util<String, Integer>(3, 2, 4);
+//		int[] data = new int[] {1,2,3,1,2,3,1,2,3,1,2,3};
+		int[] data = new int[] {1,2,3,1,2,3,1,2,3,1,2,3,5,6,7,5,6,7,5,6,7,7,8,9,7,8,9};
+		for(int d : data) {
+			util.put("key" + d, d);
+		}
+		util.deepSize();
+	}
+
+	private static void test1() {
 		try {
 			//有几层历史
-			HandleLRU_KN_Util<String, Integer> util = new HandleLRU_KN_Util<String, Integer>(100, 10, 1);
+			List<String> keyList = Lists.newArrayList();
+			HandleLRU_KN_Util<String, Integer> util = new HandleLRU_KN_Util<String, Integer>(3, 2, 4);
 			SimpleThreadPoolUtil.pool.addTask(() -> {
 				final String name = "thread1";
-				for (int i = 0; i < 3000; i++) {
+				for (int i = 0; i < 100; i++) {
 					SimpleThreadPoolUtil.pool.addTask(() -> {
-						int v = (int) (Math.random() * 1000);
-						util.put(name + "key" + v, v);
+						synchronized (HandleLRU_KN_Util.class) {
+							int v = (int) (Math.random() * 1000);
+							util.put(name + "key" + v, v);
+							keyList.add(name + "key" + v);
+						}
 					});
 				}
 			});
-			SimpleThreadPoolUtil.pool.addTask(() -> {
-				final String name = "thread2";
-				for (int i = 0; i < 3000; i++) {
-					SimpleThreadPoolUtil.pool.addTask(() -> {
-						int v = (int) (Math.random() * 1000);
-						util.put(name + "key" + v, v);
-					});
-				}
-			});
+//			SimpleThreadPoolUtil.pool.addTask(() -> {
+//				final String name = "thread2";
+//				for (int i = 0; i < 100; i++) {
+//					SimpleThreadPoolUtil.pool.addTask(() -> {
+//						int v = (int) (Math.random() * 1000);
+//						util.put(name + "key" + v, v);
+//						keyList.add(name + "key" + v);
+//					});
+//				}
+//			});
 			try {
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			util.printList();
+//			util.printList();
 			System.out.println(util.size.get());
 			System.out.println("---------------");
 			util.deepSize();
+			System.out.println(keyList);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
