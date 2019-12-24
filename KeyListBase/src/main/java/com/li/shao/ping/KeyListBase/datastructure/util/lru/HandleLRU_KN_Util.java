@@ -231,8 +231,8 @@ public class HandleLRU_KN_Util<T,V> {
 	}
 	
 	public static void main(String[] args) {
-//		test1();
-		test2();
+		test1();
+//		test2();
 	}
 
 	private static void test2() {
@@ -248,17 +248,17 @@ public class HandleLRU_KN_Util<T,V> {
 	private static void test1() {
 		try {
 			//有几层历史
-			List<String> keyList = Lists.newArrayList();
-			HandleLRU_KN_Util<String, Integer> util = new HandleLRU_KN_Util<String, Integer>(3, 2, 4);
+			List<String> keyList = Lists.newCopyOnWriteArrayList();//reentrylock
+//			HandleLRU_KN_Util<String, Integer> util = new HandleLRU_KN_Util<String, Integer>(3, 2, 4);
+			HandleLRU_KN_Util<String, Integer> util = new HandleLRU_KN_Util<String, Integer>(300, 3, 4);
+
 			SimpleThreadPoolUtil.pool.addTask(() -> {
 				final String name = "thread1";
-				for (int i = 0; i < 100; i++) {
+				for (int i = 0; i < 1000; i++) {
 					SimpleThreadPoolUtil.pool.addTask(() -> {
-						synchronized (HandleLRU_KN_Util.class) {
-							int v = (int) (Math.random() * 1000);
-							util.put(name + "key" + v, v);
-							keyList.add(name + "key" + v);
-						}
+						int v = (int) (Math.random() * 1000);
+						util.put(name + "key" + v, v);
+//						keyList.add(name + "key" + v);
 					});
 				}
 			});
@@ -281,7 +281,7 @@ public class HandleLRU_KN_Util<T,V> {
 			System.out.println(util.size.get());
 			System.out.println("---------------");
 			util.deepSize();
-			System.out.println(keyList);
+//			System.out.println(keyList);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
