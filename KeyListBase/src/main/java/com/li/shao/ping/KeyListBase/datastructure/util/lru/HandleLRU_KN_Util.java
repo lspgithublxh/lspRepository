@@ -254,7 +254,7 @@ public class HandleLRU_KN_Util<T,V> {
 
 			SimpleThreadPoolUtil.pool.addTask(() -> {
 				final String name = "thread1";
-				for (int i = 0; i < 1000; i++) {
+				for (int i = 0; i < 10000; i++) {
 					SimpleThreadPoolUtil.pool.addTask(() -> {
 						int v = (int) (Math.random() * 1000);
 						util.put(name + "key" + v, v);
@@ -262,16 +262,16 @@ public class HandleLRU_KN_Util<T,V> {
 					});
 				}
 			});
-//			SimpleThreadPoolUtil.pool.addTask(() -> {
-//				final String name = "thread2";
-//				for (int i = 0; i < 100; i++) {
-//					SimpleThreadPoolUtil.pool.addTask(() -> {
-//						int v = (int) (Math.random() * 1000);
-//						util.put(name + "key" + v, v);
-//						keyList.add(name + "key" + v);
-//					});
-//				}
-//			});
+			SimpleThreadPoolUtil.pool.addTask(() -> {
+				final String name = "thread2";
+				for (int i = 0; i < 10000; i++) {
+					SimpleThreadPoolUtil.pool.addTask(() -> {
+						int v = (int) (Math.random() * 1000);
+						util.put(name + "key" + v, v);
+						keyList.add(name + "key" + v);
+					});
+				}
+			});
 			try {
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
