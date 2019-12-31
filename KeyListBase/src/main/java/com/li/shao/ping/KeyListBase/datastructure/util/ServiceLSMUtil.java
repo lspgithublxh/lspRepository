@@ -46,10 +46,12 @@ public class ServiceLSMUtil {
 
 	//rowkey:colflm:col:timestamp 冒号的ascll比数字大比字母小
 	//val
-	private Map<String, Entity> memstore = Maps.newTreeMap();
+	private TreeMap<String, Entity> memstore = Maps.newTreeMap();
 //	private Map<String, String> flushstore;
-	private LinkedBlockingQueue<Map<String, Entity>> tasks;
-	private SerializerUtil serialUtil = new SerializerUtil(Entity.class);
+	private LinkedBlockingQueue<TreeMap<String, Entity>> tasks;
+	private SerializerUtil serialUtil = new SerializerUtil(Entity.class, TreeMap.class);
+	private SerializerUtil serialUtil2 = new SerializerUtil(String.class, TreeMap.class);
+
 //	private int status;//0 正常,1正在刷磁盘
 	private int maxTasks;
 	private String filePath;
@@ -59,12 +61,13 @@ public class ServiceLSMUtil {
 	private int maxFileCount;
 	private long maxFileSize;
 	private int maxVersionCount;
+	private int maxBlockKeySize;
 	
 	 public static SimpleThreadPoolUtil pool2 = new SimpleThreadPoolUtil(100, 200, 30, 1000,
 				(task) ->{task.run();return true;}) ;
 	
 	private ServiceLSMUtil(int maxTasks) {
-		tasks = new LinkedBlockingQueue<Map<String,Entity>>(maxTasks);
+		tasks = new LinkedBlockingQueue<TreeMap<String,Entity>>(maxTasks);
 		initTasks();
 	}
 	//序列化
@@ -73,27 +76,38 @@ public class ServiceLSMUtil {
 		//写入磁盘
 		SimpleThreadPoolUtil.pool.addTask(()->{
 			try {
-				Map<String, Entity> task = tasks.take();
+				TreeMap<String, Entity> task = tasks.take();
 				pool2.addTask(()->{
 					//老数据刷到磁盘
 					File newFile = new File(filePath + "/C0File" + currCallNo());
 					try {
-						ByteArrayOutputStream bout = new ByteArrayOutputStream();
-						for(Entry<String,Entity> item : task.entrySet()) {
-							//序列化写入
-							String line = item.getKey() + "|" + item.getValue().val + "|" + item.getValue().status + "\r\n";
-							bout.write(line.getBytes());
-						}
-						ByteBuffer buffer = ByteBuffer.wrap(bout.toByteArray());
-						newFile.createNewFile();
-						FileOutputStream out = new FileOutputStream(newFile);
-						FileChannel channel = out.getChannel();
-						channel.write(buffer);
-						channel.force(true);
-						channel.close();
-						fileCount.incrementAndGet();
+//						ByteArrayOutputStream bout = new ByteArrayOutputStream();
+//						for(Entry<String,Entity> item : task.entrySet()) {
+//							//序列化写入
+//							String line = item.getKey() + "|" + item.getValue().val + "|" + item.getValue().status + "\r\n";
+//							bout.write(line.getBytes());
+//						}
+//						ByteBuffer buffer = ByteBuffer.wrap(bout.toByteArray());
+//						newFile.createNewFile();
+//						FileOutputStream out = new FileOutputStream(newFile);
+//						FileChannel channel = out.getChannel();
+//						channel.write(buffer);
+//						channel.force(true);
+//						channel.close();
+						long[] startEnd = serialUtil.serialize2(task, newFile);//开始写磁盘
+						TreeMap<String, String> indexMap = Maps.newTreeMap();
+						String firstKey = task.firstKey();
+						String highKey = task.lastKey();
+						indexMap.put(firstKey, highKey + " " + startEnd[0] + " " + startEnd[1]);
+						long[] se = serialUtil2.serialize2(indexMap, newFile);
+						newFile.renameTo(new File(filePath + "/C0" + currCallNo() + "_" + startEnd[0] + ":" + startEnd[1]));
 						synchronized (fileCount) {
-							fileCount.notify();
+							File f = new File(filePath);
+							File[] files = f.listFiles((it,name )->name.startsWith("C0"));
+							if(files.length > maxFileCount) {
+								fileCount.notify();
+							}
+							
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -109,16 +123,26 @@ public class ServiceLSMUtil {
 		//监听磁盘个数，而合并磁盘中文件个数
 		SimpleThreadPoolUtil.pool.addTask(()->{
 			for(;;) {
-				if(fileCount.get() > maxFileCount) {
+				File f = new File(filePath);
+				File[] files = f.listFiles((it,name )->name.startsWith("C0"));
+				synchronized (fileCount) {
+					if(files.length <= maxFileCount) {
+						try {
+							fileCount.wait();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+				
+				if(files.length > maxFileCount) {
 					//开始两两合并
-					File f = new File(filePath);
-					File[] files = f.listFiles((it,name )->name.startsWith("C0"));
 					try {
 						int res = files.length % 2;
 						Map<String, Entity> totalMap = Maps.newHashMap();
 						for(int i = 0; i + 1 < files.length; i += 2) {
 							Map<String, Entity> mt = mergeFile(files[i], files[1]);
-							mergeToTotalMap(mt, totalMap);
+							totalMap = mergeToTotalMap(mt, totalMap);
 						}
 						//切分totalMap为多块；
 						persistentTotalMap(totalMap);
@@ -127,24 +151,54 @@ public class ServiceLSMUtil {
 					}
 //					Arrays.asList(files).stream().reduce(null, (fil1, file2) ->mergeTwoFile(fil1, file2));
 				}//
-				synchronized (fileCount) {
-					try {
-						fileCount.wait();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
+				
 			}
 		});
 	}
 
 	private void persistentTotalMap(Map<String, Entity> totalMap) {
-		// TODO Auto-generated method stub
+		//按行数合并--key的个数
+		TreeMap<String, Entity> blockMap = Maps.newTreeMap();
+		int i = 0;
+		File file = new File(filePath + "/C1" + currCallNo());
+		Map<String, String> indexMap = Maps.newTreeMap();
+		try {
+			file.createNewFile();
+			for(Entry<String, Entity> entity : totalMap.entrySet()) {
+				blockMap.put(entity.getKey(), entity.getValue());
+				if(blockMap.size() > maxBlockKeySize) {
+					//持久化到磁盘
+					perstenseMap(blockMap, file, indexMap);
+				}
+			}
+			if(blockMap.size() > 0) {
+				perstenseMap(blockMap, file, indexMap);
+			}
+			//持久化索引
+			long[] startEnd = serialUtil2.serialize2(indexMap, file);
+			boolean rename = file.renameTo(new File(filePath + "/C1" + currCallNo() + "_" + startEnd[0] + ":" + startEnd[1]));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 	}
 
-	private void mergeToTotalMap(Map<String, Entity> mt, Map<String, Entity> totalMap) {
-		// TODO Auto-generated method stub
+	private void perstenseMap(TreeMap<String, Entity> blockMap, File file, Map<String, String> indexMap) {
+		long[] startEnd = serialUtil.serialize2(blockMap, file);
+		String lowKey = blockMap.firstKey();
+		String highKey = blockMap.lastKey();
+		indexMap.put(lowKey, highKey + " " + startEnd[0] + " " + startEnd[1]);
+		blockMap.clear();
+	}
+
+	private Map<String, Entity> mergeToTotalMap(Map<String, Entity> mt, Map<String, Entity> totalMap) {
+		if(mt.size() > totalMap.size()) {
+			mt.putAll(totalMap);
+			totalMap = mt;
+		}else {
+			totalMap.putAll(mt);
+		}
+		return totalMap;
 	}
 
 	/**
@@ -170,70 +224,46 @@ public class ServiceLSMUtil {
 			int mapSize2 = map2.size();
 			if(mapSize1 > mapSize2) {
 				map1.putAll(map2);
-				String oldPrfix = null;
-				List<String> keyList = Lists.newArrayList();
-				Iterator<Entry<String, Entity>> iterator1 = map1.entrySet().iterator();
-				for(;iterator1.hasNext();) {
-					Entry<String, Entity> entry = iterator1.next();
-					String key = entry.getKey();
-					Entity val = entry.getValue();
-					int len1 = key.lastIndexOf(":");
-					String prefix = key.substring(len1 + 1);
-					if(prefix.equals(oldPrfix)) {
-						//查看新老key是否要根据操作类型合并
-						if(val.status == 0) {//删除
-							keyList.clear();
-						}else if(val.status == 1) {//新增
-							keyList.add(key);
-						}
-					}else {
-						oldPrfix = prefix;
-						keyList.clear();
-						if(val.status != 0) {
-							keyList.add(key);
-						}
-					}
-					if(keyList.size() > maxVersionCount) {//删除多余老版本
-						String removeKey = keyList.remove(0);
-						map1.remove(removeKey);//删除老版本
-					}
-				}
-//				Iterator<Entry<String, Entity>> iterator1 = map1.entrySet().iterator();
-//				Iterator<Entry<String, Entity>> iterator2 = map2.entrySet().iterator();
-//				Entry<String, Entity> next1 = iterator1.next();
-//				int bigger = 0;
-//				while(iterator2.hasNext()) {
-//					Entry<String, Entity> next2 = iterator1.next();
-//					String key = next1.getKey();
-//					String key2 = next2.getKey();
-//					int len1 = key.lastIndexOf(":");
-//					String prefix = key.substring(len1 + 1);
-//					long time1 = Long.valueOf(key.substring(0, len1));
-//					int len2 = key2.lastIndexOf(":");
-//					String prefix2 = key2.substring(len2 + 1);
-//					long time2 = Long.valueOf(key2.substring(0, len2));
-//					if(prefix.equals(prefix2)) {
-//						Entity v = next1.getValue();
-//						Entity v2 = next2.getValue();//键值相等，操作合并
-//						
-//						bigger = 0;
-//					}else if(prefix2.compareTo(prefix2) > 0) {//更大
-//						next1 = iterator1.next();
-//						bigger = 1;
-//						continue;
-//					}else {//更小
-//						bigger = -1;
-//					}
-//					
-//				}
-//				for(int i = 0, j = 0; i < mapSize1 && j < mapSize2; i++, j++) {
-//					
-//				}
+				map = map1;
 			}else {
-				
+				map2.putAll(map1);
+				map = map2;
 			}
 		}
+		mergeKey(map);
 		return map;
+	}
+
+	private void mergeKey(Map<String, Entity> map1) {
+		String oldPrfix = null;
+		List<String> keyList = Lists.newArrayList();
+		Iterator<Entry<String, Entity>> iterator1 = map1.entrySet().iterator();
+		for(;iterator1.hasNext();) {
+			Entry<String, Entity> entry = iterator1.next();
+			String key = entry.getKey();
+			Entity val = entry.getValue();
+			int len1 = key.lastIndexOf(":");
+			String prefix = key.substring(len1 + 1);
+			if(prefix.equals(oldPrfix)) {
+				//查看新老key是否要根据操作类型合并
+				if(val.status == 0) {//删除
+					keyList.clear();
+				}else if(val.status == 1) {//新增
+					keyList.add(key);
+				}
+			}else {
+				oldPrfix = prefix;
+				keyList.clear();
+				if(val.status != 0) {
+					keyList.add(key);
+				}
+			}
+			if(keyList.size() > maxVersionCount) {//删除多余老版本
+				String removeKey = keyList.remove(0);
+				map1.remove(removeKey);//删除老版本
+			}
+		}
+		//合并完毕
 	}
 
 	private File mergeTwoFile(File fil1, File file2) {
@@ -244,11 +274,11 @@ public class ServiceLSMUtil {
 			long len1 = fil1.length();
 			long len2 = file2.length();
 			if(len1 > maxFileSize) {
-				fil1.renameTo(new File("C1" + currCallNo()));
+				fil1.renameTo(new File(filePath + "/C1" + currCallNo()));
 				return fil1;
 			}
 			if(len2 > maxFileSize) {
-				file2.renameTo(new File("C1" + currCallNo()));
+				file2.renameTo(new File(filePath + "/C1" + currCallNo()));
 				return file2;
 			}
 			//开始合并两个文件：合并之后一块一块的写入新文件中；末尾添加上索引
@@ -307,6 +337,10 @@ public class ServiceLSMUtil {
 		memstore.entrySet().forEach(item ->{
 			System.out.println(item);//批量的刷到文件里
 		});
+		
+		//重命名：
+		File file = new File("D:\\test\\b.txt");
+		file.renameTo(new File("D:\\test\\bs.txt"));
 		
 	}
 }
