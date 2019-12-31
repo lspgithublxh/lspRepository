@@ -81,19 +81,6 @@ public class ServiceLSMUtil {
 					//老数据刷到磁盘
 					File newFile = new File(filePath + "/C0File" + currCallNo());
 					try {
-//						ByteArrayOutputStream bout = new ByteArrayOutputStream();
-//						for(Entry<String,Entity> item : task.entrySet()) {
-//							//序列化写入
-//							String line = item.getKey() + "|" + item.getValue().val + "|" + item.getValue().status + "\r\n";
-//							bout.write(line.getBytes());
-//						}
-//						ByteBuffer buffer = ByteBuffer.wrap(bout.toByteArray());
-//						newFile.createNewFile();
-//						FileOutputStream out = new FileOutputStream(newFile);
-//						FileChannel channel = out.getChannel();
-//						channel.write(buffer);
-//						channel.force(true);
-//						channel.close();
 						long[] startEnd = serialUtil.serialize2(task, newFile);//开始写磁盘
 						TreeMap<String, String> indexMap = Maps.newTreeMap();
 						String firstKey = task.firstKey();
@@ -207,6 +194,7 @@ public class ServiceLSMUtil {
 	 * @param file2
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	private Map<String, Entity> mergeFile(File file, File file2) {
 		Map<String, Entity> map = null;
 		Map<String, Entity> map1 = null;
@@ -293,8 +281,24 @@ public class ServiceLSMUtil {
 		}
 		return null;
 	}
+	
 	public synchronized void putVal(String key, String val) {
 		String oldVal = memstore.put(key, new Entity().setVal(val).setStatus((short)1)).getVal();
+		if(memstore.size() > maxMemStoreSize) {
+			//开始新建memstore,异步序列化到磁盘
+			try {
+				boolean suc = tasks.offer(memstore, 1000, TimeUnit.MILLISECONDS);
+				log.info("offer tasks:" + suc);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			memstore = Maps.newTreeMap();
+		}
+	}
+	
+	public synchronized void putVal(KeyValue keyVal) {
+		String key = keyVal.rowkey + ":" + keyVal.colFml + ":" + keyVal.col + ":" + System.currentTimeMillis();
+		String oldVal = memstore.put(key, new Entity().setVal(keyVal.val).setStatus((short)1)).getVal();
 		if(memstore.size() > maxMemStoreSize) {
 			//开始新建memstore,异步序列化到磁盘
 			try {
@@ -328,6 +332,16 @@ public class ServiceLSMUtil {
 		short status;//0删除,1新增
 	}
 	
+	@Data
+	@Accessors(chain = true)
+	static class KeyValue{
+		String rowkey;
+		String colFml;
+		String col;
+		
+		String val;
+	}
+	
 	public static void main(String[] args) {
 		Map<String, String> memstore = Maps.newTreeMap();
 		memstore.put("s", "v");
@@ -341,6 +355,7 @@ public class ServiceLSMUtil {
 		//重命名：
 		File file = new File("D:\\test\\b.txt");
 		file.renameTo(new File("D:\\test\\bs.txt"));
+	
 		
 	}
 }
