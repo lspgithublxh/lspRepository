@@ -42,8 +42,8 @@ public class SerializerUtil {
 			long start = channel.position();
 			out = new Output(output);
 			kryo.writeObject(out, obj);
-			out.close();
 			long end = channel.position();
+			out.close();
 			return new long[] {start, end};
 		} catch (Exception e) {
 			e.printStackTrace();

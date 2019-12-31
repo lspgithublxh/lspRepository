@@ -84,35 +84,39 @@ public class ServiceLSMUtil {
 		//写入磁盘
 		log.info("initTasks");
 		SimpleThreadPoolUtil.pool.addTask(()->{
-			try {
-				TreeMap<String, Entity> task = tasks.take();
-				pool2.addTask(()->{
-					//老数据刷到磁盘
-					File newFile = new File(filePath + "/C0File" + currCallNo());
-					try {
-						long[] startEnd = serialUtil.serialize2(task, newFile);//开始写磁盘
-						TreeMap<String, String> indexMap = Maps.newTreeMap();
-						String firstKey = task.firstKey();
-						String highKey = task.lastKey();
-						indexMap.put(firstKey, highKey + " " + startEnd[0] + " " + startEnd[1]);
-						long[] se = serialUtil2.serialize2(indexMap, newFile);
-						newFile.renameTo(new File(filePath + "/C0" + currCallNo() + "_" + startEnd[0] + ":" + startEnd[1]));
-						synchronized (fileCount) {
-							File f = new File(filePath);
-							File[] files = f.listFiles((it,name )->name.startsWith("C0"));
-							if(files.length > maxFileCount) {
-								fileCount.notify();
+			while(true) {
+				try {
+					TreeMap<String, Entity> task = tasks.take();
+					log.info("task take, size:" + task.size());
+					pool2.addTask(()->{
+						//老数据刷到磁盘
+						File newFile = new File(filePath + "/C0File" + currCallNo());
+						log.info("get task, create File:" + newFile.getName());
+						try {
+							long[] startEnd = serialUtil.serialize2(task, newFile);//开始写磁盘
+							TreeMap<String, String> indexMap = Maps.newTreeMap();
+							String firstKey = task.firstKey();
+							String highKey = task.lastKey();
+							indexMap.put(firstKey, highKey + " " + startEnd[0] + " " + startEnd[1]);
+							long[] se = serialUtil2.serialize2(indexMap, newFile);
+							newFile.renameTo(new File(filePath + "/C0" + currCallNo() + "_" + startEnd[0] + ":" + startEnd[1]));
+							synchronized (fileCount) {
+								File f = new File(filePath);
+								File[] files = f.listFiles((it,name )->name.startsWith("C0"));
+								if(files.length > maxFileCount) {
+									fileCount.notify();
+								}
+								
 							}
-							
+						} catch (Exception e) {
+							e.printStackTrace();
+							newFile.delete();
 						}
-					} catch (Exception e) {
-						e.printStackTrace();
-						newFile.delete();
-					}
-					
-				});
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+						
+					});
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 			
 		});
@@ -301,7 +305,7 @@ public class ServiceLSMUtil {
 			//开始新建memstore,异步序列化到磁盘
 			try {
 				boolean suc = tasks.offer(memstore, 1000, TimeUnit.MILLISECONDS);
-				log.info("offer tasks:" + suc);
+				log.info("offer tasks:" + suc + ", task size:" + tasks.size());
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -316,7 +320,7 @@ public class ServiceLSMUtil {
 			//开始新建memstore,异步序列化到磁盘
 			try {
 				boolean suc = tasks.offer(memstore, 1000, TimeUnit.MILLISECONDS);
-				log.info("offer tasks:" + suc);
+				log.info("offer tasks:" + suc + ", task size:" + tasks.size());
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -378,14 +382,14 @@ public class ServiceLSMUtil {
 				break;
 			}
 			try {
-				Thread.sleep(100);
+				Thread.sleep(10);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 			int d = (int)(Math.random() * 10000);
 			util.putVal(new KeyValue().setRowkey("rowkey" + d).setColFml("colfml").setCol("name")
 					.setVal(d + ""));
-			log.info("memstore size:" + util.memstore.size());
+//			log.info("memstore size:" + util.memstore.size());
 		}
 	}
 }
