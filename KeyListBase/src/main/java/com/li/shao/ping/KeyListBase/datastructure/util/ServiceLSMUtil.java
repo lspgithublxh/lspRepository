@@ -2,12 +2,17 @@ package com.li.shao.ping.KeyListBase.datastructure.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -15,7 +20,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.common.collect.Maps;
 import com.li.shao.ping.KeyListBase.datastructure.geneutil.SimpleThreadPoolUtil;
+import com.li.shao.ping.KeyListBase.datastructure.util.seria.SerializerUtil;
 
+import avro.shaded.com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +49,7 @@ public class ServiceLSMUtil {
 	private Map<String, Entity> memstore = Maps.newTreeMap();
 //	private Map<String, String> flushstore;
 	private LinkedBlockingQueue<Map<String, Entity>> tasks;
+	private SerializerUtil serialUtil = new SerializerUtil(Entity.class);
 //	private int status;//0 正常,1正在刷磁盘
 	private int maxTasks;
 	private String filePath;
@@ -50,6 +58,7 @@ public class ServiceLSMUtil {
 	private AtomicInteger fileCount = new AtomicInteger(0);
 	private int maxFileCount;
 	private long maxFileSize;
+	private int maxVersionCount;
 	
 	 public static SimpleThreadPoolUtil pool2 = new SimpleThreadPoolUtil(100, 200, 30, 1000,
 				(task) ->{task.run();return true;}) ;
@@ -104,7 +113,19 @@ public class ServiceLSMUtil {
 					//开始两两合并
 					File f = new File(filePath);
 					File[] files = f.listFiles((it,name )->name.startsWith("C0"));
-					Arrays.asList(files).stream().reduce(null, (fil1, file2) ->mergeTwoFile(fil1, file2));
+					try {
+						int res = files.length % 2;
+						Map<String, Entity> totalMap = Maps.newHashMap();
+						for(int i = 0; i + 1 < files.length; i += 2) {
+							Map<String, Entity> mt = mergeFile(files[i], files[1]);
+							mergeToTotalMap(mt, totalMap);
+						}
+						//切分totalMap为多块；
+						persistentTotalMap(totalMap);
+					}catch (Exception e) {
+						e.printStackTrace();
+					}
+//					Arrays.asList(files).stream().reduce(null, (fil1, file2) ->mergeTwoFile(fil1, file2));
 				}//
 				synchronized (fileCount) {
 					try {
@@ -117,6 +138,104 @@ public class ServiceLSMUtil {
 		});
 	}
 
+	private void persistentTotalMap(Map<String, Entity> totalMap) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void mergeToTotalMap(Map<String, Entity> mt, Map<String, Entity> totalMap) {
+		// TODO Auto-generated method stub
+	}
+
+	/**
+	 * gson序列化也占用很大空间；	
+	 * @param file
+	 * @param file2
+	 * @return
+	 */
+	private Map<String, Entity> mergeFile(File file, File file2) {
+		Map<String, Entity> map = null;
+		Map<String, Entity> map1 = null;
+		Map<String, Entity> map2 = null;
+		if(file != null ) {
+			map1 = serialUtil.deserialize(file, TreeMap.class);//HashMap<String, Entity> dataMap
+			map = map1;
+		}
+		if(file2 != null) {
+			map2 = serialUtil.deserialize(file2, TreeMap.class);
+			map = map2;
+		}
+		if(file != null && file2 != null) {//合并--只处理键相等的；仅仅保留时间戳不同的n个版本以内的。
+			int mapSize1 = map1.size();
+			int mapSize2 = map2.size();
+			if(mapSize1 > mapSize2) {
+				map1.putAll(map2);
+				String oldPrfix = null;
+				List<String> keyList = Lists.newArrayList();
+				Iterator<Entry<String, Entity>> iterator1 = map1.entrySet().iterator();
+				for(;iterator1.hasNext();) {
+					Entry<String, Entity> entry = iterator1.next();
+					String key = entry.getKey();
+					Entity val = entry.getValue();
+					int len1 = key.lastIndexOf(":");
+					String prefix = key.substring(len1 + 1);
+					if(prefix.equals(oldPrfix)) {
+						//查看新老key是否要根据操作类型合并
+						if(val.status == 0) {//删除
+							keyList.clear();
+						}else if(val.status == 1) {//新增
+							keyList.add(key);
+						}
+					}else {
+						oldPrfix = prefix;
+						keyList.clear();
+						if(val.status != 0) {
+							keyList.add(key);
+						}
+					}
+					if(keyList.size() > maxVersionCount) {//删除多余老版本
+						String removeKey = keyList.remove(0);
+						map1.remove(removeKey);//删除老版本
+					}
+				}
+//				Iterator<Entry<String, Entity>> iterator1 = map1.entrySet().iterator();
+//				Iterator<Entry<String, Entity>> iterator2 = map2.entrySet().iterator();
+//				Entry<String, Entity> next1 = iterator1.next();
+//				int bigger = 0;
+//				while(iterator2.hasNext()) {
+//					Entry<String, Entity> next2 = iterator1.next();
+//					String key = next1.getKey();
+//					String key2 = next2.getKey();
+//					int len1 = key.lastIndexOf(":");
+//					String prefix = key.substring(len1 + 1);
+//					long time1 = Long.valueOf(key.substring(0, len1));
+//					int len2 = key2.lastIndexOf(":");
+//					String prefix2 = key2.substring(len2 + 1);
+//					long time2 = Long.valueOf(key2.substring(0, len2));
+//					if(prefix.equals(prefix2)) {
+//						Entity v = next1.getValue();
+//						Entity v2 = next2.getValue();//键值相等，操作合并
+//						
+//						bigger = 0;
+//					}else if(prefix2.compareTo(prefix2) > 0) {//更大
+//						next1 = iterator1.next();
+//						bigger = 1;
+//						continue;
+//					}else {//更小
+//						bigger = -1;
+//					}
+//					
+//				}
+//				for(int i = 0, j = 0; i < mapSize1 && j < mapSize2; i++, j++) {
+//					
+//				}
+			}else {
+				
+			}
+		}
+		return map;
+	}
+
 	private File mergeTwoFile(File fil1, File file2) {
 		if(fil1 == null) {
 			return file2;
@@ -126,7 +245,21 @@ public class ServiceLSMUtil {
 			long len2 = file2.length();
 			if(len1 > maxFileSize) {
 				fil1.renameTo(new File("C1" + currCallNo()));
+				return fil1;
 			}
+			if(len2 > maxFileSize) {
+				file2.renameTo(new File("C1" + currCallNo()));
+				return file2;
+			}
+			//开始合并两个文件：合并之后一块一块的写入新文件中；末尾添加上索引
+			//一行一个key-value
+			//一次写1024个keyvalue
+			//读取时候，读取byte起止区间，byte[]转为一个map对象或者一个字符串对象-自己处理
+			//合并两个map，转为byte[]写到文件，且
+			//当文件的总大小超过某个值后，就要按行键分裂为两个目录-region, 各存一半的内容：每个目录有一个memstore进行分别的写入。:::所以不担心太多C1
+			//
+			
+			
 		}
 		return null;
 	}
@@ -160,7 +293,7 @@ public class ServiceLSMUtil {
 	
 	@Data
 	@Accessors(chain = true)
-	class Entity{
+	static class Entity{
 		String val;
 		short status;//0删除,1新增
 	}
