@@ -328,6 +328,10 @@ public class ServiceLSMUtil {
 		}
 	}
 	
+	public void getVal(String key) {
+		
+	}
+	
 	private String currCallNo() {
 		long now = System.currentTimeMillis();
 		int num = increNum();
