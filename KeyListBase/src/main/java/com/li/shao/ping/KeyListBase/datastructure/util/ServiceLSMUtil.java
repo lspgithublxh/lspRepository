@@ -341,6 +341,27 @@ public class ServiceLSMUtil {
 		}
 	}
 	
+	public boolean deleVal(KeyValue keyVal) {
+		String key = keyVal.rowkey + ":" + keyVal.colFml + ":" + keyVal.col + ":" + System.currentTimeMillis();
+		memstore.remove(key);
+		//为了性能，直接加到memstore中即可::因为肯定不存在：时间太短
+		memstore.put(key, new Entity().setStatus((short)1).setVal(keyVal.val));
+		//从C0文件里删除
+		//从C1文件里删除
+//		File folder = new File(filePath);
+//		File[] c0Files = filterFile(key, folder, "C0");
+//		if(c0Files == null || c0Files.length == 0) {
+//			//从C1中判断,
+//			File[] c1Files = filterFile(key, folder, "C1");
+//			if(c0Files == null || c0Files.length == 0) {
+//				return true;
+//			}
+//		}else {
+//			
+//		}
+		return true;
+	}
+	
 	public SortedMap<String, Entity> getVal(String key) {//不含时间戳
 		//先从memstore里取，然后从所有的C0中取，然后加载C1的索引，从索引块里取
 		SortedMap<String, Entity> rsMap = Maps.newTreeMap();
@@ -401,10 +422,6 @@ public class ServiceLSMUtil {
 		}
 		return rsMap;
 		
-	}
-	private TreeMap<String, Entity> getListEntry(TreeMap<String, Entity> map, String key) {
-		
-		return null;
 	}
 
 	private File[] filterFile(String key, File folder, String prefix) {
