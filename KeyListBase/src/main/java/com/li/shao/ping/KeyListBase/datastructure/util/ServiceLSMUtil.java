@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.SortedMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -62,6 +63,9 @@ public class ServiceLSMUtil {
 	private long maxFileSize;
 	private int maxVersionCount;
 	private int maxBlockKeySize;
+	private String defaultTimeStamp = "0000000000000";
+	private String defaultTsBigger = "9999999999999";
+
 	
 	 public static SimpleThreadPoolUtil pool2 = new SimpleThreadPoolUtil(100, 200, 30, 1000,
 				(task) ->{task.run();return true;}) ;
@@ -99,7 +103,7 @@ public class ServiceLSMUtil {
 							String highKey = task.lastKey();
 							indexMap.put(firstKey, highKey + " " + startEnd[0] + " " + startEnd[1]);
 							long[] se = serialUtil2.serialize2(indexMap, newFile);
-							newFile.renameTo(new File(filePath + "/C0" + currCallNo() + "_" + startEnd[0] + ":" + startEnd[1]));
+							newFile.renameTo(new File(filePath + "/C0" + currCallNo() + "_" + firstKey + ":" + highKey + "_" + startEnd[0] + ":" + startEnd[1]));
 							synchronized (fileCount) {
 								File f = new File(filePath);
 								File[] files = f.listFiles((it,name )->name.startsWith("C0"));
@@ -150,6 +154,12 @@ public class ServiceLSMUtil {
 						}
 						//切分totalMap为多块；
 						persistentTotalMap(totalMap);
+						//删除所有C0文件:
+						for(int i = 0; i < files.length; i++) {
+							String name = files[i].getName();
+							boolean delete = files[i].delete();
+							log.info(delete + " delete the C0 File:" + name);
+						}
 					}catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -165,7 +175,7 @@ public class ServiceLSMUtil {
 		TreeMap<String, Entity> blockMap = Maps.newTreeMap();
 		int i = 0;
 		File file = new File(filePath + "/C1" + currCallNo());
-		Map<String, String> indexMap = Maps.newTreeMap();
+		TreeMap<String, String> indexMap = Maps.newTreeMap();
 		try {
 			file.createNewFile();
 			for(Entry<String, Entity> entity : totalMap.entrySet()) {
@@ -180,7 +190,10 @@ public class ServiceLSMUtil {
 			}
 			//持久化索引
 			long[] startEnd = serialUtil2.serialize2(indexMap, file);
-			boolean rename = file.renameTo(new File(filePath + "/C1" + currCallNo() + "_" + startEnd[0] + ":" + startEnd[1]));
+			String firstKey = indexMap.firstKey();
+			String highKey = indexMap.lastKey();
+			boolean rename = file.renameTo(new File(filePath + "/C1" + currCallNo() + "_" + firstKey + ":" + highKey + "_" + startEnd[0] + ":" + startEnd[1]));
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -328,8 +341,86 @@ public class ServiceLSMUtil {
 		}
 	}
 	
-	public void getVal(String key) {
+	public SortedMap<String, Entity> getVal(String key) {//不含时间戳
+		//先从memstore里取，然后从所有的C0中取，然后加载C1的索引，从索引块里取
+		SortedMap<String, Entity> rsMap = Maps.newTreeMap();
+		String fromKey = key + defaultTimeStamp;
+		String toKey = key + defaultTsBigger;
+		String ck = memstore.ceilingKey(fromKey);
+		String fk = memstore.floorKey(toKey);
+		if(ck != null && fk != null) {//包含key
+			SortedMap<String, Entity> subMap = memstore.subMap(ck, fk);
+			return subMap;
+		}else {//不包含key
+			File folder = new File(filePath);
+			File[] c0Files = filterFile(key, folder, "C0");
+			if(c0Files == null || c0Files.length == 0) {
+				//从C1中判断,
+				File[] c1Files = filterFile(key, folder, "C1");
+				if(c0Files == null || c0Files.length == 0) {
+					//不存在
+					return Maps.newTreeMap();
+				}else {
+					//加载C1File
+					for(File c1 :  c1Files) {
+						String name = c1.getName();
+						String[] startEnd = name.split("_")[2].split(":");
+						TreeMap<String, String> indexMap = serialUtil2.deserialize2(c1, TreeMap.class, Long.valueOf(startEnd[0]), Long.valueOf(startEnd[1]));
+						//判断是否在索引里
+						String cek = indexMap.ceilingKey(key + defaultTimeStamp);
+						if(cek.substring(0, cek.length() - defaultTimeStamp.length()).equals(key)) {//存在
+//							indexMap.tailMap(fromKey, inclusive)
+							SortedMap<String, String> subMap = indexMap.subMap(fromKey, toKey);
+							subMap.forEach((kk, val) ->{
+								String[] arr = val.split(" ");
+								long start = Long.valueOf(arr[1]);
+								long end = Long.valueOf(arr[2]);
+								TreeMap<String, Entity> map = serialUtil.deserialize3(c1, TreeMap.class, start, end);
+								SortedMap<String, Entity> smap = map.subMap(fromKey, toKey);
+								rsMap.putAll(smap);
+							});
+						}
+					}
+				}
+			}else {
+				//加载C0File,
+				for(File c0 :  c0Files) {
+					String name = c0.getName();
+					String[] part = name.split("_");
+					String[] startEnd = part[1].split(":");//直接看到索引--即其实，单个文件可以没有索引
+					if(startEnd[0].substring(0, startEnd[0].length() - defaultTimeStamp.length()).equals(key)
+							|| startEnd[1].substring(0, startEnd[1].length() - defaultTimeStamp.length()).equals(key)) {
+						String[] startEnd2 = part[2].split(":");
+						TreeMap<String, Entity> dataMap = serialUtil.deserialize3(c0, TreeMap.class, Long.valueOf(startEnd2[0]), Long.valueOf(startEnd2[1]));
+						SortedMap<String, Entity> subMap = dataMap.subMap(fromKey, toKey);
+						rsMap.putAll(subMap);
+					}
+				}
+				
+			}
+		}
+		return rsMap;
 		
+	}
+	private TreeMap<String, Entity> getListEntry(TreeMap<String, Entity> map, String key) {
+		
+		return null;
+	}
+
+	private File[] filterFile(String key, File folder, String prefix) {
+		File[] c0Files = folder.listFiles((file, name) -> {
+			if(name.startsWith(prefix)) {
+				String[] range = name.split("_")[1].split(":");
+				String startKey = range[0];
+				String endKey = range[1];
+				if(startKey.substring(0, startKey.length() - defaultTimeStamp.length()).equals(key)
+						|| endKey.substring(0, endKey.length() - defaultTimeStamp.length()).equals(key)) {
+					return true;
+				}
+			}
+			return false;
+		});
+		return c0Files;
 	}
 	
 	private String currCallNo() {
@@ -364,6 +455,16 @@ public class ServiceLSMUtil {
 	}
 	
 	public static void main(String[] args) {
+		test2();
+//		tte();
+	}
+
+	private static void tte() {
+		System.out.println((System.currentTimeMillis()+""));
+		System.out.println("0000000000000");
+	}
+
+	private static void test2() {
 		Map<String, String> memstore = Maps.newTreeMap();
 		memstore.put("s", "v");
 		memstore.put("s2", "v");
@@ -377,8 +478,15 @@ public class ServiceLSMUtil {
 		File file = new File("D:\\test\\b.txt");
 		file.renameTo(new File("D:\\test\\bs.txt"));
 	
+		int maxTasks = 100;
+		 int maxMemStoreSize = 100;
+		 int maxFileCount = 20;
+		 long maxFileSize = 10;//无用
+		 int maxVersionCount = 3;
+		 int maxBlockKeySize = 200;
 		//开始测试
-		ServiceLSMUtil util = new ServiceLSMUtil(100, "D:\\msc", 100, 20, 0, 3, 200);
+		ServiceLSMUtil util = new ServiceLSMUtil(maxTasks, "D:\\msc", 
+				maxMemStoreSize, maxFileCount, maxFileSize, maxVersionCount, maxBlockKeySize);
 		int count = 0;
 		
 		while(true) {
@@ -393,6 +501,8 @@ public class ServiceLSMUtil {
 			int d = (int)(Math.random() * 10000);
 			util.putVal(new KeyValue().setRowkey("rowkey" + d).setColFml("colfml").setCol("name")
 					.setVal(d + ""));
+//			String key = util.memstore.firstKey();
+//			System.out.println(util.getVal(key));
 //			log.info("memstore size:" + util.memstore.size());
 		}
 	}
