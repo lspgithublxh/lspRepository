@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.common.collect.Maps;
+import com.google.gson.Gson;
 import com.li.shao.ping.KeyListBase.datastructure.geneutil.SimpleThreadPoolUtil;
 import com.li.shao.ping.KeyListBase.datastructure.util.seria.SerializerUtil;
 
@@ -93,17 +94,20 @@ public class ServiceLSMUtil {
 					TreeMap<String, Entity> task = tasks.take();
 					log.info("task take, size:" + task.size());
 					pool2.addTask(()->{
+						String firstKey = task.firstKey();
+						String highKey = task.lastKey();
 						//老数据刷到磁盘
-						File newFile = new File(filePath + "/C0File" + currCallNo());
+						File newFile = new File(filePath + "/C0File" + currCallNo() + "_" + firstKey + "," + highKey);
 						log.info("get task, create File:" + newFile.getName());
 						try {
+							newFile.createNewFile();
 							long[] startEnd = serialUtil.serialize2(task, newFile);//开始写磁盘
 							TreeMap<String, String> indexMap = Maps.newTreeMap();
-							String firstKey = task.firstKey();
-							String highKey = task.lastKey();
+							
 							indexMap.put(firstKey, highKey + " " + startEnd[0] + " " + startEnd[1]);
 							long[] se = serialUtil2.serialize2(indexMap, newFile);
-							newFile.renameTo(new File(filePath + "/C0" + currCallNo() + "_" + firstKey + ":" + highKey + "_" + startEnd[0] + ":" + startEnd[1]));
+							boolean rs = newFile.renameTo(new File(filePath + "/C0" + currCallNo() + "_" + firstKey + "," + highKey + "_" + startEnd[0] + "," + startEnd[1]));
+							
 							synchronized (fileCount) {
 								File f = new File(filePath);
 								File[] files = f.listFiles((it,name )->name.startsWith("C0"));
@@ -192,7 +196,7 @@ public class ServiceLSMUtil {
 			long[] startEnd = serialUtil2.serialize2(indexMap, file);
 			String firstKey = indexMap.firstKey();
 			String highKey = indexMap.lastKey();
-			boolean rename = file.renameTo(new File(filePath + "/C1" + currCallNo() + "_" + firstKey + ":" + highKey + "_" + startEnd[0] + ":" + startEnd[1]));
+			boolean rename = file.renameTo(new File(filePath + "/C1" + currCallNo() + "_" + firstKey + "," + highKey + "_" + startEnd[0] + "," + startEnd[1]));
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -260,7 +264,7 @@ public class ServiceLSMUtil {
 			Entry<String, Entity> entry = iterator1.next();
 			String key = entry.getKey();
 			Entity val = entry.getValue();
-			int len1 = key.lastIndexOf(":");
+			int len1 = key.lastIndexOf(",");
 			String prefix = key.substring(len1 + 1);
 			if(prefix.equals(oldPrfix)) {
 				//查看新老key是否要根据操作类型合并
@@ -327,7 +331,7 @@ public class ServiceLSMUtil {
 	}
 	
 	public synchronized void putVal(KeyValue keyVal) {
-		String key = keyVal.rowkey + ":" + keyVal.colFml + ":" + keyVal.col + ":" + System.currentTimeMillis();
+		String key = keyVal.rowkey + "'" + keyVal.colFml + "'" + keyVal.col + "'" + System.currentTimeMillis();
 		Entity oldVal = memstore.put(key, new Entity().setVal(keyVal.val).setStatus((short)1));
 		if(memstore.size() > maxMemStoreSize) {
 			//开始新建memstore,异步序列化到磁盘
@@ -342,10 +346,10 @@ public class ServiceLSMUtil {
 	}
 	
 	public boolean deleVal(KeyValue keyVal) {
-		String key = keyVal.rowkey + ":" + keyVal.colFml + ":" + keyVal.col + ":" + System.currentTimeMillis();
+		String key = keyVal.rowkey + "'" + keyVal.colFml + "'" + keyVal.col + "'" + System.currentTimeMillis();
 		memstore.remove(key);
 		//为了性能，直接加到memstore中即可::因为肯定不存在：时间太短
-		memstore.put(key, new Entity().setStatus((short)1).setVal(keyVal.val));
+		memstore.put(key, new Entity().setStatus((short)0).setVal(keyVal.val));
 		//从C0文件里删除
 		//从C1文件里删除
 //		File folder = new File(filePath);
@@ -369,65 +373,83 @@ public class ServiceLSMUtil {
 		String toKey = key + defaultTsBigger;
 		String ck = memstore.ceilingKey(fromKey);
 		String fk = memstore.floorKey(toKey);
+		
 		if(ck != null && fk != null) {//包含key
-			SortedMap<String, Entity> subMap = memstore.subMap(ck, fk);
-			return subMap;
-		}else {//不包含key
-			File folder = new File(filePath);
-			File[] c0Files = filterFile(key, folder, "C0");
-			if(c0Files == null || c0Files.length == 0) {
-				//从C1中判断,
-				File[] c1Files = filterFile(key, folder, "C1");
-				if(c0Files == null || c0Files.length == 0) {
-					//不存在
-					return Maps.newTreeMap();
-				}else {
-					//加载C1File
-					for(File c1 :  c1Files) {
-						String name = c1.getName();
-						String[] startEnd = name.split("_")[2].split(":");
-						TreeMap<String, String> indexMap = serialUtil2.deserialize2(c1, TreeMap.class, Long.valueOf(startEnd[0]), Long.valueOf(startEnd[1]));
-						//判断是否在索引里
-						String cek = indexMap.ceilingKey(key + defaultTimeStamp);
-						if(cek.substring(0, cek.length() - defaultTimeStamp.length()).equals(key)) {//存在
-//							indexMap.tailMap(fromKey, inclusive)
-							SortedMap<String, String> subMap = indexMap.subMap(fromKey, toKey);
-							subMap.forEach((kk, val) ->{
-								String[] arr = val.split(" ");
-								long start = Long.valueOf(arr[1]);
-								long end = Long.valueOf(arr[2]);
-								TreeMap<String, Entity> map = serialUtil.deserialize3(c1, TreeMap.class, start, end);
-								SortedMap<String, Entity> smap = map.subMap(fromKey, toKey);
-								rsMap.putAll(smap);
-							});
-						}
-					}
+			SortedMap<String, Entity> subMap = memstore.subMap(fk, ck);
+			SortedMap<String, Entity> rs = getFromSubMap(key, subMap);
+			if(rs.size() > 0) {
+				return rs;
+			}
+		}
+		File folder = new File(filePath);
+		File[] c0Files = filterFile(key, folder, "C0");
+		if(c0Files == null || c0Files.length == 0) {
+			return findFromC1(key, rsMap, fromKey, toKey, folder);
+		}else {
+			//加载C0File,
+			for(File c0 :  c0Files) {
+				String name = c0.getName();
+				String[] part = name.split("_");
+				String[] startEnd = part[1].split(",");//直接看到索引--即其实，单个文件可以没有索引
+				if(startEnd[0].substring(0, startEnd[0].length() - defaultTimeStamp.length()).equals(key)
+						|| startEnd[1].substring(0, startEnd[1].length() - defaultTimeStamp.length()).equals(key)) {
+					String[] startEnd2 = part[2].split(",");
+					TreeMap<String, Entity> dataMap = serialUtil.deserialize3(c0, TreeMap.class, Long.valueOf(startEnd2[0]), Long.valueOf(startEnd2[1]));
+					SortedMap<String, Entity> subMap = dataMap.subMap(fromKey, toKey);
+					SortedMap<String, Entity> rs = getFromSubMap(key, subMap);
+					rsMap.putAll(rs);
 				}
-			}else {
-				//加载C0File,
-				for(File c0 :  c0Files) {
-					String name = c0.getName();
-					String[] part = name.split("_");
-					String[] startEnd = part[1].split(":");//直接看到索引--即其实，单个文件可以没有索引
-					if(startEnd[0].substring(0, startEnd[0].length() - defaultTimeStamp.length()).equals(key)
-							|| startEnd[1].substring(0, startEnd[1].length() - defaultTimeStamp.length()).equals(key)) {
-						String[] startEnd2 = part[2].split(":");
-						TreeMap<String, Entity> dataMap = serialUtil.deserialize3(c0, TreeMap.class, Long.valueOf(startEnd2[0]), Long.valueOf(startEnd2[1]));
-						SortedMap<String, Entity> subMap = dataMap.subMap(fromKey, toKey);
-						rsMap.putAll(subMap);
-					}
-				}
-				
+			}
+			//C0没有加载C1
+			if(rsMap.size() == 0) {
+				return findFromC1(key, rsMap, fromKey, toKey, folder);
 			}
 		}
 		return rsMap;
 		
 	}
 
+	private SortedMap<String, Entity> findFromC1(String key, SortedMap<String, Entity> rsMap, String fromKey, String toKey, File folder) {
+		//从C1中判断,
+		File[] c1Files = filterFile(key, folder, "C1");
+		//加载C1File
+		for(File c1 :  c1Files) {
+			String name = c1.getName();
+			String[] startEnd = name.split("_")[2].split(",");
+			TreeMap<String, String> indexMap = serialUtil2.deserialize2(c1, TreeMap.class, Long.valueOf(startEnd[0]), Long.valueOf(startEnd[1]));
+			//判断是否在索引里
+			String cek = indexMap.ceilingKey(key + defaultTimeStamp);
+			if(cek.substring(0, cek.length() - defaultTimeStamp.length()).equals(key)) {//存在
+//						indexMap.tailMap(fromKey, inclusive)
+				SortedMap<String, String> subMap = indexMap.subMap(fromKey, toKey);
+				subMap.forEach((kk, val) ->{
+					String[] arr = val.split(" ");
+					long start = Long.valueOf(arr[1]);
+					long end = Long.valueOf(arr[2]);
+					TreeMap<String, Entity> map = serialUtil.deserialize3(c1, TreeMap.class, start, end);
+					SortedMap<String, Entity> smap = map.subMap(fromKey, toKey);
+					SortedMap<String, Entity> rs = getFromSubMap(key, smap);
+					rsMap.putAll(rs);
+				});
+			}
+		}
+		return rsMap;
+	}
+
+	private SortedMap<String, Entity> getFromSubMap(String key, SortedMap<String, Entity> subMap) {
+		SortedMap<String, Entity> rs = Maps.newTreeMap();
+		subMap.forEach((k, v) ->{
+			if(k.startsWith(key + "'")) {
+				rs.put(k, v);
+			}
+		});
+		return rs;
+	}
+
 	private File[] filterFile(String key, File folder, String prefix) {
 		File[] c0Files = folder.listFiles((file, name) -> {
 			if(name.startsWith(prefix)) {
-				String[] range = name.split("_")[1].split(":");
+				String[] range = name.split("_")[1].split(",");
 				String startKey = range[0];
 				String endKey = range[1];
 				if(startKey.substring(0, startKey.length() - defaultTimeStamp.length()).equals(key)
@@ -509,6 +531,12 @@ public class ServiceLSMUtil {
 		while(true) {
 			if(count++ > 100000) {
 				break;
+			}
+			if(count == 1000) {
+				int d = (int)(Math.random() * 10000);
+				String key = "rowkey" + d + ":colfml:name:";
+				SortedMap<String, Entity> val = util.getVal(key);
+				log.info("key:" + key + " val:" + new Gson().toJson(val));
 			}
 			try {
 				Thread.sleep(10);
