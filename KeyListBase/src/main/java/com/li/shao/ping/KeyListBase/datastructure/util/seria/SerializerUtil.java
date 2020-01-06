@@ -48,9 +48,13 @@ public class SerializerUtil {
 			long start = channel.position();
 			out = new Output(output);
 			kryo.writeObject(out, obj);
-			long end = channel.position();
+			output.flush();
+			channel.force(true);
 			out.close();
 			output.close();
+			FileOutputStream output2 = new FileOutputStream(file, true);
+			long end = output2.getChannel().position();
+			output2.close();
 			return new long[] {start, end};
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -95,9 +99,12 @@ public class SerializerUtil {
 		int totalRead = 0;
 		for(;;) {
 			int count = channel.read(buffer);
-			totalRead += count;
-			if(count <= 0 || totalRead >= len) {
+			if(count <= 0) {
 				break;
+			}
+			totalRead += count;
+			if(totalRead >= len) {
+				count = len - nextStart;
 			}
 			buffer.flip();
 			buffer.get(data, nextStart, count);
@@ -105,6 +112,9 @@ public class SerializerUtil {
 			nextStart += count;
 			start += count;
 			channel.position(start);
+			if(totalRead >= len) {
+				break;
+			}
 		}
 		return data;
 	}

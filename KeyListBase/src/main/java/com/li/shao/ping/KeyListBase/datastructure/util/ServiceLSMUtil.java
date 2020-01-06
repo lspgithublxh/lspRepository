@@ -538,7 +538,7 @@ public class ServiceLSMUtil {
 		ServiceLSMUtil util = new ServiceLSMUtil(maxTasks, "D:\\msc", 
 				maxMemStoreSize, maxFileCount, maxFileSize, maxVersionCount, maxBlockKeySize);
 		int count = 0;
-		int lastVal = 0;
+		String lastVal = "";
 		while(true) {
 			if(count++ > 100000) {
 				break;
@@ -554,7 +554,10 @@ public class ServiceLSMUtil {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			int d = (int)(Math.random() * 10000);
+			String d = (int)(Math.random() * 10000) + "";
+			for(int i = d.length(); i < 10; i++) {
+				d = "0" + d;
+			}
 			lastVal = d;
 			util.putVal(new KeyValue().setRowkey("rowkey" + d).setColFml("colfml").setCol("name")
 					.setVal(d + ""));

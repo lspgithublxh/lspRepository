@@ -1,13 +1,16 @@
 package com.li.shao.ping.KeyListBase.datastructure.util.file;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.HashMap;
+import java.util.TreeMap;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import com.li.shao.ping.KeyListBase.datastructure.util.seria.SerializerUtil;
 
 import avro.shaded.com.google.common.collect.Maps;
 import lombok.Data;
@@ -17,7 +20,22 @@ public class SerilizerTest {
 
 	public static void main(String[] args) {
 //		test();
-		new SerilizerTest().test2();
+		
+//		new SerilizerTest().test2();
+		test2x();
+	}
+
+	private static void test2x() {
+		File file = new File("D:\\test\\c.bin");
+		SerializerUtil util = new SerializerUtil(Entity.class, TreeMap.class);
+		TreeMap<String, Entity> map = Maps.newTreeMap();
+		map.put("hehe", new Entity().setAge(11).setVal("name"));
+		map.put("ss", new Entity().setAge(11).setVal("name"));
+		map.put("rrr", new Entity().setAge(11).setVal("name"));
+
+		long[] l2 = util.serialize2(map, file);
+		TreeMap trmap = util.deserialize3(file, TreeMap.class, l2[0], l2[1]);
+		System.out.println(trmap);
 	}
 
 	@Data
@@ -51,20 +69,26 @@ public class SerilizerTest {
 	private void test2() {
 		Kryo kryo = new Kryo();
 		kryo.setReferences(true);
-		kryo.register(HashMap.class);
+		kryo.register(TreeMap.class);
 		kryo.register(Entity.class);
 		Output out;
 		try {
 			out = new Output(new FileOutputStream("D:\\test\\c.bin"));
-			HashMap<Object, Entity> map = Maps.newHashMap();
-			map.put("name", new Entity().setAge(11).setVal("lsp"));
-			map.put("simple", new Entity().setAge(11).setVal("lsp"));
+			FileOutputStream output2 = new FileOutputStream("D:\\test\\c.bin", true);
+			long end = output2.getChannel().position();
+			TreeMap<String, Entity> map = Maps.newTreeMap();
+			map.put("hehe", new Entity().setAge(11).setVal("name"));
+			map.put("ss", new Entity().setAge(11).setVal("name"));
+			map.put("rrr", new Entity().setAge(11).setVal("name"));
 			kryo.writeObject(out, map);
 			out.close();
 			Input input = new Input(new FileInputStream("D:\\test\\c.bin"));
-			HashMap readObject = kryo.readObject(input, HashMap.class);
+			TreeMap readObject = kryo.readObject(input, TreeMap.class);
 			System.out.println(readObject);
-		} catch (FileNotFoundException e) {
+			FileOutputStream output3 = new FileOutputStream("D:\\test\\c.bin", true);
+			long end3 = output3.getChannel().position();
+			System.out.println(end + "," + end3);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
