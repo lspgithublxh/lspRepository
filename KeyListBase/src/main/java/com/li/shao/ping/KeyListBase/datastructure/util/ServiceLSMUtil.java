@@ -391,8 +391,9 @@ public class ServiceLSMUtil {
 				String name = c0.getName();
 				String[] part = name.split("_");
 				String[] startEnd = part[1].split(",");//直接看到索引--即其实，单个文件可以没有索引
-				if(startEnd[0].substring(0, startEnd[0].length() - defaultTimeStamp.length()).equals(key)
-						|| startEnd[1].substring(0, startEnd[1].length() - defaultTimeStamp.length()).equals(key)) {
+				if(ifKeyInIt(key, startEnd[0], startEnd[1])) {
+					//startEnd[0].substring(0, startEnd[0].length() - defaultTimeStamp.length()).equals(key)
+//					|| startEnd[1].substring(0, startEnd[1].length() - defaultTimeStamp.length()).equals(key)
 					String[] startEnd2 = part[2].split(",");
 					TreeMap<String, Entity> dataMap = serialUtil.deserialize3(c0, TreeMap.class, Long.valueOf(startEnd2[0]), Long.valueOf(startEnd2[1]));
 					SortedMap<String, Entity> subMap = dataMap.subMap(fromKey, toKey);
@@ -452,14 +453,24 @@ public class ServiceLSMUtil {
 				String[] range = name.split("_")[1].split(",");
 				String startKey = range[0];
 				String endKey = range[1];
-				if(startKey.substring(0, startKey.length() - defaultTimeStamp.length()).equals(key)
-						|| endKey.substring(0, endKey.length() - defaultTimeStamp.length()).equals(key)) {
-					return true;
-				}
+				return ifKeyInIt(key, startKey, endKey);
 			}
 			return false;
 		});
 		return c0Files;
+	}
+	private boolean ifKeyInIt(String key, String startKey, String endKey) {
+		String rk = startKey.substring("rowkey".length(), startKey.indexOf("'"));
+		String rk2 = endKey.substring("rowkey".length(), endKey.indexOf("'"));
+		String kk = key.substring("rowkey".length(), key.indexOf("'"));
+		long kkLine = Long.valueOf(kk);
+		if(Long.valueOf(rk) <= kkLine ||
+				Long.valueOf(rk2) >= kkLine) {
+			//startKey.substring(0, startKey.length() - defaultTimeStamp.length()).equals(key)
+//					|| endKey.substring(0, endKey.length() - defaultTimeStamp.length()).equals(key)
+			return true;
+		}
+		return false;
 	}
 	
 	private String currCallNo() {
@@ -527,23 +538,24 @@ public class ServiceLSMUtil {
 		ServiceLSMUtil util = new ServiceLSMUtil(maxTasks, "D:\\msc", 
 				maxMemStoreSize, maxFileCount, maxFileSize, maxVersionCount, maxBlockKeySize);
 		int count = 0;
-		
+		int lastVal = 0;
 		while(true) {
 			if(count++ > 100000) {
 				break;
 			}
 			if(count == 1000) {
-				int d = (int)(Math.random() * 10000);
-				String key = "rowkey" + d + ":colfml:name:";
+				String key = "rowkey" + lastVal + "'colfml'name'";
 				SortedMap<String, Entity> val = util.getVal(key);
 				log.info("key:" + key + " val:" + new Gson().toJson(val));
 			}
+			
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 			int d = (int)(Math.random() * 10000);
+			lastVal = d;
 			util.putVal(new KeyValue().setRowkey("rowkey" + d).setColFml("colfml").setCol("name")
 					.setVal(d + ""));
 //			String key = util.memstore.firstKey();

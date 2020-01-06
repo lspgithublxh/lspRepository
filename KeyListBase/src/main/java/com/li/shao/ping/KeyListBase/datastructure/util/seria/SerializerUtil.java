@@ -99,6 +99,7 @@ public class SerializerUtil {
 			if(count <= 0 || totalRead >= len) {
 				break;
 			}
+			buffer.flip();
 			buffer.get(data, nextStart, count);
 			buffer.compact();
 			nextStart += count;
@@ -121,6 +122,7 @@ public class SerializerUtil {
 			if(count <= 0) {
 				break;
 			}
+			buffer.flip();
 			buffer.get(data, nextStart, count);
 			buffer.compact();
 			nextStart += count;
