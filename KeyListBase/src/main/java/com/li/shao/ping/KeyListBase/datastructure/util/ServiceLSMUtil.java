@@ -154,7 +154,7 @@ public class ServiceLSMUtil {
 						int res = files.length % 2;
 						Map<String, Entity> totalMap = Maps.newHashMap();
 						for(int i = 0; i + 1 < files.length; i += 2) {
-							Map<String, Entity> mt = mergeFile(files[i], files[1]);
+							Map<String, Entity> mt = mergeFile(files[i], files[i + 1]);
 							totalMap = mergeToTotalMap(mt, totalMap);
 						}
 						if(res == 1) {
@@ -321,34 +321,6 @@ public class ServiceLSMUtil {
 			map1.remove(key);
 		});
 	}
-
-//	private File mergeTwoFile(File fil1, File file2) {
-//		if(fil1 == null) {
-//			return file2;
-//		}
-//		if(fil1 != null && file2 != null) {
-//			long len1 = fil1.length();
-//			long len2 = file2.length();
-//			if(len1 > maxFileSize) {
-//				fil1.renameTo(new File(filePath + "/C1" + currCallNo()));
-//				return fil1;
-//			}
-//			if(len2 > maxFileSize) {
-//				file2.renameTo(new File(filePath + "/C1" + currCallNo()));
-//				return file2;
-//			}
-//			//开始合并两个文件：合并之后一块一块的写入新文件中；末尾添加上索引
-//			//一行一个key-value
-//			//一次写1024个keyvalue
-//			//读取时候，读取byte起止区间，byte[]转为一个map对象或者一个字符串对象-自己处理
-//			//合并两个map，转为byte[]写到文件，且
-//			//当文件的总大小超过某个值后，就要按行键分裂为两个目录-region, 各存一半的内容：每个目录有一个memstore进行分别的写入。:::所以不担心太多C1
-//			//
-//			
-//			
-//		}
-//		return null;
-//	}
 	
 	public synchronized void putVal(String key, String val) {
 		String oldVal = memstore.put(key, new Entity().setVal(val).setStatus((short)1)).getVal();
