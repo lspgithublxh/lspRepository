@@ -264,8 +264,8 @@ public class ServiceLSMUtil {
 			Entry<String, Entity> entry = iterator1.next();
 			String key = entry.getKey();
 			Entity val = entry.getValue();
-			int len1 = key.lastIndexOf(",");
-			String prefix = key.substring(len1 + 1);
+			int len1 = key.lastIndexOf("'");
+			String prefix = key.substring(0, len1 + 1);
 			if(prefix.equals(oldPrfix)) {
 				//查看新老key是否要根据操作类型合并
 				if(val.status == 0) {//删除
@@ -541,6 +541,7 @@ public class ServiceLSMUtil {
 				maxMemStoreSize, maxFileCount, maxFileSize, maxVersionCount, maxBlockKeySize);
 		int count = 0;
 		String lastVal = "";
+		int findTimes = 0;
 		while(true) {
 			if(count++ > 100000) {
 				break;
@@ -549,6 +550,10 @@ public class ServiceLSMUtil {
 				String key = "rowkey" + lastVal + "'colfml'name'";
 				SortedMap<String, Entity> val = util.getVal(key);
 				log.info("key:" + key + " val:" + new Gson().toJson(val));
+				if(++findTimes > 1) {
+					util.deleVal(new KeyValue().setRowkey("rowkey" + lastVal).setColFml("colfml").setCol("name")
+							.setVal(lastVal + ""));
+				}
 			}
 			
 			try {
