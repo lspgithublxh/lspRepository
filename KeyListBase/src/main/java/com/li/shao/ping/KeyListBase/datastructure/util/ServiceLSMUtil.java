@@ -81,7 +81,7 @@ public class ServiceLSMUtil {
 		this.maxFileSize = maxFileSize;
 		this.maxVersionCount = maxVersionCount;
 		this.maxBlockKeySize = maxBlockKeySize;
-		initTasks();
+//		initTasks();
 	}
 	//序列化
 	
@@ -219,6 +219,7 @@ public class ServiceLSMUtil {
 		}else {
 			totalMap.putAll(mt);
 		}
+		mergeKey(totalMap);//去重
 		return totalMap;
 	}
 
@@ -260,6 +261,7 @@ public class ServiceLSMUtil {
 		String oldPrfix = null;
 		List<String> keyList = Lists.newArrayList();
 		Iterator<Entry<String, Entity>> iterator1 = map1.entrySet().iterator();
+		List<String> removeKeyList = Lists.newArrayList();
 		for(;iterator1.hasNext();) {
 			Entry<String, Entity> entry = iterator1.next();
 			String key = entry.getKey();
@@ -282,10 +284,15 @@ public class ServiceLSMUtil {
 			}
 			if(keyList.size() > maxVersionCount) {//删除多余老版本
 				String removeKey = keyList.remove(0);
-				map1.remove(removeKey);//删除老版本
+//				map1.remove(removeKey);//删除老版本
+				removeKeyList.add(removeKey);
 			}
 		}
 		//合并完毕
+		//删除key
+		removeKeyList.forEach(key ->{
+			map1.remove(key);
+		});
 	}
 
 //	private File mergeTwoFile(File fil1, File file2) {
@@ -507,8 +514,30 @@ public class ServiceLSMUtil {
 	}
 	
 	public static void main(String[] args) {
-		test2();
+//		test2();
 //		tte();
+		mergeFileTest();
+	}
+
+	private static void mergeFileTest() {
+		//
+		int maxTasks = 100;
+		 int maxMemStoreSize = 100;
+		 int maxFileCount = 20;
+		 long maxFileSize = 10;//无用
+		 int maxVersionCount = 1;
+		 int maxBlockKeySize = 200;
+		ServiceLSMUtil util = new ServiceLSMUtil(maxTasks, "D:\\msc", 
+				maxMemStoreSize, maxFileCount, maxFileSize, maxVersionCount, maxBlockKeySize);
+		Map<String, Entity> mergeFile = util.mergeFile(new File("D:\\msc\\C01578368112914a12_rowkey0000000051'colfml'name'1578368112662,rowkey0000009967'colfml'name'1578368112630_0,6063"), 
+				new File("D:\\msc\\C01578368114007a14_rowkey0000000185'colfml'name'1578368113949,rowkey0000009810'colfml'name'1578368113204_0,6063"));
+		Gson gs = new Gson();
+		System.out.println(gs.toJson(mergeFile));
+		Map<String, Entity> mergeFile2 = util.mergeFile(new File("D:\\msc\\C01578368115085a16_rowkey0000000032'colfml'name'1578368114676,rowkey0000009944'colfml'name'1578368114603_0,6063"), 
+				new File("D:\\msc\\C01578368116154a18_rowkey0000000144'colfml'name'1578368115518,rowkey0000009990'colfml'name'1578368115496_0,6063"));
+		util.mergeToTotalMap(mergeFile, mergeFile2);
+		System.out.println(gs.toJson(mergeFile2));
+		
 	}
 
 	private static void tte() {
