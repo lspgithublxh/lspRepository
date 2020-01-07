@@ -17,6 +17,7 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.common.collect.Maps;
@@ -39,6 +40,10 @@ import lombok.extern.slf4j.Slf4j;
  *  put的过程： 先写WAL记录操作, 再写C0(追加或者覆盖或者删除), C0达到一定大小开始关闭写入：创建一个新的C0,老的直接写入磁盘
  *  独立线程：监控磁盘上上C0的个数，超过额定则两两合并为一个C1 ; 同样C1也额定之后合并为C2,C3,C4: 8-4-2-1
  *独立线程算法2： 监控磁盘上上C0的总的个数，超过额定则合并为一个，且不大于某个大小，为C1；剩下的再轮询看个数。定期另外的线程：major合并；将全部C1C0合并为一个文件-同样不超过额定C2；C2有线程定期过期删除
+ * 
+ * 
+ * 方法重复：用继承/模板模式
+ * ;;如果不用模式，就会一堆重复冗余代码。
  * @author lishaoping
  * @date 2019年12月24日
  * @package  com.li.shao.ping.KeyListBase.datastructure.util
@@ -81,7 +86,7 @@ public class ServiceLSMUtil {
 		this.maxFileSize = maxFileSize;
 		this.maxVersionCount = maxVersionCount;
 		this.maxBlockKeySize = maxBlockKeySize;
-//		initTasks();
+		initTasks();
 	}
 	//序列化
 	
@@ -156,6 +161,13 @@ public class ServiceLSMUtil {
 							Map<String, Entity> mt = mergeFile(null, files[files.length - 1]);
 							totalMap = mergeToTotalMap(mt, totalMap);
 						}
+//						//test only
+//						totalMap.entrySet().stream().forEach(item ->{
+//							if(item.getKey().startsWith(deleteKey)) {
+//								log.info("contains delete");
+//							}
+//						});
+//						//test only
 						//切分totalMap为多块；
 						persistentTotalMap(totalMap);
 						//删除所有C0文件:
@@ -175,6 +187,8 @@ public class ServiceLSMUtil {
 	}
 
 	private void persistentTotalMap(Map<String, Entity> totalMap) {
+		//此时可以删除有删除标记的那些key了；NO
+//		removeDeleteKey(totalMap);
 		//按行数合并--key的个数
 		TreeMap<String, Entity> blockMap = Maps.newTreeMap();
 		int i = 0;
@@ -202,6 +216,16 @@ public class ServiceLSMUtil {
 			e.printStackTrace();
 		}
 		
+	}
+
+	private void removeDeleteKey(Map<String, Entity> totalMap) {
+		Iterator<Entry<String, Entity>> iterator = totalMap.entrySet().iterator();
+		for(;iterator.hasNext();) {
+			Entry<String, Entity> next = iterator.next();
+			if(next.getValue().status == 0) {
+				iterator.remove();
+			}
+		}
 	}
 
 	private void perstenseMap(TreeMap<String, Entity> blockMap, File file, Map<String, String> indexMap) {
@@ -253,6 +277,7 @@ public class ServiceLSMUtil {
 				map = map2;
 			}
 		}
+		
 		mergeKey(map);
 		return map;
 	}
@@ -270,7 +295,9 @@ public class ServiceLSMUtil {
 			String prefix = key.substring(0, len1 + 1);
 			if(prefix.equals(oldPrfix)) {
 				//查看新老key是否要根据操作类型合并
-				if(val.status == 0) {//删除
+				if(val.status == 0) {//删除--在C1层次的合并，所以前面的都可以删除了，因为肯定不会出现还需要删除的;;只需要留下delete标记的
+					//前面的都需要删除--因为时间上必然都靠前
+					removeKeyList.addAll(keyList);
 					keyList.clear();
 				}else if(val.status == 1) {//新增
 					keyList.add(key);
@@ -289,7 +316,7 @@ public class ServiceLSMUtil {
 			}
 		}
 		//合并完毕
-		//删除key
+		//删除老版本
 		removeKeyList.forEach(key ->{
 			map1.remove(key);
 		});
@@ -354,7 +381,7 @@ public class ServiceLSMUtil {
 	
 	public boolean deleVal(KeyValue keyVal) {
 		String key = keyVal.rowkey + "'" + keyVal.colFml + "'" + keyVal.col + "'" + System.currentTimeMillis();
-		memstore.remove(key);
+//		memstore.remove(key);
 		//为了性能，直接加到memstore中即可::因为肯定不存在：时间太短
 		memstore.put(key, new Entity().setStatus((short)0).setVal(keyVal.val));
 		//从C0文件里删除
@@ -383,8 +410,12 @@ public class ServiceLSMUtil {
 		
 		if(ck != null && fk != null) {//包含key
 			SortedMap<String, Entity> subMap = memstore.subMap(fk, true, ck, true);
-			SortedMap<String, Entity> rs = getFromSubMap(key, subMap);
+			AtomicBoolean hasDel = new AtomicBoolean(false);
+			SortedMap<String, Entity> rs = getFromSubMap(key, subMap, hasDel);
+			
 			if(rs.size() > 0) {
+				return rs;
+			}else if(hasDel.get()) {//memstore中存在，是被删除了
 				return rs;
 			}
 		}
@@ -404,9 +435,15 @@ public class ServiceLSMUtil {
 					String[] startEnd2 = part[2].split(",");
 					TreeMap<String, Entity> dataMap = serialUtil.deserialize3(c0, TreeMap.class, Long.valueOf(startEnd2[0]), Long.valueOf(startEnd2[1]));
 					SortedMap<String, Entity> subMap = dataMap.subMap(fromKey, true, toKey, true);
-					SortedMap<String, Entity> rs = getFromSubMap(key, subMap);
+					SortedMap<String, Entity> rs = getFromSubMap2(key, subMap, null);
 					rsMap.putAll(rs);
 				}
+			}
+			//移除需要删除的
+			AtomicBoolean hasDele= new AtomicBoolean(false);
+			rsMap = getFromSubMap(key, rsMap, hasDele);
+			if(rsMap.isEmpty() && hasDele.get()) {//C0上就删除了，不用去C1中寻找 了
+				return rsMap;
 			}
 			//C0没有加载C1
 			if(rsMap.size() == 0) {
@@ -438,21 +475,58 @@ public class ServiceLSMUtil {
 					long end = Long.valueOf(arr[2]);
 					TreeMap<String, Entity> map = serialUtil.deserialize3(c1, TreeMap.class, start, end);
 					SortedMap<String, Entity> smap = map.subMap(fromKey, true, toKey, true);
-					SortedMap<String, Entity> rs = getFromSubMap(key, smap);
+					SortedMap<String, Entity> rs = getFromSubMap2(key, smap, null);
 					rsMap.putAll(rs);
 				});
 			}
 		}
-		return rsMap;
+		AtomicBoolean hasDele= new AtomicBoolean(false);
+		SortedMap<String, Entity> rsMapx = getFromSubMap(key, rsMap, hasDele);
+		if(rsMapx.isEmpty() && hasDele.get()) {//C1上就删除了，不用去C2中寻找 了
+			return rsMapx;
+		}
+		return rsMapx;
 	}
 
-	private SortedMap<String, Entity> getFromSubMap(String key, SortedMap<String, Entity> subMap) {
+	private SortedMap<String, Entity> getFromSubMap3(String key, SortedMap<String, Entity> subMap) {
+		//移除需要删除的
+		
+		return subMap;
+	}
+	
+	private SortedMap<String, Entity> getFromSubMap2(String key, SortedMap<String, Entity> subMap, AtomicBoolean hasDel) {
 		SortedMap<String, Entity> rs = Maps.newTreeMap();
 		subMap.forEach((k, v) ->{
 			if(k.startsWith(key)) {
 				rs.put(k, v);
 			}
 		});
+		return rs;
+	}
+	
+	private SortedMap<String, Entity> getFromSubMap(String key, SortedMap<String, Entity> subMap, AtomicBoolean hasDel) {
+		SortedMap<String, Entity> rs = Maps.newTreeMap();
+		List<String> removeKeyList = Lists.newArrayList();
+		List<String> cacheList = Lists.newArrayList();
+		subMap.forEach((k, v) ->{
+			if(k.startsWith(key)) {// && v.status == 1
+				if(v.status == 1) {
+					cacheList.add(k);
+					rs.put(k, v);
+				}else {
+					removeKeyList.addAll(cacheList);
+					cacheList.clear();//本身也不加
+					if(hasDel != null) {
+						hasDel.set(true);
+					}
+				}
+				
+			}
+		});
+		removeKeyList.forEach(k ->{
+			rs.remove(k);
+		});
+		//
 		return rs;
 	}
 
@@ -514,9 +588,19 @@ public class ServiceLSMUtil {
 	}
 	
 	public static void main(String[] args) {
-//		test2();
+		test2();
 //		tte();
-		mergeFileTest();
+//		mergeFileTest();
+//		ee();
+	}
+	private static void ee() {
+		AtomicInteger in = new AtomicInteger(0);
+		atomicTest(in);
+		System.out.println(in.get());
+	}
+
+	private static void atomicTest(AtomicInteger in) {
+		in.incrementAndGet();
 	}
 
 	private static void mergeFileTest() {
@@ -540,6 +624,8 @@ public class ServiceLSMUtil {
 		
 	}
 
+	private String deleteKey = null;
+	
 	private static void tte() {
 		System.out.println((System.currentTimeMillis()+""));
 		System.out.println("0000000000000");
@@ -571,6 +657,7 @@ public class ServiceLSMUtil {
 		int count = 0;
 		String lastVal = "";
 		int findTimes = 0;
+		int uniqueKey = 0;
 		while(true) {
 			if(count++ > 100000) {
 				break;
@@ -579,10 +666,13 @@ public class ServiceLSMUtil {
 				String key = "rowkey" + lastVal + "'colfml'name'";
 				SortedMap<String, Entity> val = util.getVal(key);
 				log.info("key:" + key + " val:" + new Gson().toJson(val));
-				if(++findTimes > 1) {
-					util.deleVal(new KeyValue().setRowkey("rowkey" + lastVal).setColFml("colfml").setCol("name")
-							.setVal(lastVal + ""));
-				}
+				//删除
+				util.deleteKey = key;
+				util.deleVal(new KeyValue().setRowkey("rowkey" + lastVal).setColFml("colfml").setCol("name")
+						.setVal(lastVal + ""));
+				//证明删除也是有效的--内存里找
+				SortedMap<String, Entity> val2 = util.getVal(key);
+				log.info("delete then, " + val2);
 			}
 			
 			try {
@@ -590,7 +680,7 @@ public class ServiceLSMUtil {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			String d = (int)(Math.random() * 10000) + "";
+			String d = uniqueKey++ + "";//(int)(Math.random() * 10000)
 			for(int i = d.length(); i < 10; i++) {
 				d = "0" + d;
 			}
