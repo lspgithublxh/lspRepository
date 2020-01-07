@@ -420,9 +420,11 @@ public class ServiceLSMUtil {
 			TreeMap<String, String> indexMap = serialUtil2.deserialize2(c1, TreeMap.class, Long.valueOf(startEnd[0]), Long.valueOf(startEnd[1]));
 			//判断是否在索引里
 			String cek = indexMap.ceilingKey(key + defaultTimeStamp);
-			if(cek.substring(0, cek.length() - defaultTimeStamp.length()).equals(key)) {//存在
+			String toCek = indexMap.floorKey(key + defaultTsBigger);
+//			String prefix = cek.substring(0, cek.length() - defaultTimeStamp.length());
+			if(toCek != null && cek != null) {//存在
 //						indexMap.tailMap(fromKey, inclusive)
-				SortedMap<String, String> subMap = indexMap.subMap(fromKey, true, toKey, true);
+				SortedMap<String, String> subMap = indexMap.subMap(toCek, true, cek, true);
 				subMap.forEach((kk, val) ->{
 					String[] arr = val.split(" ");
 					long start = Long.valueOf(arr[1]);

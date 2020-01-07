@@ -116,6 +116,7 @@ public class SerializerUtil {
 				break;
 			}
 		}
+		finput.close();
 		return data;
 	}
 	
