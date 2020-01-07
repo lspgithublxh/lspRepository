@@ -46,12 +46,13 @@ import lombok.extern.slf4j.Slf4j;
  * ;;如果不用模式，就会一堆重复冗余代码。
  * 
  * -- 单并发版本：开发测试完毕;2020/1/7
+ * -- 代价太大，所以没有并发版本的TreeMap
  * @author lishaoping
  * @date 2019年12月24日
  * @package  com.li.shao.ping.KeyListBase.datastructure.util
  */
 @Slf4j
-public class ServiceLSMUtil {
+public class ServiceLSMUtilConcurrent {
 
 	//rowkey:colflm:col:timestamp 冒号的ascll比数字大比字母小
 	//val
@@ -60,6 +61,9 @@ public class ServiceLSMUtil {
 	private LinkedBlockingQueue<TreeMap<String, Entity>> tasks;
 	private SerializerUtil serialUtil = new SerializerUtil(Entity.class, TreeMap.class);
 	private SerializerUtil serialUtil2 = new SerializerUtil(String.class, TreeMap.class);
+	private SimpleThreadPoolUtil tpool1 = new SimpleThreadPoolUtil(20, 200, 10, 1000,
+			(task) ->{task.run();log.info("rejection thread execute");;return true;}) ;
+	
 
 //	private int status;//0 正常,1正在刷磁盘
 	private int maxTasks;
@@ -78,7 +82,7 @@ public class ServiceLSMUtil {
 	 public static SimpleThreadPoolUtil pool2 = new SimpleThreadPoolUtil(100, 200, 30, 1000,
 				(task) ->{task.run();return true;}) ;
 	
-	private ServiceLSMUtil(int maxTasks, String filePath, int maxMemStoreSize,
+	private ServiceLSMUtilConcurrent(int maxTasks, String filePath, int maxMemStoreSize,
 			int maxFileCount, long maxFileSize, int maxVersionCount, int maxBlockKeySize) {
 		tasks = new LinkedBlockingQueue<TreeMap<String,Entity>>(maxTasks);
 		this.maxTasks = maxTasks;
@@ -403,7 +407,7 @@ public class ServiceLSMUtil {
 				String name = c0.getName();
 				String[] part = name.split("_");
 				String[] startEnd = part[1].split(",");//直接看到索引--即其实，单个文件可以没有索引
-				if(ifKeyInIt(key, startEnd[0], startEnd[1])) {
+				if(ifKeyInIt(key, startEnd[0], startEnd[1]) && part.length > 2) {
 					//startEnd[0].substring(0, startEnd[0].length() - defaultTimeStamp.length()).equals(key)
 //					|| startEnd[1].substring(0, startEnd[1].length() - defaultTimeStamp.length()).equals(key)
 					String[] startEnd2 = part[2].split(",");
@@ -585,7 +589,7 @@ public class ServiceLSMUtil {
 		 long maxFileSize = 10;//无用
 		 int maxVersionCount = 1;
 		 int maxBlockKeySize = 200;
-		ServiceLSMUtil util = new ServiceLSMUtil(maxTasks, "D:\\msc", 
+		 ServiceLSMUtilConcurrent util = new ServiceLSMUtilConcurrent(maxTasks, "D:\\msc", 
 				maxMemStoreSize, maxFileCount, maxFileSize, maxVersionCount, maxBlockKeySize);
 		Map<String, Entity> mergeFile = util.mergeFile(new File("D:\\msc\\C01578368112914a12_rowkey0000000051'colfml'name'1578368112662,rowkey0000009967'colfml'name'1578368112630_0,6063"), 
 				new File("D:\\msc\\C01578368114007a14_rowkey0000000185'colfml'name'1578368113949,rowkey0000009810'colfml'name'1578368113204_0,6063"));
@@ -626,7 +630,7 @@ public class ServiceLSMUtil {
 		 int maxVersionCount = 3;
 		 int maxBlockKeySize = 200;
 		//开始测试
-		ServiceLSMUtil util = new ServiceLSMUtil(maxTasks, "D:\\msc", 
+		 ServiceLSMUtilConcurrent util = new ServiceLSMUtilConcurrent(maxTasks, "D:\\msc", 
 				maxMemStoreSize, maxFileCount, maxFileSize, maxVersionCount, maxBlockKeySize);
 		int count = 0;
 		String lastVal = "";
@@ -649,11 +653,11 @@ public class ServiceLSMUtil {
 				log.info("delete then, " + val2);
 			}
 			
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+//			try {
+//				Thread.sleep(10);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
 			String d = uniqueKey++ + "";//(int)(Math.random() * 10000)
 			for(int i = d.length(); i < 10; i++) {
 				d = "0" + d;
@@ -661,8 +665,14 @@ public class ServiceLSMUtil {
 			if(count == 2) {
 				lastVal = d;
 			}
-			util.putVal(new KeyValue().setRowkey("rowkey" + d).setColFml("colfml").setCol("name")
-					.setVal(d + ""));
+			final String rk = d;
+			util.putVal(new KeyValue().setRowkey("rowkey" + rk).setColFml("colfml").setCol("name")
+					.setVal(rk + ""));
+//			util.tpool1.addTask(() -> {
+//				util.putVal(new KeyValue().setRowkey("rowkey" + rk).setColFml("colfml").setCol("name")
+//						.setVal(rk + ""));
+//			});
+			
 //			String key = util.memstore.firstKey();
 //			System.out.println(util.getVal(key));
 //			log.info("memstore size:" + util.memstore.size());
