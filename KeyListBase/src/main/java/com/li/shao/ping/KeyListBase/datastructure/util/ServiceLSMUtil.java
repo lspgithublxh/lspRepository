@@ -375,7 +375,7 @@ public class ServiceLSMUtil {
 		String fk = memstore.floorKey(toKey);
 		
 		if(ck != null && fk != null) {//包含key
-			SortedMap<String, Entity> subMap = memstore.subMap(fk, ck);
+			SortedMap<String, Entity> subMap = memstore.subMap(fk, true, ck, true);
 			SortedMap<String, Entity> rs = getFromSubMap(key, subMap);
 			if(rs.size() > 0) {
 				return rs;
@@ -396,7 +396,7 @@ public class ServiceLSMUtil {
 //					|| startEnd[1].substring(0, startEnd[1].length() - defaultTimeStamp.length()).equals(key)
 					String[] startEnd2 = part[2].split(",");
 					TreeMap<String, Entity> dataMap = serialUtil.deserialize3(c0, TreeMap.class, Long.valueOf(startEnd2[0]), Long.valueOf(startEnd2[1]));
-					SortedMap<String, Entity> subMap = dataMap.subMap(fromKey, toKey);
+					SortedMap<String, Entity> subMap = dataMap.subMap(fromKey, true, toKey, true);
 					SortedMap<String, Entity> rs = getFromSubMap(key, subMap);
 					rsMap.putAll(rs);
 				}
@@ -422,13 +422,13 @@ public class ServiceLSMUtil {
 			String cek = indexMap.ceilingKey(key + defaultTimeStamp);
 			if(cek.substring(0, cek.length() - defaultTimeStamp.length()).equals(key)) {//存在
 //						indexMap.tailMap(fromKey, inclusive)
-				SortedMap<String, String> subMap = indexMap.subMap(fromKey, toKey);
+				SortedMap<String, String> subMap = indexMap.subMap(fromKey, true, toKey, true);
 				subMap.forEach((kk, val) ->{
 					String[] arr = val.split(" ");
 					long start = Long.valueOf(arr[1]);
 					long end = Long.valueOf(arr[2]);
 					TreeMap<String, Entity> map = serialUtil.deserialize3(c1, TreeMap.class, start, end);
-					SortedMap<String, Entity> smap = map.subMap(fromKey, toKey);
+					SortedMap<String, Entity> smap = map.subMap(fromKey, true, toKey, true);
 					SortedMap<String, Entity> rs = getFromSubMap(key, smap);
 					rsMap.putAll(rs);
 				});
@@ -440,7 +440,7 @@ public class ServiceLSMUtil {
 	private SortedMap<String, Entity> getFromSubMap(String key, SortedMap<String, Entity> subMap) {
 		SortedMap<String, Entity> rs = Maps.newTreeMap();
 		subMap.forEach((k, v) ->{
-			if(k.startsWith(key + "'")) {
+			if(k.startsWith(key)) {
 				rs.put(k, v);
 			}
 		});
@@ -543,7 +543,7 @@ public class ServiceLSMUtil {
 			if(count++ > 100000) {
 				break;
 			}
-			if(count == 1000) {
+			if(count % 1000 == 0) {
 				String key = "rowkey" + lastVal + "'colfml'name'";
 				SortedMap<String, Entity> val = util.getVal(key);
 				log.info("key:" + key + " val:" + new Gson().toJson(val));
@@ -558,7 +558,9 @@ public class ServiceLSMUtil {
 			for(int i = d.length(); i < 10; i++) {
 				d = "0" + d;
 			}
-			lastVal = d;
+			if(count == 2) {
+				lastVal = d;
+			}
 			util.putVal(new KeyValue().setRowkey("rowkey" + d).setColFml("colfml").setCol("name")
 					.setVal(d + ""));
 //			String key = util.memstore.firstKey();
