@@ -82,7 +82,7 @@ public class SerializerUtilProtobuf {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return new long[] {};
 	}
 	
 	public TreeMap<String, Entity> deserialize(File inFile) {
@@ -95,12 +95,15 @@ public class SerializerUtilProtobuf {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return Maps.newTreeMap();
 	}
 	
 	public TreeMap<String, Entity> deserialize3(File inFile, long start, long end) {
 		try {
 			byte[] data = readFromStartToEnd(inFile, start, end);
+			if(data == null) {
+				return Maps.newTreeMap(); 
+			}
 			MD op = MapData.MD.parseFrom(data);
 			Map<String, Entity> dddMap = op.getDddMap();
 			TreeMap<String, Entity> dataMap = Maps.newTreeMap();
@@ -109,10 +112,13 @@ public class SerializerUtilProtobuf {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return Maps.newTreeMap();
 	}
 	
 	private byte[] readFromStartToEnd(File file, long start, long end) throws FileNotFoundException, IOException {
+		if(!file.exists()) {
+			return null;
+		}
 		FileInputStream finput = new FileInputStream(file);
 		FileChannel channel = finput.getChannel();
 		channel.position(start);
@@ -147,6 +153,9 @@ public class SerializerUtilProtobuf {
 	public TreeMap<String, String> deserialize2(File inFile, long start, long end) {
 		try {
 			byte[] data = readFromStartToEnd(inFile, start, end);
+			if(data == null) {
+				return Maps.newTreeMap(); 
+			}
 			MD2 op = MapData2.MD2.parseFrom(data);
 			Map<String, String> dddMap = op.getDddMap();
 			TreeMap<String, String> dataMap = Maps.newTreeMap();
@@ -155,7 +164,7 @@ public class SerializerUtilProtobuf {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return Maps.newTreeMap();
 	}
 	
 	

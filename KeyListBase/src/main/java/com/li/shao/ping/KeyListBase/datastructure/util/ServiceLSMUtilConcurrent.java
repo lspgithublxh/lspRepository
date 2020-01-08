@@ -20,6 +20,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.junit.Test;
+
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.li.shao.ping.KeyListBase.datastructure.geneutil.SimpleThreadPoolUtil;
@@ -266,18 +268,18 @@ public class ServiceLSMUtilConcurrent {
 		Map<String, Entity> map = null;
 		Map<String, Entity> map1 = null;
 		Map<String, Entity> map2 = null;
-		if(file != null ) {
+		if(file != null && file.getName().split("_").length > 2) {
 			String[] startEnd = file.getName().split("_")[2].split(",");
 //			map1 = serialUtil.deserialize(file);//HashMap<String, Entity> dataMap
 			map1 = serialUtil.deserialize3(file, Long.valueOf(startEnd[0]), Long.valueOf(startEnd[1]));
 			map = map1;
 		}
-		if(file2 != null) {
+		if(file2 != null && file2.getName().split("_").length > 2) {
 			String[] startEnd = file2.getName().split("_")[2].split(",");
 			map2 = serialUtil.deserialize3(file2, Long.valueOf(startEnd[0]), Long.valueOf(startEnd[1]));
 			map = map2;
 		}
-		if(file != null && file2 != null) {//合并--只处理键相等的；仅仅保留时间戳不同的n个版本以内的。
+		if(map1 != null && map2 != null) {//合并--只处理键相等的；仅仅保留时间戳不同的n个版本以内的。
 			int mapSize1 = map1.size();
 			int mapSize2 = map2.size();
 			if(mapSize1 > mapSize2) {
@@ -570,8 +572,27 @@ public class ServiceLSMUtilConcurrent {
 		String val;
 	}
 	
+	public ServiceLSMUtilConcurrent() {
+	}
+	
+	@Test
+	public void readFromC1() {
+		try {
+			String key = "rowkey000000" + 1 + "'colfml'name'";
+			SortedMap<String, Entity> rsMap = Maps.newTreeMap();
+			String fromKey = key + defaultTimeStamp;
+			String toKey = key + defaultTsBigger;
+			File folder = new File("D:\\msc");
+			SortedMap<String, Entity> rs = findFromC1(key, rsMap, fromKey, toKey, folder);
+			System.out.println(rs);
+			Thread.sleep(1000000);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public static void main(String[] args) {
-		test2();
+//		test2();
 //		tte();
 //		mergeFileTest();
 //		ee();
