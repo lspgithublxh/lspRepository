@@ -267,11 +267,14 @@ public class ServiceLSMUtilConcurrent {
 		Map<String, Entity> map1 = null;
 		Map<String, Entity> map2 = null;
 		if(file != null ) {
-			map1 = serialUtil.deserialize(file);//HashMap<String, Entity> dataMap
+			String[] startEnd = file.getName().split("_")[2].split(",");
+//			map1 = serialUtil.deserialize(file);//HashMap<String, Entity> dataMap
+			map1 = serialUtil.deserialize3(file, Long.valueOf(startEnd[0]), Long.valueOf(startEnd[1]));
 			map = map1;
 		}
 		if(file2 != null) {
-			map2 = serialUtil.deserialize(file2);
+			String[] startEnd = file2.getName().split("_")[2].split(",");
+			map2 = serialUtil.deserialize3(file2, Long.valueOf(startEnd[0]), Long.valueOf(startEnd[1]));
 			map = map2;
 		}
 		if(file != null && file2 != null) {//合并--只处理键相等的；仅仅保留时间戳不同的n个版本以内的。
@@ -404,7 +407,7 @@ public class ServiceLSMUtilConcurrent {
 		if(c0Files == null || c0Files.length == 0) {
 			return findFromC1(key, rsMap, fromKey, toKey, folder);
 		}else {
-			//加载C0File,
+			//加载C0File,;;太快了，可能会已经删除了文件
 			for(File c0 :  c0Files) {
 				String name = c0.getName();
 				String[] part = name.split("_");
@@ -655,11 +658,11 @@ public class ServiceLSMUtilConcurrent {
 				log.info("delete then, " + val2);
 			}
 			
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+//			try {
+//				Thread.sleep(10);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
 			String d = uniqueKey++ + "";//(int)(Math.random() * 10000)
 			for(int i = d.length(); i < 10; i++) {
 				d = "0" + d;
