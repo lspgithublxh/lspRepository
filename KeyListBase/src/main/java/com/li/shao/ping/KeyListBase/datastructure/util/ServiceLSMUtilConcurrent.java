@@ -51,6 +51,7 @@ import lombok.extern.slf4j.Slf4j;
  * 
  * -- 单并发版本：开发测试完毕;2020/1/7
  * -- 代价太大，所以没有并发版本的TreeMap
+ * -- protobuf序列化工具
  * @author lishaoping
  * @date 2019年12月24日
  * @package  com.li.shao.ping.KeyListBase.datastructure.util
