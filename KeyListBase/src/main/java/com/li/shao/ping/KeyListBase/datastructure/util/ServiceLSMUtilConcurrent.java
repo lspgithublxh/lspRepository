@@ -592,7 +592,7 @@ public class ServiceLSMUtilConcurrent {
 	}
 	
 	public static void main(String[] args) {
-//		test2();
+		test2();
 //		tte();
 //		mergeFileTest();
 //		ee();
@@ -662,6 +662,7 @@ public class ServiceLSMUtilConcurrent {
 		String lastVal = "";
 		int findTimes = 0;
 		int uniqueKey = 0;
+		long start = System.currentTimeMillis();
 		while(true) {
 			if(count++ > 100000) {
 				break;
@@ -692,16 +693,18 @@ public class ServiceLSMUtilConcurrent {
 				lastVal = d;
 			}
 			final String rk = d;
-			util.putVal(new KeyValue().setRowkey("rowkey" + rk).setColFml("colfml").setCol("name")
-					.setVal(rk + ""));
-//			util.tpool1.addTask(() -> {
-//				util.putVal(new KeyValue().setRowkey("rowkey" + rk).setColFml("colfml").setCol("name")
-//						.setVal(rk + ""));
-//			});
+//			util.putVal(new KeyValue().setRowkey("rowkey" + rk).setColFml("colfml").setCol("name")
+//					.setVal(rk + ""));
+			util.tpool1.addTask(() -> {
+				util.putVal(new KeyValue().setRowkey("rowkey" + rk).setColFml("colfml").setCol("name")
+						.setVal(rk + ""));
+			});
 			
 //			String key = util.memstore.firstKey();
 //			System.out.println(util.getVal(key));
 //			log.info("memstore size:" + util.memstore.size());
 		}
+		long end = System.currentTimeMillis();
+		log.info("use:" + (end - start));
 	}
 }
