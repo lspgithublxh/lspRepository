@@ -3,6 +3,8 @@
 
 package com.li.shao.ping.KeyListBase.datastructure.util.seria;
 
+import lombok.extern.slf4j.Slf4j;
+
 public final class MapData {
   private MapData() {}
   public static void registerAllExtensions(
@@ -153,19 +155,19 @@ public final class MapData {
         com.google.protobuf.MessageOrBuilder {
 
       /**
-       * <code>string number = 1;</code>
+       * <code>string val = 1;</code>
        */
-      java.lang.String getNumber();
+      java.lang.String getVal();
       /**
-       * <code>string number = 1;</code>
+       * <code>string val = 1;</code>
        */
       com.google.protobuf.ByteString
-          getNumberBytes();
+          getValBytes();
 
       /**
-       * <code>int32 id = 2;</code>
+       * <code>int32 status = 2;</code>
        */
-      int getId();
+      int getStatus();
     }
     /**
      * Protobuf type {@code MD.Entity}
@@ -179,9 +181,9 @@ public final class MapData {
       private Entity(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
       }
-      private Entity() {
-        number_ = "";
-        id_ = 0;
+      public Entity() {
+        val_ = "";
+        status_ = 0;
       }
 
       @java.lang.Override
@@ -211,12 +213,12 @@ public final class MapData {
               case 10: {
                 java.lang.String s = input.readStringRequireUtf8();
 
-                number_ = s;
+                val_ = s;
                 break;
               }
               case 16: {
 
-                id_ = input.readInt32();
+                status_ = input.readInt32();
                 break;
               }
               default: {
@@ -251,47 +253,47 @@ public final class MapData {
                 com.li.shao.ping.KeyListBase.datastructure.util.seria.MapData.MD.Entity.class, com.li.shao.ping.KeyListBase.datastructure.util.seria.MapData.MD.Entity.Builder.class);
       }
 
-      public static final int NUMBER_FIELD_NUMBER = 1;
-      private volatile java.lang.Object number_;
+      public static final int VAL_FIELD_NUMBER = 1;
+      private volatile java.lang.Object val_;
       /**
-       * <code>string number = 1;</code>
+       * <code>string val = 1;</code>
        */
-      public java.lang.String getNumber() {
-        java.lang.Object ref = number_;
+      public java.lang.String getVal() {
+        java.lang.Object ref = val_;
         if (ref instanceof java.lang.String) {
           return (java.lang.String) ref;
         } else {
           com.google.protobuf.ByteString bs = 
               (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          number_ = s;
+          val_ = s;
           return s;
         }
       }
       /**
-       * <code>string number = 1;</code>
+       * <code>string val = 1;</code>
        */
       public com.google.protobuf.ByteString
-          getNumberBytes() {
-        java.lang.Object ref = number_;
+          getValBytes() {
+        java.lang.Object ref = val_;
         if (ref instanceof java.lang.String) {
           com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
-          number_ = b;
+          val_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
         }
       }
 
-      public static final int ID_FIELD_NUMBER = 2;
-      private int id_;
+      public static final int STATUS_FIELD_NUMBER = 2;
+      private int status_;
       /**
-       * <code>int32 id = 2;</code>
+       * <code>int32 status = 2;</code>
        */
-      public int getId() {
-        return id_;
+      public int getStatus() {
+        return status_;
       }
 
       private byte memoizedIsInitialized = -1;
@@ -308,11 +310,11 @@ public final class MapData {
       @java.lang.Override
       public void writeTo(com.google.protobuf.CodedOutputStream output)
                           throws java.io.IOException {
-        if (!getNumberBytes().isEmpty()) {
-          com.google.protobuf.GeneratedMessageV3.writeString(output, 1, number_);
+        if (!getValBytes().isEmpty()) {
+          com.google.protobuf.GeneratedMessageV3.writeString(output, 1, val_);
         }
-        if (id_ != 0) {
-          output.writeInt32(2, id_);
+        if (status_ != 0) {
+          output.writeInt32(2, status_);
         }
         unknownFields.writeTo(output);
       }
@@ -323,12 +325,12 @@ public final class MapData {
         if (size != -1) return size;
 
         size = 0;
-        if (!getNumberBytes().isEmpty()) {
-          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, number_);
+        if (!getValBytes().isEmpty()) {
+          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, val_);
         }
-        if (id_ != 0) {
+        if (status_ != 0) {
           size += com.google.protobuf.CodedOutputStream
-            .computeInt32Size(2, id_);
+            .computeInt32Size(2, status_);
         }
         size += unknownFields.getSerializedSize();
         memoizedSize = size;
@@ -346,10 +348,10 @@ public final class MapData {
         com.li.shao.ping.KeyListBase.datastructure.util.seria.MapData.MD.Entity other = (com.li.shao.ping.KeyListBase.datastructure.util.seria.MapData.MD.Entity) obj;
 
         boolean result = true;
-        result = result && getNumber()
-            .equals(other.getNumber());
-        result = result && (getId()
-            == other.getId());
+        result = result && getVal()
+            .equals(other.getVal());
+        result = result && (getStatus()
+            == other.getStatus());
         result = result && unknownFields.equals(other.unknownFields);
         return result;
       }
@@ -361,10 +363,10 @@ public final class MapData {
         }
         int hash = 41;
         hash = (19 * hash) + getDescriptor().hashCode();
-        hash = (37 * hash) + NUMBER_FIELD_NUMBER;
-        hash = (53 * hash) + getNumber().hashCode();
-        hash = (37 * hash) + ID_FIELD_NUMBER;
-        hash = (53 * hash) + getId();
+        hash = (37 * hash) + VAL_FIELD_NUMBER;
+        hash = (53 * hash) + getVal().hashCode();
+        hash = (37 * hash) + STATUS_FIELD_NUMBER;
+        hash = (53 * hash) + getStatus();
         hash = (29 * hash) + unknownFields.hashCode();
         memoizedHashCode = hash;
         return hash;
@@ -498,9 +500,9 @@ public final class MapData {
         @java.lang.Override
         public Builder clear() {
           super.clear();
-          number_ = "";
+          val_ = "";
 
-          id_ = 0;
+          status_ = 0;
 
           return this;
         }
@@ -528,8 +530,8 @@ public final class MapData {
         @java.lang.Override
         public com.li.shao.ping.KeyListBase.datastructure.util.seria.MapData.MD.Entity buildPartial() {
           com.li.shao.ping.KeyListBase.datastructure.util.seria.MapData.MD.Entity result = new com.li.shao.ping.KeyListBase.datastructure.util.seria.MapData.MD.Entity(this);
-          result.number_ = number_;
-          result.id_ = id_;
+          result.val_ = val_;
+          result.status_ = status_;
           onBuilt();
           return result;
         }
@@ -578,12 +580,12 @@ public final class MapData {
 
         public Builder mergeFrom(com.li.shao.ping.KeyListBase.datastructure.util.seria.MapData.MD.Entity other) {
           if (other == com.li.shao.ping.KeyListBase.datastructure.util.seria.MapData.MD.Entity.getDefaultInstance()) return this;
-          if (!other.getNumber().isEmpty()) {
-            number_ = other.number_;
+          if (!other.getVal().isEmpty()) {
+            val_ = other.val_;
             onChanged();
           }
-          if (other.getId() != 0) {
-            setId(other.getId());
+          if (other.getStatus() != 0) {
+            setStatus(other.getStatus());
           }
           this.mergeUnknownFields(other.unknownFields);
           onChanged();
@@ -614,97 +616,97 @@ public final class MapData {
           return this;
         }
 
-        private java.lang.Object number_ = "";
+        private java.lang.Object val_ = "";
         /**
-         * <code>string number = 1;</code>
+         * <code>string val = 1;</code>
          */
-        public java.lang.String getNumber() {
-          java.lang.Object ref = number_;
+        public java.lang.String getVal() {
+          java.lang.Object ref = val_;
           if (!(ref instanceof java.lang.String)) {
             com.google.protobuf.ByteString bs =
                 (com.google.protobuf.ByteString) ref;
             java.lang.String s = bs.toStringUtf8();
-            number_ = s;
+            val_ = s;
             return s;
           } else {
             return (java.lang.String) ref;
           }
         }
         /**
-         * <code>string number = 1;</code>
+         * <code>string val = 1;</code>
          */
         public com.google.protobuf.ByteString
-            getNumberBytes() {
-          java.lang.Object ref = number_;
+            getValBytes() {
+          java.lang.Object ref = val_;
           if (ref instanceof String) {
             com.google.protobuf.ByteString b = 
                 com.google.protobuf.ByteString.copyFromUtf8(
                     (java.lang.String) ref);
-            number_ = b;
+            val_ = b;
             return b;
           } else {
             return (com.google.protobuf.ByteString) ref;
           }
         }
         /**
-         * <code>string number = 1;</code>
+         * <code>string val = 1;</code>
          */
-        public Builder setNumber(
+        public Builder setVal(
             java.lang.String value) {
           if (value == null) {
     throw new NullPointerException();
   }
   
-          number_ = value;
+          val_ = value;
           onChanged();
           return this;
         }
         /**
-         * <code>string number = 1;</code>
+         * <code>string val = 1;</code>
          */
-        public Builder clearNumber() {
+        public Builder clearVal() {
           
-          number_ = getDefaultInstance().getNumber();
+          val_ = getDefaultInstance().getVal();
           onChanged();
           return this;
         }
         /**
-         * <code>string number = 1;</code>
+         * <code>string val = 1;</code>
          */
-        public Builder setNumberBytes(
+        public Builder setValBytes(
             com.google.protobuf.ByteString value) {
           if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
           
-          number_ = value;
+          val_ = value;
           onChanged();
           return this;
         }
 
-        private int id_ ;
+        private int status_ ;
         /**
-         * <code>int32 id = 2;</code>
+         * <code>int32 status = 2;</code>
          */
-        public int getId() {
-          return id_;
+        public int getStatus() {
+          return status_;
         }
         /**
-         * <code>int32 id = 2;</code>
+         * <code>int32 status = 2;</code>
          */
-        public Builder setId(int value) {
+        public Builder setStatus(int value) {
           
-          id_ = value;
+          status_ = value;
           onChanged();
           return this;
         }
         /**
-         * <code>int32 id = 2;</code>
+         * <code>int32 status = 2;</code>
          */
-        public Builder clearId() {
+        public Builder clearStatus() {
           
-          id_ = 0;
+          status_ = 0;
           onChanged();
           return this;
         }
@@ -1373,12 +1375,12 @@ public final class MapData {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\tabd.proto\"}\n\002MD\022\031\n\003ddd\030\001 \003(\0132\014.MD.DddE" +
-      "ntry\032$\n\006Entity\022\016\n\006number\030\001 \001(\t\022\n\n\002id\030\002 \001" +
-      "(\005\0326\n\010DddEntry\022\013\n\003key\030\001 \001(\t\022\031\n\005value\030\002 \001" +
-      "(\0132\n.MD.Entity:\0028\001B@\n5com.li.shao.ping.K" +
-      "eyListBase.datastructure.util.seriaB\007Map" +
-      "Datab\006proto3"
+      "\n\tabd.proto\"~\n\002MD\022\031\n\003ddd\030\001 \003(\0132\014.MD.DddE" +
+      "ntry\032%\n\006Entity\022\013\n\003val\030\001 \001(\t\022\016\n\006status\030\002 " +
+      "\001(\005\0326\n\010DddEntry\022\013\n\003key\030\001 \001(\t\022\031\n\005value\030\002 " +
+      "\001(\0132\n.MD.Entity:\0028\001B@\n5com.li.shao.ping." +
+      "KeyListBase.datastructure.util.seriaB\007Ma" +
+      "pDatab\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -1403,7 +1405,7 @@ public final class MapData {
     internal_static_MD_Entity_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_MD_Entity_descriptor,
-        new java.lang.String[] { "Number", "Id", });
+        new java.lang.String[] { "Val", "Status", });
     internal_static_MD_DddEntry_descriptor =
       internal_static_MD_descriptor.getNestedTypes().get(1);
     internal_static_MD_DddEntry_fieldAccessorTable = new

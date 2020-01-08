@@ -23,7 +23,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.li.shao.ping.KeyListBase.datastructure.geneutil.SimpleThreadPoolUtil;
+import com.li.shao.ping.KeyListBase.datastructure.util.seria.MapData.MD.Entity;
 import com.li.shao.ping.KeyListBase.datastructure.util.seria.SerializerUtil;
+import com.li.shao.ping.KeyListBase.datastructure.util.seria.SerializerUtilProtobuf;
 
 import avro.shaded.com.google.common.collect.Lists;
 import lombok.Data;
@@ -59,8 +61,8 @@ public class ServiceLSMUtilConcurrent {
 	private TreeMap<String, Entity> memstore = Maps.newTreeMap();
 //	private Map<String, String> flushstore;
 	private LinkedBlockingQueue<TreeMap<String, Entity>> tasks;
-	private SerializerUtil serialUtil = new SerializerUtil(Entity.class, TreeMap.class);
-	private SerializerUtil serialUtil2 = new SerializerUtil(String.class, TreeMap.class);
+	private SerializerUtilProtobuf serialUtil = new SerializerUtilProtobuf();
+	private SerializerUtilProtobuf serialUtil2 = new SerializerUtilProtobuf();
 	private SimpleThreadPoolUtil tpool1 = new SimpleThreadPoolUtil(20, 200, 10, 1000,
 			(task) ->{task.run();log.info("rejection thread execute");;return true;}) ;
 	
@@ -112,7 +114,7 @@ public class ServiceLSMUtilConcurrent {
 						log.info("get task, create File:" + newFile.getName());
 						try {
 							newFile.createNewFile();
-							long[] startEnd = serialUtil.serialize2(task, newFile);//开始写磁盘
+							long[] startEnd = serialUtil.serialize(task, newFile);//开始写磁盘
 							TreeMap<String, String> indexMap = Maps.newTreeMap();
 							
 							indexMap.put(firstKey, highKey + " " + startEnd[0] + " " + startEnd[1]);
@@ -228,14 +230,14 @@ public class ServiceLSMUtilConcurrent {
 		Iterator<Entry<String, Entity>> iterator = totalMap.entrySet().iterator();
 		for(;iterator.hasNext();) {
 			Entry<String, Entity> next = iterator.next();
-			if(next.getValue().status == 0) {
+			if(next.getValue().getStatus() == 0) {
 				iterator.remove();
 			}
 		}
 	}
 
 	private void perstenseMap(TreeMap<String, Entity> blockMap, File file, Map<String, String> indexMap) {
-		long[] startEnd = serialUtil.serialize2(blockMap, file);
+		long[] startEnd = serialUtil.serialize(blockMap, file);
 		String lowKey = blockMap.firstKey();
 		String highKey = blockMap.lastKey();
 		indexMap.put(lowKey, highKey + " " + startEnd[0] + " " + startEnd[1]);
@@ -265,11 +267,11 @@ public class ServiceLSMUtilConcurrent {
 		Map<String, Entity> map1 = null;
 		Map<String, Entity> map2 = null;
 		if(file != null ) {
-			map1 = serialUtil.deserialize(file, TreeMap.class);//HashMap<String, Entity> dataMap
+			map1 = serialUtil.deserialize(file);//HashMap<String, Entity> dataMap
 			map = map1;
 		}
 		if(file2 != null) {
-			map2 = serialUtil.deserialize(file2, TreeMap.class);
+			map2 = serialUtil.deserialize(file2);
 			map = map2;
 		}
 		if(file != null && file2 != null) {//合并--只处理键相等的；仅仅保留时间戳不同的n个版本以内的。
@@ -301,17 +303,17 @@ public class ServiceLSMUtilConcurrent {
 			String prefix = key.substring(0, len1 + 1);
 			if(prefix.equals(oldPrfix)) {
 				//查看新老key是否要根据操作类型合并
-				if(val.status == 0) {//删除--在C1层次的合并，所以前面的都可以删除了，因为肯定不会出现还需要删除的;;只需要留下delete标记的
+				if(val.getStatus() == 0) {//删除--在C1层次的合并，所以前面的都可以删除了，因为肯定不会出现还需要删除的;;只需要留下delete标记的
 					//前面的都需要删除--因为时间上必然都靠前
 					removeKeyList.addAll(keyList);
 					keyList.clear();
-				}else if(val.status == 1) {//新增
+				}else if(val.getStatus() == 1) {//新增
 					keyList.add(key);
 				}
 			}else {
 				oldPrfix = prefix;
 				keyList.clear();
-				if(val.status != 0) {
+				if(val.getStatus() != 0) {
 					keyList.add(key);
 				}
 			}
@@ -329,7 +331,7 @@ public class ServiceLSMUtilConcurrent {
 	}
 	
 	public synchronized void putVal(String key, String val) {
-		String oldVal = memstore.put(key, new Entity().setVal(val).setStatus((short)1)).getVal();
+		String oldVal = memstore.put(key, Entity.newBuilder().setVal(val).setStatus((short)1).build()).getVal();
 		if(memstore.size() > maxMemStoreSize) {
 			//开始新建memstore,异步序列化到磁盘
 			try {
@@ -344,7 +346,7 @@ public class ServiceLSMUtilConcurrent {
 	
 	public synchronized void putVal(KeyValue keyVal) {
 		String key = keyVal.rowkey + "'" + keyVal.colFml + "'" + keyVal.col + "'" + System.currentTimeMillis();
-		Entity oldVal = memstore.put(key, new Entity().setVal(keyVal.val).setStatus((short)1));
+		Entity oldVal = memstore.put(key, Entity.newBuilder().setVal(keyVal.val).setStatus((short)1).build());
 		if(memstore.size() > maxMemStoreSize) {
 			//开始新建memstore,异步序列化到磁盘
 			try {
@@ -361,7 +363,7 @@ public class ServiceLSMUtilConcurrent {
 		String key = keyVal.rowkey + "'" + keyVal.colFml + "'" + keyVal.col + "'" + System.currentTimeMillis();
 //		memstore.remove(key);
 		//为了性能，直接加到memstore中即可::因为肯定不存在：时间太短
-		memstore.put(key, new Entity().setStatus((short)0).setVal(keyVal.val));
+		memstore.put(key, Entity.newBuilder().setStatus((short)0).setVal(keyVal.val).build());
 		//从C0文件里删除
 		//从C1文件里删除
 //		File folder = new File(filePath);
@@ -411,7 +413,7 @@ public class ServiceLSMUtilConcurrent {
 					//startEnd[0].substring(0, startEnd[0].length() - defaultTimeStamp.length()).equals(key)
 //					|| startEnd[1].substring(0, startEnd[1].length() - defaultTimeStamp.length()).equals(key)
 					String[] startEnd2 = part[2].split(",");
-					TreeMap<String, Entity> dataMap = serialUtil.deserialize3(c0, TreeMap.class, Long.valueOf(startEnd2[0]), Long.valueOf(startEnd2[1]));
+					TreeMap<String, Entity> dataMap = serialUtil.deserialize3(c0, Long.valueOf(startEnd2[0]), Long.valueOf(startEnd2[1]));
 					SortedMap<String, Entity> subMap = dataMap.subMap(fromKey, true, toKey, true);
 					SortedMap<String, Entity> rs = getFromSubMap2(key, subMap, null);
 					rsMap.putAll(rs);
@@ -439,7 +441,7 @@ public class ServiceLSMUtilConcurrent {
 		for(File c1 :  c1Files) {
 			String name = c1.getName();
 			String[] startEnd = name.split("_")[2].split(",");
-			TreeMap<String, String> indexMap = serialUtil2.deserialize2(c1, TreeMap.class, Long.valueOf(startEnd[0]), Long.valueOf(startEnd[1]));
+			TreeMap<String, String> indexMap = serialUtil2.deserialize2(c1, Long.valueOf(startEnd[0]), Long.valueOf(startEnd[1]));
 			//判断是否在索引里
 			String cek = indexMap.ceilingKey(key + defaultTimeStamp);
 			String toCek = indexMap.floorKey(key + defaultTsBigger);
@@ -451,7 +453,7 @@ public class ServiceLSMUtilConcurrent {
 					String[] arr = val.split(" ");
 					long start = Long.valueOf(arr[1]);
 					long end = Long.valueOf(arr[2]);
-					TreeMap<String, Entity> map = serialUtil.deserialize3(c1, TreeMap.class, start, end);
+					TreeMap<String, Entity> map = serialUtil.deserialize3(c1, start, end);
 					SortedMap<String, Entity> smap = map.subMap(fromKey, true, toKey, true);
 					SortedMap<String, Entity> rs = getFromSubMap2(key, smap, null);
 					rsMap.putAll(rs);
@@ -488,7 +490,7 @@ public class ServiceLSMUtilConcurrent {
 		List<String> cacheList = Lists.newArrayList();
 		subMap.forEach((k, v) ->{
 			if(k.startsWith(key)) {// && v.status == 1
-				if(v.status == 1) {
+				if(v.getStatus() == 1) {
 					cacheList.add(k);
 					rs.put(k, v);
 				}else {
@@ -548,12 +550,12 @@ public class ServiceLSMUtilConcurrent {
 		return incre;
 	}
 	
-	@Data
-	@Accessors(chain = true)
-	static class Entity{
-		String val;
-		short status;//0删除,1新增
-	}
+//	@Data
+//	@Accessors(chain = true)
+//	static class Entity{
+//		String val;
+//		short status;//0删除,1新增
+//	}
 	
 	@Data
 	@Accessors(chain = true)
@@ -653,11 +655,11 @@ public class ServiceLSMUtilConcurrent {
 				log.info("delete then, " + val2);
 			}
 			
-//			try {
-//				Thread.sleep(10);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			String d = uniqueKey++ + "";//(int)(Math.random() * 10000)
 			for(int i = d.length(); i < 10; i++) {
 				d = "0" + d;
