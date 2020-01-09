@@ -369,6 +369,7 @@ public class ServiceLSMUtilConcurrent2 {
 	}
 	
 	public synchronized void putVal(String key, String val) {
+		log.info("put " + key + " " + val);
 		String oldVal = memstore.put(key, Entity.newBuilder().setVal(val).setStatus((short)1).build()).getVal();
 		if(memstore.size() > maxMemStoreSize) {
 			//开始新建memstore,异步序列化到磁盘
@@ -382,24 +383,34 @@ public class ServiceLSMUtilConcurrent2 {
 		}
 	}
 	
-	public synchronized void putVal(KeyValue keyVal) {
+	public synchronized int putVal(KeyValue keyVal) {
 		String key = keyVal.rowkey + "'" + keyVal.colFml + "'" + keyVal.col + "'" + System.currentTimeMillis();
-		Entity oldVal = memstore.put(key, Entity.newBuilder().setVal(keyVal.val).setStatus((short)1).build());
-		if(memstore.size() > maxMemStoreSize) {
-			//开始新建memstore,异步序列化到磁盘
-			try {
-				boolean suc = tasks.offer(memstore, 1000, TimeUnit.MILLISECONDS);
-				log.info("offer tasks:" + suc + ", task size:" + tasks.size());
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+		//WAL预写日志
+		log.info("put " + key + " " + keyVal.val);
+		try {
+			Entity oldVal = memstore.put(key, Entity.newBuilder().setVal(keyVal.val).setStatus((short)1).build());
+			if(memstore.size() > maxMemStoreSize) {
+				//开始新建memstore,异步序列化到磁盘
+				try {
+					boolean suc = tasks.offer(memstore, 1000, TimeUnit.MILLISECONDS);
+					log.info("offer tasks:" + suc + ", task size:" + tasks.size());
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+					return 0;
+				}
+				memstore = Maps.newTreeMap();
 			}
-			memstore = Maps.newTreeMap();
+			return 1;
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		return -1;
 	}
 	
 	public boolean deleVal(KeyValue keyVal) {
 		String key = keyVal.rowkey + "'" + keyVal.colFml + "'" + keyVal.col + "'" + System.currentTimeMillis();
 //		memstore.remove(key);
+		log.info("put " + key + " " + keyVal.val);
 		//为了性能，直接加到memstore中即可::因为肯定不存在：时间太短
 		memstore.put(key, Entity.newBuilder().setStatus((short)0).setVal(keyVal.val).build());
 		//从C0文件里删除
