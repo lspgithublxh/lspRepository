@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
  * @package  com.li.shao.ping.KeyListBase.datastructure.geneutil
  */
 @Slf4j
-public class SimpleThreadPoolUtil {
+public class SimpleThreadPoolUtil2 {
 
 	private ArrayBlockingQueue<Runnable> tasks;//LinkedBlockingQueue
 	private Set<Worker> workers;
@@ -33,7 +33,7 @@ public class SimpleThreadPoolUtil {
 	private RejectionStrategy rejHandle;
 	private SimpleThreadFactory threadFactory;
 	
-	public SimpleThreadPoolUtil(int maxWorkerNum, int maxTaskNum, int maxIdleWorkerNum
+	public SimpleThreadPoolUtil2(int maxWorkerNum, int maxTaskNum, int maxIdleWorkerNum
 			,long maxIdelTime) throws Exception {
 		this.maxWorkerNum = maxWorkerNum;
 		this.maxIdelTime = maxIdelTime;
@@ -45,7 +45,7 @@ public class SimpleThreadPoolUtil {
 		initWorkder();
 	}
 	
-	public SimpleThreadPoolUtil(int maxWorkerNum, int maxTaskNum, int maxIdleWorkerNum
+	public SimpleThreadPoolUtil2(int maxWorkerNum, int maxTaskNum, int maxIdleWorkerNum
 			,long maxIdelTime, RejectionStrategy rejHandle){
 		this.maxWorkerNum = maxWorkerNum;
 		this.maxIdelTime = maxIdelTime;
@@ -62,7 +62,7 @@ public class SimpleThreadPoolUtil {
 		}
 	}
 	
-	public SimpleThreadPoolUtil(int maxWorkerNum, int maxTaskNum, int maxIdleWorkerNum
+	public SimpleThreadPoolUtil2(int maxWorkerNum, int maxTaskNum, int maxIdleWorkerNum
 			,long maxIdelTime, RejectionStrategy rejHandle, SimpleThreadFactory threadFactory){
 		this.maxWorkerNum = maxWorkerNum;
 		this.maxIdelTime = maxIdelTime;
@@ -146,7 +146,10 @@ public class SimpleThreadPoolUtil {
 			//分析和预判：错误的理解源于思路中的某些隐含认为-隐含认识-隐含理解-隐含认定。假定  觉得是对的但无法证明往往继续深入思考则发现是错的。找到这一块，加以批判和取正。
 			//一定找到那些没有证明的隐含认定---往往是错误的。在认识事物时非常重要.....清晰描述出自己的旧思路是前提。(描述出旧思路的每一步，才能发现可能有问题的一步)
 			//觉得不可思议的事情中一定有错误的隐含认定。
-			new Thread(()->{
+			if(threadFactory == null) {
+				threadFactory = new DefaultFactory();
+			}
+			threadFactory.newThread(()->{
 				while(true) {
 					try {
 						status.set(2);
@@ -181,14 +184,18 @@ public class SimpleThreadPoolUtil {
 		
 	}
    
-  public static SimpleThreadPoolUtil pool = new SimpleThreadPoolUtil(100, 200, 30, 1000,
+   class DefaultFactory extends SimpleThreadFactory{
+	   
+   }
+   
+  public static SimpleThreadPoolUtil2 pool = new SimpleThreadPoolUtil2(100, 200, 30, 1000,
 			(task) ->{task.run();return true;}) ;
    
    public static void main(String[] args) {
 	//线程池测试
 	   try {
 //		SimpleThreadPoolUtil pool = new SimpleThreadPoolUtil(10, 20, 3, 1000);
-			SimpleThreadPoolUtil pool = new SimpleThreadPoolUtil(10, 20, 3, 1000,
+			SimpleThreadPoolUtil2 pool = new SimpleThreadPoolUtil2(10, 20, 3, 1000,
 					(task) ->{task.run();return true;}) ;
 		for(int i = 0; i< 100; i++) {
 			final int j = i;
