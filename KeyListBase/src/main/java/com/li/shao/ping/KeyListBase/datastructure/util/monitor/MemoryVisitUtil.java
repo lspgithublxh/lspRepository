@@ -85,7 +85,7 @@ public class MemoryVisitUtil {
 			String cpuU = content3.readLine();
 			String[] infos = cpuU.substring(cpuU.indexOf(":") + 1).trim().split(",");
 			base.setCpuUseTotalPers("用户空间：" + infos[0] + " 内核空间：" + infos[1] + " 空闲cpu百分比：" + infos[3] + " 等待输入输出的cpu时间百分比：" + infos[4]);
-			//网络利用率方面：
+			//磁盘利用率方面:
 			BufferedReader content4 = getContent("iostat -d -k");
 			content4.readLine();
 			content4.readLine();
@@ -95,7 +95,27 @@ public class MemoryVisitUtil {
 			base.setDiskUseIn(diskArr[0] + ":" + Double.valueOf(diskArr[2]) + " kB/s");
 			base.setDiskUseOut(diskArr[0] + ":" + Double.valueOf(diskArr[3]) + " kB/s");//每秒io数忽略
 			base.setDiskTPS(diskArr[0] + ":" + diskArr[1] + " tps/s");
-			//磁盘利用率方面:
+			//网络利用率方面：
+			BufferedReader content5 = getContent("sar -n DEV 1 1");
+			boolean start = false;
+			base.setNetIoInfo(Lists.newArrayList());
+			while(true) {
+				String line = content5.readLine();
+				if(!start) {
+					if(line.contains("rxpck/s")) {
+						start = true;
+					}
+					continue;
+				}
+				if(line.isEmpty()) {
+					break;
+				}
+				String[] netInfo = line.trim().split("\\s+");
+				base.getNetIoInfo().add(new NetIOinfoEntity().setName(netInfo[2])
+						.setNetworkIn(netInfo[3] + "pck/s " + netInfo[5] + "kB/s")
+						.setNetworkOut(netInfo[4] + "pck/s " + netInfo[6] + "kB/s"));
+				
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -464,9 +484,17 @@ public class MemoryVisitUtil {
 		private String diskUseIn;
 		private String diskUseOut;
 		private String diskTPS;
-		private double networkIn;
-		private double networkOut;
+		private List<NetIOinfoEntity> netIoInfo;
 	}
+	
+	@Data
+	@Accessors(chain = true)
+	class NetIOinfoEntity{
+		private String networkIn;
+		private String networkOut;
+		private String name;
+	}
+	
 	@Test
 	public void test() {
 		runCmd();
