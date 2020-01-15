@@ -36,6 +36,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MemoryVisitUtil {
 	
+	public static MemoryVisitUtil util = new MemoryVisitUtil();
+	
 	private Runtime runtime = Runtime.getRuntime();
 	private boolean isWin = false;
 	private Pattern jstackPattern = Pattern.compile("\"([\\S\\s]+)\".+?nid\\=0x(\\S+)");
@@ -51,6 +53,12 @@ public class MemoryVisitUtil {
 		if(name.startsWith("Win")) {
 			isWin = true;
 		}
+	}
+	
+	public void networkPortListen() {
+		//网络端口监听
+		AllMonitorEntity allEntity = new AllMonitorEntity();
+		
 	}
 	
 	/**
@@ -122,6 +130,36 @@ public class MemoryVisitUtil {
 		return base;
 	}
 	
+	public AllMonitorEntity getAllInfo() {
+		AllMonitorEntity all = new AllMonitorEntity();
+		try {
+			List<String> mainClassList = Lists.newArrayList("ProsserApplication");
+			Map<Integer, String> threadIdName = parseJps("jps", this::parseJps);
+			threadIdName.entrySet().forEach(item ->{
+				if(mainClassList.contains(item.getValue())) {
+					//开启循环持续输出
+					Integer pid = item.getKey();
+					String jmapSort = isWin ? "" : " | sort -n -r -k 3";
+					TreeMap<Integer, Entity> jmapData = parseJmap("jmap -histo:live " + pid + jmapSort);//-n -r -k
+					TreeMap<Integer, ThreadEntity> stackMap = parseJstack("jstack -l " + pid);
+					TreeMap<String, Double> jstatMap = parseJstat("jstat -gcutil " + pid);
+					all.setJmapData(jmapData);
+					all.setJstackMap(stackMap);
+					all.setJstatMap(jstatMap);
+					if(!isWin) {
+						TopEntity entity = parseTop("top -Hp " + pid);
+						//确定耗时最多的线程stack/cpu/mem占用最多的thread
+						BaseInfoEntity base = memCpuNetworkDiskMonitor();
+						all.setBase(base);
+						all.setTopEntity(entity);
+					}
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return all;
+	}
 	
 	public void runCmd() {
 		try {
@@ -494,6 +532,16 @@ public class MemoryVisitUtil {
 		private String networkIn;
 		private String networkOut;
 		private String name;
+	}
+	
+	@Data
+	@Accessors(chain = true)
+	public class AllMonitorEntity {
+		private TreeMap<Integer, Entity> jmapData;
+		private TreeMap<Integer, ThreadEntity> jstackMap;
+		private TreeMap<String, Double> jstatMap;
+		private TopEntity topEntity;
+		private BaseInfoEntity base;
 	}
 	
 	@Test
