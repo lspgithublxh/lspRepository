@@ -19,8 +19,10 @@ public class UrlHandlerMapper {
 			//到了，返回数据
 			String responseHeader = "HTTP/1.1 200 OK\r\nServer: Apache-Coyote/1.1\r\nContent-Type:text/html\r\n\r\n";
 			//获取页面数据
+//			String responseHeader = null;
 //			String page = "callback data";
 			String path = ServiceHttpServer.class.getClassLoader().getResource("").getPath();
+
 			try {
 				String page = Files.asCharSource(new File(path + "f.html"), Charset.defaultCharset()).read();
 				util.formSend(page.getBytes(), responseHeader, out);
@@ -32,7 +34,6 @@ public class UrlHandlerMapper {
 			//到了，返回数据
 			String responseHeader = "HTTP/1.1 200 OK\r\nServer: Apache-Coyote/1.1\r\nContent-Type:text/html\r\n\r\n";
 			//获取页面数据
-//			String page = "callback data";
 			String path = ServiceHttpServer.class.getClassLoader().getResource("").getPath();
 			try {
 				String page = Files.asCharSource(new File(path + "f.html"), Charset.defaultCharset()).read();

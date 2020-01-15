@@ -83,10 +83,14 @@ public class HttpStreamReaderWriter {
 	public void formSend(byte[] data, String head, OutputStream out) {
 		//发送头数据
 		try {
-			out.write(head.getBytes());
-			out.write(data);
+			if(head != null) {
+				out.write(head.getBytes());
+			}
+			if(data != null) {
+				out.write(data);
+			}
 			out.flush();//发送一个结束符？
-//			out.close();
+			out.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
