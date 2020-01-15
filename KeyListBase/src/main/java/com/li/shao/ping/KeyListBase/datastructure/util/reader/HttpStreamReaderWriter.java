@@ -86,7 +86,7 @@ public class HttpStreamReaderWriter {
 			out.write(head.getBytes());
 			out.write(data);
 			out.flush();//发送一个结束符？
-			out.close();
+//			out.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
