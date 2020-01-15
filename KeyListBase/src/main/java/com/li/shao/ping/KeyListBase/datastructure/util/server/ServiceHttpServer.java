@@ -1,14 +1,17 @@
 package com.li.shao.ping.KeyListBase.datastructure.util.server;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
+import com.google.common.io.Files;
 import com.li.shao.ping.KeyListBase.datastructure.geneutil.SimpleThreadPoolUtil;
 import com.li.shao.ping.KeyListBase.datastructure.geneutil.SimpleThreadPoolUtil2;
 import com.li.shao.ping.KeyListBase.datastructure.geneutil.v2.ServiceServerUtil;
@@ -62,9 +65,14 @@ public class ServiceHttpServer {
 									}
 									//到了，返回数据
 									String responseHeader = "HTTP/1.1 200 OK\r\nServer: Apache-Coyote/1.1\r\nContent-Type:text/html\r\n\r\n";
-									util.formSend("callback data".getBytes(), responseHeader, out);
+									//获取页面数据
+//									String page = "callback data";
+									String path = ServiceHttpServer.class.getClassLoader().getResource("").getPath();
+									log.info(path);
+									String page = Files.asCharSource(new File(path + "f.html"), Charset.defaultCharset()).read();
+									util.formSend(page.getBytes(), responseHeader, out);
 									
-								} catch (InterruptedException e) {
+								} catch (Exception e) {
 									e.printStackTrace();
 								}
 							}
