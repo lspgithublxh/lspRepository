@@ -210,8 +210,9 @@ public class MemoryVisitUtil {
 		TopEntity entity = new TopEntity();
 		try {
 			String line = null;
-			String data = Files.asCharSource(new File("D:\\var\\rs"), Charsets.UTF_8).read();
-			BufferedReader reader = new BufferedReader(new StringReader(data));
+//			String data = Files.asCharSource(new File("D:\\var\\rs"), Charsets.UTF_8).read();
+//			BufferedReader reader = new BufferedReader(new StringReader(data));
+			BufferedReader reader = getContent(cmd);
 			setBaseInfo(entity, reader);
 			reader.readLine();
 			String metaData = reader.readLine();

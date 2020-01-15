@@ -170,7 +170,7 @@ public class NServiceServerPoolUtil4 {
 				int count = 1;
 				while(count > 0) {
 					count = channel.read(buffer);
-					if(count == 0) {
+					if(count <= 0) {
 						break;
 					}
 					buffer.flip();

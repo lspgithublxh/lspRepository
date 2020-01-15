@@ -105,7 +105,7 @@ public class ServiceServerUtil {
 		
 	}
 	
-	private void formatRead(InputStream in) throws IOException {
+	public void formatRead(InputStream in) throws IOException {
 		DataInputStream input = new DataInputStream(in);
 		byte[] cache = new byte[1024];//第一个，前4个是块的个数
 		ByteArrayOutputStream innerCache = new ByteArrayOutputStream();
