@@ -32,8 +32,8 @@ Cache-Control: max-age=0
 @Slf4j
 public class HttpStreamReaderWriter {
 
-	public Map<InputStream, byte[]> dataMap;
-	public Map<InputStream, Integer> comMap = Maps.newHashMap();
+	public Map<InputStream, byte[]> dataMap = Maps.newHashMap();
+	public Map<InputStream, String> headerMap = Maps.newHashMap();
 
 	public void formatRead(InputStream in, String lock) throws IOException {
 		DataInputStream input = new DataInputStream(in);
@@ -59,7 +59,7 @@ public class HttpStreamReaderWriter {
 				if(available <= len) {//不再需要等待
 					log.info("only header");
 					synchronized (lock.intern()) {
-						comMap.put(in, 1);
+						headerMap.put(in, header);
 						lock.intern().notify();
 					}
 					break;
@@ -73,7 +73,7 @@ public class HttpStreamReaderWriter {
 			log.info("header+content");
 			dataMap.put(in, content);
 			synchronized (lock.intern()) {
-				comMap.put(in, 1);
+				headerMap.put(in, header);
 				lock.intern().notify();
 			}
 			break;

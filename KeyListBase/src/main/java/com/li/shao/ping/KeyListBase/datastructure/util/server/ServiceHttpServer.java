@@ -31,12 +31,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ServiceHttpServer {
 
-	private Map<String, byte[]> receivedMap;
-	private Map<InputStream, List<String>> inputStreamMap;
 	
 	public void startServer() {
 		try {
-			inputStreamMap = Maps.newHashMap();
 			HttpStreamReaderWriter util = new HttpStreamReaderWriter();
 			ServerSocket server = new ServerSocket(11111);
 			while(true) {
@@ -46,7 +43,6 @@ public class ServiceHttpServer {
 					try {
 						InputStream in = socket.getInputStream();
 						OutputStream out = socket.getOutputStream();
-						inputStreamMap.put(in, Lists.newArrayList());
 						String lock = UIDUtil.increNum() + "";
 						SimpleThreadPoolUtil.pool.addTask(()->{
 							SimpleThreadPoolUtil.pool.addTask(()->{
@@ -60,18 +56,12 @@ public class ServiceHttpServer {
 							synchronized (lock.intern()) {//TODO
 								try {
 									//未到，等待
-									if(!util.comMap.containsKey(in)) {
+									String header = util.headerMap.get(in);
+									if(header == null) {
 										lock.intern().wait();
 									}
-									//到了，返回数据
-									String responseHeader = "HTTP/1.1 200 OK\r\nServer: Apache-Coyote/1.1\r\nContent-Type:text/html\r\n\r\n";
-									//获取页面数据
-//									String page = "callback data";
-									String path = ServiceHttpServer.class.getClassLoader().getResource("").getPath();
-									log.info(path);
-									String page = Files.asCharSource(new File(path + "f.html"), Charset.defaultCharset()).read();
-									util.formSend(page.getBytes(), responseHeader, out);
-									
+									HttpResourceDispatcher.instance.dispatcher(header, 
+											util.dataMap.get(in), util, out);
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
