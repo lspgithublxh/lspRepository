@@ -59,6 +59,7 @@ public class ServiceHttpServer {
 									String header = util.headerMap.get(in);
 									if(header == null) {
 										lock.intern().wait();
+										header = util.headerMap.get(in);
 									}
 									HttpResourceDispatcher.instance.dispatcher(header, 
 											util.dataMap.get(in), util, out);
