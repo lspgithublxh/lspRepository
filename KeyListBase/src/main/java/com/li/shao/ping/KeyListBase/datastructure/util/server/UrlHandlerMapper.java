@@ -3,11 +3,13 @@ package com.li.shao.ping.KeyListBase.datastructure.util.server;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.li.shao.ping.KeyListBase.datastructure.util.monitor.MemoryVisitUtil;
 import com.li.shao.ping.KeyListBase.datastructure.util.monitor.MemoryVisitUtil.AllMonitorEntity;
+import com.li.shao.ping.KeyListBase.datastructure.util.monitor.MemoryVisitUtil.ThreadEntity;
 
 import avro.shaded.com.google.common.collect.Maps;
 
@@ -55,13 +57,16 @@ public class UrlHandlerMapper {
 				//信息展示：
 				String page = Files.asCharSource(new File(path + "performce.html"), Charset.defaultCharset()).read();
 				Map<String, Object> resource = Maps.newHashMap();
-				resource.put("jmap", new Gson().toJson(allInfo.getJmapData()));
-				resource.put("jstack", new Gson().toJson(allInfo.getJstackMap()));
-				resource.put("jstat", new Gson().toJson(allInfo.getJstatMap()));
+				resource.put("jmap",allInfo.getJmapData().entrySet());
+				resource.put("jstack", allInfo.getJstackMap().entrySet());
+				resource.put("jstat", allInfo.getJstatMap().entrySet());
+				
+//				allInfo.getJstackMap().entrySet().stream().map(item -> {
+//					ThreadEntity value = item.getValue();
+//					String v = item.getKey() + " " + value.getName() + " ";
+//					return v;
+//				});
 				page = ResourceMapper.instance.matchAndReplace(page, resource);
-//				page = page.replace("${jmap}", new Gson().toJson(allInfo.getJmapData()))
-//						.replace("${jstack}", new Gson().toJson(allInfo.getJstackMap()))
-//						.replace("${jstat}", new Gson().toJson(allInfo.getJstatMap()));
 				util.formSend(page.getBytes(), responseHeader, out);
 			} catch (Exception e) {
 				e.printStackTrace();

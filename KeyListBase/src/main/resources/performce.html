@@ -8,13 +8,15 @@
 <table>
 	<thead>
 	<tr>
-	<th>jmap</th><th>jstack</th><th>jstat</th>
+	<th>jmap</th>
 	</tr>
 	</thead>
 	<tbody>
+	$foreach(item in jmap)
 	<tr>
-	<td>${jmap}</td><td>${jstack}</td><td>${jstat}</td>
+	<td>${item.key}</td>
 	</tr>
+	$end
 	</tbody>
 </table>
 </body>

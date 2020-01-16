@@ -481,20 +481,20 @@ public class MemoryVisitUtil {
 	
 	@Data
 	@Accessors(chain = true)
-	class Entity{
+	public static class Entity{
 		private String name;
 		private int count;
 	}
 	@Data
 	@Accessors(chain = true)
-	class ThreadEntity{
+	public static class ThreadEntity{
 		private String stack;
 		private String status;
 		private String name;
 	}
 	@Data
 	@Accessors(chain = true)
-	class TopEntity{
+	public static class TopEntity{
 		private Integer userCount;
 		private String loadAvg;
 		private String threads;//
@@ -505,7 +505,7 @@ public class MemoryVisitUtil {
 	}
 	@Data
 	@Accessors(chain = true)
-	class SortEntity{
+	public static class SortEntity{
 		private String cpu;
 		private String mem;//是进程的；所以值都是一样
 		private String time;//线程运行时间, 占用cpu时间，各个的线程的运行时间不同
@@ -515,7 +515,7 @@ public class MemoryVisitUtil {
 	}
 	@Data
 	@Accessors(chain = true)
-	class BaseInfoEntity{
+	public static class BaseInfoEntity{
 		private String cpuUseTotalPers;
 		private String memUseTotalPers;
 		private String threadTotalPers;//
@@ -528,7 +528,7 @@ public class MemoryVisitUtil {
 	
 	@Data
 	@Accessors(chain = true)
-	class NetIOinfoEntity{
+	public static class  NetIOinfoEntity{
 		private String networkIn;
 		private String networkOut;
 		private String name;
@@ -536,7 +536,7 @@ public class MemoryVisitUtil {
 	
 	@Data
 	@Accessors(chain = true)
-	public class AllMonitorEntity {
+	public static class AllMonitorEntity {
 		private TreeMap<Integer, Entity> jmapData;
 		private TreeMap<Integer, ThreadEntity> jstackMap;
 		private TreeMap<String, Double> jstatMap;
