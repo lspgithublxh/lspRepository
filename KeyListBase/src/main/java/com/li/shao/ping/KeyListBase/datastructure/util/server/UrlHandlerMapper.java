@@ -54,9 +54,14 @@ public class UrlHandlerMapper {
 				AllMonitorEntity allInfo = MemoryVisitUtil.util.getAllInfo();
 				//信息展示：
 				String page = Files.asCharSource(new File(path + "performce.html"), Charset.defaultCharset()).read();
-				page = page.replace("${jmap}", new Gson().toJson(allInfo.getJmapData()))
-				.replace("${jstack}", new Gson().toJson(allInfo.getJstackMap()))
-				.replace("${jstat}", new Gson().toJson(allInfo.getJstatMap()));
+				Map<String, Object> resource = Maps.newHashMap();
+				resource.put("jmap", new Gson().toJson(allInfo.getJmapData()));
+				resource.put("jstack", new Gson().toJson(allInfo.getJstackMap()));
+				resource.put("jstat", new Gson().toJson(allInfo.getJstatMap()));
+				page = ResourceMapper.instance.matchAndReplace(page, resource);
+//				page = page.replace("${jmap}", new Gson().toJson(allInfo.getJmapData()))
+//						.replace("${jstack}", new Gson().toJson(allInfo.getJstackMap()))
+//						.replace("${jstat}", new Gson().toJson(allInfo.getJstatMap()));
 				util.formSend(page.getBytes(), responseHeader, out);
 			} catch (Exception e) {
 				e.printStackTrace();
