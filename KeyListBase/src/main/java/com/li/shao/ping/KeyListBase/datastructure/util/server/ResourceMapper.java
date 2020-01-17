@@ -18,6 +18,7 @@ public class ResourceMapper {
 
 	public String matchAndReplace(String resource, Map<String, Object> resourceMap) {
 		//第一种情况：数组替换
+		String copy = resource;
 		try {
 			Matcher pFor = pForeach.matcher(resource);
 			while(pFor.find()) {
@@ -35,18 +36,25 @@ public class ResourceMapper {
 					content = matchAndReplace(resource, resourceMap);
 				}else {
 					Collection coll = (Collection) res;
+					
 					for(Object o : coll) {
 						resourceMap.put(item, o);
 						String newBlock = valReplace(content, resourceMap);
 						buffer.append(newBlock);
 					}
 				}
-				resource = pFor.replaceFirst(buffer.toString());//也可以直接截断的方式；
-				pFor = pattern.matcher(resource);
+//				copy = pFor.replaceFirst(buffer.toString());//也可以直接截断的方式；
+//				pFor = pattern.matcher(copy);
+				int pos = pFor.start();
+				int pos2 = pFor.end();
+				copy = copy.substring(0, pos) + buffer.toString() + copy.substring(pos2);
+				resource = copy;
+				pFor = pForeach.matcher(resource);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		resource = copy;
 		resource = valReplace(resource, resourceMap);
 		return resource;
 	}
@@ -66,6 +74,10 @@ public class ResourceMapper {
 					attrName = arr[1];
 					val = resourceMap.get(key);
 					val = getFromAttr(val, attrName);
+					int index = 2;
+					while(arr.length > index) {
+						val = getFromAttr(val, arr[index++]);
+					}
 				}else {
 					val = resourceMap.get(key);
 				}
@@ -88,6 +100,9 @@ public class ResourceMapper {
 					}else {
 						resource = resource.replace("${" + name + "}", val.toString());
 					}
+				}else {
+					//异常处理：还是替换
+					resource = resource.replace("${" + name + "}", "暂无");
 				}
 			}
 		} catch (Exception e) {
@@ -112,25 +127,28 @@ public class ResourceMapper {
 		Pattern pattern = Pattern.compile("\\$\\{(\\S+?)\\}");
 		String rs = "<td>${jmap}</td><td>${jstack}</td><td>${jstat}</td>";
 		Matcher matcher = pattern.matcher(rs);
-		while(matcher.find()) {
-			System.out.println(matcher.group(1));
-			int pos = matcher.start();
-			int pos2 = matcher.end();
-			System.out.println(pos + "," + pos2);
-			String x = matcher.replaceFirst("bobo");
-			rs = x;
-			matcher = pattern.matcher(rs);
-			System.out.println(rs);
-		}
-		//直接分割为3半;
-//		String xx = rs;
+		String sss = rs;
 //		while(matcher.find()) {
 //			System.out.println(matcher.group(1));
 //			int pos = matcher.start();
 //			int pos2 = matcher.end();
-//			xx = xx.substring(0, pos) + "new content" + xx.substring(pos2);
-//			System.out.println(xx);
 //			System.out.println(pos + "," + pos2);
+//			sss = matcher.replaceFirst("bobo");
+//			matcher = pattern.matcher(sss);
+//			System.out.println(sss);
 //		}
+		//直接分割为3半;
+		String xx = rs;
+		while(matcher.find()) {
+			System.out.println(matcher.group(1));
+			int pos = matcher.start();
+			int pos2 = matcher.end();
+			xx = xx.substring(0, pos) + "new content" + xx.substring(pos2);
+			rs = xx;
+			matcher = pattern.matcher(rs);
+			System.out.println(rs);
+			System.out.println(pos + "," + pos2);
+			
+		}
 	}
 }

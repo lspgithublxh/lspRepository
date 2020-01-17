@@ -11,6 +11,7 @@ import com.esotericsoftware.minlog.Log;
 import com.google.common.io.Files;
 import com.li.shao.ping.KeyListBase.datastructure.util.reader.HttpStreamReaderWriter;
 
+import avro.shaded.com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -28,10 +29,16 @@ public class HttpResourceDispatcher {
 				String[] arr = request.trim().split("\\s+");
 				url = arr[1];
 				log.info(url);
+				//过滤器直接过滤：比如图片直接返回
+				if(FilterChain.getInstance().filter(Lists.newArrayList(Filter.instance), 
+						url,util, header, content, out)) {
+					return;
+				}
 				//map:url-handler
 				Handler handler = UrlHandlerMapper.instance.handlerMap.get(url);
 				if(handler != null) {
 					handler.handler(header, content, util, out);
+					return;
 				}
 			} catch (Exception e1) {
 				e1.printStackTrace();

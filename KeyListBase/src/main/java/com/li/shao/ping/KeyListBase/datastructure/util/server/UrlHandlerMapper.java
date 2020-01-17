@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.li.shao.ping.KeyListBase.datastructure.util.monitor.MemoryVisitUtil;
 import com.li.shao.ping.KeyListBase.datastructure.util.monitor.MemoryVisitUtil.AllMonitorEntity;
 import com.li.shao.ping.KeyListBase.datastructure.util.monitor.MemoryVisitUtil.ThreadEntity;
+import com.li.shao.ping.KeyListBase.datastructure.util.server.header.CommonHeader;
 
 import avro.shaded.com.google.common.collect.Maps;
 
@@ -49,23 +50,26 @@ public class UrlHandlerMapper {
 		});
 		handlerMap.put("/perf", (header, data, util, out)->{
 			//到了，返回数据
-			String responseHeader = "HTTP/1.1 200 OK\r\nServer: Apache-Coyote/1.1\r\nContent-Type:text/html\r\n\r\n";
+			String responseHeader = CommonHeader.instance.convertMapToResponseHeader(null);
+//			String responseHeader = "HTTP/1.1 200 OK\r\nServer: Apache-Coyote/1.1\r\nContent-Type:text/html\r\n\r\n";
 			//获取页面数据
 			String path = ServiceHttpServer.class.getClassLoader().getResource("").getPath();
 			try {
 				AllMonitorEntity allInfo = MemoryVisitUtil.util.getAllInfo();
+				allInfo.getJstackMap().entrySet().stream().forEach(item ->{
+					ThreadEntity entity = item.getValue();
+					int pos = entity.getStack().indexOf("\r\n");
+					if(pos > 0) {
+						entity.setStack(entity.getStack().substring(0, pos));
+					}
+				});;
 				//信息展示：
 				String page = Files.asCharSource(new File(path + "performce.html"), Charset.defaultCharset()).read();
 				Map<String, Object> resource = Maps.newHashMap();
-				resource.put("jmap",allInfo.getJmapData().entrySet());
+				resource.put("jmap",allInfo.getJmapData().descendingMap().entrySet());
 				resource.put("jstack", allInfo.getJstackMap().entrySet());
 				resource.put("jstat", allInfo.getJstatMap().entrySet());
 				
-//				allInfo.getJstackMap().entrySet().stream().map(item -> {
-//					ThreadEntity value = item.getValue();
-//					String v = item.getKey() + " " + value.getName() + " ";
-//					return v;
-//				});
 				page = ResourceMapper.instance.matchAndReplace(page, resource);
 				util.formSend(page.getBytes(), responseHeader, out);
 			} catch (Exception e) {

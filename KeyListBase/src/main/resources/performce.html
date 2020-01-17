@@ -3,21 +3,64 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<script type="text/javascript">
+setTimeout(function(){
+	//window.location.href = location.href;
+	location.reload();
+}, 10000);
+
+</script>
 </head>
 <body>
+<div style="margin: 0px;background-color: bisque;" >
+<div>
+<img class="pic" src="./static/img/head.png" style="width: 100%; height: 45px;margin-right: 0;margin-left: 0;">
+</div>
 <table>
 	<thead>
 	<tr>
 	<th>jmap</th>
 	</tr>
+	<tr>
+	<td>instances</td>
+	<td>bytes</td>
+	<td>name</td>
+	</tr>
 	</thead>
 	<tbody>
 	$foreach(item in jmap)
 	<tr>
+	<td>${item.value.count}</td>
 	<td>${item.key}</td>
+	<td>${item.value.name}</td>
 	</tr>
 	$end
 	</tbody>
 </table>
+
+<table>
+	<thead>
+	<tr>
+	<th>jstack</th>
+	</tr>
+	<tr>
+	<td>thread id</td>
+	<td>name</td>
+	<td>status</td>
+	<td>stack</td>
+	</tr>
+	</thead>
+	<tbody>
+	$foreach(item in jstack)
+	<tr>
+	<td>${item.key}</td>
+	<td>${item.value.name}</td>
+	<td>${item.value.status}</td>
+	<td>${item.value.stack}</td>
+	</tr>
+	$end
+	</tbody>
+</table>
+</div>
 </body>
 </html>
