@@ -69,7 +69,8 @@ public class UrlHandlerMapper {
 				resource.put("jmap",allInfo.getJmapData().descendingMap().entrySet());
 				resource.put("jstack", allInfo.getJstackMap().entrySet());
 				resource.put("jstat", allInfo.getJstatMap().entrySet());
-				
+				resource.put("jinfo", allInfo.getJvmStartParam());
+
 				page = ResourceMapper.instance.matchAndReplace(page, resource);
 				util.formSend(page.getBytes(), responseHeader, out);
 			} catch (Exception e) {

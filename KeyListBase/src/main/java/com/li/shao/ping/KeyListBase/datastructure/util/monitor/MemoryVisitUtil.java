@@ -143,9 +143,11 @@ public class MemoryVisitUtil {
 					TreeMap<Integer, Entity> jmapData = parseJmap("jmap -histo:live " + pid + jmapSort);//-n -r -k
 					TreeMap<Integer, ThreadEntity> stackMap = parseJstack("jstack -l " + pid);
 					TreeMap<String, Double> jstatMap = parseJstat("jstat -gcutil " + pid);
+					VMStartinfoEntity jvmStartParam = getJvmStartParam(pid);
 					all.setJmapData(jmapData);
 					all.setJstackMap(stackMap);
 					all.setJstatMap(jstatMap);
+					all.setJvmStartParam(jvmStartParam);
 					if(!isWin) {
 						TopEntity entity = parseTop("top -Hp " + pid);
 						//确定耗时最多的线程stack/cpu/mem占用最多的thread
@@ -177,6 +179,8 @@ public class MemoryVisitUtil {
 						log.info(new Gson().toJson(stackMap.descendingMap()));
 						TreeMap<String, Double> jstatMap = parseJstat("jstat -gcutil " + pid);
 						log.info(new Gson().toJson(jstatMap.descendingMap()));
+						VMStartinfoEntity jvmStartParam = getJvmStartParam(pid);
+						log.info(new Gson().toJson(jvmStartParam));
 						if(!isWin) {
 							TopEntity entity = parseTop("top -Hp " + pid);
 							log.info(new Gson().toJson(entity));
@@ -197,6 +201,28 @@ public class MemoryVisitUtil {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public VMStartinfoEntity getJvmStartParam(Integer pid) {
+		String cmd = "jinfo -flags " + pid;
+		VMStartinfoEntity vm = new VMStartinfoEntity();
+		try {
+			BufferedReader content = getContent(cmd);
+			String line = "";
+			while((line = content.readLine()) != null) {
+				if(line.contains("Non-default VM flags")) {
+					String vmParam = line.substring(line.indexOf(":") + 1);
+					vm.setVmParam(vmParam);
+				}else if (line.contains("Command line")) {
+					String commend = line.substring(line.indexOf(":") + 1);
+					vm.setCommend(commend);
+				}
+			}
+			content.readLine();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return vm;
 	}
 
 	/**
@@ -536,12 +562,20 @@ public class MemoryVisitUtil {
 	
 	@Data
 	@Accessors(chain = true)
+	public static class  VMStartinfoEntity{
+		private String vmParam;
+		private String commend;
+	}
+	
+	@Data
+	@Accessors(chain = true)
 	public static class AllMonitorEntity {
 		private TreeMap<Integer, Entity> jmapData;
 		private TreeMap<Integer, ThreadEntity> jstackMap;
 		private TreeMap<String, Double> jstatMap;
 		private TopEntity topEntity;
 		private BaseInfoEntity base;
+		private VMStartinfoEntity jvmStartParam;
 	}
 	
 	@Test
