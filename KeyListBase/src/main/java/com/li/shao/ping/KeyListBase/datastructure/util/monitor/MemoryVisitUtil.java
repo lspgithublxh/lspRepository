@@ -124,6 +124,36 @@ public class MemoryVisitUtil {
 						.setNetworkOut(netInfo[4] + "pck/s " + netInfo[6] + "kB/s"));
 				
 			}
+			//命令方式查看内存使用
+			BufferedReader content6 = getContent("cat /proc/meminfo");
+			long memTotal = 0;
+			long memFree = 0;
+			long memBuffer = 0;
+			long memCache = 0;
+			String line = "";
+			StringBuffer buf = new StringBuffer();
+			while((line = content6.readLine()) != null) {
+				if(line.startsWith("Active:")) {
+					break;
+				}
+				String number = line.substring(line.indexOf(":") + 1, line.lastIndexOf("kB")).trim();
+
+				if(line.startsWith("MemTotal:")) {
+					memTotal = Long.valueOf(number);
+				}else if(line.startsWith("MemFree::")) {
+					memFree = Long.valueOf(number);
+				}else if(line.startsWith("Buffers:")) {
+					memBuffer = Long.valueOf(number);
+				}else if(line.startsWith("Cached:")) {
+					memCache = Long.valueOf(number);
+				}
+				buf.append(line);
+			}
+			double used = memTotal - memBuffer - memCache - memFree;
+			double usage = used / memTotal;
+			buf.append("used:" + used + " kB").append("usage:" + usage + " kB");
+			base.setMemUseTotalRest(buf.toString());
+		
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -544,6 +574,7 @@ public class MemoryVisitUtil {
 	public static class BaseInfoEntity{
 		private String cpuUseTotalPers;
 		private String memUseTotalPers;
+		private String memUseTotalRest;
 		private String threadTotalPers;//
 		private String cpuLoadAvg;//cpu负载总数比
 		private String diskUseIn;
