@@ -61,6 +61,26 @@ setTimeout(function(){
 	$end
 	</tbody>
 </table>
+
+<table>
+	<thead>
+	<tr>
+	<th>jstat</th>
+	</tr>
+	<tr>
+	<td>name</td>
+	<td>value</td>
+	</tr>
+	</thead>
+	<tbody>
+	$foreach(item in jstat)
+	<tr>
+	<td>${item.key}</td>
+	<td>${item.value}</td>
+	</tr>
+	$end
+	</tbody>
+</table>
 </div>
 </body>
 </html>

@@ -1,4 +1,4 @@
-package com.li.shao.ping.KeyListBase.datastructure.util.server;
+package com.li.shao.ping.KeyListBase.datastructure.util.httpserver;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,8 +9,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.io.Files;
+import com.li.shao.ping.KeyListBase.datastructure.util.httpserver.header.CommonHeader;
 import com.li.shao.ping.KeyListBase.datastructure.util.reader.HttpStreamReaderWriter;
-import com.li.shao.ping.KeyListBase.datastructure.util.server.header.CommonHeader;
 
 import avro.shaded.com.google.common.collect.Maps;
 

@@ -1,4 +1,4 @@
-package com.li.shao.ping.KeyListBase.datastructure.util.server;
+package com.li.shao.ping.KeyListBase.datastructure.util.httpserver;
 
 import java.io.OutputStream;
 

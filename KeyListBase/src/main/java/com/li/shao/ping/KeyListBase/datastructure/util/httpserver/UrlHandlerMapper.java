@@ -1,4 +1,4 @@
-package com.li.shao.ping.KeyListBase.datastructure.util.server;
+package com.li.shao.ping.KeyListBase.datastructure.util.httpserver;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -7,10 +7,10 @@ import java.util.TreeMap;
 
 import com.google.common.io.Files;
 import com.google.gson.Gson;
+import com.li.shao.ping.KeyListBase.datastructure.util.httpserver.header.CommonHeader;
 import com.li.shao.ping.KeyListBase.datastructure.util.monitor.MemoryVisitUtil;
 import com.li.shao.ping.KeyListBase.datastructure.util.monitor.MemoryVisitUtil.AllMonitorEntity;
 import com.li.shao.ping.KeyListBase.datastructure.util.monitor.MemoryVisitUtil.ThreadEntity;
-import com.li.shao.ping.KeyListBase.datastructure.util.server.header.CommonHeader;
 
 import avro.shaded.com.google.common.collect.Maps;
 
