@@ -26,7 +26,16 @@ public class ResourceMapper {
 				String[] expreArr = expression.split("\\s+");
 				String item = expreArr[0];
 				String from = expreArr[2];
-				Object res = resourceMap.get(from);
+				Object res = null;
+				if(from.contains(".")) {
+					String[] complexO = from.split("\\.");
+					res = resourceMap.get(complexO[0]);
+					for(int i = 1; i < complexO.length; i++) {
+						res = getFromAttr(res, complexO[i]);
+					}
+				}else {
+					res = resourceMap.get(from);
+				}
 				if(res == null) {
 					continue;
 				}

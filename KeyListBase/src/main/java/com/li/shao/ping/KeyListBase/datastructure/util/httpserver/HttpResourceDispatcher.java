@@ -26,6 +26,9 @@ public class HttpResourceDispatcher {
 			try {
 				BufferedReader reader = new BufferedReader(new StringReader(header));
 				String request = reader.readLine();
+				if(request == null) {
+					log.info("dispatcher bad");
+				}
 				String[] arr = request.trim().split("\\s+");
 				url = arr[1];
 				log.info(url);

@@ -22,11 +22,13 @@ import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.junit.Test;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Splitter;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.li.shao.ping.KeyListBase.datastructure.inter.CmdReturnHandler;
 import com.li.shao.ping.KeyListBase.datastructure.util.uid.UIDUtil;
 
+import avro.shaded.com.google.common.base.Joiner;
 import avro.shaded.com.google.common.collect.Lists;
 import avro.shaded.com.google.common.collect.Maps;
 import lombok.Data;
@@ -71,7 +73,7 @@ public class MemoryVisitUtil {
 	 * cat /proc/net/dev
 	 * @return 
 	 */
-	public BaseInfoEntity memCpuNetworkDiskMonitor() {
+	public BaseInfoEntity memCpuNetworkDiskMonitor(Integer pid) {
 		BaseInfoEntity base = new BaseInfoEntity();
 		try {
 			OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
@@ -79,85 +81,209 @@ public class MemoryVisitUtil {
 			base.setCpuLoadAvg("" + operatingSystemMXBean.getSystemLoadAverage());
 			MemoryUsage heapMemoryUsage = memoryMXBean.getHeapMemoryUsage();
 			MemoryUsage nonHeapMemoryUsage = memoryMXBean.getNonHeapMemoryUsage();
-			double heapMemUse = heapMemoryUsage.getUsed() / heapMemoryUsage.getCommitted();
-			double nonHeapMemUse = nonHeapMemoryUsage.getUsed() / nonHeapMemoryUsage.getCommitted();
+			double heapMemUse = ((double)heapMemoryUsage.getUsed()) / heapMemoryUsage.getCommitted();
+			double nonHeapMemUse = ((double)nonHeapMemoryUsage.getUsed()) / nonHeapMemoryUsage.getCommitted();
 			base.setMemUseTotalPers(heapMemUse + "," + nonHeapMemUse);
-			BufferedReader content = getContent("cat /proc/sys/kernel/pid_max");
-			String totalPidNum = content.readLine();
-			BufferedReader content2 = getContent("pstree -p | wc -l");
-			String currPidNum = content2.readLine();
-			base.setThreadTotalPers(Integer.valueOf(currPidNum) + "/" + Integer.valueOf(totalPidNum));
-			BufferedReader content3 = getContent("top");
-			content3.readLine();
-			content3.readLine();
-			String cpuU = content3.readLine();
-			String[] infos = cpuU.substring(cpuU.indexOf(":") + 1).trim().split(",");
-			base.setCpuUseTotalPers("用户空间：" + infos[0] + " 内核空间：" + infos[1] + " 空闲cpu百分比：" + infos[3] + " 等待输入输出的cpu时间百分比：" + infos[4]);
-			//磁盘利用率方面:
-			BufferedReader content4 = getContent("iostat -d -k");
-			content4.readLine();
-			content4.readLine();
-			content4.readLine();	
-			String distIO = content4.readLine();
-			String[] diskArr = distIO.trim().split(",\\s+");
-			base.setDiskUseIn(diskArr[0] + ":" + Double.valueOf(diskArr[2]) + " kB/s");
-			base.setDiskUseOut(diskArr[0] + ":" + Double.valueOf(diskArr[3]) + " kB/s");//每秒io数忽略
-			base.setDiskTPS(diskArr[0] + ":" + diskArr[1] + " tps/s");
-			//网络利用率方面：
-			BufferedReader content5 = getContent("sar -n DEV 1 1");
-			boolean start = false;
-			base.setNetIoInfo(Lists.newArrayList());
-			while(true) {
-				String line = content5.readLine();
-				if(!start) {
-					if(line.contains("rxpck/s")) {
-						start = true;
-					}
-					continue;
-				}
-				if(line.isEmpty()) {
-					break;
-				}
-				String[] netInfo = line.trim().split("\\s+");
-				base.getNetIoInfo().add(new NetIOinfoEntity().setName(netInfo[2])
-						.setNetworkIn(netInfo[3] + "pck/s " + netInfo[5] + "kB/s")
-						.setNetworkOut(netInfo[4] + "pck/s " + netInfo[6] + "kB/s"));
+			
+			if(isWin) {//ProcessId
+				String items = "caption, CommandLine,KernelModeTime,ProcessId,ReadOperationCount,ThreadCount,UserModeTime,WriteOperationCount";
+				String cpuUseInfo = System.getenv("windir") + "\\system32\\wbem\\wmic.exe process " + pid + " get " + items;  
+				String cpuSysInfo = System.getenv("windir") + "\\system32\\wbem\\wmic.exe process get " + items;  
 				
-			}
-			//命令方式查看内存使用
-			BufferedReader content6 = getContent("cat /proc/meminfo");
-			long memTotal = 0;
-			long memFree = 0;
-			long memBuffer = 0;
-			long memCache = 0;
-			String line = "";
-			StringBuffer buf = new StringBuffer();
-			while((line = content6.readLine()) != null) {
-				if(line.startsWith("Active:")) {
-					break;
-				}
-				String number = line.substring(line.indexOf(":") + 1, line.lastIndexOf("kB")).trim();
+	            String keySys = "System Idle Process";
+	            String keyUser = "java";
+	            long[] time3 = getTime(pid, cpuUseInfo, keyUser);//输出顺序系统固定
+				Thread.sleep(30);
+				long[] time4 = getTime(pid, cpuUseInfo, keyUser);
+	            
+				long[] time = getTime(pid, cpuSysInfo, keySys);
+				Thread.sleep(30);
+				long[] time2 = getTime(pid, cpuSysInfo, keySys);
+				
+				long t1 = time2[0] - time[0];
+				long t2 = time4[0] - time3[0];//busy time
+				
+				long t3 = (time2[1] + time[1]) / 2;
+				long t4 = (time4[1] + time3[1]) / 2;
+				String cpuUseTotalPers = ((double)t2) / (t2 + t1) + "";
+				base.setCpuUseTotalPers(cpuUseTotalPers);
+				base.setThreadTotalPers("" + ((double) t4) + "/all");
+				//磁盘属性：
+				setDiskUsage(base);
+				//内存使用量 tasklist过滤
+				//网络收发率
+				setNetIoUsage(base);
+			}else {
+				BufferedReader content = getContent("cat /proc/sys/kernel/pid_max");
+				String totalPidNum = content.readLine();
+				BufferedReader content2 = getContent("pstree -p | wc -l");
+				String currPidNum = content2.readLine();
+				base.setThreadTotalPers(Integer.valueOf(currPidNum) + "/" + Integer.valueOf(totalPidNum));
 
-				if(line.startsWith("MemTotal:")) {
-					memTotal = Long.valueOf(number);
-				}else if(line.startsWith("MemFree::")) {
-					memFree = Long.valueOf(number);
-				}else if(line.startsWith("Buffers:")) {
-					memBuffer = Long.valueOf(number);
-				}else if(line.startsWith("Cached:")) {
-					memCache = Long.valueOf(number);
+				BufferedReader content3 = getContent("top");
+				content3.readLine();
+				content3.readLine();
+				String cpuU = content3.readLine();
+				String[] infos = cpuU.substring(cpuU.indexOf(":") + 1).trim().split(",");
+				base.setCpuUseTotalPers("用户空间：" + infos[0] + " 内核空间：" + infos[1] + " 空闲cpu百分比：" + infos[3] + " 等待输入输出的cpu时间百分比：" + infos[4]);
+				//磁盘利用率方面:
+				BufferedReader content4 = getContent("iostat -d -k");
+				content4.readLine();
+				content4.readLine();
+				content4.readLine();	
+				String distIO = content4.readLine();
+				String[] diskArr = distIO.trim().split(",\\s+");
+				base.setDiskUseIn(diskArr[0] + ":" + Double.valueOf(diskArr[2]) + " kB/s");
+				base.setDiskUseOut(diskArr[0] + ":" + Double.valueOf(diskArr[3]) + " kB/s");//每秒io数忽略
+				base.setDiskTPS(diskArr[0] + ":" + diskArr[1] + " tps/s");
+				//网络利用率方面：
+				BufferedReader content5 = getContent("sar -n DEV 1 1");
+				boolean start = false;
+				base.setNetIoInfo(Lists.newArrayList());
+				while(true) {
+					String line = content5.readLine();
+					if(!start) {
+						if(line.contains("rxpck/s")) {
+							start = true;
+						}
+						continue;
+					}
+					if(line.isEmpty()) {
+						break;
+					}
+					String[] netInfo = line.trim().split("\\s+");
+					base.getNetIoInfo().add(new NetIOinfoEntity().setName(netInfo[2])
+							.setNetworkIn(netInfo[3] + "pck/s " + netInfo[5] + "kB/s")
+							.setNetworkOut(netInfo[4] + "pck/s " + netInfo[6] + "kB/s"));
+					
 				}
-				buf.append(line);
+				//命令方式查看内存使用
+				BufferedReader content6 = getContent("cat /proc/meminfo");
+				long memTotal = 0;
+				long memFree = 0;
+				long memBuffer = 0;
+				long memCache = 0;
+				String line = "";
+				StringBuffer buf = new StringBuffer();
+				while((line = content6.readLine()) != null) {
+					if(line.startsWith("Active:")) {
+						break;
+					}
+					String number = line.substring(line.indexOf(":") + 1, line.lastIndexOf("kB")).trim();
+
+					if(line.startsWith("MemTotal:")) {
+						memTotal = Long.valueOf(number);
+					}else if(line.startsWith("MemFree::")) {
+						memFree = Long.valueOf(number);
+					}else if(line.startsWith("Buffers:")) {
+						memBuffer = Long.valueOf(number);
+					}else if(line.startsWith("Cached:")) {
+						memCache = Long.valueOf(number);
+					}
+					buf.append(line);
+				}
+				double used = memTotal - memBuffer - memCache - memFree;
+				double usage = used / memTotal;
+				buf.append("used:" + used + " kB").append("usage:" + usage + " kB");
+				base.setMemUseTotalRest(buf.toString());
 			}
-			double used = memTotal - memBuffer - memCache - memFree;
-			double usage = used / memTotal;
-			buf.append("used:" + used + " kB").append("usage:" + usage + " kB");
-			base.setMemUseTotalRest(buf.toString());
-		
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return base;
+	}
+
+	private void setNetIoUsage(BaseInfoEntity base) {
+		try {
+			long t1 = System.currentTimeMillis();
+			long[] data1 = getNetIoUsage();
+			Thread.sleep(1000);
+			long t2 = System.currentTimeMillis();
+			long second = (t2 - t1) / 1000;
+			long[] data2 = getNetIoUsage();
+			base.setNetIoInfo(Lists.newArrayList(new NetIOinfoEntity().setName("jvm")
+					.setNetworkIn((data2[0] - data1[0]) / second + " kB/s")
+					.setNetworkOut((data2[1] - data1[1]) / second + " kB/s"))
+					);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private long[] getNetIoUsage() {
+		try {
+			BufferedReader content = getContent("netstat -e");
+			String title = content.readLine();
+			String line = null;
+			String[] targetLine = null;
+			while((line = content.readLine()) != null) {
+				String[] arr = line.trim().split("\\s+");
+				if(arr.length < 3) {
+					continue;
+				}
+				targetLine = arr;
+				break;
+			}
+			long rev = Long.valueOf(targetLine[1]);
+			long send = Long.valueOf(targetLine[2]);
+			return new long[] {rev, send};
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return  new long[] {0, 0};
+	}
+
+	private void setDiskUsage(BaseInfoEntity base) throws IOException, InterruptedException {
+		BufferedReader content = getContent("wmic logicaldisk list brief");
+		String title = content.readLine();
+		String line = "";
+		double useAge = 0;
+		long totalFree = 0;
+		long totalAll = 0;
+		while((line = content.readLine()) != null) {
+			String[] diskInfo = line.split("\\s+");
+			if(diskInfo.length > 4) {
+				long free = Long.valueOf(diskInfo[2]);
+				long total = Long.valueOf(diskInfo[3]);
+				totalFree += free;
+				totalAll += total;
+			}
+		}
+		useAge += ((double)totalAll - totalFree) / totalAll;
+		base.setDiskUsage("" + useAge);
+	}
+
+	private long[] getTime(Integer pid, String cpuUseInfo, String key) throws IOException, InterruptedException {
+		BufferedReader content = getContent(cpuUseInfo);
+		long[] time = new long[4];
+		try {
+			String line = content.readLine();//title 忽略
+			//list-map: map-entity
+			String sysLine = null;
+			int count = 0;
+			while((line = content.readLine()) != null) {
+				String[] arr = line.split("\\s+");
+				if(arr.length < 2) {
+					if(count++ > 10) {
+						break;
+					}
+					continue;
+				}
+				String normal = Joiner.on(" ").join(arr);	
+				log.info(normal);
+				if(line.startsWith(key)) {
+					sysLine = normal;
+					break;
+				}
+			}
+			//开始处理
+			String[] s1 = sysLine.split("\\s+");
+			time[0] = Long.valueOf(s1[s1.length - 2]) + Long.valueOf(s1[s1.length - 6]);
+			time[1] = Long.valueOf(s1[s1.length - 3]);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return time;
 	}
 	
 	public AllMonitorEntity getAllInfo() {
@@ -178,11 +304,11 @@ public class MemoryVisitUtil {
 					all.setJstackMap(stackMap);
 					all.setJstatMap(jstatMap);
 					all.setJvmStartParam(jvmStartParam);
+					BaseInfoEntity base = memCpuNetworkDiskMonitor(pid);
+					all.setBase(base);
 					if(!isWin) {
 						TopEntity entity = parseTop("top -Hp " + pid);
 						//确定耗时最多的线程stack/cpu/mem占用最多的thread
-						BaseInfoEntity base = memCpuNetworkDiskMonitor();
-						all.setBase(base);
 						all.setTopEntity(entity);
 					}
 				}
@@ -211,14 +337,14 @@ public class MemoryVisitUtil {
 						log.info(new Gson().toJson(jstatMap.descendingMap()));
 						VMStartinfoEntity jvmStartParam = getJvmStartParam(pid);
 						log.info(new Gson().toJson(jvmStartParam));
+						BaseInfoEntity base = memCpuNetworkDiskMonitor(pid);
+						log.info(new Gson().toJson(base));
 						if(!isWin) {
 							TopEntity entity = parseTop("top -Hp " + pid);
 							log.info(new Gson().toJson(entity));
 							//确定耗时最多的线程stack/cpu/mem占用最多的thread
 							parsePerf("sudo perf record -F 99 -p " + pid + " -g -- sleep 30", pid);//持续30s.-g记录调用栈;然后产生一个庞大文件
 							parsePerf2("./profiler.sh -d 60 -o collapsed -f /tmp/test_01.txt " + pid);//持续60s
-							BaseInfoEntity base = memCpuNetworkDiskMonitor();
-							log.info(new Gson().toJson(base));
 						}
 						try {
 							Thread.sleep(1000);
@@ -580,6 +706,7 @@ public class MemoryVisitUtil {
 		private String diskUseIn;
 		private String diskUseOut;
 		private String diskTPS;
+		private String diskUsage;
 		private List<NetIOinfoEntity> netIoInfo;
 	}
 	

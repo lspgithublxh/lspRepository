@@ -56,6 +56,10 @@ public class UrlHandlerMapper {
 			String path = ServiceHttpServer.class.getClassLoader().getResource("").getPath();
 			try {
 				AllMonitorEntity allInfo = MemoryVisitUtil.util.getAllInfo();
+				if(allInfo.getJstackMap() == null ) {
+					handlerMap.get("/default").handler(header, data, util, out);
+					return;
+				}
 				allInfo.getJstackMap().entrySet().stream().forEach(item ->{
 					ThreadEntity entity = item.getValue();
 					int pos = entity.getStack().indexOf("\r\n");
@@ -70,6 +74,7 @@ public class UrlHandlerMapper {
 				resource.put("jstack", allInfo.getJstackMap().entrySet());
 				resource.put("jstat", allInfo.getJstatMap().entrySet());
 				resource.put("jinfo", allInfo.getJvmStartParam());
+				resource.put("resource", allInfo.getBase());
 
 				page = ResourceMapper.instance.matchAndReplace(page, resource);
 				util.formSend(page.getBytes(), responseHeader, out);

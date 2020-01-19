@@ -7,7 +7,7 @@
 setTimeout(function(){
 	//window.location.href = location.href;
 	location.reload();
-}, 10000);
+}, 1000 * 60);
 
 </script>
 </head>
@@ -99,6 +99,57 @@ setTimeout(function(){
 	</tr>
 	</tbody>
 </table>
+
+<table>
+	<thead>
+	<tr>
+	<th>sys</th>
+	</tr>
+	<tr>
+	<td>cpuUsage</td>
+	<td>memUsage</td>
+	<td>diskUsage</td>
+	<td>threadTotalPers</td>
+	<td>cpuLoadAvg</td>
+	<td>diskTPS</td>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+	<td>${resource.cpuUseTotalPers}</td>
+	<td>${resource.memUseTotalPers}</td>
+	<td>${resource.diskUsage}</td>
+	<td>${resource.threadTotalPers}</td>
+	<td>${resource.cpuLoadAvg}</td>
+	<td>${resource.diskTPS}</td>
+	
+	</tr>
+	</tbody>
+</table>
+
+
+<table>
+	<thead>
+	<tr>
+	<th>netIoInfo</th>
+	</tr>
+	<tr>
+	<td>name</td>
+	<td>networkOut</td>
+	<td>networkIn</td>
+	</tr>
+	</thead>
+	<tbody>
+	$foreach(item in resource.netIoInfo)
+	<tr>
+	<td>${item.name}</td>
+	<td>${item.networkOut}</td>
+	<td>${item.networkIn}</td>
+	</tr>
+	$end
+	</tbody>
+</table>
+
 </div>
 </body>
 </html>

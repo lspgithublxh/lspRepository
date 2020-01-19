@@ -15,6 +15,7 @@ import com.google.common.io.Files;
 import com.li.shao.ping.KeyListBase.datastructure.geneutil.SimpleThreadPoolUtil;
 import com.li.shao.ping.KeyListBase.datastructure.geneutil.SimpleThreadPoolUtil2;
 import com.li.shao.ping.KeyListBase.datastructure.geneutil.v2.ServiceServerUtil;
+import com.li.shao.ping.KeyListBase.datastructure.util.httpserver.header.CommonHeader;
 import com.li.shao.ping.KeyListBase.datastructure.util.reader.HttpStreamReaderWriter;
 import com.li.shao.ping.KeyListBase.datastructure.util.uid.UIDUtil;
 
@@ -61,6 +62,7 @@ public class ServiceHttpServer {
 										lock.intern().wait();
 										header = util.headerMap.get(in);
 									}
+									header = header == null || header.isEmpty() ? CommonHeader.instance.convertMapToResponseHeader(null) : header;
 									HttpResourceDispatcher.instance.dispatcher(header, 
 											util.dataMap.get(in), util, out);
 								} catch (Exception e) {
