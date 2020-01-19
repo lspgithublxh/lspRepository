@@ -75,7 +75,7 @@ public class UrlHandlerMapper {
 				resource.put("jstat", allInfo.getJstatMap().entrySet());
 				resource.put("jinfo", allInfo.getJvmStartParam());
 				resource.put("resource", allInfo.getBase());
-
+				
 				page = ResourceMapper.instance.matchAndReplace(page, resource);
 				util.formSend(page.getBytes(), responseHeader, out);
 			} catch (Exception e) {

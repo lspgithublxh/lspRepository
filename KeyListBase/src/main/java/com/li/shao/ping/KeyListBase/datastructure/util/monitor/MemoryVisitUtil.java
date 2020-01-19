@@ -35,6 +35,20 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 画图+报警
+ * 检查：
+ * 1.老年代回收次数太高：
+ * 2.堆空间占用太高：
+ * 3.存在死锁：
+ * 4.hashMap节点数上百万：
+ * 5.cpu利用率超过60%
+ * 6.内存利用率超过60%
+ * 7.网络接收流量超过10M/s
+ * @author lishaoping
+ * @date 2020年1月19日
+ * @package  com.li.shao.ping.KeyListBase.datastructure.util.monitor
+ */
 @Slf4j
 public class MemoryVisitUtil {
 	
@@ -83,7 +97,7 @@ public class MemoryVisitUtil {
 			MemoryUsage nonHeapMemoryUsage = memoryMXBean.getNonHeapMemoryUsage();
 			double heapMemUse = ((double)heapMemoryUsage.getUsed()) / heapMemoryUsage.getCommitted();
 			double nonHeapMemUse = ((double)nonHeapMemoryUsage.getUsed()) / nonHeapMemoryUsage.getCommitted();
-			base.setMemUseTotalPers(heapMemUse + "," + nonHeapMemUse);
+			base.setMemUseTotalPers(String.format("%.2f", heapMemUse) + "," + String.format("%.2f", nonHeapMemUse));
 			
 			if(isWin) {//ProcessId
 				String items = "caption, CommandLine,KernelModeTime,ProcessId,ReadOperationCount,ThreadCount,UserModeTime,WriteOperationCount";
@@ -94,6 +108,10 @@ public class MemoryVisitUtil {
 	            String keyUser = "java";
 	            long[] time3 = getTime(pid, cpuUseInfo, keyUser);//输出顺序系统固定
 				Thread.sleep(30);
+//				int countJust = 0;
+//				for(int i = 0; i< 1000000; i++) {
+//					countJust += 1;
+//				}
 				long[] time4 = getTime(pid, cpuUseInfo, keyUser);
 	            
 				long[] time = getTime(pid, cpuSysInfo, keySys);
@@ -250,7 +268,7 @@ public class MemoryVisitUtil {
 			}
 		}
 		useAge += ((double)totalAll - totalFree) / totalAll;
-		base.setDiskUsage("" + useAge);
+		base.setDiskUsage("" + String.format("%.2f", useAge));
 	}
 
 	private long[] getTime(Integer pid, String cpuUseInfo, String key) throws IOException, InterruptedException {
@@ -739,5 +757,9 @@ public class MemoryVisitUtil {
 	@Test
 	public void test() {
 		runCmd();
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(String.format("%.2f", 2.222222));
 	}
 }
