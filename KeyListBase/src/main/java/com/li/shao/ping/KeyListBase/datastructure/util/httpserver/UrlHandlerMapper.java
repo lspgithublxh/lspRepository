@@ -17,6 +17,13 @@ import com.li.shao.ping.KeyListBase.datastructure.util.monitor.MemoryVisitUtil.T
 
 import avro.shaded.com.google.common.collect.Maps;
 
+/**
+ * 补充：实时命令窗口：返回获取的输出
+ *
+ * @author lishaoping
+ * @date 2020年1月20日
+ * @package  com.li.shao.ping.KeyListBase.datastructure.util.httpserver
+ */
 public class UrlHandlerMapper {
 
 	public static UrlHandlerMapper instance = new UrlHandlerMapper();
