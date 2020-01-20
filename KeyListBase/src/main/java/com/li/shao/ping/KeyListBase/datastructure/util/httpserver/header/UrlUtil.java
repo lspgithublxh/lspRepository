@@ -20,8 +20,15 @@ public class UrlUtil {
 		if(header == null || header.isEmpty() || !header.contains("\r\n")) {
 			return "/default";
 		}
-		String url = header.substring(header.indexOf(" ") + 1, header.lastIndexOf("\r\n"));
-		url = url.substring(0, url.indexOf(" "));
+		String url = "/default";
+		try {
+			url = header.substring(header.indexOf(" ") + 1, header.indexOf("\r\n"));
+			if(url.contains("?")) {
+				url = url.substring(0, url.indexOf("?"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return url;
 	}
 	

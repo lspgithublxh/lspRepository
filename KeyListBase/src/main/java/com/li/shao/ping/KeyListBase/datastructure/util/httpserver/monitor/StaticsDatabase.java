@@ -50,7 +50,7 @@ public class StaticsDatabase {
 				winfo.setNetIoUsage("[warning] netIn usage overUse: " + netIn);
 			}
 			String threadTotalPers = base.getThreadTotalPers();
-			Integer threadCount = Integer.valueOf(threadTotalPers.substring(0, threadTotalPers.indexOf("/")));
+			Double threadCount = Double.valueOf(threadTotalPers.substring(0, threadTotalPers.indexOf("/")));
 			if(threadCount > threadCountLimit  ) {
 				winfo.setThreadCount("[warning] threadCount usage overUse: " + threadCount);
 			}
