@@ -9,6 +9,7 @@ import java.nio.charset.Charset;
 
 import com.esotericsoftware.minlog.Log;
 import com.google.common.io.Files;
+import com.li.shao.ping.KeyListBase.datastructure.util.httpserver.header.UrlUtil;
 import com.li.shao.ping.KeyListBase.datastructure.util.reader.HttpStreamReaderWriter;
 
 import avro.shaded.com.google.common.collect.Lists;
@@ -24,13 +25,7 @@ public class HttpResourceDispatcher {
 		String url = "";
 		if(header != null) {
 			try {
-				BufferedReader reader = new BufferedReader(new StringReader(header));
-				String request = reader.readLine();
-				if(request == null) {
-					log.info("dispatcher bad");
-				}
-				String[] arr = request.trim().split("\\s+");
-				url = arr[1];
+				url = UrlUtil.instance.getUrl(header);
 				log.info(url);
 				//过滤器直接过滤：比如图片直接返回
 				if(FilterChain.getInstance().filter(Lists.newArrayList(Filter.instance), 

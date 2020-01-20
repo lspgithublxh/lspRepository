@@ -10,6 +10,7 @@ public class WarningInfo {
 	private String fulGCTimes;
 	private String heapUsage;
 	private String threadLock;
+	private String threadCount;
 	private String hashMapNodeCount;
 	private String cpuUsage;
 	private String memUsage;

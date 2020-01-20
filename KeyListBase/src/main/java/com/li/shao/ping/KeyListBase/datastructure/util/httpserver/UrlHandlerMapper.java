@@ -2,12 +2,15 @@ package com.li.shao.ping.KeyListBase.datastructure.util.httpserver;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.li.shao.ping.KeyListBase.datastructure.util.httpserver.header.CommonHeader;
+import com.li.shao.ping.KeyListBase.datastructure.util.httpserver.header.UrlUtil;
+import com.li.shao.ping.KeyListBase.datastructure.util.httpserver.monitor.StaticsDatabase;
 import com.li.shao.ping.KeyListBase.datastructure.util.monitor.MemoryVisitUtil;
 import com.li.shao.ping.KeyListBase.datastructure.util.monitor.MemoryVisitUtil.AllMonitorEntity;
 import com.li.shao.ping.KeyListBase.datastructure.util.monitor.MemoryVisitUtil.ThreadEntity;
@@ -55,7 +58,10 @@ public class UrlHandlerMapper {
 			//获取页面数据
 			String path = ServiceHttpServer.class.getClassLoader().getResource("").getPath();
 			try {
-				AllMonitorEntity allInfo = MemoryVisitUtil.util.getAllInfo();
+				Map<String, List<String>> dataMap = UrlUtil.instance.getUrlData(header);
+				List<String> dlist = dataMap.get("app");
+				String name = dlist == null ? "ProsserApplication" : dlist.get(0);
+				AllMonitorEntity allInfo = MemoryVisitUtil.util.getAllInfo(name);
 				if(allInfo.getJstackMap() == null ) {
 					handlerMap.get("/default").handler(header, data, util, out);
 					return;
@@ -66,7 +72,7 @@ public class UrlHandlerMapper {
 					if(pos > 0) {
 						entity.setStack(entity.getStack().substring(0, pos));
 					}
-				});;
+				});
 				//信息展示：
 				String page = Files.asCharSource(new File(path + "performce.html"), Charset.defaultCharset()).read();
 				Map<String, Object> resource = Maps.newHashMap();
@@ -75,6 +81,7 @@ public class UrlHandlerMapper {
 				resource.put("jstat", allInfo.getJstatMap().entrySet());
 				resource.put("jinfo", allInfo.getJvmStartParam());
 				resource.put("resource", allInfo.getBase());
+				resource.put("warning", StaticsDatabase.instance.getWarningInfo(allInfo));
 				
 				page = ResourceMapper.instance.matchAndReplace(page, resource);
 				util.formSend(page.getBytes(), responseHeader, out);

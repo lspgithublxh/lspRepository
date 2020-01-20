@@ -61,6 +61,7 @@ public class MemoryVisitUtil {
 	private Pattern threadPattern = Pattern.compile("Threads:(.+?)\\r\\n");
 	private Pattern cpuPattern = Pattern.compile("Cpu\\(s\\):\\s+(.+)?\\r\\n");
 	private Pattern generalPattern = Pattern.compile(":(.+)?\\r\\n");
+	private String deadLockInfo = "Java stack information for the threads";
 	{
 		runtime.addShutdownHook(new Thread(()->{
 			log.info("shutdown of runtime!");
@@ -304,10 +305,10 @@ public class MemoryVisitUtil {
 		return time;
 	}
 	
-	public AllMonitorEntity getAllInfo() {
+	public AllMonitorEntity getAllInfo(String name) {
 		AllMonitorEntity all = new AllMonitorEntity();
 		try {
-			List<String> mainClassList = Lists.newArrayList("ProsserApplication");
+			List<String> mainClassList = Lists.newArrayList(name);
 			Map<Integer, String> threadIdName = parseJps("jps", this::parseJps);
 			threadIdName.entrySet().forEach(item ->{
 				if(mainClassList.contains(item.getValue())) {
@@ -573,6 +574,7 @@ public class MemoryVisitUtil {
 			StringBuffer buffer = new StringBuffer();
 			String threadStatus = "";
 			ThreadEntity currThread = null;
+			ThreadEntity deadLock = null;
 			while((line = reader.readLine()) != null) {
 				Matcher matcher = jstackPattern.matcher(line);
 				if(matcher.find()) {
@@ -599,9 +601,21 @@ public class MemoryVisitUtil {
 					continue;
 				}
 				buffer.append(line).append("\r\n");
+				if(deadLock != null) {
+					deadLock.setStack(deadLock.getStack() + line + "</br>");
+				}
+				if(line.contains(deadLockInfo)) {
+					deadLock = new ThreadEntity();
+					deadLock.setName(line);
+					deadLock.setStack("");
+				}
+				
 			}
 			if(currThread != null) {
 				currThread.setStack(buffer.toString());
+			}
+			if(deadLock != null) {
+				threadMap.put(-1, deadLock);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
