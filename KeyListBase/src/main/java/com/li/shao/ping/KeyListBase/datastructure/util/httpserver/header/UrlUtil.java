@@ -25,6 +25,8 @@ public class UrlUtil {
 			url = header.substring(header.indexOf(" ") + 1, header.indexOf("\r\n"));
 			if(url.contains("?")) {
 				url = url.substring(0, url.indexOf("?"));
+			}else {
+				url = url.substring(0, url.indexOf(" "));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
