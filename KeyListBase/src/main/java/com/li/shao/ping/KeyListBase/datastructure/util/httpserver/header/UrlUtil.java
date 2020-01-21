@@ -57,6 +57,9 @@ public class UrlUtil {
 					dataMap.put(kvv[0], dlist);
 					return dlist;
 				});
+				if(kvv.length == 1) {
+					continue;
+				}
 				orElseGet.add(kvv[1]);
 			}
 		} catch (Exception e) {

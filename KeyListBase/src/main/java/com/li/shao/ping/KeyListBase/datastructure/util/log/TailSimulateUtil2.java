@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.junit.Test;
 
+import com.li.shao.ping.KeyListBase.datastructure.util.file.ReadFileUtil;
 import com.li.shao.ping.KeyListBase.datastructure.util.uid.UIDUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TailSimulateUtil2 {
 
+	public static TailSimulateUtil2 instance = new TailSimulateUtil2();
+	
 	public void logWrite(File file) {
 		try {
 			FileWriter fw = new FileWriter(file);
@@ -46,11 +49,12 @@ public class TailSimulateUtil2 {
 		}
 	}
 	
+	
+	
 	public void logRead(File file) {
 		try {
 			RandomAccessFile rf = new RandomAccessFile(file, "r");
 			AtomicLong pos = new AtomicLong(0);
-//			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			ByteBuffer buffer = ByteBuffer.allocate(1024);
 			Thread thread = new Thread(()->{
 				while(true) {
@@ -58,15 +62,8 @@ public class TailSimulateUtil2 {
 						long nowPos = rf.getFilePointer();
 						rf.seek(pos.get());
 						FileChannel channel = rf.getChannel();
-						int len = 0;
 						ByteArrayOutputStream out = new ByteArrayOutputStream();
-						byte[] data = new byte[1024];
-						while((len = channel.read(buffer)) > 0) {
-							buffer.flip();
-							buffer.get(data, 0, len);
-							buffer.compact();
-							out.write(data, 0, len);
-						}
+						ReadFileUtil.instance.readFromChannel(buffer, channel, out);
 						if(pos.get() == nowPos) {
 							continue;
 						}
@@ -86,13 +83,25 @@ public class TailSimulateUtil2 {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Test
 	public void test() {
 		try {
 			File f = new File("D:\\test\\a.txt");
 			logRead(f);
 			logWrite(f);
+			Thread.sleep(1000 * 3600);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void main(String[] args) {
+		try {
+			File f = new File("D:\\test\\a.txt");
+			TailSimulateUtil2 t2 = new TailSimulateUtil2();
+			t2.logRead(f);
+			t2.logWrite(f);
 			Thread.sleep(1000 * 3600);
 		} catch (Exception e) {
 			e.printStackTrace();

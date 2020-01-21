@@ -50,6 +50,26 @@ setTimeout(function(){
 <table>
 	<thead>
 	<tr>
+	<th>matchLog</th>
+	</tr>
+	<tr>
+	<td>file name</td>
+	<td>content</td>
+	</tr>
+	</thead>
+	<tbody>
+	$foreach(item in matchLog)
+	<tr>
+	<td>${item.fileName}</td>
+	<td>${item.content}</td>
+	</tr>
+	$end
+	</tbody>
+</table>
+
+<table>
+	<thead>
+	<tr>
 	<th>jmap</th>
 	</tr>
 	<tr>

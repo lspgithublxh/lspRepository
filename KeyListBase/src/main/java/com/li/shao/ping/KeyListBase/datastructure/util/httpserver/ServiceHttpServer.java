@@ -1,14 +1,10 @@
 package com.li.shao.ping.KeyListBase.datastructure.util.httpserver;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.charset.Charset;
-import java.util.List;
-import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
@@ -24,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 浏览器中可以访问的可以返回正常信息的服务器
- *
+ *传图片：传profiler火焰图，性能图
  * @author lishaoping
  * @date 2020年1月13日
  * @package  com.li.shao.ping.KeyListBase.datastructure.util.server

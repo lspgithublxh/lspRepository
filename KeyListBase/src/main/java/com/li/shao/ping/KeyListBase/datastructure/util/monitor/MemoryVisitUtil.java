@@ -296,9 +296,11 @@ public class MemoryVisitUtil {
 				}
 			}
 			//开始处理
-			String[] s1 = sysLine.split("\\s+");
-			time[0] = Long.valueOf(s1[s1.length - 2]) + Long.valueOf(s1[s1.length - 6]);
-			time[1] = Long.valueOf(s1[s1.length - 3]);
+			if(sysLine != null) {
+				String[] s1 = sysLine.split("\\s+");
+				time[0] = Long.valueOf(s1[s1.length - 2]) + Long.valueOf(s1[s1.length - 6]);
+				time[1] = Long.valueOf(s1[s1.length - 3]);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -308,8 +310,16 @@ public class MemoryVisitUtil {
 	public AllMonitorEntity getAllInfo(String name) {
 		AllMonitorEntity all = new AllMonitorEntity();
 		try {
-			List<String> mainClassList = Lists.newArrayList(name);
 			Map<Integer, String> threadIdName = parseJps("jps", this::parseJps);
+			if(name == null || name.isEmpty()) {
+				for(String tname : threadIdName.values()) {
+					if(tname != null && !"".equals(tname) && !"jps".toLowerCase().equals(tname)) {
+						name = tname;
+						break;
+					}
+				}
+			}
+			List<String> mainClassList = Lists.newArrayList(name);
 			threadIdName.entrySet().forEach(item ->{
 				if(mainClassList.contains(item.getValue())) {
 					//开启循环持续输出
@@ -545,10 +555,12 @@ public class MemoryVisitUtil {
 			BufferedReader reader = getContent(cmd);
 			String metaData = reader.readLine();
 			String val = reader.readLine();
-			String[] arr = metaData.trim().split("\\s+");
-			String[] valArr = val.trim().split("\\s+");
-			for(int i = 0; i < arr.length; i++) {
-				memMap.put(arr[i], Double.valueOf(valArr[i]));
+			if(metaData != null) {
+				String[] arr = metaData.trim().split("\\s+");
+				String[] valArr = val.trim().split("\\s+");
+				for(int i = 0; i < arr.length; i++) {
+					memMap.put(arr[i], Double.valueOf(valArr[i]));
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -558,6 +570,7 @@ public class MemoryVisitUtil {
 
 	/**
 	 * 可以周期执行，得出重复的threadid,来统计哪个线程出现次数最多，并且出现在哪个方法上;1s内串行执行几十次。
+	 * 通过Thread.接口获取所有的线程的栈也可以。
 	 * @param cmd
 	 * @return
 	 */

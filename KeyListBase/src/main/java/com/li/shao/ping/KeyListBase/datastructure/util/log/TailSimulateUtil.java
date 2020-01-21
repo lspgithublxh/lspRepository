@@ -26,6 +26,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TailSimulateUtil {
 
+	public static TailSimulateUtil instance = new TailSimulateUtil();
+	
 	public void logWrite(File file) {
 		try {
 			FileWriter fw = new FileWriter(file);
