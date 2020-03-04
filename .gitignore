@@ -32,3 +32,4 @@ build/
 /bin/
 **/.metadata/**
 /RemoteSystemsTempFiles
+/.metadata/
