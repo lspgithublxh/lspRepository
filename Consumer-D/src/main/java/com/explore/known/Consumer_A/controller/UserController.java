@@ -9,6 +9,13 @@ import org.springframework.web.client.RestTemplate;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
+/**
+ * url-mapping 不会再生效
+ *
+ * @author lishaoping
+ * @date 2020年3月9日
+ * @package  com.explore.known.Consumer_A.controller
+ */
 @RestController("UserController")
 @RequestMapping("/api/consumer")
 public class UserController {
