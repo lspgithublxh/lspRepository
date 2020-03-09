@@ -1,0 +1,25 @@
+package com.explore.known.Consumer_A.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+import com.explore.known.Consumer_A.interfaces.IUserService;
+
+@RestController("UserController")
+@RequestMapping("/api/consumer")
+public class UserController {
+
+	@Autowired
+	private IUserService userService;
+//    public static  final String URL_PREFIX = "http://localhost:8001";
+	 public static  final String URL_PREFIX = "http://Service-B";//可以去掉端口，根据服务名访问
+	
+	@GetMapping("/start/{user_id}")
+	public String hello(@PathVariable("user_id") Long id) {
+		return userService.getUserById(id).toString();
+	}
+}
