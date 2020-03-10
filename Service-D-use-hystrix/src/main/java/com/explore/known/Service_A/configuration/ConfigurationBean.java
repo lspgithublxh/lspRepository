@@ -1,4 +1,4 @@
-package com.explore.known.Consumer_A.configuration;
+package com.explore.known.Service_A.configuration;
 
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -19,12 +19,9 @@ public class ConfigurationBean {
 	
 	@Bean
 	public ServletRegistrationBean hystrixMetricsStreamServlet() {
-		HystrixMetricsStreamServlet streamServlet = new HystrixMetricsStreamServlet();
-	    ServletRegistrationBean registrationBean = new ServletRegistrationBean(streamServlet);
-	    registrationBean.setLoadOnStartup(1);
-	    registrationBean.addUrlMappings("/hystrix.stream");
-	    registrationBean.setName("HystrixMetricsStreamServlet");
-	    return registrationBean;
+		ServletRegistrationBean registration = new ServletRegistrationBean(new HystrixMetricsStreamServlet());
+		registration.addUrlMappings("/hystrix.stream");
+		return registration;
 	}
 	
 }

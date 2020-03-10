@@ -22,10 +22,6 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
  */
 @RestController("UserController")
 @RequestMapping("/api/consumer")
-@EnableHystrix
-@EnableCircuitBreaker
-@EnableHystrixDashboard
-@EnableTurbine
 public class UserController {
 
 	@Autowired
