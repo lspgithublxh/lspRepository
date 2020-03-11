@@ -1,14 +1,21 @@
 package com.explore.known.Consumer_A.configuration;
 
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
 import org.springframework.cloud.gateway.filter.ratelimit.RateLimiter;
 import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.web.client.RestTemplate;
 
 import com.explore.known.Consumer_A.filters.TokenFilter;
+import com.explore.known.Consumer_A.resolver.HostAddrKeyResolver;
+import com.explore.known.Consumer_A.resolver.UriKeyResolver;
+
+import reactor.core.publisher.Mono;
 
 /**
  * 限流(过滤器方式：需要redis配置)，熔断(hystrix)，缓存
@@ -50,7 +57,32 @@ public class ConfigurationBean {
 	}
 	
 	@Bean
+	@Qualifier(value = "TokenFilter")
 	public TokenFilter tokenFilter(){
 	        return new TokenFilter();
 	}
+	
+	@Bean
+	@Qualifier(value = "HostAddrKeyResolver")
+	@Primary
+    public HostAddrKeyResolver hostAddrKeyResolver() {
+        return new HostAddrKeyResolver();
+    }
+	
+	@Bean
+	@Qualifier(value = "UriKeyResolver")
+    public UriKeyResolver uriKeyResolver() {
+        return new UriKeyResolver();
+    }
+	
+	/**@Primary
+	 * 直接根据用户名去限流
+	 * @return
+	 */
+	@Bean
+	@Qualifier(value = "userKeyResolver")
+    KeyResolver userKeyResolver() {
+        return exchange -> Mono.just(exchange.getRequest().getQueryParams().getFirst("user"));
+    }
+
 }
