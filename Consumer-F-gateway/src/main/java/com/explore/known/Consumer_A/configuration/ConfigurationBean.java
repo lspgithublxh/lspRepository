@@ -1,11 +1,20 @@
 package com.explore.known.Consumer_A.configuration;
 
+import org.springframework.cloud.gateway.filter.ratelimit.RateLimiter;
+import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * 限流，熔断，缓存
+ *
+ * @author lishaoping
+ * @date 2020年3月11日
+ * @package  com.explore.known.Consumer_A.configuration
+ */
 @Configuration
 public class ConfigurationBean {
 
