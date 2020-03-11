@@ -56,33 +56,33 @@ public class ConfigurationBean {
 				.build();
 	}
 	
-	@Bean
-	@Qualifier(value = "TokenFilter")
-	public TokenFilter tokenFilter(){
-	        return new TokenFilter();
-	}
+//	@Bean
+//	@Qualifier(value = "TokenFilter")
+//	public TokenFilter tokenFilter(){
+//	        return new TokenFilter();
+//	}
 	
 	@Bean
-	@Qualifier(value = "HostAddrKeyResolver")
-	@Primary
+//	@Qualifier(value = "hostAddrKeyResolver")
+//	@Primary
     public HostAddrKeyResolver hostAddrKeyResolver() {
         return new HostAddrKeyResolver();
     }
 	
-	@Bean
-	@Qualifier(value = "UriKeyResolver")
-    public UriKeyResolver uriKeyResolver() {
-        return new UriKeyResolver();
-    }
+//	@Bean
+//	@Qualifier(value = "UriKeyResolver")
+//    public UriKeyResolver uriKeyResolver() {
+//        return new UriKeyResolver();
+//    }
 	
 	/**@Primary
 	 * 直接根据用户名去限流
 	 * @return
 	 */
-	@Bean
-	@Qualifier(value = "userKeyResolver")
-    KeyResolver userKeyResolver() {
-        return exchange -> Mono.just(exchange.getRequest().getQueryParams().getFirst("user"));
-    }
+//	@Bean
+//	@Qualifier(value = "userKeyResolver")
+//    KeyResolver userKeyResolver() {
+//        return exchange -> Mono.just(exchange.getRequest().getQueryParams().getFirst("user"));
+//    }
 
 }
