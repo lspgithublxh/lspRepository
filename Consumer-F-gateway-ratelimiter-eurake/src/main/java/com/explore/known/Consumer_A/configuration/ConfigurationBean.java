@@ -63,7 +63,7 @@ public class ConfigurationBean {
 //	}
 	
 	@Bean
-//	@Qualifier(value = "hostAddrKeyResolver")
+	@Qualifier(value = "hostAddrKeyResolver")
 //	@Primary
     public HostAddrKeyResolver hostAddrKeyResolver() {
         return new HostAddrKeyResolver();
