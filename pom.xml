@@ -12,6 +12,7 @@
     <modules>
         <module>RegistCenter2</module>
         <module>Service-B</module>
+		<module>Service-D-use-hystrix2</module>
     </modules>
 
     <parent>

@@ -9,7 +9,7 @@
 		<relativePath />
 	</parent>
 	<groupId>com.explore.known</groupId>
-	<artifactId>Service-A</artifactId>
+	<artifactId>Service-D-use-hystrix2</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
