@@ -9,7 +9,7 @@
 		<relativePath />
 	</parent>
 	<groupId>com.explore.known</groupId>
-	<artifactId>RegistCenter</artifactId>
+	<artifactId>RegistCenter2</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
