@@ -9,7 +9,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import reactor.core.publisher.Mono;
-
+/**
+ * 阿里云上也成功
+ *
+ * @author lishaoping
+ * @date 2020年3月17日
+ * @package  com.explore.known.Consumer_A.controller
+ */
 @RestController("UserController")
 @RequestMapping("/api/consumer")
 public class UserController {
