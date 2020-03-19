@@ -10,6 +10,13 @@ import org.springframework.web.client.RestTemplate;
 
 import brave.sampler.Sampler;
 
+/**
+ * 
+ *
+ * @author lishaoping
+ * @date 2020年3月19日
+ * @package  com.explore.known.Service_A.controller
+ */
 @RestController("usercontroller")
 @RequestMapping("/api/zipkin")
 public class UserController {
