@@ -10,6 +10,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <modules>
+	    <module>RegistCenter</module>
         <module>RegistCenter2</module>
 		<module>Service-A</module>
         <module>Service-B</module>
@@ -20,7 +21,8 @@
 		<module>Service-D-use-hystrix</module>
 		<module>Service-D-use-hystrix2</module>
 		<module>Consumer-E-HystrixTurbine</module>
-		
+		<module>Service-C-p1</module>
+		<module>Service-C-p2</module>
     </modules>
 
     <parent>
