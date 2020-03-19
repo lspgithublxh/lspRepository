@@ -40,8 +40,7 @@ public class AppTest
     }
     
     public void test() {
-    	ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
-    	AppTest someBean= (AppTest) context.getBean("AppTest");
-    	
+//    	ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+//    	AppTest someBean= (AppTest) context.getBean("AppTest");
     }
 }
