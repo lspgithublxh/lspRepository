@@ -9,11 +9,11 @@
 		<relativePath />
 	</parent>
 	<groupId>com.explore.known</groupId>
-	<artifactId>Service-A</artifactId>
+	<artifactId>Service-D-use-hystrix</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>Service-A</name>
+	<name>Service-D-use-hystrix</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>
