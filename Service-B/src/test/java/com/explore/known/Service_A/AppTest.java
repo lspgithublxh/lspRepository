@@ -1,5 +1,8 @@
 package com.explore.known.Service_A;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -34,5 +37,11 @@ public class AppTest
     public void testApp()
     {
         assertTrue( true );
+    }
+    
+    public void test() {
+    	ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+    	AppTest someBean= (AppTest) context.getBean("AppTest");
+    	
     }
 }
