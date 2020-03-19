@@ -19,7 +19,6 @@
 		<module>Consumer-F-gateway-ratelimiter-eurake</module>
 		<module>Consumer-E-HystrixTurbine</module>
 		<module>Service-D-use-hystrix</module>
-		<module>Service-D-use-hystrix2</module>
 		<module>Consumer-E-HystrixTurbine</module>
 		<module>Service-C-p1</module>
 		<module>Service-C-p2</module>
