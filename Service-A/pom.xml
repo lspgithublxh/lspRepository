@@ -49,6 +49,7 @@
     </dependencyManagement>
     
 <build>
+<finalName>${project.artifactId}</finalName>
 <plugins>
 <plugin>
         <groupId>org.springframework.boot</groupId>
@@ -64,6 +65,32 @@
             <fork>true</fork>
         </configuration>
     </plugin>
+    <plugin>
+            <groupId>com.spotify</groupId>
+            <artifactId>docker-maven-plugin</artifactId>
+            <version>0.4.13</version>
+            <configuration>
+                <!-- docker默认远程端口为2375-->
+                <dockerHost>http://39.101.197.111:2375/</dockerHost>
+                <!--用于指定镜像名称, 不能有-特殊符号，否则报socket write error-->
+                <imageName>hellososo</imageName>
+                <!--用于指定基础镜像，相当于Dockerfile中的FROM指令-->
+                <baseImage>java</baseImage>
+                <!--相当于Dockerfile的ENTRYPOINT指令-->
+                <entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
+                <!--是否跳过docker build-->
+                <skipDockerBuild>false</skipDockerBuild>
+                <resources>
+                    <resource>
+                        <targetPath>/</targetPath>
+                        <!--用于指定需要复制的根目录，${project.build.directory}表示target目录-->
+                        <directory>${project.build.directory}</directory>
+                        <!--用于指定需要复制的文件。${project.build.finalName}.jar指的是打包后的jar包文件。-->
+                        <include>${project.build.finalName}.jar</include>
+                    </resource>
+                </resources>
+            </configuration>
+        </plugin>
 </plugins>
 
 </build>
