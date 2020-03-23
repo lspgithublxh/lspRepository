@@ -10,6 +10,13 @@ import org.springframework.web.client.RestTemplate;
 
 import reactor.core.publisher.Mono;
 
+/**
+ * 以后从nginx转发到网关
+ *
+ * @author lishaoping
+ * @date 2020年3月23日
+ * @package  com.explore.known.Consumer_A.controller
+ */
 @RestController("UserController")
 @RequestMapping("/api/consumer")
 public class UserController {
