@@ -3,6 +3,15 @@ package com.li.shao.ping.KeyListBase;
 public class ThreadTest {
 
 	public static void main(String[] args) {
+//		e();
+		b();
+	}
+
+	private static void b() {
+		
+	}
+
+	private static void e() {
 		Object lock1 = new Object();
 		Object lock2 = new Object();
 		Thread thread = new Thread(()->{
