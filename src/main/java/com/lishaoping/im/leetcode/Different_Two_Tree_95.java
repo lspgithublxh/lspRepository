@@ -16,7 +16,7 @@ public class Different_Two_Tree_95 {
 
 	private static void test() {
 		//形成组合：
-		int n = 3;
+		int n = 4;
 		List<String> old = new ArrayList<>();
 		List<String> next = new ArrayList<>();
 		old.add("1");
@@ -77,16 +77,21 @@ public class Different_Two_Tree_95 {
 				for(String k : keys) {
 					Integer kvl = pathVl.get(k + "0");
 					Integer kvr = pathVl.get(k + "1");
-					if(kvl != null || kvr != null) {
-//						arr[start++]=kvl;
-//						arr[start++]=kvr;
-						arr += "," + kvl;
-						arr += "," + kvr;
-					}
+//					if(kvl != null || kvr != null) {
+////						arr[start++]=kvl;
+////						arr[start++]=kvr;
+//						arr += "," + kvl;
+//						arr += "," + kvr;
+//					}
+					arr += "," + kvl;
+					arr += "," + kvr;
 				}
 				len++;
 			}
-			arr = arr.endsWith("null") ? arr.substring(0, arr.lastIndexOf(",")) : arr;
+			while(arr.endsWith("null")) {
+				arr =  arr.substring(0, arr.lastIndexOf(","));
+			}
+			
 			if(s.contains(arr)) {
 				continue;
 			}

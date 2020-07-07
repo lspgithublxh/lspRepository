@@ -4,6 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+/**
+ * 每层所有的用子个数--每种个数下的用子方案--划分方案；然后看下一层
+ *
+ *@author lishaoping
+ *Client
+ *2020年7月7日
+ */
 public class Different_Two_Tree96 {
 
 	public static void main(String[] args) {
@@ -28,7 +35,7 @@ public class Different_Two_Tree96 {
 	
 	private static void test() {
 		//
-		int n = 12;
+		int n = 1;
 		Stack<Node> st = new Stack<>();
 		Node root = new Node(1, n-1, 0, 1);
 		Node parent = root;
@@ -44,7 +51,7 @@ public class Different_Two_Tree96 {
 						break;
 					}
 					//使用个数，份数 决定的 总方案数
-					int fangan = compute(use, fact_fen);
+					int fangan = compute(use, fact_fen, parent.use);
 					if(restnum - use == 0) {
 						total += fangan * parent.fangan;
 						continue;
@@ -63,7 +70,7 @@ public class Different_Two_Tree96 {
 	}
 
 
-	private static int compute(int use, int now_fen) {
+	private static int compute(int use, int now_fen, int p_use) {
 		//
 		int k = now_fen;
 		int h = use;
@@ -81,6 +88,16 @@ public class Different_Two_Tree96 {
 		for(int i = 1;i <= 2*k-h;i++ ) {
 			you *= 2;
 		}
-		return c * you;
+		//补充0容器
+		int up2 = 1;
+		for(int i = p_use; i>= k+1;i--) {
+			up2 *= i;
+		}
+		int down2 = 1;
+		for(int j = p_use - k; j >=1; j--) {
+			down2 *= j;
+		}
+		int c2 = up2 / down2;
+		return c * you * c2;
 	}
 }
